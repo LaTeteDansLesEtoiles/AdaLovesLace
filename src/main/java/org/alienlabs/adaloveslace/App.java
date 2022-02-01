@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
@@ -33,14 +34,16 @@ public class App extends Application {
     var javaVersion   = SystemInfo.javaVersion();
 
     TilePane footer           = new TilePane(Orientation.VERTICAL);
-    footer.getChildren().add(new Label("Ada Loves Lace - A lace pattern creation software"));
+    footer.getChildren().add(new Label("Ada Loves Lace - A tatting lace patterns creation software"));
     footer.getChildren().add(new Label("© 2022 AlienLabs"));
     footer.getChildren().add(new Label("This is Free Software under GPL license"));
     footer.getChildren().add(new Label("JavaFX " + javafxVersion + ", running on Java " + javaVersion));
-    footer.setAlignment(Pos.BOTTOM_LEFT);
+    footer.setAlignment(Pos.BOTTOM_CENTER);
 
-    TilePane root             = new TilePane(Orientation.VERTICAL, grid, footer);
-    root.setAlignment(Pos.BOTTOM_CENTER);
+    GridPane root             = new GridPane();
+    GridPane.setConstraints(grid, 0, 0);
+    GridPane.setConstraints(footer, 0, 1);
+    root.getChildren().addAll(grid, footer);
 
     var scene = new Scene(root, 800d, 720d);
     primaryStage.setScene(scene);
