@@ -6,14 +6,23 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.DotGrid;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * JavaFX App
@@ -55,13 +64,24 @@ public class App extends Application {
     Stage toolboxStage = new Stage(StageStyle.DECORATED);
 
     TilePane toolboxPane = new TilePane(Orientation.VERTICAL);
-
-    Button snowflakeButton  = new Button("1", new ImageView("snowflake_small.jpg"));
-    Button mandalaButton    = new Button("2", new ImageView("mandala_small.jpg"));
-
-    toolboxPane.getChildren().add(snowflakeButton);
-    toolboxPane.getChildren().add(mandalaButton);
     toolboxPane.setAlignment(Pos.TOP_CENTER);
+
+    String ps = File.separator;
+    List<String> resourceFiles = FileUtil.getResources(Pattern.compile(".*org" + ps + "alienlabs" + ps + "adaloveslace" + ps + ".*.jpg"));
+
+    for (int i = 0; i < resourceFiles.size(); i++) {
+      String filename = resourceFiles.get(i);
+      Button button = null;
+
+      try (FileInputStream fis = new FileInputStream(filename)) {
+        button = new Button(Integer.toString(i + 1), new ImageView(new Image(fis)));
+        toolboxPane.getChildren().add(button);
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
 
     var toolboxScene = new Scene(toolboxPane, 150, 400);
     toolboxStage.setTitle("Toolbox");

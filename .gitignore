@@ -1,2 +1,11 @@
 .idea/
 target/
+/libs/openjfx-17.0.2_linux-x64_bin-jmods.zip
+/libs/openjfx-17.0.2_linux-x64_bin-sdk.zip
+/libs/openjfx-17.0.2_monocle-linux-x64_bin-sdk.zip
+/libs/openjfx-17.0.2_monocle-osx-x64_bin-sdk.zip
+/libs/openjfx-17.0.2_monocle-windows-x64_bin-sdk.zip
+/libs/openjfx-17.0.2_osx-x64_bin-jmods.zip
+/libs/openjfx-17.0.2_osx-x64_bin-sdk.zip
+/libs/openjfx-17.0.2_windows-x64_bin-jmods.zip
+/libs/openjfx-17.0.2_windows-x64_bin-sdk.zip

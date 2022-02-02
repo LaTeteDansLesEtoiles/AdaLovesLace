@@ -1,5 +1,7 @@
 module org.alienlabs.adaloveslace {
-    requires javafx.controls;
-    exports org.alienlabs.adaloveslace;
-  exports org.alienlabs.adaloveslace.util;
+  requires javafx.controls;
+  requires javafx.graphics;
+  requires java.prefs;
+
+  opens org.alienlabs.adaloveslace to javafx.graphics, javafx.controls;
 }
