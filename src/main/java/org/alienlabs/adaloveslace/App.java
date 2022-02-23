@@ -28,6 +28,15 @@ import java.util.regex.Pattern;
  */
 public class App extends Application {
 
+  public static final String ID                 = "#";
+  public static final String TOOLBOX_BUTTON     = "toolbox-btn-";
+  public static final String TOOLBOX_BUTTON_ID  = ID + TOOLBOX_BUTTON;
+  public static final String ADA_LOVES_LACE     = "Ada Loves Lace";
+  public static final String MAIN_WINDOW_TITLE  = ADA_LOVES_LACE;
+  public static final String TOOLBOX_TITLE      = "Toolbox";
+
+  private Stage toolboxStage;
+
   @Override
   public void start(Stage primaryStage) {
     showMainWindow(primaryStage);
@@ -55,12 +64,12 @@ public class App extends Application {
 
     var scene = new Scene(root, 800d, 720d);
     primaryStage.setScene(scene);
-    primaryStage.setTitle("Ada Loves Lace");
+    primaryStage.setTitle(MAIN_WINDOW_TITLE);
     primaryStage.show();
   }
 
   void showToolboxWindow() {
-    Stage toolboxStage = new Stage(StageStyle.DECORATED);
+    toolboxStage = new Stage(StageStyle.DECORATED);
     TilePane toolboxPane = new TilePane(Orientation.VERTICAL);
     toolboxPane.setAlignment(Pos.TOP_CENTER);
 
@@ -77,7 +86,10 @@ public class App extends Application {
       Button button;
 
       try (FileInputStream fis = new FileInputStream(filename)) {
-        button = new Button(Integer.toString(i + 1), new ImageView(new Image(fis)));
+        String name = new File(filename).getName();
+        button = new Button(name, new ImageView(new Image(fis)));
+        button.setId(TOOLBOX_BUTTON + (i + 1));
+
         toolboxPane.getChildren().add(button);
       } catch (IOException e) {
         e.printStackTrace();
@@ -86,8 +98,8 @@ public class App extends Application {
   }
 
   void showToolboxStage(Stage toolboxStage, TilePane toolboxPane) {
-    var toolboxScene = new Scene(toolboxPane, 150, 400);
-    toolboxStage.setTitle("Toolbox");
+    Scene toolboxScene = new Scene(toolboxPane, 150, 400);
+    toolboxStage.setTitle(TOOLBOX_TITLE);
     toolboxStage.setX(1400d);
     toolboxStage.setY(175d);
     toolboxStage.setScene(toolboxScene);
@@ -96,6 +108,10 @@ public class App extends Application {
 
   public static void main(String[] args) {
     launch();
+  }
+
+  public Stage getToolboxStage() {
+    return toolboxStage;
   }
 
 }

@@ -8,7 +8,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 public class FileUtil {
@@ -25,7 +24,6 @@ public class FileUtil {
     final Pattern pattern){
     final ArrayList<String> retval = new ArrayList<>();
     final String classPath = System.getProperty("java.class.path", ".");
-    System.out.println("### " + classPath);
     final String[] classPathElements = classPath.split(System.getProperty("path.separator"));
     for(final String element : classPathElements){
       retval.addAll(getResources(element, pattern));
@@ -53,14 +51,12 @@ public class FileUtil {
     ZipFile zf;
     try{
       zf = new ZipFile(file);
-    } catch(final ZipException e){
-      throw new Error(e);
     } catch(final IOException e){
       throw new Error(e);
     }
-    final Enumeration e = zf.entries();
+    final Enumeration<? extends ZipEntry> e = zf.entries();
     while(e.hasMoreElements()){
-      final ZipEntry ze = (ZipEntry) e.nextElement();
+      final ZipEntry ze = e.nextElement();
       final String fileName = ze.getName();
       final boolean accept = pattern.matcher(fileName).matches();
       if(accept){
@@ -80,18 +76,20 @@ public class FileUtil {
     final Pattern pattern){
     final ArrayList<String> retval = new ArrayList<>();
     final File[] fileList = directory.listFiles();
-    for(final File file : fileList){
-      if(file.isDirectory()){
-        retval.addAll(getResourcesFromDirectory(file, pattern));
-      } else{
-        try{
-          final String fileName = file.getCanonicalPath();
-          final boolean accept = pattern.matcher(fileName).matches();
-          if(accept){
-            retval.add(fileName);
+    if (null != fileList) {
+      for (final File file : fileList) {
+        if (file.isDirectory()) {
+          retval.addAll(getResourcesFromDirectory(file, pattern));
+        } else {
+          try {
+            final String fileName = file.getCanonicalPath();
+            final boolean accept = pattern.matcher(fileName).matches();
+            if (accept) {
+              retval.add(fileName);
+            }
+          } catch (final IOException e) {
+            throw new Error(e);
           }
-        } catch(final IOException e){
-          throw new Error(e);
         }
       }
     }
