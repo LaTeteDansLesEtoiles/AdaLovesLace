@@ -19,7 +19,6 @@ import org.alienlabs.adaloveslace.view.DotGrid;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -35,7 +34,7 @@ public class App extends Application {
     showToolboxWindow();
   }
 
-  private void showMainWindow(Stage primaryStage) {
+  void showMainWindow(Stage primaryStage) {
     StackPane grid            = new StackPane(new DotGrid());
     grid.setAlignment(Pos.TOP_LEFT);
 
@@ -60,29 +59,33 @@ public class App extends Application {
     primaryStage.show();
   }
 
-  private void showToolboxWindow() {
+  void showToolboxWindow() {
     Stage toolboxStage = new Stage(StageStyle.DECORATED);
-
     TilePane toolboxPane = new TilePane(Orientation.VERTICAL);
     toolboxPane.setAlignment(Pos.TOP_CENTER);
 
+    fillUpToolboxPane(toolboxPane);
+    showToolboxStage(toolboxStage, toolboxPane);
+  }
+
+  void fillUpToolboxPane(TilePane toolboxPane) {
     String ps = File.separator;
     List<String> resourceFiles = FileUtil.getResources(Pattern.compile(".*org" + ps + "alienlabs" + ps + "adaloveslace" + ps + ".*.jpg"));
 
     for (int i = 0; i < resourceFiles.size(); i++) {
       String filename = resourceFiles.get(i);
-      Button button = null;
+      Button button;
 
       try (FileInputStream fis = new FileInputStream(filename)) {
         button = new Button(Integer.toString(i + 1), new ImageView(new Image(fis)));
         toolboxPane.getChildren().add(button);
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
+  }
 
+  void showToolboxStage(Stage toolboxStage, TilePane toolboxPane) {
     var toolboxScene = new Scene(toolboxPane, 150, 400);
     toolboxStage.setTitle("Toolbox");
     toolboxStage.setX(1400d);
