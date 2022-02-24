@@ -1,6 +1,7 @@
-package org.alienlabs.adaloveslace;
+package org.alienlabs.adaloveslace.test;
 
 import javafx.stage.Stage;
+import org.alienlabs.adaloveslace.App;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxAssert;

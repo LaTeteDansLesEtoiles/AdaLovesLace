@@ -43,7 +43,7 @@ public class App extends Application {
     showToolboxWindow();
   }
 
-  void showMainWindow(Stage primaryStage) {
+  public void showMainWindow(Stage primaryStage) {
     StackPane grid            = new StackPane(new DotGrid());
     grid.setAlignment(Pos.TOP_LEFT);
 
@@ -68,7 +68,7 @@ public class App extends Application {
     primaryStage.show();
   }
 
-  void showToolboxWindow() {
+  public void showToolboxWindow() {
     toolboxStage = new Stage(StageStyle.DECORATED);
     TilePane toolboxPane = new TilePane(Orientation.VERTICAL);
     toolboxPane.setAlignment(Pos.TOP_CENTER);
