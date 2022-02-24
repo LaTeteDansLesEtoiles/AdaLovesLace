@@ -16,6 +16,8 @@ import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.DotGrid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +36,8 @@ public class App extends Application {
   public static final String ADA_LOVES_LACE     = "Ada Loves Lace";
   public static final String MAIN_WINDOW_TITLE  = ADA_LOVES_LACE;
   public static final String TOOLBOX_TITLE      = "Toolbox";
+
+  private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   private Stage toolboxStage;
 
@@ -93,7 +97,7 @@ public class App extends Application {
 
         toolboxPane.getChildren().add(button);
       } catch (IOException e) {
-        e.printStackTrace();
+        logger.error("Exception reading toolbox file!", e);
       }
     }
   }

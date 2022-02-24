@@ -1,5 +1,8 @@
 package org.alienlabs.adaloveslace.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,6 +15,8 @@ import java.util.zip.ZipFile;
 
 public class FileUtil {
 
+  private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
+
   /**
    * For all elements of java classpath (starting from app class package if java.class.path system property is empty),
    * get a Collection of resources with a pattern.
@@ -21,21 +26,21 @@ public class FileUtil {
    * @return the resources in the order they are found
    */
   public static List<String> getResources(
-    Object app, final Pattern pattern){
+    Object app, final Pattern pattern) {
     final ArrayList<String> retval = new ArrayList<>();
     final String classPath = System.getProperty("java.class.path", ".");
-    System.out.println("### " + classPath);
+    logger.info("classpath: " + classPath);
 
     if (classPath != null && !"".equals(classPath.trim())) {
       final String[] classPathElements = classPath.split(System.getProperty("path.separator"));
       for (final String element : classPathElements) {
-        System.out.println("### " + element + ", " + pattern);
+        logger.info("element: " + element + ", pattern: " + pattern);
         retval.addAll(getResources(element, pattern));
       }
     } else {
       File file = new File(app.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
       String absolutePath = file.getAbsolutePath();
-      System.out.println("### " + absolutePath);
+      logger.info("absolute path: " + absolutePath);
       retval.addAll(getResources(absolutePath, pattern));
     }
     return retval;
@@ -46,7 +51,7 @@ public class FileUtil {
     final Pattern pattern){
     final ArrayList<String> retval = new ArrayList<>();
     final File file = new File(element);
-    if(file.isDirectory()){
+    if(file.isDirectory()) {
       retval.addAll(getResourcesFromDirectory(file, pattern));
     } else{
       retval.addAll(getResourcesFromJarFile(file, pattern));
@@ -59,24 +64,24 @@ public class FileUtil {
     final Pattern pattern){
     final ArrayList<String> retval = new ArrayList<>();
     ZipFile zf;
-    try{
+    try {
       zf = new ZipFile(file);
-    } catch(final IOException e){
-      e.printStackTrace();
+    } catch(final IOException e) {
+      logger.error("Error reading classpath .jar file!", e);
       return retval;
     }
     final Enumeration<? extends ZipEntry> e = zf.entries();
-    while(e.hasMoreElements()){
+    while(e.hasMoreElements()) {
       final ZipEntry ze = e.nextElement();
       final String fileName = ze.getName();
       final boolean accept = pattern.matcher(fileName).matches();
-      if(accept){
+      if(accept) {
         retval.add(fileName);
       }
     }
     try{
       zf.close();
-    } catch(final IOException e1){
+    } catch(final IOException e1) {
       throw new Error(e1);
     }
     return retval;
@@ -87,6 +92,7 @@ public class FileUtil {
     final Pattern pattern){
     final ArrayList<String> retval = new ArrayList<>();
     final File[] fileList = directory.listFiles();
+
     if (null != fileList) {
       for (final File file : fileList) {
         if (file.isDirectory()) {
@@ -104,6 +110,7 @@ public class FileUtil {
         }
       }
     }
+
     return retval;
   }
 
