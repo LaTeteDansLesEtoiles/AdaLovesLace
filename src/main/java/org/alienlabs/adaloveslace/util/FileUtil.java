@@ -13,22 +13,30 @@ import java.util.zip.ZipFile;
 public class FileUtil {
 
   /**
-   * for all elements of java.class.path get a Collection of resources Pattern
-   * pattern = Pattern.compile(".*"); gets all resources
+   * For all elements of java classpath (starting from app class package if java.class.path system property is empty),
+   * get a Collection of resources with a pattern.
    *
-   * @param pattern
-   *            the pattern to match
+   * @param app production app or unit test class
+   * @param pattern the pattern to match
    * @return the resources in the order they are found
    */
   public static List<String> getResources(
-    final Pattern pattern){
+    Object app, final Pattern pattern){
     final ArrayList<String> retval = new ArrayList<>();
     final String classPath = System.getProperty("java.class.path", ".");
     System.out.println("### " + classPath);
-    final String[] classPathElements = classPath.split(System.getProperty("path.separator"));
-    for(final String element : classPathElements){
-      System.out.println("### " + element + ", " + pattern);
-      retval.addAll(getResources(element, pattern));
+
+    if (classPath != null && !"".equals(classPath.trim())) {
+      final String[] classPathElements = classPath.split(System.getProperty("path.separator"));
+      for (final String element : classPathElements) {
+        System.out.println("### " + element + ", " + pattern);
+        retval.addAll(getResources(element, pattern));
+      }
+    } else {
+      File file = new File(app.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+      String absolutePath = file.getAbsolutePath();
+      System.out.println("### " + absolutePath);
+      retval.addAll(getResources(absolutePath, pattern));
     }
     return retval;
   }
@@ -54,6 +62,7 @@ public class FileUtil {
     try{
       zf = new ZipFile(file);
     } catch(final IOException e){
+      e.printStackTrace();
       return retval;
     }
     final Enumeration<? extends ZipEntry> e = zf.entries();

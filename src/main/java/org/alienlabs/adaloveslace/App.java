@@ -42,7 +42,7 @@ public class App extends Application {
     showMainWindow(primaryStage);
 
     String ps = File.separator;
-    showToolboxWindow(".*org" + ps + "alienlabs" + ps + "adaloveslace" + ps + ".*.jpg");
+    showToolboxWindow(this, ".*org" + ps + "alienlabs" + ps + "adaloveslace" + ps + ".*.jpg");
   }
 
   public void showMainWindow(Stage primaryStage) {
@@ -70,17 +70,17 @@ public class App extends Application {
     primaryStage.show();
   }
 
-  public void showToolboxWindow(String resourcesPath) {
+  public void showToolboxWindow(Object app, String resourcesPath) {
     toolboxStage = new Stage(StageStyle.DECORATED);
     TilePane toolboxPane = new TilePane(Orientation.VERTICAL);
     toolboxPane.setAlignment(Pos.TOP_CENTER);
 
-    fillUpToolboxPane(toolboxPane, resourcesPath);
+    fillUpToolboxPane(toolboxPane, resourcesPath, app);
     showToolboxStage(toolboxStage, toolboxPane);
   }
 
-  void fillUpToolboxPane(TilePane toolboxPane, String resourcesPath) {
-    List<String> resourceFiles = FileUtil.getResources(Pattern.compile(resourcesPath));
+  void fillUpToolboxPane(TilePane toolboxPane, String resourcesPath, Object app) {
+    List<String> resourceFiles = FileUtil.getResources(app, Pattern.compile(resourcesPath));
 
     for (int i = 0; i < resourceFiles.size(); i++) {
       String filename = resourceFiles.get(i);

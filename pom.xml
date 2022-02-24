@@ -10,6 +10,7 @@
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <javafx.version>17.0.2</javafx.version>
+    <testfx.version>4.0.16-alpha</testfx.version>
   </properties>
 
   <dependencies>
@@ -33,13 +34,13 @@
     <dependency>
       <groupId>org.testfx</groupId>
       <artifactId>testfx-core</artifactId>
-      <version>4.0.15-alpha</version>
+      <version>${testfx.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.testfx</groupId>
       <artifactId>testfx-junit5</artifactId>
-      <version>4.0.15-alpha</version>
+      <version>${testfx.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

@@ -37,7 +37,7 @@ public class AppTest {
     app.showMainWindow(this.primaryStage);
 
     String ps = File.separator;
-    app.showToolboxWindow(".*test" + ps + ".*.jpg");
+    app.showToolboxWindow(this, ".*test" + ps + ".*.jpg");
   }
 
   @Test
