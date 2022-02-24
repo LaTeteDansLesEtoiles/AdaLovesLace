@@ -114,6 +114,9 @@
                 <vmArg>--module-path libs\javafx-controls-17.jar;libs\javafx-graphics-17.jar</vmArg>
                 <vmArg>--add-modules javafx.controls,javafx.graphics</vmArg>
               </vmArgs>
+              <additionalResources>
+                <additionalResource>${basedir}/target/classes/org/</additionalResource>
+              </additionalResources>
             </configuration>
           </execution>
         </executions>
