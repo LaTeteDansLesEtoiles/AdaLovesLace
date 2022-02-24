@@ -106,6 +106,7 @@
               <administratorRequired>false</administratorRequired>
               <bundleJre>true</bundleJre>
               <customizedJre>false</customizedJre>
+              <assetsDir>${basedir}/target/classes/assets</assetsDir>
               <!--<modules>
                 <module></module>
               </modules>-->
