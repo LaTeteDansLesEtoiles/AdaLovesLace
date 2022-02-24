@@ -26,6 +26,7 @@ public class FileUtil {
     final String classPath = System.getProperty("java.class.path", ".");
     final String[] classPathElements = classPath.split(System.getProperty("path.separator"));
     for(final String element : classPathElements){
+      System.out.println("### " + element + ", " + pattern);
       retval.addAll(getResources(element, pattern));
     }
     return retval;
@@ -52,7 +53,7 @@ public class FileUtil {
     try{
       zf = new ZipFile(file);
     } catch(final IOException e){
-      throw new Error(e);
+      return retval;
     }
     final Enumeration<? extends ZipEntry> e = zf.entries();
     while(e.hasMoreElements()){

@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.test;
+package test;
 
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
@@ -9,6 +9,8 @@ import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.control.LabeledMatchers;
+
+import java.io.File;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +35,9 @@ public class AppTest {
     app = new App();
     this.primaryStage = primaryStage;
     app.showMainWindow(this.primaryStage);
-    app.showToolboxWindow();
+
+    String ps = File.separator;
+    app.showToolboxWindow(".*test" + ps + ".*.jpg");
   }
 
   @Test

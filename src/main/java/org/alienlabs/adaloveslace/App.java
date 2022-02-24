@@ -40,7 +40,9 @@ public class App extends Application {
   @Override
   public void start(Stage primaryStage) {
     showMainWindow(primaryStage);
-    showToolboxWindow();
+
+    String ps = File.separator;
+    showToolboxWindow(".*org" + ps + "alienlabs" + ps + "adaloveslace" + ps + ".*.jpg");
   }
 
   public void showMainWindow(Stage primaryStage) {
@@ -68,18 +70,17 @@ public class App extends Application {
     primaryStage.show();
   }
 
-  public void showToolboxWindow() {
+  public void showToolboxWindow(String resourcesPath) {
     toolboxStage = new Stage(StageStyle.DECORATED);
     TilePane toolboxPane = new TilePane(Orientation.VERTICAL);
     toolboxPane.setAlignment(Pos.TOP_CENTER);
 
-    fillUpToolboxPane(toolboxPane);
+    fillUpToolboxPane(toolboxPane, resourcesPath);
     showToolboxStage(toolboxStage, toolboxPane);
   }
 
-  void fillUpToolboxPane(TilePane toolboxPane) {
-    String ps = File.separator;
-    List<String> resourceFiles = FileUtil.getResources(Pattern.compile(".*org" + ps + "alienlabs" + ps + "adaloveslace" + ps + ".*.jpg"));
+  void fillUpToolboxPane(TilePane toolboxPane, String resourcesPath) {
+    List<String> resourceFiles = FileUtil.getResources(Pattern.compile(resourcesPath));
 
     for (int i = 0; i < resourceFiles.size(); i++) {
       String filename = resourceFiles.get(i);
