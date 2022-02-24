@@ -10,6 +10,5 @@ open module org.alienlabs.adaloveslace.test {
   requires org.testfx;
   requires org.testfx.junit5;
 
-//  opens org.alienlabs.adaloveslace.test to javafx.graphics, javafx.controls;
   exports test;
 }
