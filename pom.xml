@@ -7,8 +7,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <java.version>17</java.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
     <javafx.version>17.0.2</javafx.version>
     <testfx.version>4.0.16-alpha</testfx.version>
   </properties>
@@ -64,7 +65,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.9.0</version>
         <configuration>
-          <release>17</release>
+          <release>${java.version}</release>
         </configuration>
       </plugin>
       <plugin>
@@ -112,7 +113,7 @@
                 <headerType>console</headerType>
               </winConfig>
               <vmArgs>
-                <vmArg>--module-path libs\javafx-controls-17.jar;libs\javafx-graphics-17.jar</vmArg>
+                <vmArg>--module-path libs\javafx-controls-${java.version}.jar;libs\javafx-graphics-${java.version}.jar</vmArg>
                 <vmArg>--add-modules javafx.controls,javafx.graphics</vmArg>
               </vmArgs>
               <additionalResources>
