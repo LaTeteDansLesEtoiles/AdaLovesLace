@@ -9,6 +9,4 @@ open module org.alienlabs.adaloveslace.test {
   requires transitive org.junit.jupiter.api;
   requires org.testfx;
   requires org.testfx.junit5;
-
-  exports test;
 }
