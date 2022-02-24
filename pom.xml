@@ -68,7 +68,7 @@
         <configuration>
           <argLine>--add-exports javafx.graphics/com.sun.javafx.application=org.testfx</argLine>
           <additionalClasspathElements>
-            <additionalClasspathElement>src/test/resources/test/*</additionalClasspathElement>
+            <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
       </plugin>

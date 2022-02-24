@@ -24,6 +24,7 @@ public class FileUtil {
     final Pattern pattern){
     final ArrayList<String> retval = new ArrayList<>();
     final String classPath = System.getProperty("java.class.path", ".");
+    System.out.println("### " + classPath);
     final String[] classPathElements = classPath.split(System.getProperty("path.separator"));
     for(final String element : classPathElements){
       System.out.println("### " + element + ", " + pattern);
