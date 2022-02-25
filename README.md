@@ -18,7 +18,11 @@ https://github.com/jgneff/javafx-graphics
 
 then:
 
-# ./mvnw clean install
+# ./mvnw clean package
+
+or:
+
+# ./mvnw clean test spotbugs:spotbugs
 
 from the project root directory
 
