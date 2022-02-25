@@ -35,9 +35,11 @@ public class App extends Application {
 
   @Override
   public void start(Stage primaryStage) {
+    logger.info("Starting app: opening main window");
     showMainWindow(primaryStage);
 
     String ps = File.separator;
+    logger.info("Opening toolbox window");
     showToolboxWindow(this, ".*org" + ps + "alienlabs" + ps + "adaloveslace" + ps + ".*.jpg");
   }
 

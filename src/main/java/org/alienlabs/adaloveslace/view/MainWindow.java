@@ -13,8 +13,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MainWindow {
+
+  private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
   public void createMenuBar(GridPane root) {
     MenuBar menuBar = new MenuBar();
@@ -53,6 +57,7 @@ public class MainWindow {
   }
 
   private void onQuitAction() {
+    logger.info("Exiting app");
     System.exit(0);
   }
 
