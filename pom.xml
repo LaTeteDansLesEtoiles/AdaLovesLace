@@ -4,6 +4,7 @@
   <groupId>org.alienlabs.adaloveslace</groupId>
   <artifactId>adaloveslace</artifactId>
   <version>0.0.2</version>
+  <description>A tatting lace patterns creation software</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
