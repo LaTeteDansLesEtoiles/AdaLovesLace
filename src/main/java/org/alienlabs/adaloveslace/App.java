@@ -4,29 +4,18 @@ import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.SystemInfo;
-import org.alienlabs.adaloveslace.view.DotGrid;
+import org.alienlabs.adaloveslace.view.MainWindow;
+import org.alienlabs.adaloveslace.view.ToolboxWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * JavaFX App
@@ -53,47 +42,21 @@ public class App extends Application {
   }
 
   public void showMainWindow(Stage primaryStage) {
-    StackPane grid            = new StackPane(new DotGrid());
-    grid.setAlignment(Pos.TOP_LEFT);
+    MainWindow mainWindow = new MainWindow();
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
 
-    TilePane footer           = new TilePane(Orientation.VERTICAL);
-    footer.getChildren().add(new Label("Ada Loves Lace - A tatting lace patterns creation software"));
-    footer.getChildren().add(new Label("© 2022 AlienLabs"));
-    footer.getChildren().add(new Label("This is Free Software under GPL license"));
-    footer.getChildren().add(new Label("JavaFX " + javafxVersion + ", running on Java " + javaVersion));
-    footer.setAlignment(Pos.BOTTOM_CENTER);
-
-    GridPane root             = new GridPane();
-    GridPane.setConstraints(grid, 0, 0);
-    GridPane.setConstraints(footer, 0, 1);
-    root.getChildren().addAll(grid, footer);
+    TilePane footer = mainWindow.createFooter(javafxVersion, javaVersion);
+    StackPane grid = mainWindow.createGrid();
+    GridPane root = mainWindow.createGridPane(grid, footer);
 
     var scene = new Scene(root, 800d, 720d);
     primaryStage.setScene(scene);
     primaryStage.setTitle(MAIN_WINDOW_TITLE);
 
-    createMenuBar(root);
-
+    mainWindow.createMenuBar(root);
     primaryStage.show();
-  }
-
-  private void createMenuBar(GridPane root) {
-    MenuBar menuBar = new MenuBar();
-    Menu menu = new Menu("File");
-    MenuItem menuItem = new MenuItem("Quit");
-    menuItem.setOnAction(actionEvent -> onQuitAction());
-    menuItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
-    menu.getItems().add(menuItem);
-    menuBar.getMenus().add(menu);
-    VBox vBox = new VBox(menuBar); //Gives vertical box
-    root.getChildren().add(vBox);
-  }
-
-  private void onQuitAction() {
-    System.exit(0);
   }
 
   public void showToolboxWindow(Object app, String resourcesPath) {
@@ -101,36 +64,9 @@ public class App extends Application {
     TilePane toolboxPane = new TilePane(Orientation.VERTICAL);
     toolboxPane.setAlignment(Pos.TOP_CENTER);
 
-    fillUpToolboxPane(toolboxPane, resourcesPath, app);
-    showToolboxStage(toolboxStage, toolboxPane);
-  }
-
-  void fillUpToolboxPane(TilePane toolboxPane, String resourcesPath, Object app) {
-    List<String> resourceFiles = FileUtil.getResources(app, Pattern.compile(resourcesPath));
-
-    for (int i = 0; i < resourceFiles.size(); i++) {
-      String filename = resourceFiles.get(i);
-      Button button;
-
-      try (FileInputStream fis = new FileInputStream(filename)) {
-        String name = new File(filename).getName();
-        button = new Button(name, new ImageView(new Image(fis)));
-        button.setId(TOOLBOX_BUTTON + (i + 1));
-
-        toolboxPane.getChildren().add(button);
-      } catch (IOException e) {
-        logger.error("Exception reading toolbox file!", e);
-      }
-    }
-  }
-
-  void showToolboxStage(Stage toolboxStage, TilePane toolboxPane) {
-    Scene toolboxScene = new Scene(toolboxPane, 150, 400);
-    toolboxStage.setTitle(TOOLBOX_TITLE);
-    toolboxStage.setX(1400d);
-    toolboxStage.setY(175d);
-    toolboxStage.setScene(toolboxScene);
-    toolboxStage.show();
+    ToolboxWindow toolboxWindow = new ToolboxWindow();
+    toolboxWindow.createToolboxPane(toolboxPane, resourcesPath, app);
+    toolboxWindow.createToolboxStage(toolboxStage, toolboxPane);
   }
 
   public static void main(String[] args) {
