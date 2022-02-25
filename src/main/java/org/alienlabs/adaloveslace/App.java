@@ -4,13 +4,16 @@ import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.util.FileUtil;
@@ -71,7 +74,26 @@ public class App extends Application {
     var scene = new Scene(root, 800d, 720d);
     primaryStage.setScene(scene);
     primaryStage.setTitle(MAIN_WINDOW_TITLE);
+
+    createMenuBar(root);
+
     primaryStage.show();
+  }
+
+  private void createMenuBar(GridPane root) {
+    MenuBar menuBar = new MenuBar();
+    Menu menu = new Menu("File");
+    MenuItem menuItem = new MenuItem("Quit");
+    menuItem.setOnAction(actionEvent -> onQuitAction());
+    menuItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
+    menu.getItems().add(menuItem);
+    menuBar.getMenus().add(menu);
+    VBox vBox = new VBox(menuBar); //Gives vertical box
+    root.getChildren().add(vBox);
+  }
+
+  private void onQuitAction() {
+    System.exit(0);
   }
 
   public void showToolboxWindow(Object app, String resourcesPath) {

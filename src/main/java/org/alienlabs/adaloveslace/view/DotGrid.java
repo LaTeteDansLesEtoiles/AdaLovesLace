@@ -17,7 +17,7 @@ public class DotGrid extends Pane {
 
   @Override
   protected void layoutChildren() {
-    final int top = (int)snappedTopInset() - 10;
+    final int top = (int)snappedTopInset() + 30;
     final int right = (int)snappedRightInset();
     final int bottom = (int)snappedBottomInset();
     final int left = (int)snappedLeftInset();
