@@ -22,7 +22,7 @@ then:
 
 or:
 
-# ./mvnw clean test pmd:pmd spotbugs:spotbugs
+# ./mvnw clean test pmd:pmd pmd:cpd-check spotbugs:spotbugs
 
 from the project root directory
 
