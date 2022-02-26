@@ -69,18 +69,6 @@
           <release>${java.version}</release>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
-        <version>3.0.0-M5</version>
-        <configuration>
-          <argLine>--add-exports javafx.graphics/com.sun.javafx.application=org.testfx</argLine>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
-          </additionalClasspathElements>
-        </configuration>
-      </plugin>
 
       <plugin>
         <groupId>org.openjfx</groupId>
@@ -128,9 +116,41 @@
       </plugin>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
+        <version>3.0.0-M5</version>
+        <configuration>
+          <argLine>@{argLine} --add-exports javafx.graphics/com.sun.javafx.application=org.testfx</argLine>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
+          </additionalClasspathElements>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
         <version>4.5.3.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.7</version>
+        <executions>
+          <execution>
+            <id>jacoco-initialize</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-site</id>
+            <phase>package</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
 
