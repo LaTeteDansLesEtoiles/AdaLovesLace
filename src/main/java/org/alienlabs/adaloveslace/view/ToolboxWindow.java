@@ -35,7 +35,7 @@ public class ToolboxWindow {
         button = new Button(name, new ImageView(new Image(fis)));
         button.setId(TOOLBOX_BUTTON + (i + 1));
 
-        toolboxPane.getChildren().add(button);
+        toolboxPane.getChildren().addAll(button);
       } catch (IOException e) {
         logger.error("Exception reading toolbox file!", e);
       }

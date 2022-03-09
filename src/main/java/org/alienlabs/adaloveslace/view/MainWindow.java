@@ -26,18 +26,18 @@ public class MainWindow {
     MenuItem menuItem = new MenuItem("Quit");
     menuItem.setOnAction(actionEvent -> onQuitAction());
     menuItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
-    menu.getItems().add(menuItem);
-    menuBar.getMenus().add(menu);
+    menu.getItems().addAll(menuItem);
+    menuBar.getMenus().addAll(menu);
     VBox vBox = new VBox(menuBar); //Gives vertical box
-    root.getChildren().add(vBox);
+    root.getChildren().addAll(vBox);
   }
 
   public TilePane createFooter(String javafxVersion, String javaVersion) {
     TilePane footer           = new TilePane(Orientation.VERTICAL);
-    footer.getChildren().add(new Label("Ada Loves Lace - A tatting lace patterns creation software"));
-    footer.getChildren().add(new Label("© 2022 AlienLabs"));
-    footer.getChildren().add(new Label("This is Free Software under GPL license"));
-    footer.getChildren().add(new Label("JavaFX " + javafxVersion + ", running on Java " + javaVersion));
+    footer.getChildren().addAll(new Label("Ada Loves Lace - A tatting lace patterns creation software"));
+    footer.getChildren().addAll(new Label("© 2022 AlienLabs"));
+    footer.getChildren().addAll(new Label("This is Free Software under GPL license"));
+    footer.getChildren().addAll(new Label("JavaFX " + javafxVersion + ", running on Java " + javaVersion));
     footer.setAlignment(Pos.BOTTOM_CENTER);
     return footer;
   }

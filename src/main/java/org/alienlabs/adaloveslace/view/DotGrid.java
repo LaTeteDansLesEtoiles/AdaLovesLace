@@ -12,7 +12,7 @@ public class DotGrid extends Pane {
   private final Canvas canvas = new Canvas(1200d, 700d);
 
   public DotGrid() {
-    getChildren().add(canvas);
+    getChildren().addAll(canvas);
   }
 
   @Override
