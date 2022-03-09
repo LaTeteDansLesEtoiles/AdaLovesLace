@@ -16,9 +16,11 @@ import static org.alienlabs.adaloveslace.App.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(ApplicationExtension.class)
-public class AppTest {
+class AppTest {
 
-  public static final String SNOWFLAKE = "snowflake_small.jpg";
+  public static final String MANDALA    = "mandala_small.jpg";
+  public static final String SNOWFLAKE  = "snowflake_small.jpg";
+
   private Stage primaryStage;
   private App app;
 
@@ -51,12 +53,22 @@ public class AppTest {
   }
 
   /**
-   * Checks if 1st toolbox button contains image "snowflake_small.jpg"
+   * Checks if 1st toolbox button contains image "mandala_small.jpg"
    *
    * @param robot The injected FxRobot
    */
   @Test
-  void should_contain_button_with_text(FxRobot robot) {
+  void should_contain_1st_button_with_text(FxRobot robot) {
+    FxAssert.verifyThat(TOOLBOX_BUTTON_ID + "1", LabeledMatchers.hasText(MANDALA));
+  }
+
+  /**
+   * Checks if 2nd toolbox button contains image "snowflake_small.jpg"
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void should_contain_2nd_button_with_text(FxRobot robot) {
     FxAssert.verifyThat(TOOLBOX_BUTTON_ID + "2", LabeledMatchers.hasText(SNOWFLAKE));
   }
 
