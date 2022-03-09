@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,7 @@ public class ToolboxWindow {
 
   public void createToolboxPane(TilePane toolboxPane, String resourcesPath, Object app) {
     List<String> resourceFiles = FileUtil.getResources(app, Pattern.compile(resourcesPath));
+    Collections.sort(resourceFiles);
 
     for (int i = 0; i < resourceFiles.size(); i++) {
       String filename = resourceFiles.get(i);

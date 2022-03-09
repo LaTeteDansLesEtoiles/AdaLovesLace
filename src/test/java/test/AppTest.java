@@ -57,7 +57,7 @@ public class AppTest {
    */
   @Test
   void should_contain_button_with_text(FxRobot robot) {
-    FxAssert.verifyThat(TOOLBOX_BUTTON_ID + "1", LabeledMatchers.hasText(SNOWFLAKE));
+    FxAssert.verifyThat(TOOLBOX_BUTTON_ID + "2", LabeledMatchers.hasText(SNOWFLAKE));
   }
 
 }
