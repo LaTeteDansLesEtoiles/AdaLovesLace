@@ -87,7 +87,7 @@ node {
 
         stage('test coverage') {
             step([$class: 'JacocoPublisher',
-                  execPattern:      'target/*.exec',
+                  execPattern:      'target/**/*.exec',
                   classPattern:     'target/classes',
                   sourcePattern:    'src/main/java',
                   exclusionPattern: 'src/test*'
