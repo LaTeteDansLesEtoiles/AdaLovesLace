@@ -20,6 +20,8 @@ public class MainWindow {
 
   private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
+  public static final String MOUSE_CLICKED = "MOUSE_CLICKED";
+
   public void createMenuBar(GridPane root) {
     MenuBar menuBar = new MenuBar();
     Menu menu = new Menu("File");
@@ -51,9 +53,21 @@ public class MainWindow {
   }
 
   public StackPane createGrid() {
-    StackPane grid            = new StackPane(new DotGrid());
+    StackPane grid = new StackPane(new DotGrid());
     grid.setAlignment(Pos.TOP_LEFT);
     return grid;
+  }
+
+  public void onMainWindowClicked(GridPane root) {
+    root.setOnMouseClicked(event -> {
+      String eType = event.getEventType().toString();
+      logger.info("Event type -> {}", eType);
+
+      if (eType.equals(MOUSE_CLICKED)) {
+        logger.info("Coordinate X -> {}", event.getX());
+        logger.info("Coordinate Y -> {}", event.getY());
+      }
+    });
   }
 
   private void onQuitAction() {

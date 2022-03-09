@@ -5,45 +5,60 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+/**
+ * A grid (= coordinate system) with dots (= used as landmarks for lace).
+ */
 public class DotGrid extends Pane {
-  private static final double SPACING_X = 25;
-  private static final double SPACING_Y = 10;
-  private static final double RADIUS = 2.5;
-  private final Canvas canvas = new Canvas(1200d, 700d);
 
+  private static final double SPACING_X = 25; // The X space between the dots
+  private static final double SPACING_Y = 10; // The Y space between the dots
+  private static final double RADIUS    = 2.5;// The dots are ellipses, this is their radius
+
+  private final Canvas canvas           = new Canvas(1200d, 700d); // We draw the dots on the grid using a Canvas
+
+  /**
+   * We draw the dots on the grid using a Canvas.
+   *
+   * @see Canvas
+   */
   public DotGrid() {
-    getChildren().addAll(canvas);
+    getChildren().addAll(this.canvas);
   }
 
   @Override
   protected void layoutChildren() {
-    final int top = (int)snappedTopInset() + 30;
-    final int right = (int)snappedRightInset();
-    final int bottom = (int)snappedBottomInset();
-    final int left = (int)snappedLeftInset();
-    final int w = (int)getWidth() - left - right;
-    final int h = (int)getHeight() - top - bottom - 20;
+    final double top    = (int)snappedTopInset() + 30d;
+    final double right  = (int)snappedRightInset();
+    final double bottom = (int)snappedBottomInset();
+    final double left   = (int)snappedLeftInset();
+    final double w      = (int)getWidth() - left - right;
+    final double h      = (int)getHeight() - top - bottom - 20d;
 
-    canvas.setLayoutX(left);
-    canvas.setLayoutY(top);
+    this.canvas.setLayoutX(left);
+    this.canvas.setLayoutY(top);
 
-    if (w != canvas.getWidth() || h != canvas.getHeight()) {
-      canvas.setWidth(w);
-      canvas.setHeight(h);
+    if (w != this.canvas.getWidth() || h != this.canvas.getHeight()) {
+      this.canvas.setWidth(w);
+      this.canvas.setHeight(h);
 
-      GraphicsContext g = canvas.getGraphicsContext2D();
-      g.clearRect(0, 0, w, h);
-      g.setFill(new Color(1.0d, 1.0d, 1.0d,0.9));
-      g.fillRect(40, 40, w - 87, h - 70);
+      GraphicsContext g = this.canvas.getGraphicsContext2D();
+      g.clearRect(0d, 0d, w, h);
+      g.setFill(new Color(1.0d, 1.0d, 1.0d, 0.9d));
+      g.fillRect(40d, 40d, w - 87d, h - 70d);
 
-      g.setFill(Color.gray(0,0.2));
+      g.setFill(Color.gray(0,0.2d));
 
-      for (int x = 40; x < (w - 40); x += SPACING_X) {
-        for (int y = 40; y < (h - 20); y += SPACING_Y) {
-          double offsetY = (y%(2*SPACING_Y)) == 0 ? SPACING_X /2 : 0;
-          g.fillOval(x-RADIUS+offsetY,y-RADIUS,RADIUS+RADIUS,RADIUS+RADIUS);
-        }
+      drawGrid(w, h, g);
+    }
+  }
+
+  private void drawGrid(double w, double h, GraphicsContext g) {
+    for (double x = 40d; x < (w - 40d); x += SPACING_X) {
+      for (double y = 40d; y < (h - 20d); y += SPACING_Y) {
+        double offsetY = (y % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
+        g.fillOval(x - RADIUS + offsetY,y - RADIUS,RADIUS + RADIUS,RADIUS + RADIUS); // A dot
       }
     }
   }
+
 }

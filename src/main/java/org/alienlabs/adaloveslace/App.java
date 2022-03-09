@@ -44,16 +44,17 @@ public class App extends Application {
   }
 
   public void showMainWindow(Stage primaryStage) {
-    MainWindow mainWindow = new MainWindow();
+    MainWindow mainWindow     = new MainWindow();
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
 
-    TilePane footer = mainWindow.createFooter(javafxVersion, javaVersion);
-    StackPane grid = mainWindow.createGrid();
-    GridPane root = mainWindow.createGridPane(grid, footer);
+    TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
+    StackPane grid            = mainWindow.createGrid();
+    GridPane root             = mainWindow.createGridPane(grid, footer);
+    mainWindow.onMainWindowClicked(root);
 
-    var scene = new Scene(root, 800d, 720d);
+    var scene                 = new Scene(root, 800d, 720d);
     primaryStage.setScene(scene);
     primaryStage.setTitle(MAIN_WINDOW_TITLE);
 
