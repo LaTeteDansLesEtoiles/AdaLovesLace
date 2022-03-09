@@ -27,3 +27,8 @@ or:
 from the project root directory
 
 - To run me within an IDE, add "target/classes/org/alienlabs/adaloveslace/" to the classpath (in order to load the images of the patterns in the toolbox)
+
+
+This is Free Software, under Affero GPL V3 license. © 2022 Zala GOUPIL
+
+This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by applicable law.
