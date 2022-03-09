@@ -28,6 +28,10 @@ from the project root directory
 
 - To run me within an IDE, add "target/classes/org/alienlabs/adaloveslace/" to the classpath (in order to load the images of the patterns in the toolbox)
 
+- In case of UnsupportedOperationException in Jenkins & testFX: https://github.com/TestFX/TestFX/issues/731
+
+=> apt-get install libgtk3.0-cil libgtk3.0-cil-dev libgtk-3-0 libgtk-3-bin libgtk-3-dev 
+
 
 This is Free Software, under Affero GPL V3 license. © 2022 Zala GOUPIL
 
