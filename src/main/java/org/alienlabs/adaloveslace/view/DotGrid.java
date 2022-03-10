@@ -63,7 +63,7 @@ public class DotGrid extends Pane {
     }
   }
 
-  public Canvas getCanvas() {
+  Canvas getCanvas() {
     return this.canvas;
   }
 
