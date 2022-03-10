@@ -28,8 +28,7 @@ public class ToolboxWindow {
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
 
   public void createToolboxPane(TilePane toolboxPane, String resourcesPath, Object app) {
-    List<String> resourceFiles = new FileUtil().getResources(app, Pattern.compile(resourcesPath));
-    Collections.sort(resourceFiles);
+    List<String> resourceFiles = loadPatternsResourcesFiles(resourcesPath, app);
 
     for (int i = 0; i < resourceFiles.size(); i++) {
       String filename = resourceFiles.get(i);
@@ -47,6 +46,13 @@ public class ToolboxWindow {
         logger.error("Exception reading toolbox file!", e);
       }
     }
+  }
+
+  public List<String> loadPatternsResourcesFiles(String resourcesPath, Object app) {
+    List<String> resourceFiles = new FileUtil().getResources(app, Pattern.compile(resourcesPath));
+    Collections.sort(resourceFiles);
+
+    return resourceFiles;
   }
 
   public void createToolboxStage(Stage toolboxStage, TilePane toolboxPane) {
