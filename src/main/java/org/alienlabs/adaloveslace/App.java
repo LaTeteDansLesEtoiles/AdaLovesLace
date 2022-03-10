@@ -32,15 +32,16 @@ public class App extends Application {
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   private Stage toolboxStage;
+  private ToolboxWindow toolboxWindow;
 
   @Override
   public void start(Stage primaryStage) {
-    logger.info("Starting app: opening main window");
-    showMainWindow(primaryStage);
-
     String ps = File.separator;
     logger.info("Opening toolbox window");
     showToolboxWindow(this, ".*org" + ps + "alienlabs" + ps + "adaloveslace" + ps + ".*.jpg");
+
+    logger.info("Starting app: opening main window");
+    showMainWindow(primaryStage);
   }
 
   public void showMainWindow(Stage primaryStage) {
@@ -52,7 +53,7 @@ public class App extends Application {
     TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
     StackPane grid            = mainWindow.createGrid();
     GridPane root             = mainWindow.createGridPane(grid, footer);
-    mainWindow.onMainWindowClicked(root);
+    mainWindow.onMainWindowClicked(root, this.toolboxWindow);
 
     var scene                 = new Scene(root, 800d, 720d);
     primaryStage.setScene(scene);
@@ -63,13 +64,13 @@ public class App extends Application {
   }
 
   public void showToolboxWindow(Object app, String resourcesPath) {
-    toolboxStage = new Stage(StageStyle.DECORATED);
-    TilePane toolboxPane = new TilePane(Orientation.VERTICAL);
+    this.toolboxStage     = new Stage(StageStyle.DECORATED);
+    TilePane toolboxPane  = new TilePane(Orientation.VERTICAL);
     toolboxPane.setAlignment(Pos.TOP_CENTER);
 
-    ToolboxWindow toolboxWindow = new ToolboxWindow();
-    toolboxWindow.createToolboxPane(toolboxPane, resourcesPath, app);
-    toolboxWindow.createToolboxStage(toolboxStage, toolboxPane);
+    this.toolboxWindow    = new ToolboxWindow();
+    this.toolboxWindow.createToolboxPane(toolboxPane, resourcesPath, app);
+    this.toolboxWindow.createToolboxStage(this.toolboxStage, toolboxPane);
   }
 
   public static void main(String[] args) {
@@ -77,7 +78,7 @@ public class App extends Application {
   }
 
   public Stage getToolboxStage() {
-    return toolboxStage;
+    return this.toolboxStage;
   }
 
 }

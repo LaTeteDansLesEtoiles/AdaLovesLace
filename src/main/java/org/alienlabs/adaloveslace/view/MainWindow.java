@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -16,11 +17,15 @@ import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+
 public class MainWindow {
 
-  private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
-
   public static final String MOUSE_CLICKED = "MOUSE_CLICKED";
+
+  private DotGrid dotGrid;
+  private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
   public void createMenuBar(GridPane root) {
     MenuBar menuBar = new MenuBar();
@@ -53,19 +58,31 @@ public class MainWindow {
   }
 
   public StackPane createGrid() {
-    StackPane grid = new StackPane(new DotGrid());
+    this.dotGrid = new DotGrid();
+    StackPane grid = new StackPane(this.dotGrid);
     grid.setAlignment(Pos.TOP_LEFT);
     return grid;
   }
 
-  public void onMainWindowClicked(GridPane root) {
+  public void onMainWindowClicked(final GridPane root, final ToolboxWindow toolboxWindow) {
     root.setOnMouseClicked(event -> {
       String eType = event.getEventType().toString();
       logger.info("Event type -> {}", eType);
 
       if (eType.equals(MOUSE_CLICKED)) {
-        logger.info("Coordinate X -> {}", event.getX());
-        logger.info("Coordinate Y -> {}", event.getY());
+        double x          = event.getX();
+        double y          = event.getY();
+        double yMinusTop  = y - DotGrid.TOP;
+
+        logger.info("Coordinate X -> {}",                 x);
+        logger.info("Coordinate Y -> {}, Y - TOP -> {}",  y, yMinusTop);
+
+        try (FileInputStream fis = new FileInputStream(toolboxWindow.getAllPatterns().get(1))) {
+          this.dotGrid.getCanvas().getGraphicsContext2D().drawImage(
+            new Image(fis), x, yMinusTop);
+        } catch (IOException e) {
+          logger.error("Problem with resource file!", e);
+        }
       }
     });
   }

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -21,6 +22,8 @@ import static org.alienlabs.adaloveslace.App.TOOLBOX_BUTTON;
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
 
 public class ToolboxWindow {
+
+  private final List<String> allPatterns = new ArrayList<>();
 
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
 
@@ -38,6 +41,8 @@ public class ToolboxWindow {
         button.setId(TOOLBOX_BUTTON + (i + 1));
 
         toolboxPane.getChildren().addAll(button);
+
+        this.allPatterns.add(filename);
       } catch (IOException e) {
         logger.error("Exception reading toolbox file!", e);
       }
@@ -51,6 +56,10 @@ public class ToolboxWindow {
     toolboxStage.setY(175d);
     toolboxStage.setScene(toolboxScene);
     toolboxStage.show();
+  }
+
+  public List<String> getAllPatterns() {
+    return this.allPatterns;
   }
 
 }

@@ -10,6 +10,8 @@ import javafx.scene.paint.Color;
  */
 public class DotGrid extends Pane {
 
+  static final double TOP = 30d;
+
   private static final double SPACING_X = 25; // The X space between the dots
   private static final double SPACING_Y = 10; // The Y space between the dots
   private static final double RADIUS    = 2.5;// The dots are ellipses, this is their radius
@@ -27,7 +29,7 @@ public class DotGrid extends Pane {
 
   @Override
   protected void layoutChildren() {
-    final double top    = (int)snappedTopInset() + 30d;
+    final double top    = (int)snappedTopInset() + TOP;
     final double right  = (int)snappedRightInset();
     final double bottom = (int)snappedBottomInset();
     final double left   = (int)snappedLeftInset();
@@ -59,6 +61,10 @@ public class DotGrid extends Pane {
         g.fillOval(x - RADIUS + offsetY,y - RADIUS,RADIUS + RADIUS,RADIUS + RADIUS); // A dot
       }
     }
+  }
+
+  public Canvas getCanvas() {
+    return this.canvas;
   }
 
 }
