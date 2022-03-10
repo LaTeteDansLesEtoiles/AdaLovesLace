@@ -61,8 +61,7 @@ public class Knot {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Knot)) return false;
-    Knot knot = (Knot) o;
+    if (!(o instanceof Knot knot)) return false;
     return uuid.equals(knot.uuid);
   }
 
