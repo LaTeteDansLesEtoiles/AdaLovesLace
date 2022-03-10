@@ -12,9 +12,9 @@ public class DotGrid extends Pane {
 
   static final double TOP = 30d;
 
-  private static final double SPACING_X = 25; // The X space between the dots
-  private static final double SPACING_Y = 10; // The Y space between the dots
-  private static final double RADIUS    = 2.5;// The dots are ellipses, this is their radius
+  private static final double SPACING_X = 25d; // The X space between the dots
+  private static final double SPACING_Y = 10d; // The Y space between the dots
+  private static final double RADIUS    = 2.5d;// The dots are ellipses, this is their radius
 
   private final Canvas canvas           = new Canvas(1200d, 700d); // We draw the dots on the grid using a Canvas
 
@@ -48,7 +48,7 @@ public class DotGrid extends Pane {
       g.setFill(new Color(1.0d, 1.0d, 1.0d, 0.9d));
       g.fillRect(40d, 40d, w - 87d, h - 70d);
 
-      g.setFill(Color.gray(0,0.2d));
+      g.setFill(Color.gray(0d,0.2d));
 
       drawGrid(w, h, g);
     }
