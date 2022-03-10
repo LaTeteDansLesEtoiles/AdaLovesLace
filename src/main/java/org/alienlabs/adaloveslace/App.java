@@ -15,7 +15,7 @@ import org.alienlabs.adaloveslace.view.ToolboxWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 
 /**
  * JavaFX App
@@ -36,9 +36,8 @@ public class App extends Application {
 
   @Override
   public void start(Stage primaryStage) {
-    String ps = File.separator;
     logger.info("Opening toolbox window");
-    showToolboxWindow(this, ".*org" + ps + "alienlabs" + ps + "adaloveslace" + ps + ".*.jpg");
+    showToolboxWindow(this, CLASSPATH_RESOURCES_PATH);
 
     logger.info("Starting app: opening main window");
     showMainWindow(primaryStage);

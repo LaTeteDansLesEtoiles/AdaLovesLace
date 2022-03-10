@@ -28,7 +28,7 @@ public class ToolboxWindow {
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
 
   public void createToolboxPane(TilePane toolboxPane, String resourcesPath, Object app) {
-    List<String> resourceFiles = FileUtil.getResources(app, Pattern.compile(resourcesPath));
+    List<String> resourceFiles = new FileUtil().getResources(app, Pattern.compile(resourcesPath));
     Collections.sort(resourceFiles);
 
     for (int i = 0; i < resourceFiles.size(); i++) {
