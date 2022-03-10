@@ -41,13 +41,19 @@ When creating a branch, if you wish to set tracking information for this branch 
 
 - To run me within an IDE, add "target/classes/org/alienlabs/adaloveslace/" to the classpath (in order to load the images of the patterns in the toolbox)
 
+
 - In case of UnsupportedOperationException in Jenkins & testFX:
 
 
     https://github.com/TestFX/TestFX/issues/731
 
-=> apt-get install libgtk3.0-cil libgtk3.0-cil-dev libgtk-3-0 libgtk-3-bin libgtk-3-dev 
+    => apt-get install libgtk3.0-cil libgtk3.0-cil-dev libgtk-3-0 libgtk-3-bin libgtk-3-dev 
 
+
+- Does Jenkins fail with java.lang.IllegalArgumentException: Invalid refspec refs/heads/** Error ?
+
+
+    https://stackoverflow.com/questions/46684972/jenkins-throws-java-lang-illegalargumentexception-invalid-refspec-refs-heads/58348530#58348530
 
 --------------------------------------------------------------------------------------------
 
