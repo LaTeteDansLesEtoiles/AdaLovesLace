@@ -28,8 +28,9 @@ public class MainWindow {
   public static final String MOUSE_CLICKED = "MOUSE_CLICKED";
 
   private CanvasWithOptionalDotGrid canvasWithOptionalDotGrid;
-  private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
   private Diagram diagram;
+
+  private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
   public void createMenuBar(GridPane root) {
     MenuBar menuBar = new MenuBar();

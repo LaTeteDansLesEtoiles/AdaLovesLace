@@ -2,9 +2,16 @@ package org.alienlabs.adaloveslace.view;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.business.model.Knot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * A grid (= coordinate system) with dots (= used as landmarks for lace).
@@ -25,6 +32,9 @@ public class CanvasWithOptionalDotGrid extends Pane {
   private double left;
   private double width;
   private double height;
+  private GraphicsContext graphicsContext2D;
+
+  private static final Logger logger = LoggerFactory.getLogger(CanvasWithOptionalDotGrid.class);
 
   /**
    * We draw the dots on the grid using a Canvas.
@@ -40,6 +50,19 @@ public class CanvasWithOptionalDotGrid extends Pane {
   @Override
   protected void layoutChildren() {
     drawGrid();
+    drawCanvas();
+  }
+
+  private void drawCanvas() {
+    for (Knot knot : this.diagram.getKnots()) {
+
+      try (FileInputStream fis = new FileInputStream(knot.getPattern().filename())) {
+        graphicsContext2D.drawImage(new Image(fis), knot.getX(), knot.getY());
+
+      } catch (IOException e) {
+        logger.error("Problem with resource file!", e);
+      }
+    }
   }
 
   private void drawGrid() {
@@ -57,22 +80,22 @@ public class CanvasWithOptionalDotGrid extends Pane {
       this.canvas.setWidth(width);
       this.canvas.setHeight(height);
 
-      GraphicsContext g = this.canvas.getGraphicsContext2D();
-      g.clearRect(0d, 0d, width, height);
-      g.setFill(new Color(1.0d, 1.0d, 1.0d, 0.9d));
-      g.fillRect(40d, 40d, width - 87d, height - 70d);
+      this.graphicsContext2D = this.canvas.getGraphicsContext2D();
+      this.graphicsContext2D.clearRect(0d, 0d, width, height);
+      this.graphicsContext2D.setFill(new Color(1.0d, 1.0d, 1.0d, 0.9d));
+      this.graphicsContext2D.fillRect(40d, 40d, width - 87d, height - 70d);
 
-      g.setFill(Color.gray(0d,0.2d));
+      this.graphicsContext2D.setFill(Color.gray(0d,0.2d));
 
-      drawGrid(width, height, g);
+      drawGrid(width, height);
     }
   }
 
-  private void drawGrid(double w, double h, GraphicsContext g) {
+  private void drawGrid(double w, double h) {
     for (double x = 40d; x < (w - 40d); x += SPACING_X) {
       for (double y = 40d; y < (h - 20d); y += SPACING_Y) {
         double offsetY = (y % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
-        g.fillOval(x - RADIUS + offsetY,y - RADIUS,RADIUS + RADIUS,RADIUS + RADIUS); // A dot
+        this.graphicsContext2D.fillOval(x - RADIUS + offsetY,y - RADIUS,RADIUS + RADIUS,RADIUS + RADIUS); // A dot
       }
     }
   }
