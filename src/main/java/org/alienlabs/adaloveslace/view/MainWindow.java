@@ -80,6 +80,9 @@ public class MainWindow {
     });
   }
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    value = "DM_EXIT",
+    justification = "We shall exit when we have to, since we are not in a lib")
   private void onQuitAction() {
     logger.info("Exiting app");
     System.exit(0);
