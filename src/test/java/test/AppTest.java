@@ -39,7 +39,7 @@ class AppTest {
     app.setDiagram(new Diagram());
 
     String ps = File.separator;
-    app.showToolboxWindow(this, ".*test" + ps + ".*.jpg");
+    app.showToolboxWindow(app, this, ".*test" + ps + ".*.jpg");
 
     this.primaryStage = primaryStage;
     app.showMainWindow(this.primaryStage);

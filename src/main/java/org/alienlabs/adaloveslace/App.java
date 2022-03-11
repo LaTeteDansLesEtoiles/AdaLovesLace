@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.SystemInfo;
+import org.alienlabs.adaloveslace.view.CanvasWithOptionalDotGrid;
 import org.alienlabs.adaloveslace.view.MainWindow;
 import org.alienlabs.adaloveslace.view.ToolboxWindow;
 import org.slf4j.Logger;
@@ -34,20 +35,21 @@ public class App extends Application {
 
   private Stage toolboxStage;
   private Diagram diagram;
+  private MainWindow mainWindow;
 
   @Override
   public void start(Stage primaryStage) {
     this.diagram = new Diagram();
 
     logger.info("Opening toolbox window");
-    showToolboxWindow(this, CLASSPATH_RESOURCES_PATH);
+    showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
 
     logger.info("Starting app: opening main window");
     showMainWindow(primaryStage);
   }
 
   public void showMainWindow(Stage primaryStage) {
-    MainWindow mainWindow     = new MainWindow();
+    mainWindow = new MainWindow();
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
@@ -65,13 +67,13 @@ public class App extends Application {
     primaryStage.show();
   }
 
-  public void showToolboxWindow(Object app, String resourcesPath) {
+  public void showToolboxWindow(App app, Object classpathBase, String resourcesPath) {
     this.toolboxStage     = new Stage(StageStyle.DECORATED);
     TilePane toolboxPane  = new TilePane(Orientation.VERTICAL);
     toolboxPane.setAlignment(Pos.TOP_CENTER);
 
     ToolboxWindow toolboxWindow = new ToolboxWindow();
-    this.diagram = toolboxWindow.createToolboxPane(toolboxPane, resourcesPath, app, this.diagram);
+    this.diagram = toolboxWindow.createToolboxPane(toolboxPane, classpathBase, resourcesPath, app, this.diagram);
     toolboxWindow.createToolboxStage(this.toolboxStage, toolboxPane);
   }
 
@@ -88,6 +90,10 @@ public class App extends Application {
 
   public void setDiagram(Diagram diagram) {
     this.diagram = new Diagram(diagram);
+  }
+
+  public CanvasWithOptionalDotGrid getCanvasWithOptionalDotGrid() {
+    return this.mainWindow.getCanvasWithOptionalDotGrid();
   }
 
 }

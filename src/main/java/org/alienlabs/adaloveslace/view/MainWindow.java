@@ -85,4 +85,8 @@ public class MainWindow {
     System.exit(0);
   }
 
+  public CanvasWithOptionalDotGrid getCanvasWithOptionalDotGrid() {
+    return this.canvasWithOptionalDotGrid;
+  }
+
 }

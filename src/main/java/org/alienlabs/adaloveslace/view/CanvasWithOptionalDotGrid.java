@@ -20,7 +20,7 @@ import java.io.IOException;
  */
 public class CanvasWithOptionalDotGrid extends Pane {
 
-  static SimpleObjectProperty<Pattern> currentPatternProperty;
+  private SimpleObjectProperty<Pattern> currentPatternProperty;
 
   static final double TOP_MARGIN        = 30d;
 
@@ -29,7 +29,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
   private static final double RADIUS    = 2.5d;// The dots are ellipses, this is their radius
 
   private final Canvas canvas           = new Canvas(1200d, 700d); // We draw the dots on the grid using a Canvas
-  private Diagram diagram;
+  private final Diagram diagram;
   private double top;
   private double right;
   private double bottom;
@@ -126,6 +126,10 @@ public class CanvasWithOptionalDotGrid extends Pane {
     } catch (IOException e) {
       logger.error("Problem with pattern resource file!", e);
     }
+  }
+
+  SimpleObjectProperty<Pattern> getCurrentPatternProperty() {
+    return currentPatternProperty;
   }
 
 }

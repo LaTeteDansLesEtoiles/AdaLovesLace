@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
+import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.slf4j.Logger;
@@ -25,8 +26,8 @@ public class ToolboxWindow {
 
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
 
-  public Diagram createToolboxPane(TilePane toolboxPane, String resourcesPath, Object app, final Diagram diagram) {
-    List<String> resourceFiles = loadPatternsResourcesFiles(resourcesPath, app);
+  public Diagram createToolboxPane(TilePane toolboxPane, Object classpathBase, String resourcesPath, App app, final Diagram diagram) {
+    List<String> resourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
 
     for (int i = 0; i < resourceFiles.size(); i++) {
       String filename = resourceFiles.get(i);
@@ -40,7 +41,7 @@ public class ToolboxWindow {
           diagram.setCurrentPattern(pattern);
         }
 
-        button = new PatternButton(name, new ImageView(new Image(fis)), pattern);
+        button = new PatternButton(app, name, new ImageView(new Image(fis)), pattern);
         button.setId(TOOLBOX_BUTTON + (i + 1));
         toolboxPane.getChildren().addAll(button);
 
@@ -57,11 +58,11 @@ public class ToolboxWindow {
    * Gets sorted (by String's default sort) Pattern list resources from classpath.
    *
    * @param resourcesPath the classpath resource pattern to load
-   * @param app the main app, needed for tests
+   * @param classpathBase the main app, needed for tests
    * @return the sorted Pattern list from classpath, by name
    */
-  public List<String> loadPatternsResourcesFiles(String resourcesPath, Object app) {
-    List<String> resourceFiles = new FileUtil().getResources(app, Pattern.compile(resourcesPath));
+  public List<String> loadPatternsResourcesFiles(String resourcesPath, Object classpathBase) {
+    List<String> resourceFiles = new FileUtil().getResources(classpathBase, Pattern.compile(resourcesPath));
     Collections.sort(resourceFiles);
 
     return resourceFiles;

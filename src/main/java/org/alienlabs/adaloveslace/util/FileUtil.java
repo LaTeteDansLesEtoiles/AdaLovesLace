@@ -30,12 +30,11 @@ public class FileUtil {
    * For all elements of java classpath (starting from app class package if java.class.path system property is empty),
    * get a Collection of resources with a pattern.
    *
-   * @param app production app or unit test class
+   * @param classpathBase production app or unit test class
    * @param pattern the pattern to match
    * @return the resources in the order they are found
    */
-  public List<String> getResources(
-    Object app, final Pattern pattern) {
+  public List<String> getResources(Object classpathBase, final Pattern pattern) {
     final ArrayList<String> retval = new ArrayList<>();
     final String classPath = JAVA_CLASS_PATH_PROPERTY;
     logger.info("classpath: {}", classPath);
@@ -47,7 +46,7 @@ public class FileUtil {
         retval.addAll(getResources(element, pattern));
       }
     } else {
-      File file = new File(app.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+      File file = new File(classpathBase.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
       String absolutePath = file.getAbsolutePath();
       logger.info("absolute path: {}", absolutePath);
       retval.addAll(getResources(absolutePath, pattern));
@@ -102,16 +101,24 @@ public class FileUtil {
     final ArrayList<String> retval = new ArrayList<>();
     final File[] fileList = directory.listFiles();
 
+    logger.info("Directory: {}", directory.getAbsolutePath());
+
     if (null != fileList) {
       for (final File file : fileList) {
         if (file.isDirectory()) {
+          logger.info("loading from directory: {}", file.getAbsolutePath());
           retval.addAll(getResourcesFromDirectory(file, pattern));
         } else {
+          logger.info("loading from file: {}", file.getAbsolutePath());
+
           try {
             final String fileName = file.getCanonicalPath();
             final boolean accept = pattern.matcher(fileName).matches();
             if (accept) {
+              logger.info("matches");
               retval.add(fileName);
+            } else {
+              logger.info("doesn't match");
             }
           } catch (final IOException e) {
             throw new IllegalStateException("Error reading file / directory from classpath: " + file, e);
