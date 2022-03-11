@@ -2,6 +2,7 @@ package test;
 
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxAssert;
@@ -35,11 +36,13 @@ class AppTest {
   @Start
   private void start(Stage primaryStage) {
     app = new App();
-    this.primaryStage = primaryStage;
-    app.showMainWindow(this.primaryStage);
+    app.setDiagram(new Diagram());
 
     String ps = File.separator;
     app.showToolboxWindow(this, ".*test" + ps + ".*.jpg");
+
+    this.primaryStage = primaryStage;
+    app.showMainWindow(this.primaryStage);
   }
 
   @Test

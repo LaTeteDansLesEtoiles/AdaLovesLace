@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
+import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -23,11 +23,9 @@ import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
 
 public class ToolboxWindow {
 
-  private final List<String> allPatterns = new ArrayList<>();
-
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
 
-  public void createToolboxPane(TilePane toolboxPane, String resourcesPath, Object app) {
+  public Diagram createToolboxPane(TilePane toolboxPane, String resourcesPath, Object app, Diagram diagram) {
     List<String> resourceFiles = loadPatternsResourcesFiles(resourcesPath, app);
 
     for (int i = 0; i < resourceFiles.size(); i++) {
@@ -41,11 +39,13 @@ public class ToolboxWindow {
 
         toolboxPane.getChildren().addAll(button);
 
-        this.allPatterns.add(filename);
+        diagram.addPattern(new org.alienlabs.adaloveslace.business.model.Pattern(filename));
       } catch (IOException e) {
         logger.error("Exception reading toolbox file!", e);
       }
     }
+
+    return diagram;
   }
 
   public List<String> loadPatternsResourcesFiles(String resourcesPath, Object app) {
@@ -62,10 +62,6 @@ public class ToolboxWindow {
     toolboxStage.setY(175d);
     toolboxStage.setScene(toolboxScene);
     toolboxStage.show();
-  }
-
-  public List<String> getAllPatterns() {
-    return this.allPatterns;
   }
 
 }

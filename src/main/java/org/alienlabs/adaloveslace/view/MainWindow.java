@@ -14,6 +14,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +27,9 @@ public class MainWindow {
 
   public static final String MOUSE_CLICKED = "MOUSE_CLICKED";
 
-  private DotGrid dotGrid;
+  private CanvasWithOptionalDotGrid canvasWithOptionalDotGrid;
   private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
+  private Diagram diagram;
 
   public void createMenuBar(GridPane root) {
     MenuBar menuBar = new MenuBar();
@@ -57,14 +61,15 @@ public class MainWindow {
     return root;
   }
 
-  public StackPane createGrid() {
-    this.dotGrid = new DotGrid();
-    StackPane grid = new StackPane(this.dotGrid);
+  public StackPane createGrid(final Diagram diagram) {
+    this.diagram = diagram;
+    this.canvasWithOptionalDotGrid = new CanvasWithOptionalDotGrid(this.diagram);
+    StackPane grid = new StackPane(this.canvasWithOptionalDotGrid);
     grid.setAlignment(Pos.TOP_LEFT);
     return grid;
   }
 
-  public void onMainWindowClicked(final GridPane root, final ToolboxWindow toolboxWindow) {
+  public void onMainWindowClicked(final GridPane root) {
     root.setOnMouseClicked(event -> {
       String eType = event.getEventType().toString();
       logger.info("Event type -> {}", eType);
@@ -72,14 +77,19 @@ public class MainWindow {
       if (eType.equals(MOUSE_CLICKED)) {
         double x          = event.getX();
         double y          = event.getY();
-        double yMinusTop  = y - DotGrid.TOP;
+        double yMinusTop  = y - CanvasWithOptionalDotGrid.TOP_MARGIN;
+        Pattern myPattern = this.diagram.getPatterns().get(1);
 
         logger.info("Coordinate X -> {}",                 x);
         logger.info("Coordinate Y -> {}, Y - TOP -> {}",  y, yMinusTop);
 
-        try (FileInputStream fis = new FileInputStream(toolboxWindow.getAllPatterns().get(1))) {
-          this.dotGrid.getCanvas().getGraphicsContext2D().drawImage(
+
+        try (FileInputStream fis = new FileInputStream(myPattern.filename())) {
+
+          this.canvasWithOptionalDotGrid.getCanvas().getGraphicsContext2D().drawImage(
             new Image(fis), x, yMinusTop);
+          this.diagram.addKnot(new Knot(x, yMinusTop, myPattern));
+
         } catch (IOException e) {
           logger.error("Problem with resource file!", e);
         }

@@ -4,53 +4,67 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import org.alienlabs.adaloveslace.business.model.Diagram;
 
 /**
  * A grid (= coordinate system) with dots (= used as landmarks for lace).
  */
-public class DotGrid extends Pane {
+public class CanvasWithOptionalDotGrid extends Pane {
 
-  static final double TOP = 30d;
+  static final double TOP_MARGIN        = 30d;
 
   private static final double SPACING_X = 25d; // The X space between the dots
   private static final double SPACING_Y = 10d; // The Y space between the dots
   private static final double RADIUS    = 2.5d;// The dots are ellipses, this is their radius
 
   private final Canvas canvas           = new Canvas(1200d, 700d); // We draw the dots on the grid using a Canvas
+  private Diagram diagram;
+  private double top;
+  private double right;
+  private double bottom;
+  private double left;
+  private double width;
+  private double height;
 
   /**
    * We draw the dots on the grid using a Canvas.
    *
    * @see Canvas
+   * @param diagram the business bean containing our future drawing (and its knots)
    */
-  public DotGrid() {
+  public CanvasWithOptionalDotGrid(Diagram diagram) {
+    this.diagram = diagram;
     getChildren().addAll(this.canvas);
   }
 
   @Override
   protected void layoutChildren() {
-    final double top    = (int)snappedTopInset() + TOP;
-    final double right  = (int)snappedRightInset();
-    final double bottom = (int)snappedBottomInset();
-    final double left   = (int)snappedLeftInset();
-    final double w      = (int)getWidth() - left - right;
-    final double h      = (int)getHeight() - top - bottom - 20d;
+    drawGrid();
+  }
+
+  private void drawGrid() {
+    top     = (int)snappedTopInset() + TOP_MARGIN;
+    right   = (int)snappedRightInset();
+    bottom  = (int)snappedBottomInset();
+    left    = (int)snappedLeftInset();
+    width   = (int)getWidth() - left - right;
+    height  = (int)getHeight() - top - bottom - 20d;
 
     this.canvas.setLayoutX(left);
     this.canvas.setLayoutY(top);
 
-    if (w != this.canvas.getWidth() || h != this.canvas.getHeight()) {
-      this.canvas.setWidth(w);
-      this.canvas.setHeight(h);
+    if (width != this.canvas.getWidth() || height != this.canvas.getHeight()) {
+      this.canvas.setWidth(width);
+      this.canvas.setHeight(height);
 
       GraphicsContext g = this.canvas.getGraphicsContext2D();
-      g.clearRect(0d, 0d, w, h);
+      g.clearRect(0d, 0d, width, height);
       g.setFill(new Color(1.0d, 1.0d, 1.0d, 0.9d));
-      g.fillRect(40d, 40d, w - 87d, h - 70d);
+      g.fillRect(40d, 40d, width - 87d, height - 70d);
 
       g.setFill(Color.gray(0d,0.2d));
 
-      drawGrid(w, h, g);
+      drawGrid(width, height, g);
     }
   }
 

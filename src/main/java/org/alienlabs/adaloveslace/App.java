@@ -9,6 +9,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.MainWindow;
 import org.alienlabs.adaloveslace.view.ToolboxWindow;
@@ -33,9 +34,12 @@ public class App extends Application {
 
   private Stage toolboxStage;
   private ToolboxWindow toolboxWindow;
+  private Diagram diagram;
 
   @Override
   public void start(Stage primaryStage) {
+    this.diagram = new Diagram();
+
     logger.info("Opening toolbox window");
     showToolboxWindow(this, CLASSPATH_RESOURCES_PATH);
 
@@ -50,9 +54,9 @@ public class App extends Application {
     var javaVersion   = SystemInfo.javaVersion();
 
     TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
-    StackPane grid            = mainWindow.createGrid();
+    StackPane grid            = mainWindow.createGrid(this.diagram);
     GridPane root             = mainWindow.createGridPane(grid, footer);
-    mainWindow.onMainWindowClicked(root, this.toolboxWindow);
+    mainWindow.onMainWindowClicked(root);
 
     var scene                 = new Scene(root, 800d, 720d);
     primaryStage.setScene(scene);
@@ -68,7 +72,7 @@ public class App extends Application {
     toolboxPane.setAlignment(Pos.TOP_CENTER);
 
     this.toolboxWindow    = new ToolboxWindow();
-    this.toolboxWindow.createToolboxPane(toolboxPane, resourcesPath, app);
+    this.diagram = this.toolboxWindow.createToolboxPane(toolboxPane, resourcesPath, app, this.diagram);
     this.toolboxWindow.createToolboxStage(this.toolboxStage, toolboxPane);
   }
 
@@ -78,6 +82,10 @@ public class App extends Application {
 
   public Stage getToolboxStage() {
     return this.toolboxStage;
+  }
+
+  public void setDiagram(Diagram diagram) {
+    this.diagram = diagram;
   }
 
 }

@@ -5,4 +5,5 @@ module org.alienlabs.adaloveslace.impl {
 
   opens org.alienlabs.adaloveslace to javafx.graphics, javafx.controls;
   exports org.alienlabs.adaloveslace;
+  exports org.alienlabs.adaloveslace.business.model to org.alienlabs.adaloveslace.test;
 }
