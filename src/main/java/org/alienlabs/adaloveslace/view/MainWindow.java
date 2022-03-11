@@ -85,6 +85,9 @@ public class MainWindow {
     System.exit(0);
   }
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    value = "EI_EXPOSE_REP",
+    justification = "Copying a CanvasWithOptionalDotGrid, which is a stage, would mean working with another window")
   public CanvasWithOptionalDotGrid getCanvasWithOptionalDotGrid() {
     return this.canvasWithOptionalDotGrid;
   }
