@@ -60,7 +60,7 @@ node {
 
             def java_report =       scanForIssues(
                 tool:
-                    java        (pattern: 'target/classes/**/*.class')
+                    java        (pattern: 'target/*classes/**/*.class')
             )
 
             publishIssues(
