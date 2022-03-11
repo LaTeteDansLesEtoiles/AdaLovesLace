@@ -1,3 +1,15 @@
+Ada Loves Lace: A tatting lace patterns creation software 
+
+Ada Aime la Dentelle : un logiciel de création de diagrammes de dentelle
+
+This is Free Software, under [Affero GPL V3 license](license.md)
+
+© 2022 Zala GOUPIL
+
+This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by applicable law.
+
+--------------------------------------------------------------------------------------------
+
 - Project generated with:
 
 
@@ -56,9 +68,3 @@ When creating a branch, if you wish to set tracking information for this branch 
     https://stackoverflow.com/questions/46684972/jenkins-throws-java-lang-illegalargumentexception-invalid-refspec-refs-heads/58348530#58348530
 
 --------------------------------------------------------------------------------------------
-
-This is Free Software, under Affero GPL V3 license. 
-
-© 2022 Zala GOUPIL
-
-This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by applicable law.
