@@ -96,10 +96,8 @@
               <bundleJre>true</bundleJre>
               <customizedJre>false</customizedJre>
               <organizationName>AlienLabs</organizationName>
+              <outputDirectory>${basedir}/target/artifacts</outputDirectory>
               <assetsDir>${basedir}/target/classes/assets</assetsDir>
-              <!--<modules>
-                <module></module>
-              </modules>-->
               <winConfig>
                 <headerType>console</headerType>
               </winConfig>

@@ -96,7 +96,7 @@ node {
 
         stage('packaging') {
             sh "./mvnw package -DskipTests"
-            archiveArtifacts artifacts: '**/target/*.[jar,deb,rpm,exe]', fingerprint: true
+            archiveArtifacts artifacts: '**/target/artifacts/*', fingerprint: true
         }
     }
 }
