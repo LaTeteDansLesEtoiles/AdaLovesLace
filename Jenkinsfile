@@ -37,6 +37,15 @@ node {
             }
         }
 
+        stage('test coverage') {
+            step([$class: 'JacocoPublisher',
+                  execPattern:      'target/**/*.exec',
+                  classPattern:     'target/classes',
+                  sourcePattern:    'src/main/java',
+                  exclusionPattern: 'src/test*'
+            ])
+        }
+
         stage('static code analysis') {
             sh './mvnw -batch-mode -V -U -e pmd:cpd pmd:pmd spotbugs:spotbugs'
 
@@ -85,18 +94,9 @@ node {
             )
         }
 
-        stage('test coverage') {
-            step([$class: 'JacocoPublisher',
-                  execPattern:      'target/**/*.exec',
-                  classPattern:     'target/classes',
-                  sourcePattern:    'src/main/java',
-                  exclusionPattern: 'src/test*'
-            ])
-        }
-
         stage('packaging') {
             sh "./mvnw package -DskipTests"
-            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+            archiveArtifacts artifacts: ['**/target/*.jar', '**/target/*.deb', '**/target/*.rpm'], fingerprint: true
         }
     }
 }
