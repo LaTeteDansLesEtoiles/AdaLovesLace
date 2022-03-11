@@ -25,7 +25,7 @@ public class ToolboxWindow {
 
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
 
-  public Diagram createToolboxPane(TilePane toolboxPane, String resourcesPath, Object app, Diagram diagram) {
+  public Diagram createToolboxPane(TilePane toolboxPane, String resourcesPath, Object app, final Diagram diagram) {
     List<String> resourceFiles = loadPatternsResourcesFiles(resourcesPath, app);
 
     for (int i = 0; i < resourceFiles.size(); i++) {
@@ -34,12 +34,17 @@ public class ToolboxWindow {
 
       try (FileInputStream fis = new FileInputStream(filename)) {
         String name = new File(filename).getName();
-        button = new Button(name, new ImageView(new Image(fis)));
-        button.setId(TOOLBOX_BUTTON + (i + 1));
+        org.alienlabs.adaloveslace.business.model.Pattern pattern = new org.alienlabs.adaloveslace.business.model.Pattern(filename);
 
+        if (i == 0) {
+          diagram.setCurrentPattern(pattern);
+        }
+
+        button = new PatternButton(name, new ImageView(new Image(fis)), diagram, pattern);
+        button.setId(TOOLBOX_BUTTON + (i + 1));
         toolboxPane.getChildren().addAll(button);
 
-        diagram.addPattern(new org.alienlabs.adaloveslace.business.model.Pattern(filename));
+        diagram.addPattern(pattern);
       } catch (IOException e) {
         logger.error("Exception reading toolbox file!", e);
       }
@@ -48,6 +53,13 @@ public class ToolboxWindow {
     return diagram;
   }
 
+  /**
+   * Gets sorted (by String's default sort) Pattern list resources from classpath.
+   *
+   * @param resourcesPath the classpath resource pattern to load
+   * @param app the main app, needed for tests
+   * @return the sorted Pattern list from classpath, by name
+   */
   public List<String> loadPatternsResourcesFiles(String resourcesPath, Object app) {
     List<String> resourceFiles = new FileUtil().getResources(app, Pattern.compile(resourcesPath));
     Collections.sort(resourceFiles);

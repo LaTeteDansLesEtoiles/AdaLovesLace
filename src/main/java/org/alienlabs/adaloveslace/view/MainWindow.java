@@ -76,20 +76,21 @@ public class MainWindow {
       logger.info("Event type -> {}", eType);
 
       if (eType.equals(MOUSE_CLICKED)) {
-        double x          = event.getX();
-        double y          = event.getY();
-        double yMinusTop  = y - CanvasWithOptionalDotGrid.TOP_MARGIN;
-        Pattern myPattern = this.diagram.getPatterns().get(1);
+        double x                = event.getX();
+        double y                = event.getY();
+        double yMinusTop        = y - CanvasWithOptionalDotGrid.TOP_MARGIN;
+        Pattern currentPattern  = this.diagram.getCurrentPattern();
 
-        logger.info("Coordinate X -> {}",                 x);
-        logger.info("Coordinate Y -> {}, Y - TOP -> {}",  y, yMinusTop);
+        logger.info("Coordinate X     -> {}",                 x);
+        logger.info("Coordinate Y     -> {}, Y - TOP -> {}",  y, yMinusTop);
+        logger.info("Current pattern  -> {}",                 currentPattern);
 
 
-        try (FileInputStream fis = new FileInputStream(myPattern.filename())) {
+        try (FileInputStream fis = new FileInputStream(currentPattern.filename())) {
 
           this.canvasWithOptionalDotGrid.getCanvas().getGraphicsContext2D().drawImage(
             new Image(fis), x, yMinusTop);
-          this.diagram.addKnot(new Knot(x, yMinusTop, myPattern));
+          this.diagram.addKnot(new Knot(x, yMinusTop, currentPattern));
 
         } catch (IOException e) {
           logger.error("Problem with resource file!", e);

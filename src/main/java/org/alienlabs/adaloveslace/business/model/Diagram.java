@@ -7,6 +7,7 @@ public class Diagram {
 
   private final List<Pattern> patterns;
   private final List<Knot>    knots;
+  private Pattern currentPattern;
 
   public Diagram() {
     this.patterns = new ArrayList<>();
@@ -39,6 +40,14 @@ public class Diagram {
   public List<Knot> clearKnots() {
     this.knots.clear();
     return this.knots;
+  }
+
+  public Pattern getCurrentPattern() {
+    return this.currentPattern;
+  }
+
+  public void setCurrentPattern(Pattern currentPattern) {
+    this.currentPattern = currentPattern;
   }
 
 }
