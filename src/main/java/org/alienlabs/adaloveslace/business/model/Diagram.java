@@ -15,31 +15,31 @@ public class Diagram {
   }
 
   public List<Pattern> getPatterns() {
-    return this.patterns;
+    return new ArrayList<>(this.patterns);
   }
 
   public List<Knot> getKnots() {
-    return this.knots;
+    return new ArrayList<>(this.knots);
   }
 
   public List<Pattern> addPattern(final Pattern pattern) {
     this.patterns.add(pattern);
-    return this.patterns;
+    return new ArrayList<>(this.patterns);
   }
 
   public List<Knot> addKnot(final Knot knot) {
     this.knots.add(knot);
-    return this.knots;
+    return new ArrayList<>(this.knots);
   }
 
   public List<Pattern> clearPatterns() {
     this.patterns.clear();
-    return this.patterns;
+    return new ArrayList<>(this.patterns);
   }
 
   public List<Knot> clearKnots() {
     this.knots.clear();
-    return this.knots;
+    return new ArrayList<>(this.knots);
   }
 
   public Pattern getCurrentPattern() {
