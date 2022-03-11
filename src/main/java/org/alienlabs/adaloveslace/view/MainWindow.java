@@ -6,7 +6,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -15,20 +14,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import org.alienlabs.adaloveslace.business.model.Diagram;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.FileInputStream;
-import java.io.IOException;
 
 public class MainWindow {
 
   public static final String MOUSE_CLICKED = "MOUSE_CLICKED";
 
   private CanvasWithOptionalDotGrid canvasWithOptionalDotGrid;
-  private Diagram diagram;
 
   private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
@@ -63,8 +56,7 @@ public class MainWindow {
   }
 
   public StackPane createGrid(final Diagram diagram) {
-    this.diagram = diagram;
-    this.canvasWithOptionalDotGrid = new CanvasWithOptionalDotGrid(this.diagram);
+    this.canvasWithOptionalDotGrid = new CanvasWithOptionalDotGrid(diagram);
     StackPane grid = new StackPane(this.canvasWithOptionalDotGrid);
     grid.setAlignment(Pos.TOP_LEFT);
     return grid;
@@ -79,22 +71,11 @@ public class MainWindow {
         double x                = event.getX();
         double y                = event.getY();
         double yMinusTop        = y - CanvasWithOptionalDotGrid.TOP_MARGIN;
-        Pattern currentPattern  = this.diagram.getCurrentPattern();
 
         logger.info("Coordinate X     -> {}",                 x);
         logger.info("Coordinate Y     -> {}, Y - TOP -> {}",  y, yMinusTop);
-        logger.info("Current pattern  -> {}",                 currentPattern);
 
-
-        try (FileInputStream fis = new FileInputStream(currentPattern.filename())) {
-
-          this.canvasWithOptionalDotGrid.getCanvas().getGraphicsContext2D().drawImage(
-            new Image(fis), x, yMinusTop);
-          this.diagram.addKnot(new Knot(x, yMinusTop, currentPattern));
-
-        } catch (IOException e) {
-          logger.error("Problem with resource file!", e);
-        }
+        canvasWithOptionalDotGrid.addKnot(x, yMinusTop);
       }
     });
   }

@@ -1,5 +1,6 @@
 package org.alienlabs.adaloveslace.view;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -7,6 +8,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +19,8 @@ import java.io.IOException;
  * A grid (= coordinate system) with dots (= used as landmarks for lace).
  */
 public class CanvasWithOptionalDotGrid extends Pane {
+
+  static SimpleObjectProperty<Pattern> currentPatternProperty;
 
   static final double TOP_MARGIN        = 30d;
 
@@ -40,10 +44,19 @@ public class CanvasWithOptionalDotGrid extends Pane {
    * We draw the dots on the grid using a Canvas.
    *
    * @see Canvas
-   * @param diagram the business bean containing our future drawing (and its knots)
+   *
    */
   public CanvasWithOptionalDotGrid(Diagram diagram) {
-    this.diagram = diagram;
+    this.diagram = new Diagram(diagram);
+
+    // TODO: display an error message if there is no pattern in the toolbox
+    if (!this.diagram.getPatterns().isEmpty()) {
+      this.diagram.setCurrentPattern(this.diagram.getPatterns().get(0));
+
+      currentPatternProperty = new SimpleObjectProperty<>(this.diagram.getCurrentPattern());
+      currentPatternProperty.addListener(observable -> this.diagram.setCurrentPattern(currentPatternProperty.getValue()));
+    }
+
     getChildren().addAll(this.canvas);
   }
 
@@ -100,8 +113,19 @@ public class CanvasWithOptionalDotGrid extends Pane {
     }
   }
 
-  Canvas getCanvas() {
-    return this.canvas;
+  void addKnot(double x, double y) {
+    Pattern currentPattern = this.diagram.getCurrentPattern();
+    logger.info("Current pattern  -> {}", currentPattern);
+
+    try (FileInputStream fis = new FileInputStream(currentPattern.filename())) {
+
+      this.canvas.getGraphicsContext2D().drawImage(
+        new Image(fis), x, y);
+      this.diagram.addKnot(new Knot(x, y, currentPattern));
+
+    } catch (IOException e) {
+      logger.error("Problem with pattern resource file!", e);
+    }
   }
 
 }

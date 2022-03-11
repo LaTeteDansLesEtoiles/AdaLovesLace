@@ -33,7 +33,6 @@ public class App extends Application {
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   private Stage toolboxStage;
-  private ToolboxWindow toolboxWindow;
   private Diagram diagram;
 
   @Override
@@ -71,21 +70,24 @@ public class App extends Application {
     TilePane toolboxPane  = new TilePane(Orientation.VERTICAL);
     toolboxPane.setAlignment(Pos.TOP_CENTER);
 
-    this.toolboxWindow    = new ToolboxWindow();
-    this.diagram = this.toolboxWindow.createToolboxPane(toolboxPane, resourcesPath, app, this.diagram);
-    this.toolboxWindow.createToolboxStage(this.toolboxStage, toolboxPane);
+    ToolboxWindow toolboxWindow = new ToolboxWindow();
+    this.diagram = toolboxWindow.createToolboxPane(toolboxPane, resourcesPath, app, this.diagram);
+    toolboxWindow.createToolboxStage(this.toolboxStage, toolboxPane);
   }
 
   public static void main(String[] args) {
     launch();
   }
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    value = "EI_EXPOSE_REP",
+    justification = "Copying a toolbox stage would mean working with another window")
   public Stage getToolboxStage() {
     return this.toolboxStage;
   }
 
   public void setDiagram(Diagram diagram) {
-    this.diagram = diagram;
+    this.diagram = new Diagram(diagram);
   }
 
 }

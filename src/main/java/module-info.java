@@ -1,4 +1,5 @@
 module org.alienlabs.adaloveslace.impl {
+  requires com.github.spotbugs.annotations;
   requires javafx.controls;
   requires javafx.graphics;
   requires org.slf4j;

@@ -40,7 +40,7 @@ public class ToolboxWindow {
           diagram.setCurrentPattern(pattern);
         }
 
-        button = new PatternButton(name, new ImageView(new Image(fis)), diagram, pattern);
+        button = new PatternButton(name, new ImageView(new Image(fis)), pattern);
         button.setId(TOOLBOX_BUTTON + (i + 1));
         toolboxPane.getChildren().addAll(button);
 

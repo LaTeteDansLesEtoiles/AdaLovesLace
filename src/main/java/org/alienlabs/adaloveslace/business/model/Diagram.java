@@ -14,6 +14,12 @@ public class Diagram {
     this.knots    = new ArrayList<>();
   }
 
+  public Diagram(final Diagram diagram) {
+    this.patterns = new ArrayList<>(diagram.getPatterns());
+    this.knots    = new ArrayList<>(diagram.getKnots());
+    this.setCurrentPattern(diagram.getCurrentPattern());
+  }
+
   public List<Pattern> getPatterns() {
     return new ArrayList<>(this.patterns);
   }
