@@ -110,7 +110,9 @@
               <bundleJre>false</bundleJre>
               <customizedJre>true</customizedJre>
               <organizationName>AlienLabs</organizationName>
+              <organizationEmail>goupilpierre@gmail.com</organizationEmail>
               <assetsDir>${basedir}/src/main/resources/assets</assetsDir>
+              <outputDirectory>${project.build.directory}/artifacts</outputDirectory>
               <winConfig>
                 <headerType>console</headerType>
                 <setupLanguages>

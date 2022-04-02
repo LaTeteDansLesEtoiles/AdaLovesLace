@@ -96,7 +96,7 @@ node {
 
         stage('packaging') {
             sh "./mvnw package -DskipTests"
-            archiveArtifacts artifacts: '**/target/artifacts/*', fingerprint: true
+            archiveArtifacts artifacts: '**/target/artifacts/adaloveslace_*', fingerprint: true
         }
     }
 }
