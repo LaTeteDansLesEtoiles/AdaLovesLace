@@ -18,6 +18,11 @@
   <dependencies>
     <dependency>
       <groupId>org.openjfx</groupId>
+      <artifactId>javafx-base</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
       <version>${javafx.version}</version>
     </dependency>
@@ -66,6 +71,8 @@
   </dependencies>
 
   <build>
+    <finalName>adaloveslace</finalName>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -96,24 +103,36 @@
               <goal>package</goal>
             </goals>
             <configuration>
+              <name>adaloveslace</name>
               <mainClass>org.alienlabs.adaloveslace.App</mainClass>
               <generateInstaller>true</generateInstaller>
               <administratorRequired>false</administratorRequired>
-              <bundleJre>true</bundleJre>
-              <customizedJre>false</customizedJre>
+              <bundleJre>false</bundleJre>
+              <customizedJre>true</customizedJre>
               <organizationName>AlienLabs</organizationName>
-              <outputDirectory>${basedir}/target/artifacts</outputDirectory>
-              <assetsDir>${basedir}/target/classes/assets</assetsDir>
+              <assetsDir>${basedir}/src/main/resources/assets</assetsDir>
               <winConfig>
                 <headerType>console</headerType>
+                <setupLanguages>
+                  <french>compiler:Languages\French.isl</french>
+                  <english>compiler:Languages\English.isl</english>
+                </setupLanguages>
               </winConfig>
               <vmArgs>
-                <vmArg>--module-path libs\javafx-controls-${java.version}.jar;libs\javafx-graphics-${java.version}.jar</vmArg>
-                <vmArg>--add-modules javafx.controls,javafx.graphics</vmArg>
+                <vmArg>--module-path libs</vmArg>
+                <vmArg>--add-modules javafx.base,javafx.controls,javafx.graphics</vmArg>
               </vmArgs>
               <additionalResources>
                 <additionalResource>${basedir}/target/classes/org/</additionalResource>
+                <additionalResource>${basedir}/target/classes/assets/</additionalResource>
               </additionalResources>
+              <fileAssociations>
+                <fileAssociation>
+                  <description>Ada Loves Lace file</description>
+                  <extension>lace</extension>
+                  <mimeType>application/lace</mimeType>
+                </fileAssociation>
+              </fileAssociations>
             </configuration>
           </execution>
         </executions>
