@@ -1,32 +1,17 @@
-package test;
+package org.alienlabs.adaloveslace.test;
 
 import javafx.stage.Stage;
-import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxAssert;
 import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.control.LabeledMatchers;
 
-import java.io.File;
-
-import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.App.TOOLBOX_BUTTON_ID;
+import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(ApplicationExtension.class)
-class AppTest {
-
-  public static final String MANDALA    = "mandala_small.jpg";
-  public static final String SNOWFLAKE  = "snowflake_small.jpg";
-
-  private Stage primaryStage;
-  private App app;
-
-  public AppTest() {
-  }
+class ToolBoxTest extends AppTestParent {
 
   /**
    * Init method called before each test
@@ -34,25 +19,13 @@ class AppTest {
    * @param primaryStage The injected window (stage)
    */
   @Start
-  private void start(Stage primaryStage) {
-    app = new App();
-    app.setDiagram(new Diagram());
-
-    String ps = File.separator;
-    app.showToolboxWindow(app, this, ".*test" + ps + ".*.jpg");
-
-    this.primaryStage = primaryStage;
-    app.showMainWindow(this.primaryStage);
-  }
-
-  @Test
-  void testShowMainWindow() {
-    assertEquals(MAIN_WINDOW_TITLE, primaryStage.getTitle());
+  void start(Stage primaryStage) {
+    super.start(primaryStage);
   }
 
   @Test
   void testShowToolboxWindow() {
-    assertEquals(TOOLBOX_TITLE, app.getToolboxStage().getTitle());
+    assertEquals(TOOLBOX_TITLE, super.app.getToolboxStage().getTitle());
   }
 
   /**
