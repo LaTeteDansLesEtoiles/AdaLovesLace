@@ -21,20 +21,18 @@ import java.io.IOException;
  */
 public class CanvasWithOptionalDotGrid extends Pane {
 
-  private SimpleObjectProperty<Pattern> currentPatternProperty;
-
   public static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
+  double CANVAS_WIDTH                   = 1200d;
+  double CANVAS_HEIGHT                  = 700d;
   static final double TOP_MARGIN        = 30d;
 
   private static final double SPACING_X = 25d; // The X space between the dots
   private static final double SPACING_Y = 10d; // The Y space between the dots
   private static final double RADIUS    = 2.5d;// The dots are ellipses, this is their radius
 
+  private SimpleObjectProperty<Pattern> currentPatternProperty;
   private final Object app;
   private Image  image;
-
-  public static double CANVAS_WIDTH = 1200d;
-  public static double CANVAS_HEIGHT = 700d;
   private final Canvas canvas           = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT); // We draw the dots on the grid using a Canvas
   private final Diagram diagram;
   private final String classpath;
