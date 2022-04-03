@@ -45,7 +45,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
   private double left;
   private double width;
   private double height;
-  private GraphicsContext graphicsContext2D;
+  private final GraphicsContext graphicsContext2D;
 
   private static final Logger logger = LoggerFactory.getLogger(CanvasWithOptionalDotGrid.class);
 
@@ -68,6 +68,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
       currentPatternProperty.addListener(observable -> this.diagram.setCurrentPattern(currentPatternProperty.getValue()));
     }
 
+    this.graphicsContext2D = this.canvas.getGraphicsContext2D();
     getChildren().addAll(this.canvas);
   }
 
@@ -128,7 +129,6 @@ public class CanvasWithOptionalDotGrid extends Pane {
   }
 
   private void fillEmptyRectangle() {
-    this.graphicsContext2D = this.canvas.getGraphicsContext2D();
     this.graphicsContext2D.clearRect(0d, 0d, width, height);
     this.graphicsContext2D.setFill(new Color(1.0d, 1.0d, 1.0d, 0.9d));
     this.graphicsContext2D.fillRect(40d, 40d, width - 87d, height - 70d);
@@ -151,8 +151,8 @@ public class CanvasWithOptionalDotGrid extends Pane {
 
     try (FileInputStream fis = new FileInputStream(currentPattern.filename())) {
 
-      this.canvas.getGraphicsContext2D().drawImage(
-        new Image(fis), x, y);
+
+      this.canvas.getGraphicsContext2D().drawImage(new Image(fis), x, y);
       this.diagram.addKnot(new Knot(x, y, currentPattern));
 
     } catch (IOException e) {
