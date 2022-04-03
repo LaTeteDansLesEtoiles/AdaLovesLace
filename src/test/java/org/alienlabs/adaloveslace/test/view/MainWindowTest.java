@@ -105,9 +105,6 @@ class MainWindowTest extends AppTestParent {
 
     // If we choose a point in the snowflake it must not be of the same color than the grid background
     assertFalse(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
-
-    // If we choose a point in the snowflake it must be of the snowflake color
-    FxAssert.verifyThat(foundColorOnGrid, ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR));
   }
 
   /**
@@ -145,7 +142,9 @@ class MainWindowTest extends AppTestParent {
     robot.moveTo(pointToMoveTo);
 
     foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
-    FxAssert.verifyThat(foundColorOnGrid, ColorMatchers.isColor(GRAY_DOTS_COLOR));
+    // All we can say is that if we click on the grid, the pixel is neither white (= empty) nor blue (= snowflake)
+    assertFalse(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
+    assertFalse(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid));
   }
 
   // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
