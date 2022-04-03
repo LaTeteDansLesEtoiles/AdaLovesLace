@@ -96,4 +96,8 @@ public class App extends Application {
     return this.mainWindow.getCanvasWithOptionalDotGrid();
   }
 
+  public MainWindow getMainWindow() {
+    return this.mainWindow;
+  }
+
 }

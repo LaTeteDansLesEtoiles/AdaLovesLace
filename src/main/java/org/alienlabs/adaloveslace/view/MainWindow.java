@@ -19,16 +19,21 @@ import org.slf4j.LoggerFactory;
 
 public class MainWindow {
 
-  public static final String MOUSE_CLICKED = "MOUSE_CLICKED";
-
+  public final MenuBar menuBar;
   private CanvasWithOptionalDotGrid canvasWithOptionalDotGrid;
+
+  public static final String QUIT_APP = "Quit";
+  public static final String MOUSE_CLICKED = "MOUSE_CLICKED";
 
   private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
+  public MainWindow() {
+    menuBar = new MenuBar();
+  }
+
   public void createMenuBar(GridPane root) {
-    MenuBar menuBar = new MenuBar();
     Menu menu = new Menu("File");
-    MenuItem menuItem = new MenuItem("Quit");
+    MenuItem menuItem = new MenuItem(QUIT_APP);
     menuItem.setOnAction(actionEvent -> onQuitAction());
     menuItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
     menu.getItems().addAll(menuItem);
@@ -93,6 +98,10 @@ public class MainWindow {
     justification = "Copying a CanvasWithOptionalDotGrid, which is a stage, would mean working with another window")
   public CanvasWithOptionalDotGrid getCanvasWithOptionalDotGrid() {
     return this.canvasWithOptionalDotGrid;
+  }
+
+  public MenuBar getMenuBar() {
+    return this.menuBar;
   }
 
 }
