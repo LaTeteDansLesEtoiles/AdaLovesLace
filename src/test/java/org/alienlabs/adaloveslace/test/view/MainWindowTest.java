@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.test;
+package org.alienlabs.adaloveslace.test.view;
 
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
@@ -12,6 +12,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.alienlabs.adaloveslace.test.AppTestParent;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ class MainWindowTest extends AppTestParent {
    * @param primaryStage The injected window (stage)
    */
   @Start
-  void start(Stage primaryStage) {
+  public void start(Stage primaryStage) {
     this.primaryStage = primaryStage;
     super.start(this.primaryStage);
   }
@@ -76,8 +77,7 @@ class MainWindowTest extends AppTestParent {
     drawSnowflake(robot);
 
     // If we choose a point in the snowflake it must not be white
-    Color foundColorOnGrid = moveMouseForSnowflake(robot);
-    assertNotEquals(Color.WHITE, foundColorOnGrid);
+    moveMouseForSnowflake(robot);
 
     // If we choose a point in the snowflake it must not be of the same color than the grid background
     assertNotEquals(GRID_COLOR, foundColorOnGrid);
@@ -100,32 +100,26 @@ class MainWindowTest extends AppTestParent {
   }
 
   // Move mouse and get the color of the pixel under the pointer
-  private Color moveMouseForSnowflake(FxRobot robot) {
+  private void moveMouseForSnowflake(FxRobot robot) {
     Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
     robot.moveTo(new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + NOT_WHITE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + NOT_WHITE_PIXEL_Y));
-    getBackgroundColor();
-
-    // This is in order tp have time to copy the image to the canvas
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException e) {
-      logger.error("Error sleeping!, e");
-    }
-    return this.foundColorOnGrid;
+    getBackgroundColor(canvas);
   }
+
 
   // What is the color of a pixel under the snowflake, on the grid?
-  private void getBackgroundColor() {
-    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
-    copyBackgroundImageToCanvas(canvas);
-  }
-
+  private void getBackgroundColor(Canvas canvas) {
     // This is in order tp have time to copy the image to the canvas, otherwise the image is always white and we don't
     // have access to the UI thread for the copy without "Platform.runLater()"
-  private void copyBackgroundImageToCanvas(Canvas canvas) {
     Platform.runLater(() -> {
       WritableImage writableImage = new WritableImage(Double.valueOf(CANVAS_WIDTH).intValue(), Double.valueOf(CANVAS_HEIGHT).intValue());
-      canvas.snapshot(snapshotResult -> { logger.info("Snapshot done!"); return null; } , new SnapshotParameters(), writableImage);
+
+      canvas.snapshot(snapshotResult -> {
+        logger.info("Snapshot done!");
+        assertNotEquals(Color.WHITE, foundColorOnGrid);
+        return null;
+        }, new SnapshotParameters(), writableImage);
+
       app.getMainWindow().getCanvasWithOptionalDotGrid().setImage(writableImage);
 
       PixelReader pr = app.getMainWindow().getCanvasWithOptionalDotGrid().getImage().getPixelReader();

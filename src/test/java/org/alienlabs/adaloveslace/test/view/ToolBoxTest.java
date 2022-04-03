@@ -1,6 +1,7 @@
-package org.alienlabs.adaloveslace.test;
+package org.alienlabs.adaloveslace.test.view;
 
 import javafx.stage.Stage;
+import org.alienlabs.adaloveslace.test.AppTestParent;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.api.FxRobot;
@@ -18,7 +19,7 @@ class ToolBoxTest extends AppTestParent {
    * @param primaryStage The injected window (stage)
    */
   @Start
-  void start(Stage primaryStage) {
+  public void start(Stage primaryStage) {
     super.start(primaryStage);
   }
 
