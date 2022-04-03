@@ -33,8 +33,8 @@ public class CanvasWithOptionalDotGrid extends Pane {
   private final Object app;
   private Image  image;
 
-  public static final double CANVAS_WIDTH = 1200d;
-  public static final double CANVAS_HEIGHT = 700d;
+  public static double CANVAS_WIDTH = 1200d;
+  public static double CANVAS_HEIGHT = 700d;
   private final Canvas canvas           = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT); // We draw the dots on the grid using a Canvas
   private final Diagram diagram;
   private final String classpath;
@@ -70,6 +70,12 @@ public class CanvasWithOptionalDotGrid extends Pane {
 
     this.graphicsContext2D = this.canvas.getGraphicsContext2D();
     getChildren().addAll(this.canvas);
+  }
+
+  public CanvasWithOptionalDotGrid(double width, double height, Object app, Diagram diagram, String classpath) {
+    this(app, diagram, classpath);
+    CANVAS_WIDTH = width;
+    CANVAS_HEIGHT = height;
   }
 
   @Override

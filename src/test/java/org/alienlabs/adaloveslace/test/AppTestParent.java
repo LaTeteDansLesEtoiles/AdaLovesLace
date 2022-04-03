@@ -41,7 +41,7 @@ public class AppTestParent {
     this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
 
     this.primaryStage = primaryStage;
-    this.app.showMainWindow(this, this.primaryStage, CLASSPATH_RESOURCES_PATH_PNG);
+    this.app.showMainWindow(640d, 480d, 600d, 420d,this, this.primaryStage, CLASSPATH_RESOURCES_PATH_PNG);
   }
 
 }

@@ -30,12 +30,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MainWindowTest extends AppTestParent {
 
-  public static final double  NOT_WHITE_PIXEL_X   = 80d;
-  public static final long    NOT_WHITE_PIXEL_Y   = 80l;
-  public static final double  GRAY_PIXEL_X        = 40d;
-  public static final long    GRAY_PIXEL_Y        = 50l;
-  public static final Color   GRAY_DOTS_COLOR     = Color.valueOf("0xcececeff");
-  public static final Color   SNOWFLAKE_DOT_COLOR = Color.valueOf("0xccccccff");
+  public static final double  WHITE_PIXEL_X       = 90d;
+  public static final long    WHITE_PIXEL_Y       = 90l;
+  public static final double  SNOWFLAKE_PIXEL_X   = 75d;
+  public static final long    SNOWFLAKE_PIXEL_Y   = 90l;
+  public static final double  GRAY_PIXEL_X        = 78d;
+  public static final long    GRAY_PIXEL_Y        = 92l;
+  public static final Color   GRAY_DOTS_COLOR     = Color.valueOf("0xedededff");
+  public static final Color   SNOWFLAKE_DOT_COLOR = Color.valueOf("0xcececeff");
   private Stage primaryStage;
   private Color foundColorOnGrid;
 
@@ -90,12 +92,13 @@ class MainWindowTest extends AppTestParent {
 
     // Move mouse and get the color of the pixel under the pointer
     Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + NOT_WHITE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + NOT_WHITE_PIXEL_Y);
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
     // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
     // have access to the UI thread for the copy without "Platform.runLater()"
-    foundColorOnGrid = getColor(canvas, pointToMoveTo);
+    foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
 
     // If we choose a point in the snowflake it must not be of the same color than the grid dots
     assertFalse(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
@@ -114,15 +117,34 @@ class MainWindowTest extends AppTestParent {
    * @param robot The injected FxRobot
    */
   @Test
-  // What is the color of a pixel under nothing, even not the grid?
   void testClickOutsideOfTheGrid(FxRobot robot) {
     Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
 
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + GRAY_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + GRAY_PIXEL_Y);
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + WHITE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + WHITE_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + WHITE_PIXEL_X, canvas.getLayoutY() + WHITE_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
-    foundColorOnGrid = getColor(canvas, pointToMoveTo);
+    foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
+    FxAssert.verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.WHITE));
+  }
+
+  /**
+   * Checks if we are able to click on the canvas, somewhere where there is no pattern
+   * and a grid dot: the pixel should be gray.
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void testClickOnTheGrid(FxRobot robot) {
+    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
+
+    // Move mouse and get the color of the pixel under the pointer
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + GRAY_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + GRAY_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + GRAY_PIXEL_X, canvas.getLayoutY() + GRAY_PIXEL_Y);
+    robot.moveTo(pointToMoveTo);
+
+    foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
     FxAssert.verifyThat(foundColorOnGrid, ColorMatchers.isColor(GRAY_DOTS_COLOR));
   }
 
