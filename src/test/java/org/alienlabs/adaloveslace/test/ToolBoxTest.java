@@ -7,7 +7,6 @@ import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.control.LabeledMatchers;
 
-import static org.alienlabs.adaloveslace.App.TOOLBOX_BUTTON_ID;
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -35,7 +34,7 @@ class ToolBoxTest extends AppTestParent {
    */
   @Test
   void should_contain_1st_button_with_text(FxRobot robot) {
-    FxAssert.verifyThat(TOOLBOX_BUTTON_ID + "1", LabeledMatchers.hasText(MANDALA));
+    FxAssert.verifyThat(MANDALA_BUTTON, LabeledMatchers.hasText(MANDALA));
   }
 
   /**
@@ -45,7 +44,7 @@ class ToolBoxTest extends AppTestParent {
    */
   @Test
   void should_contain_2nd_button_with_text(FxRobot robot) {
-    FxAssert.verifyThat(TOOLBOX_BUTTON_ID + "2", LabeledMatchers.hasText(SNOWFLAKE));
+    FxAssert.verifyThat(SNOWFLAKE_BUTTON, LabeledMatchers.hasText(SNOWFLAKE));
   }
 
 }

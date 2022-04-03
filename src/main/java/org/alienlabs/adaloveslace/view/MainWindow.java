@@ -60,8 +60,8 @@ public class MainWindow {
     return root;
   }
 
-  public StackPane createGrid(final Diagram diagram) {
-    this.canvasWithOptionalDotGrid = new CanvasWithOptionalDotGrid(diagram);
+  public StackPane createGrid(final Object app, final Diagram diagram, final String classpath) {
+    this.canvasWithOptionalDotGrid = new CanvasWithOptionalDotGrid(app, diagram, classpath);
     StackPane grid = new StackPane(this.canvasWithOptionalDotGrid);
     grid.setAlignment(Pos.TOP_LEFT);
     return grid;

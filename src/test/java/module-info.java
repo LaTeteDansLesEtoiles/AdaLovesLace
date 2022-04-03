@@ -5,6 +5,7 @@ open module org.alienlabs.adaloveslace.test {
   requires javafx.graphics;
 
   requires org.hamcrest;
+  requires org.slf4j;
   requires org.testfx;
   requires org.testfx.junit5;
 

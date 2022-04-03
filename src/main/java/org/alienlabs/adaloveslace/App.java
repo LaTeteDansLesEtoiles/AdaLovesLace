@@ -45,17 +45,17 @@ public class App extends Application {
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
 
     logger.info("Starting app: opening main window");
-    showMainWindow(primaryStage);
+    showMainWindow(this, primaryStage, CLASSPATH_RESOURCES_PATH);
   }
 
-  public void showMainWindow(Stage primaryStage) {
+  public void showMainWindow(Object app, Stage primaryStage, String classpath) {
     mainWindow = new MainWindow();
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
 
     TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
-    StackPane grid            = mainWindow.createGrid(this.diagram);
+    StackPane grid            = mainWindow.createGrid(app, this.diagram, classpath);
     GridPane root             = mainWindow.createGridPane(grid, footer);
     mainWindow.onMainWindowClicked(root);
 

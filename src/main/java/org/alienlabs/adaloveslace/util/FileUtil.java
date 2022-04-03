@@ -15,10 +15,12 @@ import java.util.zip.ZipFile;
 
 public class FileUtil {
 
-  public static final String JAVA_CLASS_PATH_PROPERTY = System.getProperty("java.class.path", ".");
-  public static final String PATH_SEPARATOR_PROPERTY  = System.getProperty("path.separator");
-  public static final String PATH_SEPARATOR           = File.separator;
-  public static final String CLASSPATH_RESOURCES_PATH = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*.jpg";
+  public static final String JAVA_CLASS_PATH_PROPERTY     = System.getProperty("java.class.path", ".");
+  public static final String PATH_SEPARATOR_PROPERTY      = System.getProperty("path.separator");
+  public static final String PATH_SEPARATOR               = File.separator;
+
+  // For code under test:
+  public static final String CLASSPATH_RESOURCES_PATH     = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*.jpg";
 
   private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
