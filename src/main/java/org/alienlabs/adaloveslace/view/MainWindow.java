@@ -60,11 +60,11 @@ public class MainWindow {
     return root;
   }
 
-  public StackPane createGrid(final double width, final double height, final Object app, final Diagram diagram, final String classpath) {
+  public StackPane createGrid(final double width, final double height, final Diagram diagram) {
     if (width == 0d || height == 0d) {
-      this.canvasWithOptionalDotGrid = new CanvasWithOptionalDotGrid(app, diagram, classpath);
+      this.canvasWithOptionalDotGrid = new CanvasWithOptionalDotGrid(diagram);
     } else {
-      this.canvasWithOptionalDotGrid = new CanvasWithOptionalDotGrid(width, height, app, diagram, classpath);
+      this.canvasWithOptionalDotGrid = new CanvasWithOptionalDotGrid(width, height, diagram);
     }
 
     StackPane grid = new StackPane(this.canvasWithOptionalDotGrid);

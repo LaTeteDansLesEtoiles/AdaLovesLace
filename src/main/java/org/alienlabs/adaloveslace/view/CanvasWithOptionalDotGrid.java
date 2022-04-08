@@ -9,7 +9,6 @@ import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Pattern;
-import org.alienlabs.adaloveslace.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +30,8 @@ public class CanvasWithOptionalDotGrid extends Pane {
   private static final double RADIUS    = 2.5d;// The dots are ellipses, this is their radius
 
   private SimpleObjectProperty<Pattern> currentPatternProperty;
-  private final Object app;
-  private Image  image;
   private final Canvas canvas           = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT); // We draw the dots on the grid using a Canvas
   private final Diagram diagram;
-  private final String classpath;
 
   private double top;
   private double right;
@@ -53,10 +49,8 @@ public class CanvasWithOptionalDotGrid extends Pane {
    * @see Canvas
    *
    */
-  public CanvasWithOptionalDotGrid(Object app, Diagram diagram, String classpath) {
-    this.app        = app;
+  public CanvasWithOptionalDotGrid(Diagram diagram) {
     this.diagram    = new Diagram(diagram);
-    this.classpath  = classpath;
 
     // TODO: display an error message if there is no pattern in the toolbox
     if (!this.diagram.getPatterns().isEmpty()) {
@@ -70,8 +64,8 @@ public class CanvasWithOptionalDotGrid extends Pane {
     getChildren().addAll(this.canvas);
   }
 
-  public CanvasWithOptionalDotGrid(double width, double height, Object app, Diagram diagram, String classpath) {
-    this(app, diagram, classpath);
+  public CanvasWithOptionalDotGrid(double width, double height, Diagram diagram) {
+    this(diagram);
     CANVAS_WIDTH = width;
     CANVAS_HEIGHT = height;
   }
@@ -87,8 +81,8 @@ public class CanvasWithOptionalDotGrid extends Pane {
     for (Knot knot : this.diagram.getKnots()) {
 
       try (FileInputStream fis = new FileInputStream(knot.getPattern().filename())) {
-        image = new Image(fis);
-        graphicsContext2D.drawImage(this.image, knot.getX(), knot.getY());
+        Image image = new Image(fis);
+        graphicsContext2D.drawImage(image, knot.getX(), knot.getY());
 
       } catch (IOException e) {
         logger.error("Problem with resource file!", e);
@@ -97,15 +91,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
 
     // If there is no knot on the diagram, we must display a blank diagram
     if (this.diagram.getKnots() == null || this.diagram.getKnots().isEmpty()) {
-      try (FileInputStream fis = new FileInputStream(
-        new FileUtil().getResources(this.app, java.util.regex.Pattern.compile(this.classpath))
-          .get(0))) {
-        this.image = new Image(fis);
-        graphicsContext2D.drawImage(image, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-      } catch (IOException e) {
-        logger.error("Problem with creating empty canvas!", e);
-      }
+        graphicsContext2D.rect(0d, 0d, CANVAS_WIDTH, CANVAS_HEIGHT);
     }
   }
 
@@ -154,11 +140,8 @@ public class CanvasWithOptionalDotGrid extends Pane {
     logger.info("Current pattern  -> {}", currentPattern);
 
     try (FileInputStream fis = new FileInputStream(currentPattern.filename())) {
-
-
       this.canvas.getGraphicsContext2D().drawImage(new Image(fis), x, y);
       this.diagram.addKnot(new Knot(x, y, currentPattern));
-
     } catch (IOException e) {
       logger.error("Problem with pattern resource file!", e);
     }
@@ -168,16 +151,11 @@ public class CanvasWithOptionalDotGrid extends Pane {
     return currentPatternProperty;
   }
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    value = "EI_EXPOSE_REP",
+    justification = "The canvas can not be copied at will (because the copy would be asynchronous), so we are forced to reuse the same one")
   public Canvas getCanvas() {
     return this.canvas;
-  }
-
-  public Image getImage() {
-    return this.image;
-  }
-
-  public void setImage(Image image) {
-    this.image = image;
   }
 
 }
