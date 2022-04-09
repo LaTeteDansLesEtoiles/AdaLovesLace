@@ -11,6 +11,8 @@ This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by app
 
 --------------------------------------------------------------------------------------------
 
+- This project uses Java JDK 17 (because it is an LTS JDK) & JavaFX 17.0.2
+
 - Project generated with:
 
 
@@ -28,7 +30,7 @@ This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by app
 
     mvn -N io.takari:maven:wrapper -Dmaven=3.8.4
 
-Feel free to run it again if Java version changes
+Feel free to run the Maven wrapper generation command again if Java version used changes
 
 
 --------------------------------------------------------------------------------------------
