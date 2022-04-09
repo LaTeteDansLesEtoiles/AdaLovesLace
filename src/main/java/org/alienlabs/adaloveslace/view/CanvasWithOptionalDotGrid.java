@@ -1,5 +1,6 @@
 package org.alienlabs.adaloveslace.view;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -29,8 +30,12 @@ public class CanvasWithOptionalDotGrid extends Pane {
   private static final double SPACING_Y = 10d; // The Y space between the dots
   private static final double RADIUS    = 2.5d;// The dots are ellipses, this is their radius
 
+  private final SimpleBooleanProperty   showHideGridProperty;
   private SimpleObjectProperty<Pattern> currentPatternProperty;
+  private boolean showHideGrid          = true;
+
   private final Canvas canvas           = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT); // We draw the dots on the grid using a Canvas
+  private final GraphicsContext graphicsContext2D;
   private final Diagram diagram;
 
   private double top;
@@ -39,7 +44,6 @@ public class CanvasWithOptionalDotGrid extends Pane {
   private double left;
   private double width;
   private double height;
-  private final GraphicsContext graphicsContext2D;
 
   private static final Logger logger = LoggerFactory.getLogger(CanvasWithOptionalDotGrid.class);
 
@@ -60,6 +64,12 @@ public class CanvasWithOptionalDotGrid extends Pane {
       currentPatternProperty.addListener(observable -> this.diagram.setCurrentPattern(currentPatternProperty.getValue()));
     }
 
+    showHideGridProperty = new SimpleBooleanProperty(this.showHideGrid);
+    showHideGridProperty.addListener(observable -> {
+      this.showHideGrid = showHideGridProperty.getValue();
+      setNeedsLayout(true);
+    });
+
     this.graphicsContext2D = this.canvas.getGraphicsContext2D();
     getChildren().addAll(this.canvas);
   }
@@ -72,11 +82,11 @@ public class CanvasWithOptionalDotGrid extends Pane {
 
   @Override
   protected void layoutChildren() {
-    drawGrid();
-    drawCanvas();
+    initCanvasAndGrid();
+    drawDiagram();
   }
 
-  private void drawCanvas() {
+  private void drawDiagram() {
     // If there are knots on the diagram, we must display them at each window refresh
     for (Knot knot : this.diagram.getKnots()) {
 
@@ -95,25 +105,24 @@ public class CanvasWithOptionalDotGrid extends Pane {
     }
   }
 
-  private void drawGrid() {
+  private void initCanvasAndGrid() {
     top     = (int)snappedTopInset() + TOP_MARGIN;
     right   = (int)snappedRightInset();
     bottom  = (int)snappedBottomInset();
     left    = (int)snappedLeftInset();
     width   = (int)getWidth() - left - right;
     height  = (int)getHeight() - top - bottom - 20d;
-
     this.canvas.setLayoutX(left);
     this.canvas.setLayoutY(top);
-    if (!this.getChildren().contains(canvas)) {
-      this.getChildren().add(canvas);
-    }
 
     if (width != this.canvas.getWidth() || height != this.canvas.getHeight()) {
       this.canvas.setWidth(width);
       this.canvas.setHeight(height);
+    }
 
-      fillEmptyRectangle();
+    fillEmptyRectangle();
+
+    if (this.showHideGrid) {
       drawGrid(width, height);
     }
   }
@@ -148,7 +157,11 @@ public class CanvasWithOptionalDotGrid extends Pane {
   }
 
   SimpleObjectProperty<Pattern> getCurrentPatternProperty() {
-    return currentPatternProperty;
+    return this.currentPatternProperty;
+  }
+
+  public SimpleBooleanProperty isShowHideGridProperty() {
+    return this.showHideGridProperty;
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

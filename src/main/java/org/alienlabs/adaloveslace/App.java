@@ -80,7 +80,7 @@ public class App extends Application {
 
     ToolboxWindow toolboxWindow = new ToolboxWindow();
     this.diagram = toolboxWindow.createToolboxPane(toolboxPane, classpathBase, resourcesPath, app, this.diagram);
-    TilePane showHideGridPanePane = toolboxWindow.createShowHideGridButton();
+    TilePane showHideGridPanePane = toolboxWindow.createShowHideGridButton(app);
 
     toolboxWindow.createToolboxStage(this.toolboxStage, showHideGridPanePane, toolboxPane);
   }

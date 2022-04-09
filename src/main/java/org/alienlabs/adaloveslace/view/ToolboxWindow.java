@@ -87,13 +87,11 @@ public class ToolboxWindow {
     toolboxPane.getChildren().addAll(showHideGridPanePane);
   }
 
-  public TilePane createShowHideGridButton() {
+  public TilePane createShowHideGridButton(App app) {
     TilePane showHideGridPanePane  = new TilePane(Orientation.VERTICAL);
     showHideGridPanePane.setAlignment(Pos.CENTER);
 
-    Button showHideGridButton = new Button("Show / Hide grid");
-    showHideGridButton.setId("showHideGridButton");
-    showHideGridButton.setOnAction(actionEvent -> {});
+    ShowHideGridButton showHideGridButton = new ShowHideGridButton("Show / Hide grid", app);
     showHideGridPanePane.getChildren().add(showHideGridButton);
 
     return showHideGridPanePane;
