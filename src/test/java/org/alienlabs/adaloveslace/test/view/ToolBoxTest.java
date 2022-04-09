@@ -89,8 +89,8 @@ class ToolBoxTest extends AppTestParent {
     switchGrid(robot);
 
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + GRAY_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + GRAY_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + GRAY_PIXEL_X, canvas.getLayoutY() + GRAY_PIXEL_Y);
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + (canvas.getLayoutX() /2d) + GRAY_PIXEL_X, this.primaryStage.getY() + (canvas.getLayoutY() / 2d) + GRAY_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D((canvas.getLayoutX() / 2d) + GRAY_PIXEL_X, (canvas.getLayoutY() / 2d) + GRAY_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
     foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
@@ -111,8 +111,8 @@ class ToolBoxTest extends AppTestParent {
     switchGrid(robot);
 
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + GRAY_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + GRAY_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + GRAY_PIXEL_X, canvas.getLayoutY() + GRAY_PIXEL_Y);
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + (canvas.getLayoutX() / 2d) + NOT_WHITE_PIXEL_X, this.primaryStage.getY() + (canvas.getLayoutY() / 2d) + NOT_WHITE_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D((canvas.getLayoutX() / 2d) + NOT_WHITE_PIXEL_X, (canvas.getLayoutY() / 2d) + NOT_WHITE_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
     foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
@@ -123,8 +123,8 @@ class ToolBoxTest extends AppTestParent {
     switchGrid(robot);
 
     // Move mouse and get the color of the pixel under the pointer
-    pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + GRAY_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + GRAY_PIXEL_Y);
-    pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + GRAY_PIXEL_X, canvas.getLayoutY() + GRAY_PIXEL_Y);
+    pointToMoveTo = new Point2D(this.primaryStage.getX() + (canvas.getLayoutX() / 2d) + NOT_WHITE_PIXEL_X, this.primaryStage.getY() + (canvas.getLayoutY() / 2d) + NOT_WHITE_PIXEL_Y);
+    pointToMoveToInCanvas = new Point2D((canvas.getLayoutX() / 2d) + NOT_WHITE_PIXEL_X, (canvas.getLayoutY() / 2d) + NOT_WHITE_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
     foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);

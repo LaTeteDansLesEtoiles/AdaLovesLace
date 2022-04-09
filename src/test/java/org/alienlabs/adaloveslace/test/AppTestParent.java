@@ -39,6 +39,8 @@ public class AppTestParent {
 
   public static final double  GRAY_PIXEL_X        = 78d;
   public static final long    GRAY_PIXEL_Y        = 92l;
+  public static final double  NOT_WHITE_PIXEL_X   = 75d;
+  public static final long    NOT_WHITE_PIXEL_Y   = 85l;
   public static final Color   SNOWFLAKE_DOT_COLOR = Color.valueOf("0xcececeff");
 
 
@@ -64,7 +66,7 @@ public class AppTestParent {
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
 
     this.primaryStage = primaryStage;
-    this.app.showMainWindow(640d, 480d, 600d, 420d, this.primaryStage);
+    this.app.showMainWindow(640d, 480d, 600d, 420d, 5d, this.primaryStage);
   }
 
   // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't

@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
+import static org.alienlabs.adaloveslace.view.CanvasWithOptionalDotGrid.RADIUS;
 import static org.alienlabs.adaloveslace.view.ToolboxWindow.TILE_HEIGHT;
 import static org.alienlabs.adaloveslace.view.ToolboxWindow.TILE_PADDING;
 
@@ -33,6 +34,9 @@ public class App extends Application {
   public static final String MAIN_WINDOW_TITLE  = ADA_LOVES_LACE;
   public static final String TOOLBOX_TITLE      = "Toolbox";
 
+  private static final double MAIN_WINDOW_X = 50d;
+  private static final double MAIN_WINDOW_Y = 50d;
+
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   private Stage toolboxStage;
@@ -47,22 +51,24 @@ public class App extends Application {
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
 
     logger.info("Starting app: opening main window");
-    showMainWindow(660d, 700d, 0d, 0d, primaryStage);
+    showMainWindow(660d, 700d, 0d, 0d, RADIUS, primaryStage);
   }
 
-  public void showMainWindow(double windowWidth, double windowHeight, double canvasWidth, double canvasHeight, Stage primaryStage) {
+  public void showMainWindow(double windowWidth, double windowHeight, double canvasWidth, double canvasHeight, double radius, Stage primaryStage) {
     mainWindow = new MainWindow();
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
 
     TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
-    StackPane grid            = mainWindow.createGrid(canvasWidth, canvasHeight, this.diagram);
+    StackPane grid            = mainWindow.createGrid(canvasWidth, canvasHeight, radius, this.diagram);
     GridPane root             = mainWindow.createGridPane(grid, footer);
     mainWindow.onMainWindowClicked(root);
 
     var scene                 = new Scene(root, windowWidth, windowHeight);
     primaryStage.setScene(scene);
+    primaryStage.setX(MAIN_WINDOW_X);
+    primaryStage.setY(MAIN_WINDOW_Y);
     primaryStage.setTitle(MAIN_WINDOW_TITLE);
 
     mainWindow.createMenuBar(root, this);

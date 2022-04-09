@@ -22,13 +22,13 @@ import java.io.IOException;
 public class CanvasWithOptionalDotGrid extends Pane {
 
   public static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
+  public static double RADIUS           = 2.5d;// The dots are ellipses, this is their radius
   double CANVAS_WIDTH                   = 1200d;
   double CANVAS_HEIGHT                  = 700d;
   static final double TOP_MARGIN        = 30d;
 
   private static final double SPACING_X = 25d; // The X space between the dots
   private static final double SPACING_Y = 10d; // The Y space between the dots
-  private static final double RADIUS    = 2.5d;// The dots are ellipses, this is their radius
 
   private final SimpleBooleanProperty   showHideGridProperty;
   private SimpleObjectProperty<Pattern> currentPatternProperty;
@@ -74,10 +74,11 @@ public class CanvasWithOptionalDotGrid extends Pane {
     getChildren().addAll(this.canvas);
   }
 
-  public CanvasWithOptionalDotGrid(double width, double height, Diagram diagram) {
+  public CanvasWithOptionalDotGrid(double width, double height, double radius, Diagram diagram) {
     this(diagram);
     CANVAS_WIDTH = width;
     CANVAS_HEIGHT = height;
+    RADIUS = radius;
   }
 
   @Override

@@ -105,7 +105,7 @@ class MainWindowTest extends AppTestParent {
   }
 
   /**
-   * Checks if we are able to click nowhere on the canvas, i.e. somewhere where there is no pattern
+   * Checks if we are able to click anywhere on the canvas, i.e. somewhere where there is no pattern
    * and no grid dots: the pixel should be white.
    *
    * @param robot The injected FxRobot
@@ -134,8 +134,8 @@ class MainWindowTest extends AppTestParent {
     Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
 
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + GRAY_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + GRAY_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + GRAY_PIXEL_X, canvas.getLayoutY() + GRAY_PIXEL_Y);
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + NOT_WHITE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + NOT_WHITE_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + NOT_WHITE_PIXEL_X, canvas.getLayoutY() + NOT_WHITE_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
     foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);

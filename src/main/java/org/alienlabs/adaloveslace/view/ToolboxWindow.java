@@ -85,7 +85,7 @@ public class ToolboxWindow {
       this.resourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING + VERTICAL_GAP_BETWEEN_BUTTONS);
 
     toolboxStage.setTitle(TOOLBOX_TITLE);
-    toolboxStage.setX(1400d);
+    toolboxStage.setX(750d);
     toolboxStage.setY(175d);
     toolboxStage.setScene(toolboxScene);
     toolboxStage.show();
