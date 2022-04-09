@@ -2,10 +2,7 @@ package org.alienlabs.adaloveslace.view;
 
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -13,16 +10,19 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
 
   public final MenuBar menuBar;
   private CanvasWithOptionalDotGrid canvasWithOptionalDotGrid;
 
-  public static final String QUIT_APP = "Quit";
   public static final String MOUSE_CLICKED = "MOUSE_CLICKED";
 
   private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
@@ -31,12 +31,20 @@ public class MainWindow {
     menuBar = new MenuBar();
   }
 
-  public void createMenuBar(GridPane root) {
+  public void createMenuBar(GridPane root, App app) {
     Menu menu = new Menu("File");
-    MenuItem menuItem = new MenuItem(QUIT_APP);
-    menuItem.setOnAction(actionEvent -> onQuitAction());
-    menuItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
-    menu.getItems().addAll(menuItem);
+
+    MenuItem showHideGridItem = new MenuItem(SHOW_HIDE_GRID_BUTTON_NAME);
+    showHideGridItem.setOnAction(actionEvent -> ShowHideGridButton.showHideGrid(app));
+    showHideGridItem.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
+
+    SeparatorMenuItem separator = new SeparatorMenuItem();
+
+    MenuItem quitItem = new MenuItem(QUIT_APP);
+    quitItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
+    quitItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
+
+    menu.getItems().addAll(showHideGridItem, separator, quitItem);
     menuBar.getMenus().addAll(menu);
     VBox vBox = new VBox(menuBar); //Gives vertical box
     root.getChildren().addAll(vBox);
@@ -88,14 +96,6 @@ public class MainWindow {
         canvasWithOptionalDotGrid.addKnot(x, yMinusTop);
       }
     });
-  }
-
-  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
-    value = "DM_EXIT",
-    justification = "We shall exit when we have to, since we are not in a lib")
-  private void onQuitAction() {
-    logger.info("Exiting app");
-    System.exit(0);
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

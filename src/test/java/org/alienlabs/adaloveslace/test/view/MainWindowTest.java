@@ -25,19 +25,24 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
-import static org.alienlabs.adaloveslace.view.MainWindow.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MainWindowTest extends AppTestParent {
 
-  public static final double  WHITE_PIXEL_X       = 90d;
-  public static final long    WHITE_PIXEL_Y       = 90l;
-  public static final double  SNOWFLAKE_PIXEL_X   = 75d;
-  public static final long    SNOWFLAKE_PIXEL_Y   = 90l;
-  public static final double  GRAY_PIXEL_X        = 78d;
-  public static final long    GRAY_PIXEL_Y        = 92l;
-  public static final Color   GRAY_DOTS_COLOR     = Color.valueOf("0xedededff");
-  public static final Color   SNOWFLAKE_DOT_COLOR = Color.valueOf("0xcececeff");
+  public static final double  WHITE_PIXEL_X               = 90d;
+  public static final long    WHITE_PIXEL_Y               = 90l;
+  public static final double  SNOWFLAKE_PIXEL_X           = 75d;
+  public static final long    SNOWFLAKE_PIXEL_Y           = 90l;
+  public static final double  GRAY_PIXEL_X                = 78d;
+  public static final long    GRAY_PIXEL_Y                = 92l;
+  public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xedededff");
+  public static final Color   SNOWFLAKE_DOT_COLOR         = Color.valueOf("0xcececeff");
+  public static final int FILE_MENU_ENTRY_INDEX           = 0;
+  public static final int SHOW_HIDE_GRID_MENU_ITEM_INDEX  = 0;
+  public static final int QUIT_MENU_ITEM_INDEX            = 2;
+
   private Stage primaryStage;
   private Color foundColorOnGrid;
 
@@ -67,6 +72,17 @@ class MainWindowTest extends AppTestParent {
   @Test
   void testMainWindowTitle() {
     assertEquals(MAIN_WINDOW_TITLE, getMainWindowTitle());
+  }
+
+  /**
+   * Checks if the menubar contains a "show / hide grid" button
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void showHideGridAppMenuItemShallBeDisplayed(FxRobot robot) {
+    MenuItem showHideGrid = getShowHideGridMenuItem(getFileMenu());
+    assertEquals(SHOW_HIDE_GRID_BUTTON_NAME, showHideGrid.getText());
   }
 
   /**
@@ -200,11 +216,15 @@ class MainWindowTest extends AppTestParent {
   }
 
   private Menu getFileMenu() {
-    return super.app.getMainWindow().getMenuBar().getMenus().get(0);
+    return super.app.getMainWindow().getMenuBar().getMenus().get(FILE_MENU_ENTRY_INDEX);
+  }
+
+  private MenuItem getShowHideGridMenuItem(Menu menu) {
+    return menu.getItems().get(SHOW_HIDE_GRID_MENU_ITEM_INDEX);
   }
 
   private MenuItem getQuitMenuItem(Menu menu) {
-    return menu.getItems().get(0);
+    return menu.getItems().get(QUIT_MENU_ITEM_INDEX);
   }
 
 }

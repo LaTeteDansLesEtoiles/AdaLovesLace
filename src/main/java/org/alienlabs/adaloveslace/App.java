@@ -65,7 +65,7 @@ public class App extends Application {
     primaryStage.setScene(scene);
     primaryStage.setTitle(MAIN_WINDOW_TITLE);
 
-    mainWindow.createMenuBar(root);
+    mainWindow.createMenuBar(root, this);
     primaryStage.show();
   }
 
@@ -80,7 +80,7 @@ public class App extends Application {
 
     ToolboxWindow toolboxWindow = new ToolboxWindow();
     this.diagram = toolboxWindow.createToolboxPane(toolboxPane, classpathBase, resourcesPath, app, this.diagram);
-    TilePane showHideGridPanePane = toolboxWindow.createShowHideGridButton(app);
+    TilePane showHideGridPanePane = toolboxWindow.createShowHideGridAndQuitButtons(app);
 
     toolboxWindow.createToolboxStage(this.toolboxStage, showHideGridPanePane, toolboxPane);
   }

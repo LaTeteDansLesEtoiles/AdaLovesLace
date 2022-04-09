@@ -23,14 +23,17 @@ import java.util.regex.Pattern;
 
 import static org.alienlabs.adaloveslace.App.TOOLBOX_BUTTON;
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
+import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class ToolboxWindow {
 
   private List<String> resourceFiles;
 
-  public static final double TILE_HEIGHT      = 50d;
-  public static final double TILE_PADDING     = 10d;
-  public static final double VERTICAL_PADDING = 50d;
+  public static final double TILE_HEIGHT                  = 50d;
+  public static final double TILE_PADDING                 = 15d;
+  public static final double VERTICAL_PADDING             = 50d;
+  public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
 
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
 
@@ -76,7 +79,8 @@ public class ToolboxWindow {
   }
 
   public void createToolboxStage(Stage toolboxStage, TilePane showHideGridPanePane, TilePane toolboxPane) {
-    Scene toolboxScene = new Scene(toolboxPane, 200d, this.resourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING);
+    Scene toolboxScene = new Scene(toolboxPane, 200d,
+      this.resourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING + VERTICAL_GAP_BETWEEN_BUTTONS);
 
     toolboxStage.setTitle(TOOLBOX_TITLE);
     toolboxStage.setX(1400d);
@@ -87,12 +91,17 @@ public class ToolboxWindow {
     toolboxPane.getChildren().addAll(showHideGridPanePane);
   }
 
-  public TilePane createShowHideGridButton(App app) {
-    TilePane showHideGridPanePane  = new TilePane(Orientation.VERTICAL);
+  public TilePane createShowHideGridAndQuitButtons(App app) {
+    TilePane showHideGridPanePane  = new TilePane(Orientation.HORIZONTAL);
     showHideGridPanePane.setAlignment(Pos.CENTER);
+    showHideGridPanePane.setPrefColumns(1);
+    showHideGridPanePane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
 
-    ShowHideGridButton showHideGridButton = new ShowHideGridButton("Show / Hide grid", app);
+    ShowHideGridButton showHideGridButton = new ShowHideGridButton(SHOW_HIDE_GRID_BUTTON_NAME, app);
     showHideGridPanePane.getChildren().add(showHideGridButton);
+
+    QuitButton showQuitButton = new QuitButton(QUIT_APP);
+    showHideGridPanePane.getChildren().add(showQuitButton);
 
     return showHideGridPanePane;
   }
