@@ -34,8 +34,8 @@ public class App extends Application {
   public static final String MAIN_WINDOW_TITLE  = ADA_LOVES_LACE;
   public static final String TOOLBOX_TITLE      = "Toolbox";
 
-  private static final double MAIN_WINDOW_X = 50d;
-  private static final double MAIN_WINDOW_Y = 50d;
+  public static final double MAIN_WINDOW_X      = 50d;
+  private static final double MAIN_WINDOW_Y     = 50d;
 
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 

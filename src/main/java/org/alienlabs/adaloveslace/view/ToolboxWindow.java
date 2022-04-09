@@ -22,8 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.alienlabs.adaloveslace.App.TOOLBOX_BUTTON;
-import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
+import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
@@ -31,6 +30,7 @@ public class ToolboxWindow {
 
   private List<String> resourceFiles;
 
+  public static final double TOOLBOX_WINDOW_Y             = 750d;
   public static final double TOOLBOX_WINDOW_WIDTH         = 200d;
   public static final double TILE_HEIGHT                  = 50d;
   public static final double TILE_PADDING                 = 15d;
@@ -85,8 +85,8 @@ public class ToolboxWindow {
       this.resourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING + VERTICAL_GAP_BETWEEN_BUTTONS);
 
     toolboxStage.setTitle(TOOLBOX_TITLE);
-    toolboxStage.setX(750d);
-    toolboxStage.setY(175d);
+    toolboxStage.setX(TOOLBOX_WINDOW_Y);
+    toolboxStage.setY(MAIN_WINDOW_X);
     toolboxStage.setScene(toolboxScene);
     toolboxStage.show();
 
