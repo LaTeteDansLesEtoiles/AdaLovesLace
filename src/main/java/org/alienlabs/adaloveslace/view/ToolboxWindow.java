@@ -30,7 +30,7 @@ public class ToolboxWindow {
 
   private List<String> resourceFiles;
 
-  public static final double TOOLBOX_WINDOW_Y             = 750d;
+  public static final double TOOLBOX_WINDOW_X             = 750d;
   public static final double TOOLBOX_WINDOW_WIDTH         = 200d;
   public static final double TILE_HEIGHT                  = 50d;
   public static final double TILE_PADDING                 = 15d;
@@ -85,8 +85,8 @@ public class ToolboxWindow {
       this.resourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING + VERTICAL_GAP_BETWEEN_BUTTONS);
 
     toolboxStage.setTitle(TOOLBOX_TITLE);
-    toolboxStage.setX(TOOLBOX_WINDOW_Y);
-    toolboxStage.setY(MAIN_WINDOW_X);
+    toolboxStage.setX(TOOLBOX_WINDOW_X);
+    toolboxStage.setY(MAIN_WINDOW_Y);
     toolboxStage.setScene(toolboxScene);
     toolboxStage.show();
 
