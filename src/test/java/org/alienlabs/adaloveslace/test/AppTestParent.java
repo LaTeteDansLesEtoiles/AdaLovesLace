@@ -38,7 +38,7 @@ public class AppTestParent {
   public static final String SNOWFLAKE_BUTTON     = TOOLBOX_BUTTON_ID + "2";
 
   public static final double  GRAY_PIXEL_X        = 78d;
-  public static final long    GRAY_PIXEL_Y        = 92l;
+  public static final long    GRAY_PIXEL_Y        = 82l;
   public static final double  NOT_WHITE_PIXEL_X   = 75d;
   public static final long    NOT_WHITE_PIXEL_Y   = 85l;
   public static final Color   SNOWFLAKE_DOT_COLOR = Color.valueOf("0xcececeff");
