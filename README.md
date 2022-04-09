@@ -61,6 +61,13 @@ When creating a branch, if you wish to set tracking information for this branch 
 
     => apt-get install libgtk3.0-cil libgtk3.0-cil-dev libgtk-3-0 libgtk-3-bin libgtk-3-dev 
 
+- When upgrading Jenkins Docker container:
+
+  docker exec -u root -it jenkins-alienlabs bash
+  apt-get update
+  apt-get install libgtk3.0-cil libgtk3.0-cil-dev libgtk-3-0 libgtk-3-bin libgtk-3-dev vim git xvfb
+
+- Jenkins logs? docker logs -f jenkins-alienlabs
 
 - Does Jenkins fail with java.lang.IllegalArgumentException: Invalid refspec refs/heads/** Error ?
 
