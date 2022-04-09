@@ -26,16 +26,19 @@ import static org.alienlabs.adaloveslace.view.ToolboxWindow.TILE_PADDING;
  */
 public class App extends Application {
 
-  public static final String ID                 = "#";
-  public static final String TOOLBOX_BUTTON     = "toolbox-btn-";
-  public static final String TOOLBOX_BUTTON_ID  = ID + TOOLBOX_BUTTON;
-  public static final String ADA_LOVES_LACE     = "Ada Loves Lace";
-  public static final String MAIN_WINDOW_TITLE  = ADA_LOVES_LACE;
-  public static final String TOOLBOX_TITLE      = "Toolbox";
+  public static final String ID                       = "#";
+  public static final String TOOLBOX_BUTTON           = "toolbox-btn-";
+  public static final String TOOLBOX_BUTTON_ID        = ID + TOOLBOX_BUTTON;
+  public static final String ADA_LOVES_LACE           = "Ada Loves Lace";
+  public static final String MAIN_WINDOW_TITLE        = ADA_LOVES_LACE;
+  public static final String PROJECT_NAME             = "adaloveslace";
+  public static final String TOOLBOX_TITLE            = "Toolbox";
+  public static final String PATTERNS_DIRECTORY_NAME  = "patterns";
+  public static final String ERROR                    = "Error!";
 
-  public static final double MAIN_WINDOW_Y      = 10d;
-  private static final double MAIN_WINDOW_X     = 50d;
-  private static final double RADIUS            = 2.5d;// The dots from the grid are ellipses, this is their radius
+  public static final double MAIN_WINDOW_Y            = 10d;
+  private static final double MAIN_WINDOW_X           = 50d;
+  private static final double RADIUS                  = 2.5d;// The dots from the grid are ellipses, this is their radius
 
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
