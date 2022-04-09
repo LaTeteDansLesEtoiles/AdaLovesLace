@@ -1,5 +1,7 @@
 package org.alienlabs.adaloveslace.view;
 
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -24,24 +26,29 @@ import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
 
 public class ToolboxWindow {
 
+  private List<String> resourceFiles;
+
+  public static final double TILE_HEIGHT      = 50d;
+  public static final double TILE_PADDING     = 10d;
+  public static final double VERTICAL_PADDING = 50d;
+
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
 
   public Diagram createToolboxPane(TilePane toolboxPane, Object classpathBase, String resourcesPath, App app, final Diagram diagram) {
-    List<String> resourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
+    this.resourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
 
-    for (int i = 0; i < resourceFiles.size(); i++) {
-      String filename = resourceFiles.get(i);
-      Button button;
+    for (int i = 0; i < this.resourceFiles.size(); i++) {
+      String filename = this.resourceFiles.get(i);
 
       try (FileInputStream fis = new FileInputStream(filename)) {
-        String name = new File(filename).getName();
+        String label = new File(filename).getName();
         org.alienlabs.adaloveslace.business.model.Pattern pattern = new org.alienlabs.adaloveslace.business.model.Pattern(filename);
 
         if (i == 0) {
           diagram.setCurrentPattern(pattern);
         }
 
-        button = new PatternButton(app, name, new ImageView(new Image(fis)), pattern);
+        Button button = new PatternButton(app, label, new ImageView(new Image(fis)), pattern);
         button.setId(TOOLBOX_BUTTON + (i + 1));
         toolboxPane.getChildren().addAll(button);
 
@@ -62,19 +69,34 @@ public class ToolboxWindow {
    * @return the sorted Pattern list from classpath, by name
    */
   public List<String> loadPatternsResourcesFiles(String resourcesPath, Object classpathBase) {
-    List<String> resourceFiles = new FileUtil().getResources(classpathBase, Pattern.compile(resourcesPath));
-    Collections.sort(resourceFiles);
+    List<String> classpathResourceFiles = new FileUtil().getResources(classpathBase, Pattern.compile(resourcesPath));
+    Collections.sort(classpathResourceFiles);
 
-    return resourceFiles;
+    return classpathResourceFiles;
   }
 
-  public void createToolboxStage(Stage toolboxStage, TilePane toolboxPane) {
-    Scene toolboxScene = new Scene(toolboxPane, 150, 400);
+  public void createToolboxStage(Stage toolboxStage, TilePane showHideGridPanePane, TilePane toolboxPane) {
+    Scene toolboxScene = new Scene(toolboxPane, 200d, this.resourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING);
+
     toolboxStage.setTitle(TOOLBOX_TITLE);
     toolboxStage.setX(1400d);
     toolboxStage.setY(175d);
     toolboxStage.setScene(toolboxScene);
     toolboxStage.show();
+
+    toolboxPane.getChildren().addAll(showHideGridPanePane);
+  }
+
+  public TilePane createShowHideGridButton() {
+    TilePane showHideGridPanePane  = new TilePane(Orientation.VERTICAL);
+    showHideGridPanePane.setAlignment(Pos.CENTER);
+
+    Button showHideGridButton = new Button("Show / Hide grid");
+    showHideGridButton.setId("showHideGridButton");
+    showHideGridButton.setOnAction(actionEvent -> {});
+    showHideGridPanePane.getChildren().add(showHideGridButton);
+
+    return showHideGridPanePane;
   }
 
 }

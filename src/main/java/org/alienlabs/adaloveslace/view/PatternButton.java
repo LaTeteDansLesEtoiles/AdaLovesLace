@@ -13,8 +13,8 @@ public class PatternButton extends Button {
 
   private static final Logger logger = LoggerFactory.getLogger(PatternButton.class);
 
-  public PatternButton(App app, String s, Node node, Pattern pattern) {
-    super(s, node);
+  public PatternButton(App app, String buttonLabel, Node node, Pattern pattern) {
+    super(cleanButtonLabel(buttonLabel), node);
     this.pattern = pattern;
 
     this.setOnMouseClicked(event -> {
@@ -24,6 +24,10 @@ public class PatternButton extends Button {
 
       app.getCanvasWithOptionalDotGrid().getCurrentPatternProperty().set(newCurrentPattern);
     });
+  }
+
+  private static String cleanButtonLabel(String buttonLabel) {
+    return buttonLabel.replaceAll(".jpg", "");
   }
 
   public Pattern getPattern() {

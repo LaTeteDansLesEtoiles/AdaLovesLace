@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
+import static org.alienlabs.adaloveslace.view.ToolboxWindow.TILE_HEIGHT;
+import static org.alienlabs.adaloveslace.view.ToolboxWindow.TILE_PADDING;
 
 /**
  * JavaFX App
@@ -69,12 +71,18 @@ public class App extends Application {
 
   public void showToolboxWindow(App app, Object classpathBase, String resourcesPath) {
     this.toolboxStage     = new Stage(StageStyle.DECORATED);
-    TilePane toolboxPane  = new TilePane(Orientation.VERTICAL);
+
+    TilePane toolboxPane  = new TilePane(Orientation.HORIZONTAL);
+    toolboxPane.setVgap(TILE_PADDING);
+    toolboxPane.setPrefColumns(1);
+    toolboxPane.setPrefTileHeight(TILE_HEIGHT);
     toolboxPane.setAlignment(Pos.TOP_CENTER);
 
     ToolboxWindow toolboxWindow = new ToolboxWindow();
     this.diagram = toolboxWindow.createToolboxPane(toolboxPane, classpathBase, resourcesPath, app, this.diagram);
-    toolboxWindow.createToolboxStage(this.toolboxStage, toolboxPane);
+    TilePane showHideGridPanePane = toolboxWindow.createShowHideGridButton();
+
+    toolboxWindow.createToolboxStage(this.toolboxStage, showHideGridPanePane, toolboxPane);
   }
 
   public static void main(String[] args) {
