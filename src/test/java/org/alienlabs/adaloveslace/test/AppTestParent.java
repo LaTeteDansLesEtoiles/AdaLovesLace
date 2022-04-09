@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.view.ToolboxWindow;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import static org.alienlabs.adaloveslace.util.FileUtil.PATH_SEPARATOR;
 public class AppTestParent {
 
   public Stage primaryStage;
+  public ToolboxWindow toolboxWindow;
   public App app;
 
   // For tests:
@@ -59,7 +61,7 @@ public class AppTestParent {
     this.app = new App();
     this.app.setDiagram(new Diagram());
 
-    this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
+    this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
 
     this.primaryStage = primaryStage;
     this.app.showMainWindow(640d, 480d, 600d, 420d, this.primaryStage);

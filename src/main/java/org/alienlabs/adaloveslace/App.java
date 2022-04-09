@@ -69,7 +69,7 @@ public class App extends Application {
     primaryStage.show();
   }
 
-  public void showToolboxWindow(App app, Object classpathBase, String resourcesPath) {
+  public ToolboxWindow showToolboxWindow(App app, Object classpathBase, String resourcesPath) {
     this.toolboxStage     = new Stage(StageStyle.DECORATED);
 
     TilePane toolboxPane  = new TilePane(Orientation.HORIZONTAL);
@@ -83,6 +83,7 @@ public class App extends Application {
     TilePane showHideGridPanePane = toolboxWindow.createShowHideGridAndQuitButtons(app);
 
     toolboxWindow.createToolboxStage(this.toolboxStage, showHideGridPanePane, toolboxPane);
+    return toolboxWindow;
   }
 
   public static void main(String[] args) {

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -30,6 +31,7 @@ public class ToolboxWindow {
 
   private List<String> resourceFiles;
 
+  public static final double TOOLBOX_WINDOW_WIDTH         = 200d;
   public static final double TILE_HEIGHT                  = 50d;
   public static final double TILE_PADDING                 = 15d;
   public static final double VERTICAL_PADDING             = 50d;
@@ -79,7 +81,7 @@ public class ToolboxWindow {
   }
 
   public void createToolboxStage(Stage toolboxStage, TilePane showHideGridPanePane, TilePane toolboxPane) {
-    Scene toolboxScene = new Scene(toolboxPane, 200d,
+    Scene toolboxScene = new Scene(toolboxPane, TOOLBOX_WINDOW_WIDTH,
       this.resourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING + VERTICAL_GAP_BETWEEN_BUTTONS);
 
     toolboxStage.setTitle(TOOLBOX_TITLE);
@@ -104,6 +106,10 @@ public class ToolboxWindow {
     showHideGridPanePane.getChildren().add(showQuitButton);
 
     return showHideGridPanePane;
+  }
+
+  public List<String> getResourceFiles() {
+    return new ArrayList<>(this.resourceFiles);
   }
 
 }

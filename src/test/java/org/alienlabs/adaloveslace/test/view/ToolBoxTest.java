@@ -1,7 +1,6 @@
 package org.alienlabs.adaloveslace.test.view;
 
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -19,6 +18,7 @@ import org.testfx.robot.Motion;
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
 import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.ToolboxWindow.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ToolBoxTest extends AppTestParent {
@@ -134,9 +134,8 @@ class ToolBoxTest extends AppTestParent {
 
   // Click on "show / hide dot grid" button in the toolbox
   private void switchGrid(FxRobot robot) {
-    Node button = robot.lookup(SHOW_HIDE_GRID_BUTTON_NAME).query();
-    Point2D showHideGridButtonOnTheToolbox = new Point2D(app.getToolboxStage().getX() + button.getLayoutX() + 50d,
-      app.getToolboxStage().getY() + button.getLayoutY() + 150d);
+    Point2D showHideGridButtonOnTheToolbox = new Point2D(app.getToolboxStage().getX() + TOOLBOX_WINDOW_WIDTH / 2d,
+      app.getToolboxStage().getY() + (this.toolboxWindow.getResourceFiles().size() * (TILE_HEIGHT + 1) + VERTICAL_PADDING + TILE_PADDING));
     robot.clickOn(showHideGridButtonOnTheToolbox, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
