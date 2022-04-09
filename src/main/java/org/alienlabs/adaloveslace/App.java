@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
-import static org.alienlabs.adaloveslace.view.CanvasWithOptionalDotGrid.RADIUS;
 import static org.alienlabs.adaloveslace.view.ToolboxWindow.TILE_HEIGHT;
 import static org.alienlabs.adaloveslace.view.ToolboxWindow.TILE_PADDING;
 
@@ -36,6 +35,7 @@ public class App extends Application {
 
   public static final double MAIN_WINDOW_Y      = 10d;
   private static final double MAIN_WINDOW_X     = 50d;
+  private static final double RADIUS            = 2.5d;// The dots from the grid are ellipses, this is their radius
 
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 

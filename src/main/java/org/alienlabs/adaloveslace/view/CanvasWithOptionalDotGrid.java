@@ -22,7 +22,7 @@ import java.io.IOException;
 public class CanvasWithOptionalDotGrid extends Pane {
 
   public static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
-  public static double RADIUS           = 2.5d;// The dots are ellipses, this is their radius
+  private static final double RADIUS    = 2.5d; // The dots are ellipses, this is their radius
   double CANVAS_WIDTH                   = 1200d;
   double CANVAS_HEIGHT                  = 700d;
   static final double TOP_MARGIN        = 30d;
@@ -33,6 +33,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
   private final SimpleBooleanProperty   showHideGridProperty;
   private SimpleObjectProperty<Pattern> currentPatternProperty;
   private boolean showHideGrid          = true;
+  private double radius;
 
   private final Canvas canvas           = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT); // We draw the dots on the grid using a Canvas
   private final GraphicsContext graphicsContext2D;
@@ -55,6 +56,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
    */
   public CanvasWithOptionalDotGrid(Diagram diagram) {
     this.diagram    = new Diagram(diagram);
+    this.radius     = RADIUS;
 
     // TODO: display an error message if there is no pattern in the toolbox
     if (!this.diagram.getPatterns().isEmpty()) {
@@ -78,7 +80,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
     this(diagram);
     CANVAS_WIDTH = width;
     CANVAS_HEIGHT = height;
-    RADIUS = radius;
+    this.radius = radius;
   }
 
   @Override
@@ -140,7 +142,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
     for (double x = 40d; x < (w - 40d); x += SPACING_X) {
       for (double y = 40d; y < (h - 20d); y += SPACING_Y) {
         double offsetY = (y % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
-        this.graphicsContext2D.fillOval(x - RADIUS + offsetY,y - RADIUS,RADIUS + RADIUS,RADIUS + RADIUS); // A dot
+        this.graphicsContext2D.fillOval(x - this.radius + offsetY,y - this.radius,this.radius * 2,this.radius * 2); // A dot
       }
     }
   }
