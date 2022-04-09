@@ -160,6 +160,9 @@ public class CanvasWithOptionalDotGrid extends Pane {
     return this.currentPatternProperty;
   }
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    value = "EI_EXPOSE_REP",
+    justification = "A JavaFX property is meant to be modified from the outside")
   public SimpleBooleanProperty isShowHideGridProperty() {
     return this.showHideGridProperty;
   }

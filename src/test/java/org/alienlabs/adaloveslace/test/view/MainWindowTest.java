@@ -1,28 +1,20 @@
 package org.alienlabs.adaloveslace.test.view;
 
-import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.test.AppTestParent;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testfx.api.FxAssert;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
 import org.testfx.robot.Motion;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
 import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
@@ -35,23 +27,12 @@ class MainWindowTest extends AppTestParent {
   public static final long    WHITE_PIXEL_Y               = 90l;
   public static final double  SNOWFLAKE_PIXEL_X           = 75d;
   public static final long    SNOWFLAKE_PIXEL_Y           = 90l;
-  public static final double  GRAY_PIXEL_X                = 78d;
-  public static final long    GRAY_PIXEL_Y                = 92l;
   public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xedededff");
-  public static final Color   SNOWFLAKE_DOT_COLOR         = Color.valueOf("0xcececeff");
   public static final int FILE_MENU_ENTRY_INDEX           = 0;
   public static final int SHOW_HIDE_GRID_MENU_ITEM_INDEX  = 0;
   public static final int QUIT_MENU_ITEM_INDEX            = 2;
 
   private Stage primaryStage;
-  private Color foundColorOnGrid;
-
-  /**
-   * Countdown latch
-   */
-  private CountDownLatch lock = new CountDownLatch(1);
-
-  private static final Logger logger = LoggerFactory.getLogger(MainWindowTest.class);
 
   /**
    * Init method called before each test
@@ -161,34 +142,6 @@ class MainWindowTest extends AppTestParent {
     // All we can say is that if we click on the grid, the pixel is neither white (= empty) nor blue (= snowflake)
     assertFalse(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
     assertFalse(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid));
-  }
-
-  // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
-  // have access to the UI thread for the copy without "Platform.runLater()"
-  private Color getColor(Canvas canvas, Point2D pointToMoveTo) {
-    lock = new CountDownLatch(1);
-    copyCanvas(canvas, pointToMoveTo);
-
-    try {
-      lock.await(5_000, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
-
-    return this.foundColorOnGrid;
-  }
-
-  private void copyCanvas(Canvas canvas, Point2D pointToMoveTo) {
-    Platform.runLater(() -> {
-      Image snapshot = canvas.snapshot(null, null);
-      logger.info("Snapshot done!");
-
-      PixelReader pr = snapshot.getPixelReader();
-      MainWindowTest.this.foundColorOnGrid = pr.getColor(Double.valueOf(pointToMoveTo.getX()).intValue(), Double.valueOf(pointToMoveTo.getY()).intValue());
-      logger.info("# argb: {}", MainWindowTest.this.foundColorOnGrid);
-
-      lock.countDown();
-    });
   }
 
   // Click on the snowflake in the toolbox to select it

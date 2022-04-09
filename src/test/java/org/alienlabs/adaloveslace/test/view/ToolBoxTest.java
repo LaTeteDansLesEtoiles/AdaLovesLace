@@ -1,18 +1,25 @@
 package org.alienlabs.adaloveslace.test.view;
 
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.test.AppTestParent;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
+import org.testfx.matcher.base.ColorMatchers;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.matcher.control.LabeledMatchers;
+import org.testfx.robot.Motion;
 
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
 import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ToolBoxTest extends AppTestParent {
 
@@ -69,6 +76,68 @@ class ToolBoxTest extends AppTestParent {
   @Test
   void should_contain_quit_button_with_text(FxRobot robot) {
     FxAssert.verifyThat(QUIT_APP, NodeMatchers.isVisible());
+  }
+
+  /**
+   * Checks if we are able to hide the dot grid: a canvas pixel should be white, then.
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void testHideGrid(FxRobot robot) {
+    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
+    switchGrid(robot);
+
+    // Move mouse and get the color of the pixel under the pointer
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + GRAY_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + GRAY_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + GRAY_PIXEL_X, canvas.getLayoutY() + GRAY_PIXEL_Y);
+    robot.moveTo(pointToMoveTo);
+
+    foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
+    // All we can say is that if we click on the empty canvas, then the pixel is white
+    assertTrue(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
+  }
+
+  /**
+   * Checks if we are able to hide the dot grid (a canvas pixel should be white, then)
+   * and to display it again (a canvas pixel should not be white, then).
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void testHideAndShowAgainGrid(FxRobot robot) {
+    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
+    // Hide the dot grid
+    switchGrid(robot);
+
+    // Move mouse and get the color of the pixel under the pointer
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + GRAY_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + GRAY_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + GRAY_PIXEL_X, canvas.getLayoutY() + GRAY_PIXEL_Y);
+    robot.moveTo(pointToMoveTo);
+
+    foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
+    // All we can say is that if we click on the empty canvas, the pixel is white
+    assertTrue(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
+
+    // Show the dot grid again
+    switchGrid(robot);
+
+    // Move mouse and get the color of the pixel under the pointer
+    pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + GRAY_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + GRAY_PIXEL_Y);
+    pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + GRAY_PIXEL_X, canvas.getLayoutY() + GRAY_PIXEL_Y);
+    robot.moveTo(pointToMoveTo);
+
+    foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
+    // All we can say is that if we click on the grid, then the pixel is not white
+    assertFalse(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
+  }
+
+  // Click on "show / hide dot grid" button in the toolbox
+  private void switchGrid(FxRobot robot) {
+    Node button = robot.lookup(SHOW_HIDE_GRID_BUTTON_NAME).query();
+    Point2D showHideGridButtonOnTheToolbox = new Point2D(app.getToolboxStage().getX() + button.getLayoutX() + 50d,
+      app.getToolboxStage().getY() + button.getLayoutY() + 150d);
+    robot.clickOn(showHideGridButtonOnTheToolbox, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
 }
