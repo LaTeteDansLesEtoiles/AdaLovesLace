@@ -63,11 +63,21 @@ When creating a branch, if you wish to set tracking information for this branch 
 
 - When upgrading Jenkins Docker container:
 
-  docker exec -u root -it jenkins-alienlabs bash
-  apt-get update
-  apt-get install libgtk3.0-cil libgtk3.0-cil-dev libgtk-3-0 libgtk-3-bin libgtk-3-dev vim git xvfb
+    docker exec -u root -it jenkins-alienlabs bash
+    apt-get update
+    apt-get install libgtk3.0-cil libgtk3.0-cil-dev libgtk-3-0 libgtk-3-bin libgtk-3-dev vim git xvfb
 
-- Jenkins logs? docker logs -f jenkins-alienlabs
+- Jenkins logs? 
+
+    docker logs -f jenkins-alienlabs
+
+- Jenkins container update:
+
+    docker pull jenkins/jenkins:lts 
+    docker container rm jenkins-alienlabs.old
+    docker container rename jenkins-alienlabs jenkins-alienlabs.old
+    docker network create jenkins
+    docker run --name jenkins-alienlabs --detach --network jenkins --env DOCKER_HOST=tcp://docker:2376 --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=0 --publish 8780:8780 --publish 50800:50800 --volume /home/change_myuser/docker/jenkins-data:/var/jenkins_home jenkins/jenkins:lts
 
 - Does Jenkins fail with java.lang.IllegalArgumentException: Invalid refspec refs/heads/** Error ?
 
