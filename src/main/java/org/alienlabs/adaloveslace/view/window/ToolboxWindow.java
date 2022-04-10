@@ -128,7 +128,7 @@ public class ToolboxWindow {
     patternsPane.getChildren().add(buttonsPane);
 
     Scene toolboxScene = new Scene(patternsPane, TOOLBOX_WINDOW_WIDTH,
-      this.classpathResourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + (VERTICAL_PADDING * 3) + VERTICAL_GAP_BETWEEN_BUTTONS);
+      this.classpathResourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING * 3 + VERTICAL_GAP_BETWEEN_BUTTONS);
 
     toolboxStage.setTitle(TOOLBOX_TITLE);
     toolboxStage.setX(TOOLBOX_WINDOW_X);
