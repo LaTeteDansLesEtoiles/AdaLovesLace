@@ -2,11 +2,7 @@ package org.alienlabs.adaloveslace.view;
 
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -14,26 +10,41 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
 
+  public final MenuBar menuBar;
+  private CanvasWithOptionalDotGrid canvasWithOptionalDotGrid;
+
   public static final String MOUSE_CLICKED = "MOUSE_CLICKED";
 
-  private DotGrid dotGrid;
   private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
-  public void createMenuBar(GridPane root) {
-    MenuBar menuBar = new MenuBar();
+  public MainWindow() {
+    menuBar = new MenuBar();
+  }
+
+  public void createMenuBar(GridPane root, App app) {
     Menu menu = new Menu("File");
-    MenuItem menuItem = new MenuItem("Quit");
-    menuItem.setOnAction(actionEvent -> onQuitAction());
-    menuItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
-    menu.getItems().addAll(menuItem);
+
+    MenuItem showHideGridItem = new MenuItem(SHOW_HIDE_GRID_BUTTON_NAME);
+    showHideGridItem.setOnAction(actionEvent -> ShowHideGridButton.showHideGrid(app));
+    showHideGridItem.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
+
+    SeparatorMenuItem separator = new SeparatorMenuItem();
+
+    MenuItem quitItem = new MenuItem(QUIT_APP);
+    quitItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
+    quitItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
+
+    menu.getItems().addAll(showHideGridItem, separator, quitItem);
     menuBar.getMenus().addAll(menu);
     VBox vBox = new VBox(menuBar); //Gives vertical box
     root.getChildren().addAll(vBox);
@@ -57,39 +68,45 @@ public class MainWindow {
     return root;
   }
 
-  public StackPane createGrid() {
-    this.dotGrid = new DotGrid();
-    StackPane grid = new StackPane(this.dotGrid);
+  public StackPane createGrid(final double width, final double height, final double radius, final Diagram diagram) {
+    if (width == 0d || height == 0d) {
+      this.canvasWithOptionalDotGrid = new CanvasWithOptionalDotGrid(diagram);
+    } else {
+      this.canvasWithOptionalDotGrid = new CanvasWithOptionalDotGrid(width, height, radius, diagram);
+    }
+
+    StackPane grid = new StackPane(this.canvasWithOptionalDotGrid);
     grid.setAlignment(Pos.TOP_LEFT);
     return grid;
   }
 
-  public void onMainWindowClicked(final GridPane root, final ToolboxWindow toolboxWindow) {
+  public void onMainWindowClicked(final GridPane root) {
     root.setOnMouseClicked(event -> {
       String eType = event.getEventType().toString();
       logger.info("Event type -> {}", eType);
 
       if (eType.equals(MOUSE_CLICKED)) {
-        double x          = event.getX();
-        double y          = event.getY();
-        double yMinusTop  = y - DotGrid.TOP;
+        double x                = event.getX();
+        double y                = event.getY();
+        double yMinusTop        = y - CanvasWithOptionalDotGrid.TOP_MARGIN;
 
-        logger.info("Coordinate X -> {}",                 x);
-        logger.info("Coordinate Y -> {}, Y - TOP -> {}",  y, yMinusTop);
+        logger.info("Coordinate X     -> {}",                 x);
+        logger.info("Coordinate Y     -> {}, Y - TOP -> {}",  y, yMinusTop);
 
-        try (FileInputStream fis = new FileInputStream(toolboxWindow.getAllPatterns().get(1))) {
-          this.dotGrid.getCanvas().getGraphicsContext2D().drawImage(
-            new Image(fis), x, yMinusTop);
-        } catch (IOException e) {
-          logger.error("Problem with resource file!", e);
-        }
+        canvasWithOptionalDotGrid.addKnot(x, yMinusTop);
       }
     });
   }
 
-  private void onQuitAction() {
-    logger.info("Exiting app");
-    System.exit(0);
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    value = "EI_EXPOSE_REP",
+    justification = "Copying a CanvasWithOptionalDotGrid, which is a stage, would mean working with another window")
+  public CanvasWithOptionalDotGrid getCanvasWithOptionalDotGrid() {
+    return this.canvasWithOptionalDotGrid;
+  }
+
+  public MenuBar getMenuBar() {
+    return this.menuBar;
   }
 
 }

@@ -18,6 +18,11 @@
   <dependencies>
     <dependency>
       <groupId>org.openjfx</groupId>
+      <artifactId>javafx-base</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
       <version>${javafx.version}</version>
     </dependency>
@@ -30,7 +35,23 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.2.10</version>
+      <version>1.2.11</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>1.2.11</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.36</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+      <version>4.6.0</version>
     </dependency>
 
     <dependency>
@@ -51,6 +72,13 @@
       <version>${testfx.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
+      <version>2.2</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
@@ -60,6 +88,8 @@
   </dependencies>
 
   <build>
+    <finalName>adaloveslace</finalName>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -90,26 +120,38 @@
               <goal>package</goal>
             </goals>
             <configuration>
+              <name>adaloveslace</name>
               <mainClass>org.alienlabs.adaloveslace.App</mainClass>
               <generateInstaller>true</generateInstaller>
               <administratorRequired>false</administratorRequired>
-              <bundleJre>true</bundleJre>
-              <customizedJre>false</customizedJre>
+              <bundleJre>false</bundleJre>
+              <customizedJre>true</customizedJre>
               <organizationName>AlienLabs</organizationName>
-              <assetsDir>${basedir}/target/classes/assets</assetsDir>
-              <!--<modules>
-                <module></module>
-              </modules>-->
+              <organizationEmail>goupilpierre@gmail.com</organizationEmail>
+              <assetsDir>${basedir}/src/main/resources/assets</assetsDir>
+              <outputDirectory>${project.build.directory}/artifacts</outputDirectory>
               <winConfig>
                 <headerType>console</headerType>
+                <setupLanguages>
+                  <french>compiler:Languages\French.isl</french>
+                  <english>compiler:Languages\English.isl</english>
+                </setupLanguages>
               </winConfig>
               <vmArgs>
-                <vmArg>--module-path libs\javafx-controls-${java.version}.jar;libs\javafx-graphics-${java.version}.jar</vmArg>
-                <vmArg>--add-modules javafx.controls,javafx.graphics</vmArg>
+                <vmArg>--module-path libs</vmArg>
+                <vmArg>--add-modules javafx.base,javafx.controls,javafx.graphics</vmArg>
               </vmArgs>
               <additionalResources>
                 <additionalResource>${basedir}/target/classes/org/</additionalResource>
+                <additionalResource>${basedir}/target/classes/assets/</additionalResource>
               </additionalResources>
+              <fileAssociations>
+                <fileAssociation>
+                  <description>Ada Loves Lace file</description>
+                  <extension>lace</extension>
+                  <mimeType>application/lace</mimeType>
+                </fileAssociation>
+              </fileAssociations>
             </configuration>
           </execution>
         </executions>
@@ -127,6 +169,7 @@
           </additionalClasspathElements>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
@@ -171,6 +214,11 @@
 
   <reporting>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>3.1.1</version>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>

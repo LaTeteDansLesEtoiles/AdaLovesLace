@@ -1,11 +1,16 @@
 package org.alienlabs.adaloveslace.view;
 
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
+import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,48 +23,148 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.alienlabs.adaloveslace.App.TOOLBOX_BUTTON;
-import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
+import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.util.FileUtil.HOME_DIRECTORY_RESOURCES_PATH;
+import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class ToolboxWindow {
 
-  private final List<String> allPatterns = new ArrayList<>();
+  private List<String> classpathResourceFiles;
+
+  public static final double TOOLBOX_WINDOW_X             = 750d;
+  public static final double TOOLBOX_WINDOW_WIDTH         = 200d;
+  public static final double TILE_HEIGHT                  = 50d;
+  public static final double TILE_PADDING                 = 15d;
+  public static final double VERTICAL_PADDING             = 50d;
+  public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
 
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
 
-  public void createToolboxPane(TilePane toolboxPane, String resourcesPath, Object app) {
-    List<String> resourceFiles = FileUtil.getResources(app, Pattern.compile(resourcesPath));
-    Collections.sort(resourceFiles);
+  public Diagram createToolboxPane(TilePane toolboxPane, Object classpathBase, String resourcesPath, App app, final Diagram diagram) {
+    this.classpathResourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
+    List<String> homeDirectoryResourceFiles;
 
-    for (int i = 0; i < resourceFiles.size(); i++) {
-      String filename = resourceFiles.get(i);
-      Button button;
+    if (classpathBase.equals(app)) {
+      File homeDirectoryResourcesPath = new File(System.getProperty("user.home") + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
+      if (!homeDirectoryResourcesPath.exists() || !homeDirectoryResourcesPath.canWrite()) {
+        showNoPatternDirectoryDialog(homeDirectoryResourcesPath);
+      } else {
+        homeDirectoryResourceFiles = loadPatternsFolderResourcesFiles(HOME_DIRECTORY_RESOURCES_PATH,
+          homeDirectoryResourcesPath);
 
-      try (FileInputStream fis = new FileInputStream(filename)) {
-        String name = new File(filename).getName();
-        button = new Button(name, new ImageView(new Image(fis)));
-        button.setId(TOOLBOX_BUTTON + (i + 1));
-
-        toolboxPane.getChildren().addAll(button);
-
-        this.allPatterns.add(filename);
-      } catch (IOException e) {
-        logger.error("Exception reading toolbox file!", e);
+        if (homeDirectoryResourceFiles == null || homeDirectoryResourceFiles.isEmpty()) {
+          showEmptyPatternDirectoryDialog(homeDirectoryResourcesPath);
+        } else {
+          this.classpathResourceFiles.addAll(homeDirectoryResourceFiles);
+        }
       }
     }
+
+    for (int i = 0; i < this.classpathResourceFiles.size(); i++) {
+      String filename = this.classpathResourceFiles.get(i);
+      File file = new File(filename);
+
+      if (file.exists()) {
+        String label = file.getName();
+
+        try (FileInputStream fis = new FileInputStream(filename)) {
+          org.alienlabs.adaloveslace.business.model.Pattern pattern = new org.alienlabs.adaloveslace.business.model.Pattern(filename);
+
+          if (i == 0) {
+            diagram.setCurrentPattern(pattern);
+          }
+
+          Button button = new PatternButton(app, label, new ImageView(new Image(fis)), pattern);
+          button.setId(TOOLBOX_BUTTON + (i + 1));
+          toolboxPane.getChildren().addAll(button);
+
+          diagram.addPattern(pattern);
+        } catch (IOException e) {
+          logger.error("Exception reading toolbox file!", e);
+        }
+      }
+    }
+
+    return diagram;
   }
 
-  public void createToolboxStage(Stage toolboxStage, TilePane toolboxPane) {
-    Scene toolboxScene = new Scene(toolboxPane, 150, 400);
+  /**
+   * Gets sorted (by String's default sort) Pattern list resources from classpath.
+   *
+   * @param resourcesPath the classpath resource pattern to load
+   * @param classpathBase the main app, needed for tests
+   * @return the sorted Pattern list from classpath, by name
+   */
+  public List<String> loadPatternsResourcesFiles(String resourcesPath, Object classpathBase) {
+    List<String> resourceFiles = new FileUtil().getResources(classpathBase, Pattern.compile(resourcesPath));
+    Collections.sort(resourceFiles);
+
+    return resourceFiles;
+  }
+
+  /**
+   * Gets sorted (by String's default sort) Pattern list resources from folder.
+   *
+   * @param resourcesPath the folder resource pattern to load
+   * @param classpathBase the main app, needed for tests
+   * @return the sorted Pattern list from folder, by name
+   */
+  public List<String> loadPatternsFolderResourcesFiles(String resourcesPath, File classpathBase) {
+    List<String> resourceFiles = new FileUtil().getDirectoryResources(classpathBase, Pattern.compile(resourcesPath));
+    Collections.sort(resourceFiles);
+
+    return resourceFiles;
+  }
+
+  public void createToolboxStage(Stage toolboxStage, TilePane showHideGridPanePane, TilePane toolboxPane) {
+    Scene toolboxScene = new Scene(toolboxPane, TOOLBOX_WINDOW_WIDTH,
+      this.classpathResourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING + VERTICAL_GAP_BETWEEN_BUTTONS);
+
     toolboxStage.setTitle(TOOLBOX_TITLE);
-    toolboxStage.setX(1400d);
-    toolboxStage.setY(175d);
+    toolboxStage.setX(TOOLBOX_WINDOW_X);
+    toolboxStage.setY(MAIN_WINDOW_Y);
     toolboxStage.setScene(toolboxScene);
     toolboxStage.show();
+
+    toolboxPane.getChildren().addAll(showHideGridPanePane);
   }
 
-  public List<String> getAllPatterns() {
-    return this.allPatterns;
+  public TilePane createShowHideGridAndQuitButtons(App app) {
+    TilePane showHideGridPanePane  = new TilePane(Orientation.HORIZONTAL);
+    showHideGridPanePane.setAlignment(Pos.CENTER);
+    showHideGridPanePane.setPrefColumns(1);
+    showHideGridPanePane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
+
+    ShowHideGridButton showHideGridButton = new ShowHideGridButton(SHOW_HIDE_GRID_BUTTON_NAME, app);
+    showHideGridPanePane.getChildren().add(showHideGridButton);
+
+    QuitButton showQuitButton = new QuitButton(QUIT_APP);
+    showHideGridPanePane.getChildren().add(showQuitButton);
+
+    return showHideGridPanePane;
+  }
+
+  private void showNoPatternDirectoryDialog(final File directory) {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setTitle(ADA_LOVES_LACE);
+    alert.setHeaderText(ERROR);
+    alert.setContentText("The following folder: '" + directory.getAbsolutePath() + "' shall be used for storing patterns images and it is either non-existent either non-writable!");
+
+    alert.showAndWait();
+  }
+
+  private void showEmptyPatternDirectoryDialog(final File directory) {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setTitle(ADA_LOVES_LACE);
+    alert.setHeaderText(ERROR);
+    alert.setContentText("The following folder: '" + directory.getAbsolutePath() + "' shall be used for storing patterns images and it is empty!");
+
+    alert.showAndWait();
+  }
+
+  public List<String> getClasspathResourceFiles() {
+    return new ArrayList<>(this.classpathResourceFiles);
   }
 
 }
