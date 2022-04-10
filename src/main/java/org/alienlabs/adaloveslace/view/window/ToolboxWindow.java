@@ -35,8 +35,6 @@ import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButto
 
 public class ToolboxWindow {
 
-  private List<String> classpathResourceFiles;
-
   public static final double TOOLBOX_WINDOW_X             = 750d;
   public static final double TOOLBOX_WINDOW_WIDTH         = 200d;
   public static final double TILE_HEIGHT                  = 50d;
@@ -44,6 +42,8 @@ public class ToolboxWindow {
   public static final double VERTICAL_PADDING             = 50d;
   public static final double VERTICAL_BUTTONS_PADDING     = 30d;
   public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
+
+  private List<String> classpathResourceFiles;
 
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
 
