@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MainWindowTest extends AppTestParent {
 
   public static final double  WHITE_PIXEL_X               = 90d;
-  public static final long    WHITE_PIXEL_Y               = 90l;
+  public static final long    WHITE_PIXEL_Y               = 130l;
   public static final double  SNOWFLAKE_PIXEL_X           = 75d;
   public static final long    SNOWFLAKE_PIXEL_Y           = 90l;
   public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xedededff");
