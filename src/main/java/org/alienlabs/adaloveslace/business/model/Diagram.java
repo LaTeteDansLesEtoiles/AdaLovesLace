@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace.business.model;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,8 @@ public class Diagram {
 
   private final List<Pattern> patterns;
   private final List<Knot>    knots;
+
+  @XmlTransient
   private Pattern currentPattern;
 
   public Diagram() {

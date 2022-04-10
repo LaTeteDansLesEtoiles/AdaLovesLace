@@ -2,7 +2,7 @@ package org.alienlabs.adaloveslace.business.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 
 /**
@@ -16,7 +16,7 @@ import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
  * @see ToolboxWindow#loadPatternsResourcesFiles
  *
  * */
-@XmlRootElement(name = "Pattern")
+@XmlType(name = "Pattern")
 @XmlAccessorType(XmlAccessType.FIELD)
 public record Pattern(String filename) {
 

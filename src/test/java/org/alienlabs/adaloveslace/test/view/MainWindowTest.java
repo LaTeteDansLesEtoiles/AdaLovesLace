@@ -18,8 +18,10 @@ import org.testfx.robot.Motion;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
 import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.LOAD_FILE;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.SAVE_FILE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MainWindowTest extends AppTestParent {
@@ -82,7 +84,7 @@ class MainWindowTest extends AppTestParent {
   @Test
   void saveFileMenuItemShallBeDisplayed(FxRobot robot) {
     MenuItem save = getSaveMenuItem(getFileMenu());
-    assertEquals(SAVE_APP, save.getText());
+    assertEquals(SAVE_FILE, save.getText());
   }
 
   /**
@@ -93,7 +95,7 @@ class MainWindowTest extends AppTestParent {
   @Test
   void saveAsMenuItemShallBeDisplayed(FxRobot robot) {
     MenuItem saveAs = getSaveAsMenuItem(getFileMenu());
-    assertEquals(SAVE_AS_APP, saveAs.getText());
+    assertEquals(SAVE_FILE_AS_BUTTON_NAME, saveAs.getText());
   }
 
   /**
@@ -104,7 +106,7 @@ class MainWindowTest extends AppTestParent {
   @Test
   void loadMenuItemShallBeDisplayed(FxRobot robot) {
     MenuItem load = getLoadMenuItem(getFileMenu());
-    assertEquals(LOAD_APP, load.getText());
+    assertEquals(LOAD_FILE, load.getText());
   }
 
   /**

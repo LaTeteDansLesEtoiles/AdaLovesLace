@@ -14,11 +14,13 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.view.component.CanvasWithOptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.QuitButton;
+import org.alienlabs.adaloveslace.view.component.button.SaveAsButton;
 import org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
@@ -26,9 +28,8 @@ public class MainWindow {
   public final MenuBar menuBar;
   private CanvasWithOptionalDotGrid canvasWithOptionalDotGrid;
 
-  public static final String SAVE_APP       = "Save";
-  public static final String SAVE_AS_APP    = "Save as";
-  public static final String LOAD_APP       = "Load";
+  public static final String SAVE_FILE      = "Save";
+  public static final String LOAD_FILE      = "Load";
 
   public static final String MOUSE_CLICKED  = "MOUSE_CLICKED";
 
@@ -46,15 +47,15 @@ public class MainWindow {
     showHideGridItem.setOnAction(actionEvent -> ShowHideGridButton.showHideGrid(app));
     showHideGridItem.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
 
-    MenuItem saveItem = new MenuItem(SAVE_APP);
+    MenuItem saveItem = new MenuItem(SAVE_FILE);
     saveItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
     saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
 
-    MenuItem saveAsItem = new MenuItem(SAVE_AS_APP);
-    saveAsItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
+    MenuItem saveAsItem = new MenuItem(SAVE_FILE_AS_BUTTON_NAME);
+    saveAsItem.setOnAction(actionEvent -> SaveAsButton.onSaveAsAction(app, root));
     saveAsItem.setAccelerator(new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN));
 
-    MenuItem loadItem = new MenuItem(LOAD_APP);
+    MenuItem loadItem = new MenuItem(LOAD_FILE);
     loadItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
     loadItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
 

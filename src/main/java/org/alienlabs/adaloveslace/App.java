@@ -36,7 +36,7 @@ public class App extends Application {
   public static final String PATTERNS_DIRECTORY_NAME  = "patterns";
   public static final String ERROR                    = "Error!";
 
-  public static final double MAIN_WINDOW_Y            = 10d;
+  public static final double  MAIN_WINDOW_Y           = 10d;
   private static final double MAIN_WINDOW_X           = 50d;
   private static final double RADIUS                  = 2.5d;// The dots from the grid are ellipses, this is their radius
 
@@ -81,17 +81,18 @@ public class App extends Application {
   public ToolboxWindow showToolboxWindow(App app, Object classpathBase, String resourcesPath) {
     this.toolboxStage     = new Stage(StageStyle.DECORATED);
 
-    TilePane toolboxPane  = new TilePane(Orientation.HORIZONTAL);
-    toolboxPane.setVgap(TILE_PADDING);
-    toolboxPane.setPrefColumns(1);
-    toolboxPane.setPrefTileHeight(TILE_HEIGHT);
-    toolboxPane.setAlignment(Pos.TOP_CENTER);
+    TilePane patternsPane  = new TilePane(Orientation.HORIZONTAL);
+    patternsPane.setVgap(TILE_PADDING);
+    patternsPane.setPrefColumns(1);
+    patternsPane.setPrefTileHeight(TILE_HEIGHT);
+    patternsPane.setAlignment(Pos.TOP_CENTER);
+
 
     ToolboxWindow toolboxWindow = new ToolboxWindow();
-    this.diagram = toolboxWindow.createToolboxPane(toolboxPane, classpathBase, resourcesPath, app, this.diagram);
-    TilePane showHideGridPanePane = toolboxWindow.createShowHideGridAndQuitButtons(app);
+    this.diagram = toolboxWindow.createToolboxPane(patternsPane, classpathBase, resourcesPath, app, this.diagram);
+    TilePane buttonsPane = toolboxWindow.createToolboxButtons(app);
 
-    toolboxWindow.createToolboxStage(this.toolboxStage, showHideGridPanePane, toolboxPane);
+    toolboxWindow.createToolboxStage(this.toolboxStage, buttonsPane, patternsPane);
     return toolboxWindow;
   }
 
@@ -104,6 +105,10 @@ public class App extends Application {
     justification = "Copying a toolbox stage would mean working with another window")
   public Stage getToolboxStage() {
     return this.toolboxStage;
+  }
+
+  public Diagram getDiagram() {
+    return new Diagram(this.getCanvasWithOptionalDotGrid().getDiagram());
   }
 
   public void setDiagram(Diagram diagram) {

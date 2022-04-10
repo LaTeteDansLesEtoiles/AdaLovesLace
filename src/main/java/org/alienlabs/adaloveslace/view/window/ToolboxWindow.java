@@ -14,6 +14,7 @@ import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.view.component.button.PatternButton;
 import org.alienlabs.adaloveslace.view.component.button.QuitButton;
+import org.alienlabs.adaloveslace.view.component.button.SaveAsButton;
 import org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ import java.util.regex.Pattern;
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.HOME_DIRECTORY_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class ToolboxWindow {
@@ -40,6 +42,7 @@ public class ToolboxWindow {
   public static final double TILE_HEIGHT                  = 50d;
   public static final double TILE_PADDING                 = 15d;
   public static final double VERTICAL_PADDING             = 50d;
+  public static final double VERTICAL_BUTTONS_PADDING     = 30d;
   public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
 
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
@@ -80,7 +83,7 @@ public class ToolboxWindow {
 
           Button button = new PatternButton(app, label, new ImageView(new Image(fis)), pattern);
           button.setId(TOOLBOX_BUTTON + (i + 1));
-          toolboxPane.getChildren().addAll(button);
+          toolboxPane.getChildren().add(button);
 
           diagram.addPattern(pattern);
         } catch (IOException e) {
@@ -120,32 +123,37 @@ public class ToolboxWindow {
     return resourceFiles;
   }
 
-  public void createToolboxStage(Stage toolboxStage, TilePane showHideGridPanePane, TilePane toolboxPane) {
-    Scene toolboxScene = new Scene(toolboxPane, TOOLBOX_WINDOW_WIDTH,
-      this.classpathResourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING + VERTICAL_GAP_BETWEEN_BUTTONS);
+  public void createToolboxStage(Stage toolboxStage, TilePane buttonsPane, TilePane patternsPane) {
+    buttonsPane.setTranslateY(VERTICAL_BUTTONS_PADDING);
+    patternsPane.getChildren().add(buttonsPane);
+
+    Scene toolboxScene = new Scene(patternsPane, TOOLBOX_WINDOW_WIDTH,
+      this.classpathResourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + (VERTICAL_PADDING * 3) + VERTICAL_GAP_BETWEEN_BUTTONS);
 
     toolboxStage.setTitle(TOOLBOX_TITLE);
     toolboxStage.setX(TOOLBOX_WINDOW_X);
     toolboxStage.setY(MAIN_WINDOW_Y);
     toolboxStage.setScene(toolboxScene);
     toolboxStage.show();
-
-    toolboxPane.getChildren().addAll(showHideGridPanePane);
   }
 
-  public TilePane createShowHideGridAndQuitButtons(App app) {
-    TilePane showHideGridPanePane  = new TilePane(Orientation.HORIZONTAL);
-    showHideGridPanePane.setAlignment(Pos.CENTER);
-    showHideGridPanePane.setPrefColumns(1);
-    showHideGridPanePane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
+  public TilePane createToolboxButtons(App app) {
+    TilePane buttonsPane  = new TilePane(Orientation.HORIZONTAL);
+    buttonsPane.setAlignment(Pos.BOTTOM_CENTER);
+    buttonsPane.setPrefColumns(1);
+    buttonsPane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
+
+    SaveAsButton saveAsButton = new SaveAsButton(app, buttonsPane, SAVE_FILE_AS_BUTTON_NAME);
+    buttonsPane.getChildren().add(saveAsButton);
 
     ShowHideGridButton showHideGridButton = new ShowHideGridButton(SHOW_HIDE_GRID_BUTTON_NAME, app);
-    showHideGridPanePane.getChildren().add(showHideGridButton);
+    buttonsPane.getChildren().add(showHideGridButton);
 
     QuitButton showQuitButton = new QuitButton(QUIT_APP);
-    showHideGridPanePane.getChildren().add(showQuitButton);
+    showQuitButton.setTranslateY(VERTICAL_BUTTONS_PADDING);
+    buttonsPane.getChildren().add(showQuitButton);
 
-    return showHideGridPanePane;
+    return buttonsPane;
   }
 
   private void showNoPatternDirectoryDialog(final File directory) {

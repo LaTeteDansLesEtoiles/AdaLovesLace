@@ -6,6 +6,8 @@ module org.alienlabs.adaloveslace.impl {
   requires jakarta.xml.bind;
 
   opens org.alienlabs.adaloveslace to javafx.graphics, javafx.controls;
+  opens org.alienlabs.adaloveslace.business.model to jakarta.xml.bind;
+
   exports org.alienlabs.adaloveslace;
   exports org.alienlabs.adaloveslace.business.model to org.alienlabs.adaloveslace.test;
   exports org.alienlabs.adaloveslace.util;
