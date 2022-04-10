@@ -16,8 +16,7 @@ import org.testfx.matcher.control.LabeledMatchers;
 import org.testfx.robot.Motion;
 
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
-import static org.alienlabs.adaloveslace.test.view.MainWindowTest.WHITE_PIXEL_X;
-import static org.alienlabs.adaloveslace.test.view.MainWindowTest.WHITE_PIXEL_Y;
+import static org.alienlabs.adaloveslace.test.view.MainWindowTest.*;
 import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.*;
@@ -114,10 +113,11 @@ class ToolBoxTest extends AppTestParent {
 
     // Move mouse and get the color of the pixel under the pointer
     Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + (canvas.getLayoutX() / 2d) +  WHITE_PIXEL_X, this.primaryStage.getY() + (canvas.getLayoutY() / 2d) + WHITE_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D((canvas.getLayoutX() / 2d) + WHITE_PIXEL_X, (canvas.getLayoutY() / 2d) + WHITE_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D((canvas.getLayoutX() / 2d) + WHITE_PIXEL_X, (canvas.getLayoutY() / 2d) + NO_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
     foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
+
     // All we can say is that if we click on the empty canvas, the pixel is white
     assertTrue(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
 
