@@ -7,7 +7,9 @@ module org.alienlabs.adaloveslace.impl {
 
   opens org.alienlabs.adaloveslace to javafx.graphics, javafx.controls;
   exports org.alienlabs.adaloveslace;
-  exports org.alienlabs.adaloveslace.view;
   exports org.alienlabs.adaloveslace.business.model to org.alienlabs.adaloveslace.test;
   exports org.alienlabs.adaloveslace.util;
+  exports org.alienlabs.adaloveslace.view.window;
+  exports org.alienlabs.adaloveslace.view.component;
+  exports org.alienlabs.adaloveslace.view.component.button;
 }

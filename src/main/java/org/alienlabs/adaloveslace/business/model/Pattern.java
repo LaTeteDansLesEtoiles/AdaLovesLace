@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace.business.model;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 
 /**
  * An image, or at least the one represented by a Pattern filename, which can be put at will on a Canvas and chosen
@@ -12,7 +13,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  *
  * @see org.alienlabs.adaloveslace.util.FileUtil#CLASSPATH_RESOURCES_PATH
  * <p>
- * @see org.alienlabs.adaloveslace.view.ToolboxWindow#loadPatternsResourcesFiles
+ * @see ToolboxWindow#loadPatternsResourcesFiles
  *
  * */
 @XmlRootElement(name = "Pattern")

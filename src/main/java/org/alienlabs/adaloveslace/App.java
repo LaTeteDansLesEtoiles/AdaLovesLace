@@ -11,15 +11,15 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.SystemInfo;
-import org.alienlabs.adaloveslace.view.CanvasWithOptionalDotGrid;
-import org.alienlabs.adaloveslace.view.MainWindow;
-import org.alienlabs.adaloveslace.view.ToolboxWindow;
+import org.alienlabs.adaloveslace.view.component.CanvasWithOptionalDotGrid;
+import org.alienlabs.adaloveslace.view.window.MainWindow;
+import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
-import static org.alienlabs.adaloveslace.view.ToolboxWindow.TILE_HEIGHT;
-import static org.alienlabs.adaloveslace.view.ToolboxWindow.TILE_PADDING;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.TILE_HEIGHT;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.TILE_PADDING;
 
 /**
  * JavaFX App

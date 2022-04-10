@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view;
+package org.alienlabs.adaloveslace.view.component.button;
 
 import javafx.scene.Node;
 import javafx.scene.control.Button;

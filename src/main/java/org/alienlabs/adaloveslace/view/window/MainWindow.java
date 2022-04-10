@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view;
+package org.alienlabs.adaloveslace.view.window;
 
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -12,11 +12,14 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.view.component.CanvasWithOptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.button.QuitButton;
+import org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
-import static org.alienlabs.adaloveslace.view.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
 

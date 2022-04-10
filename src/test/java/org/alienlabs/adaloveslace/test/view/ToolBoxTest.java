@@ -18,9 +18,9 @@ import org.testfx.robot.Motion;
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
 import static org.alienlabs.adaloveslace.test.view.MainWindowTest.WHITE_PIXEL_X;
 import static org.alienlabs.adaloveslace.test.view.MainWindowTest.WHITE_PIXEL_Y;
-import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
-import static org.alienlabs.adaloveslace.view.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.ToolboxWindow.*;
+import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ToolBoxTest extends AppTestParent {
