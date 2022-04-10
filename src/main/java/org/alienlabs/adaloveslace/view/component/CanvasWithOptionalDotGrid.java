@@ -25,7 +25,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
   private static final double RADIUS    = 2.5d; // The dots are ellipses, this is their radius
   double CANVAS_WIDTH                   = 1200d;
   double CANVAS_HEIGHT                  = 700d;
-  public static final double TOP_MARGIN        = 30d;
+  public static final double TOP_MARGIN = 10d;
 
   private static final double SPACING_X = 25d; // The X space between the dots
   private static final double SPACING_Y = 10d; // The Y space between the dots

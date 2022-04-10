@@ -27,7 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class MainWindowTest extends AppTestParent {
 
   public static final double  WHITE_PIXEL_X               = 90d;
-  public static final long    WHITE_PIXEL_Y               = 130l;
+  public static final long    WHITE_PIXEL_Y               = 60l;
+  public static final long    NO_PIXEL_Y                  = 70l;
   public static final double  SNOWFLAKE_PIXEL_X           = 75d;
   public static final long    SNOWFLAKE_PIXEL_Y           = 90l;
   public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xedededff");
@@ -154,12 +155,12 @@ class MainWindowTest extends AppTestParent {
    * @param robot The injected FxRobot
    */
   @Test
-  void testClickOutsideOfTheGrid(FxRobot robot) {
+  void testClickOutsideOfAGridDot(FxRobot robot) {
     Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
 
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + WHITE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + WHITE_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + WHITE_PIXEL_X, canvas.getLayoutY() + WHITE_PIXEL_Y);
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + WHITE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + NO_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + WHITE_PIXEL_X, canvas.getLayoutY() + NO_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
     foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
