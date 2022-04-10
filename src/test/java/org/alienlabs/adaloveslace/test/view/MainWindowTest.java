@@ -17,6 +17,7 @@ import org.testfx.matcher.base.ColorMatchers;
 import org.testfx.robot.Motion;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
+import static org.alienlabs.adaloveslace.view.MainWindow.*;
 import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,9 +29,16 @@ class MainWindowTest extends AppTestParent {
   public static final double  SNOWFLAKE_PIXEL_X           = 75d;
   public static final long    SNOWFLAKE_PIXEL_Y           = 90l;
   public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xedededff");
+
   public static final int FILE_MENU_ENTRY_INDEX           = 0;
+  public static final int TOOL_MENU_ENTRY_INDEX           = 1;
+
   public static final int SHOW_HIDE_GRID_MENU_ITEM_INDEX  = 0;
-  public static final int QUIT_MENU_ITEM_INDEX            = 2;
+
+  public static final int SAVE_MENU_ITEM_INDEX            = 0;
+  public static final int SAVE_AS_MENU_ITEM_INDEX         = 1;
+  public static final int LOAD_MENU_ITEM_INDEX            = 2;
+  public static final int QUIT_MENU_ITEM_INDEX            = 4;
 
   private Stage primaryStage;
 
@@ -62,8 +70,41 @@ class MainWindowTest extends AppTestParent {
    */
   @Test
   void showHideGridAppMenuItemShallBeDisplayed(FxRobot robot) {
-    MenuItem showHideGrid = getShowHideGridMenuItem(getFileMenu());
+    MenuItem showHideGrid = getShowHideGridMenuItem(getToolMenu());
     assertEquals(SHOW_HIDE_GRID_BUTTON_NAME, showHideGrid.getText());
+  }
+
+  /**
+   * Checks if the menubar contains a "save file" button
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void saveFileMenuItemShallBeDisplayed(FxRobot robot) {
+    MenuItem save = getSaveMenuItem(getFileMenu());
+    assertEquals(SAVE_APP, save.getText());
+  }
+
+  /**
+   * Checks if the menubar contains a "save file as" button
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void saveAsMenuItemShallBeDisplayed(FxRobot robot) {
+    MenuItem saveAs = getSaveAsMenuItem(getFileMenu());
+    assertEquals(SAVE_AS_APP, saveAs.getText());
+  }
+
+  /**
+   * Checks if the menubar contains a "load file" button
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void loadMenuItemShallBeDisplayed(FxRobot robot) {
+    MenuItem load = getLoadMenuItem(getFileMenu());
+    assertEquals(LOAD_APP, load.getText());
   }
 
   /**
@@ -172,8 +213,24 @@ class MainWindowTest extends AppTestParent {
     return super.app.getMainWindow().getMenuBar().getMenus().get(FILE_MENU_ENTRY_INDEX);
   }
 
+  private Menu getToolMenu() {
+    return super.app.getMainWindow().getMenuBar().getMenus().get(TOOL_MENU_ENTRY_INDEX);
+  }
+
   private MenuItem getShowHideGridMenuItem(Menu menu) {
     return menu.getItems().get(SHOW_HIDE_GRID_MENU_ITEM_INDEX);
+  }
+
+  private MenuItem getSaveMenuItem(Menu menu) {
+    return menu.getItems().get(SAVE_MENU_ITEM_INDEX);
+  }
+
+  private MenuItem getSaveAsMenuItem(Menu menu) {
+    return menu.getItems().get(SAVE_AS_MENU_ITEM_INDEX);
+  }
+
+  private MenuItem getLoadMenuItem(Menu menu) {
+    return menu.getItems().get(LOAD_MENU_ITEM_INDEX);
   }
 
   private MenuItem getQuitMenuItem(Menu menu) {

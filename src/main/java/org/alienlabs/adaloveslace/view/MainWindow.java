@@ -23,20 +23,37 @@ public class MainWindow {
   public final MenuBar menuBar;
   private CanvasWithOptionalDotGrid canvasWithOptionalDotGrid;
 
-  public static final String MOUSE_CLICKED = "MOUSE_CLICKED";
+  public static final String SAVE_APP       = "Save";
+  public static final String SAVE_AS_APP    = "Save as";
+  public static final String LOAD_APP       = "Load";
 
-  private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
+  public static final String MOUSE_CLICKED  = "MOUSE_CLICKED";
+
+  private static final Logger logger        = LoggerFactory.getLogger(MainWindow.class);
 
   public MainWindow() {
     menuBar = new MenuBar();
   }
 
   public void createMenuBar(GridPane root, App app) {
-    Menu menu = new Menu("File");
+    Menu fileMenu = new Menu("File");
+    Menu toolMenu = new Menu("Tool");
 
     MenuItem showHideGridItem = new MenuItem(SHOW_HIDE_GRID_BUTTON_NAME);
     showHideGridItem.setOnAction(actionEvent -> ShowHideGridButton.showHideGrid(app));
     showHideGridItem.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
+
+    MenuItem saveItem = new MenuItem(SAVE_APP);
+    saveItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
+    saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
+
+    MenuItem saveAsItem = new MenuItem(SAVE_AS_APP);
+    saveAsItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
+    saveAsItem.setAccelerator(new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN));
+
+    MenuItem loadItem = new MenuItem(LOAD_APP);
+    loadItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
+    loadItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
 
     SeparatorMenuItem separator = new SeparatorMenuItem();
 
@@ -44,8 +61,11 @@ public class MainWindow {
     quitItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
     quitItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
 
-    menu.getItems().addAll(showHideGridItem, separator, quitItem);
-    menuBar.getMenus().addAll(menu);
+    fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, separator, quitItem);
+    toolMenu.getItems().addAll(showHideGridItem);
+
+    menuBar.getMenus().addAll(fileMenu, toolMenu);
+
     VBox vBox = new VBox(menuBar); //Gives vertical box
     root.getChildren().addAll(vBox);
   }

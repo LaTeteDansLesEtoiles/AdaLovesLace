@@ -1,5 +1,9 @@
 package org.alienlabs.adaloveslace.business.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -10,6 +14,8 @@ import java.util.UUID;
  * @see javafx.scene.canvas.Canvas
  *
   */
+@XmlRootElement(name = "Knot")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Knot {
 
   // Two coinciding Knots can be different
