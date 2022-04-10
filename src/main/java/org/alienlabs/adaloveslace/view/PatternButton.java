@@ -27,7 +27,11 @@ public class PatternButton extends Button {
   }
 
   private static String cleanButtonLabel(String buttonLabel) {
-    return buttonLabel.replaceAll(".jpg", "");
+    return buttonLabel.replaceAll(".png", "").replaceAll(".jpg", "")
+      .replaceAll(".gif", "").replaceAll("bmp", "")
+      .replaceAll(".jpeg", "").replaceAll(".PNG", "")
+      .replaceAll(".JPG", "").replaceAll(".GIF", "")
+      .replaceAll(".BMP","").replaceAll(".JPEG", "");
   }
 
   public Pattern getPattern() {

@@ -137,7 +137,7 @@ class ToolBoxTest extends AppTestParent {
   // Click on "show / hide dot grid" button in the toolbox
   private void switchGrid(FxRobot robot) {
     Point2D showHideGridButtonOnTheToolbox = new Point2D(app.getToolboxStage().getX() + TOOLBOX_WINDOW_WIDTH / 2d,
-      app.getToolboxStage().getY() + (this.toolboxWindow.getResourceFiles().size() * TILE_HEIGHT + VERTICAL_PADDING));
+      app.getToolboxStage().getY() + (this.toolboxWindow.getClasspathResourceFiles().size() * TILE_HEIGHT + VERTICAL_PADDING));
     robot.clickOn(showHideGridButtonOnTheToolbox, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
