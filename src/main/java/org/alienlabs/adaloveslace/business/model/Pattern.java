@@ -18,12 +18,24 @@ import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
  * */
 @XmlType(name = "Pattern")
 @XmlAccessorType(XmlAccessType.FIELD)
-public record Pattern(String filename) {
+public class Pattern {
 
-  public Pattern {
-    if (null == filename || "".equals(filename.trim())) {
-      throw new IllegalArgumentException("Bad filename for a Pattern: \"" + filename + "\"");
-    }
+  private String filename;
+
+  public Pattern(String filename) {
+    this.filename = filename;
+  }
+
+  public Pattern() {
+    this(null);
+  }
+
+  public String getFilename() {
+    return this.filename;
+  }
+
+  public void setFilename(String filename) {
+    this.filename = filename;
   }
 
 }
