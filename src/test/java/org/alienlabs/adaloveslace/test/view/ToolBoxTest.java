@@ -36,7 +36,7 @@ class ToolBoxTest extends AppTestParent {
 
   @Test
   void testShowToolboxWindow() {
-    assertEquals(TOOLBOX_TITLE, super.app.getToolboxStage().getTitle());
+    assertEquals(TOOLBOX_TITLE, this.app.getToolboxStage().getTitle());
   }
 
   /**
@@ -86,7 +86,7 @@ class ToolBoxTest extends AppTestParent {
    */
   @Test
   void testHideGrid(FxRobot robot) {
-    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
+    Canvas canvas = this.app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
     switchGrid(robot);
 
     // Move mouse and get the color of the pixel under the pointer
@@ -107,7 +107,7 @@ class ToolBoxTest extends AppTestParent {
    */
   @Test
   void testHideAndShowAgainGrid(FxRobot robot) {
-    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
+    Canvas canvas = this.app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
     // Hide the dot grid
     switchGrid(robot);
 
@@ -136,8 +136,8 @@ class ToolBoxTest extends AppTestParent {
 
   // Click on "show / hide dot grid" button in the toolbox
   private void switchGrid(FxRobot robot) {
-    Point2D showHideGridButtonOnTheToolbox = new Point2D(app.getToolboxStage().getX() + TOOLBOX_WINDOW_WIDTH / 2d,
-      app.getToolboxStage().getY() +
+    Point2D showHideGridButtonOnTheToolbox = new Point2D(this.app.getToolboxStage().getX() + TOOLBOX_WINDOW_WIDTH / 2d,
+      this.app.getToolboxStage().getY() +
         (this.toolboxWindow.getClasspathResourceFiles().size() * TILE_HEIGHT + (VERTICAL_PADDING * 2)));
     robot.clickOn(showHideGridButtonOnTheToolbox, Motion.DEFAULT, MouseButton.PRIMARY);
   }

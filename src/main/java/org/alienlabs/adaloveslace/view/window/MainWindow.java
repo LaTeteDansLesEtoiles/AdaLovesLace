@@ -33,6 +33,8 @@ public class MainWindow {
 
   public static final String MOUSE_CLICKED  = "MOUSE_CLICKED";
 
+  public static final KeyCodeCombination SAVE_AS_KEY_COMBINATION = new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN);
+
   private static final Logger logger        = LoggerFactory.getLogger(MainWindow.class);
 
   public MainWindow() {
@@ -53,7 +55,7 @@ public class MainWindow {
 
     MenuItem saveAsItem = new MenuItem(SAVE_FILE_AS_BUTTON_NAME);
     saveAsItem.setOnAction(actionEvent -> SaveAsButton.onSaveAsAction(app, root));
-    saveAsItem.setAccelerator(new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN));
+    saveAsItem.setAccelerator(SAVE_AS_KEY_COMBINATION);
 
     MenuItem loadItem = new MenuItem(LOAD_FILE);
     loadItem.setOnAction(actionEvent -> QuitButton.onQuitAction());

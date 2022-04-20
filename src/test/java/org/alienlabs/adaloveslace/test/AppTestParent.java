@@ -43,7 +43,6 @@ public class AppTestParent {
   public static final long    NOT_WHITE_PIXEL_Y   = 82l;
   public static final Color   SNOWFLAKE_DOT_COLOR = Color.valueOf("0xcececeff");
 
-
   public Color foundColorOnGrid;
 
   /**

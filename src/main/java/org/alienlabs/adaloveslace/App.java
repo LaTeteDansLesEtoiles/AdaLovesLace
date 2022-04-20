@@ -58,7 +58,7 @@ public class App extends Application {
   }
 
   public void showMainWindow(double windowWidth, double windowHeight, double canvasWidth, double canvasHeight, double radius, Stage primaryStage) {
-    mainWindow = new MainWindow();
+    this.mainWindow = new MainWindow();
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
@@ -66,7 +66,7 @@ public class App extends Application {
     TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
     StackPane grid            = mainWindow.createGrid(canvasWidth, canvasHeight, radius, this.diagram);
     GridPane root             = mainWindow.createGridPane(grid, footer);
-    mainWindow.onMainWindowClicked(root);
+    this.mainWindow.onMainWindowClicked(root);
 
     var scene                 = new Scene(root, windowWidth, windowHeight);
     primaryStage.setScene(scene);
@@ -74,7 +74,7 @@ public class App extends Application {
     primaryStage.setY(MAIN_WINDOW_Y);
     primaryStage.setTitle(MAIN_WINDOW_TITLE);
 
-    mainWindow.createMenuBar(root, this);
+    this.mainWindow.createMenuBar(root, this);
     primaryStage.show();
   }
 

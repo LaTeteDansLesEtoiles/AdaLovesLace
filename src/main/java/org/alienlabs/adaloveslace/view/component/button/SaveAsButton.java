@@ -37,7 +37,7 @@ public class SaveAsButton extends Button {
     FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(DIAGRAM_FILES, DIAGRAM_FILE_FILTER);
     saveAs.getExtensionFilters().add(filter);
 
-    File file = saveAs.showSaveDialog(root.getParent().getScene().getWindow());
+    File file = saveAs.showSaveDialog(root.getScene().getWindow());
 
     if (file != null) {
       try {

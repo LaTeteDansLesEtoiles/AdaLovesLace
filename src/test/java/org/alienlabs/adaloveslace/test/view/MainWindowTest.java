@@ -14,14 +14,15 @@ import org.testfx.api.FxAssert;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
+import org.testfx.matcher.base.WindowMatchers;
 import org.testfx.robot.Motion;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
 import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_DIALOG_TITLE;
 import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.window.MainWindow.LOAD_FILE;
-import static org.alienlabs.adaloveslace.view.window.MainWindow.SAVE_FILE;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MainWindowTest extends AppTestParent {
@@ -122,6 +123,18 @@ class MainWindowTest extends AppTestParent {
   }
 
   /**
+   * Checks if the "save as" menu entry displays "save as" dialog
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void saveAsDialogShallBeDisplayed(FxRobot robot) {
+    MenuItem saveAs = getSaveAsMenuItem(getFileMenu());
+    robot.push(SAVE_AS_KEY_COMBINATION);
+    FxAssert.verifyThat(robot.window(SAVE_FILE_DIALOG_TITLE), WindowMatchers.isShowing());
+  }
+
+  /**
    * Checks if we are able to draw a snowflake (the second pattern) on the canvas
    *
    * @param robot The injected FxRobot
@@ -205,19 +218,19 @@ class MainWindowTest extends AppTestParent {
   }
 
   private String getMainWindowTitle() {
-    return super.primaryStage.getTitle();
+    return this.primaryStage.getTitle();
   }
 
   private boolean isMainWindowDisplayed() {
-    return super.primaryStage.getScene().getWindow().isShowing();
+    return this.primaryStage.getScene().getWindow().isShowing();
   }
 
   private Menu getFileMenu() {
-    return super.app.getMainWindow().getMenuBar().getMenus().get(FILE_MENU_ENTRY_INDEX);
+    return this.app.getMainWindow().getMenuBar().getMenus().get(FILE_MENU_ENTRY_INDEX);
   }
 
   private Menu getToolMenu() {
-    return super.app.getMainWindow().getMenuBar().getMenus().get(TOOL_MENU_ENTRY_INDEX);
+    return this.app.getMainWindow().getMenuBar().getMenus().get(TOOL_MENU_ENTRY_INDEX);
   }
 
   private MenuItem getShowHideGridMenuItem(Menu menu) {
