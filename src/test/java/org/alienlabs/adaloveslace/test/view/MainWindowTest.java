@@ -14,15 +14,14 @@ import org.testfx.api.FxAssert;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
-import org.testfx.matcher.base.WindowMatchers;
 import org.testfx.robot.Motion;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
 import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_DIALOG_TITLE;
 import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.LOAD_FILE;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.SAVE_FILE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MainWindowTest extends AppTestParent {
@@ -120,18 +119,6 @@ class MainWindowTest extends AppTestParent {
   void quitAppMenuItemShallBeDisplayed(FxRobot robot) {
     MenuItem quit = getQuitMenuItem(getFileMenu());
     assertEquals(QUIT_APP, quit.getText());
-  }
-
-  /**
-   * Checks if the "save as" menu entry displays "save as" dialog
-   *
-   * @param robot The injected FxRobot
-   */
-  @Test
-  void saveAsDialogShallBeDisplayed(FxRobot robot) {
-    MenuItem saveAs = getSaveAsMenuItem(getFileMenu());
-    robot.push(SAVE_AS_KEY_COMBINATION);
-    FxAssert.verifyThat(robot.window(SAVE_FILE_DIALOG_TITLE), WindowMatchers.isShowing());
   }
 
   /**
