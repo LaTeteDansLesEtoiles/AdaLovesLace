@@ -25,6 +25,10 @@ public class Knot {
   private double y;
   private Pattern pattern;
 
+  public Knot() {
+    this.uuid = UUID.randomUUID();
+  }
+
   public Knot(final double x, final double y, final Pattern pattern) {
     this.uuid = UUID.randomUUID();
     this.x = x;
@@ -61,7 +65,7 @@ public class Knot {
   }
 
   public boolean coincide(Knot other) {
-    return this.x == other.x && this.y == other.y && this.pattern.filename().equals(other.getPattern().filename());
+    return this.x == other.x && this.y == other.y && this.pattern.getFilename().equals(other.getPattern().getFilename());
   }
 
   @Override
