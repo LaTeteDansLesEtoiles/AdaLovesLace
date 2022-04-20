@@ -108,11 +108,11 @@ public class App extends Application {
   }
 
   public Diagram getDiagram() {
-    return new Diagram(this.getCanvasWithOptionalDotGrid().getDiagram());
+    return this.getCanvasWithOptionalDotGrid().getDiagram();
   }
 
   public void setDiagram(Diagram diagram) {
-    this.diagram = new Diagram(diagram);
+    this.diagram = diagram;
   }
 
   public CanvasWithOptionalDotGrid getCanvasWithOptionalDotGrid() {

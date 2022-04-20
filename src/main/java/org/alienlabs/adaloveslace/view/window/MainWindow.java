@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.view.component.CanvasWithOptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.button.LoadButton;
 import org.alienlabs.adaloveslace.view.component.button.QuitButton;
 import org.alienlabs.adaloveslace.view.component.button.SaveAsButton;
 import org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton;
@@ -58,7 +59,7 @@ public class MainWindow {
     saveAsItem.setAccelerator(SAVE_AS_KEY_COMBINATION);
 
     MenuItem loadItem = new MenuItem(LOAD_FILE);
-    loadItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
+    loadItem.setOnAction(actionEvent -> LoadButton.onLoadAction(app, root));
     loadItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
 
     SeparatorMenuItem separator = new SeparatorMenuItem();

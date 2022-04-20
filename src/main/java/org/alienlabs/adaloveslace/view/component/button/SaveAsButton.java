@@ -44,7 +44,7 @@ public class SaveAsButton extends Button {
         JAXBContext context = JAXBContext.newInstance(Diagram.class);
         Marshaller jaxbMarshaller = context.createMarshaller();
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        jaxbMarshaller.marshal(app.getDiagram(), file);
+        jaxbMarshaller.marshal(app.getCanvasWithOptionalDotGrid().getDiagram(), file);
       } catch (JAXBException e) {
         logger.error("Error marshalling save as file: " + file.getAbsolutePath(), e);
       }
