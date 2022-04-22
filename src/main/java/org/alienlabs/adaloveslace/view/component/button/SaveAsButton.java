@@ -8,10 +8,13 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.util.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+
+import static org.alienlabs.adaloveslace.util.Preferences.XML_FILE_SAVE_PATH;
 
 public class SaveAsButton extends Button {
 
@@ -32,7 +35,16 @@ public class SaveAsButton extends Button {
 
     FileChooser saveAs = new FileChooser();
     saveAs.setTitle(SAVE_FILE_DIALOG_TITLE);
-    saveAs.setInitialDirectory(new File(System.getProperty("user.home")));
+
+    Preferences preferences = new Preferences();
+    File xmlFilePath = preferences.getPathWithFileValue(XML_FILE_SAVE_PATH);
+    if (xmlFilePath == null) {
+      File userHome = new File(System.getProperty("user.home"));
+      saveAs.setInitialDirectory(userHome);
+      preferences.setPathWithFileValue(userHome, XML_FILE_SAVE_PATH);
+    } else {
+      saveAs.setInitialDirectory(xmlFilePath);
+    }
 
     FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(DIAGRAM_FILES, DIAGRAM_FILE_FILTER);
     saveAs.getExtensionFilters().add(filter);
@@ -40,6 +52,8 @@ public class SaveAsButton extends Button {
     File file = saveAs.showSaveDialog(root.getScene().getWindow());
 
     if (file != null) {
+      preferences.setPathWithFileValue(file.getParentFile(), XML_FILE_SAVE_PATH);
+
       try {
         JAXBContext context = JAXBContext.newInstance(Diagram.class);
         Marshaller jaxbMarshaller = context.createMarshaller();
