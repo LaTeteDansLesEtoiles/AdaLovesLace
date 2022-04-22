@@ -14,7 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-import static org.alienlabs.adaloveslace.util.Preferences.XML_FILE_SAVE_PATH;
+import static org.alienlabs.adaloveslace.util.Preferences.SAVED_XML_FILE;
+import static org.alienlabs.adaloveslace.util.Preferences.XML_FILE_FOLDER_SAVE_PATH;
 
 public class SaveAsButton extends Button {
 
@@ -37,11 +38,11 @@ public class SaveAsButton extends Button {
     saveAs.setTitle(SAVE_FILE_DIALOG_TITLE);
 
     Preferences preferences = new Preferences();
-    File xmlFilePath = preferences.getPathWithFileValue(XML_FILE_SAVE_PATH);
+    File xmlFilePath = preferences.getPathWithFileValue(XML_FILE_FOLDER_SAVE_PATH);
     if (xmlFilePath == null) {
       File userHome = new File(System.getProperty("user.home"));
       saveAs.setInitialDirectory(userHome);
-      preferences.setPathWithFileValue(userHome, XML_FILE_SAVE_PATH);
+      preferences.setPathWithFileValue(userHome, XML_FILE_FOLDER_SAVE_PATH);
     } else {
       saveAs.setInitialDirectory(xmlFilePath);
     }
@@ -52,7 +53,8 @@ public class SaveAsButton extends Button {
     File file = saveAs.showSaveDialog(root.getScene().getWindow());
 
     if (file != null) {
-      preferences.setPathWithFileValue(file.getParentFile(), XML_FILE_SAVE_PATH);
+      preferences.setPathWithFileValue(file,                  SAVED_XML_FILE);
+      preferences.setPathWithFileValue(file.getParentFile(),  XML_FILE_FOLDER_SAVE_PATH);
 
       try {
         JAXBContext context = JAXBContext.newInstance(Diagram.class);

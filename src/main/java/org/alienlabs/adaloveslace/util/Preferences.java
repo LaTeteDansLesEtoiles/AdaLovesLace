@@ -7,7 +7,11 @@ import java.io.File;
 
 public class Preferences {
 
-  public static final String XML_FILE_SAVE_PATH = "XML_FILE_SAVE_PATH";
+  /** In which folder is the XML file saved? */
+  public static final String XML_FILE_FOLDER_SAVE_PATH = "XML_FILE_FOLDER_SAVE_PATH";
+
+  /** What is File path of the saved XML file? */
+  public static final String SAVED_XML_FILE = "SAVED_XML_FILE";
 
   public Preferences() {
     // Nothing special to do here as it is just a utility class
