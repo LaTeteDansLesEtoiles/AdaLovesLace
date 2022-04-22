@@ -90,8 +90,10 @@ class ToolBoxTest extends AppTestParent {
     switchGrid(robot);
 
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + (canvas.getLayoutX() /2d) + GRAY_PIXEL_X, this.primaryStage.getY() + (canvas.getLayoutY() / 2d) + GRAY_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D((canvas.getLayoutX() / 2d) + GRAY_PIXEL_X, (canvas.getLayoutY() / 2d) + GRAY_PIXEL_Y);
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + (canvas.getLayoutX() /2d) + GRAY_PIXEL_X,
+      this.primaryStage.getY() + (canvas.getLayoutY() / 2d) + GRAY_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D((canvas.getLayoutX() / 2d) + GRAY_PIXEL_X,
+      (canvas.getLayoutY() / 2d) + GRAY_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
     foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
@@ -125,8 +127,10 @@ class ToolBoxTest extends AppTestParent {
     switchGrid(robot);
 
     // Move mouse and get the color of the pixel under the pointer
-    pointToMoveTo = new Point2D(this.primaryStage.getX() + (canvas.getLayoutX() / 2d) + WHITE_PIXEL_X, this.primaryStage.getY() + (canvas.getLayoutY() / 2d) + WHITE_PIXEL_Y);
-    pointToMoveToInCanvas = new Point2D((canvas.getLayoutX() / 2d) + WHITE_PIXEL_X, (canvas.getLayoutY() / 2d) + WHITE_PIXEL_Y);
+    pointToMoveTo = new Point2D(this.primaryStage.getX() + (canvas.getLayoutX() / 2d) + WHITE_PIXEL_X,
+      this.primaryStage.getY() + (canvas.getLayoutY() / 2d) + WHITE_PIXEL_Y);
+    pointToMoveToInCanvas = new Point2D((canvas.getLayoutX() / 2d) + WHITE_PIXEL_X,
+      (canvas.getLayoutY() / 2d) + WHITE_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
     foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
@@ -138,7 +142,7 @@ class ToolBoxTest extends AppTestParent {
   private void switchGrid(FxRobot robot) {
     Point2D showHideGridButtonOnTheToolbox = new Point2D(this.app.getToolboxStage().getX() + TOOLBOX_WINDOW_WIDTH / 2d,
       this.app.getToolboxStage().getY() +
-        (this.toolboxWindow.getClasspathResourceFiles().size() * TILE_HEIGHT + (VERTICAL_PADDING * 2)));
+        (this.toolboxWindow.getClasspathResourceFiles().size() * TILE_HEIGHT + (VERTICAL_PADDING * 2d)) + 25d);
     robot.clickOn(showHideGridButtonOnTheToolbox, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
