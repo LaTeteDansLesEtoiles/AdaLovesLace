@@ -17,20 +17,31 @@ import org.testfx.matcher.base.ColorMatchers;
 import org.testfx.robot.Motion;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
-import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
-import static org.alienlabs.adaloveslace.view.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.LOAD_FILE;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.SAVE_FILE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MainWindowTest extends AppTestParent {
 
   public static final double  WHITE_PIXEL_X               = 90d;
-  public static final long    WHITE_PIXEL_Y               = 90l;
+  public static final long    WHITE_PIXEL_Y               = 60l;
+  public static final long    NO_PIXEL_Y                  = 70l;
   public static final double  SNOWFLAKE_PIXEL_X           = 75d;
   public static final long    SNOWFLAKE_PIXEL_Y           = 90l;
   public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xedededff");
+
   public static final int FILE_MENU_ENTRY_INDEX           = 0;
+  public static final int TOOL_MENU_ENTRY_INDEX           = 1;
+
   public static final int SHOW_HIDE_GRID_MENU_ITEM_INDEX  = 0;
-  public static final int QUIT_MENU_ITEM_INDEX            = 2;
+
+  public static final int SAVE_MENU_ITEM_INDEX            = 0;
+  public static final int SAVE_AS_MENU_ITEM_INDEX         = 1;
+  public static final int LOAD_MENU_ITEM_INDEX            = 2;
+  public static final int QUIT_MENU_ITEM_INDEX            = 4;
 
   private Stage primaryStage;
 
@@ -62,8 +73,41 @@ class MainWindowTest extends AppTestParent {
    */
   @Test
   void showHideGridAppMenuItemShallBeDisplayed(FxRobot robot) {
-    MenuItem showHideGrid = getShowHideGridMenuItem(getFileMenu());
+    MenuItem showHideGrid = getShowHideGridMenuItem(getToolMenu());
     assertEquals(SHOW_HIDE_GRID_BUTTON_NAME, showHideGrid.getText());
+  }
+
+  /**
+   * Checks if the menubar contains a "save file" button
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void saveFileMenuItemShallBeDisplayed(FxRobot robot) {
+    MenuItem save = getSaveMenuItem(getFileMenu());
+    assertEquals(SAVE_FILE, save.getText());
+  }
+
+  /**
+   * Checks if the menubar contains a "save file as" button
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void saveAsMenuItemShallBeDisplayed(FxRobot robot) {
+    MenuItem saveAs = getSaveAsMenuItem(getFileMenu());
+    assertEquals(SAVE_FILE_AS_BUTTON_NAME, saveAs.getText());
+  }
+
+  /**
+   * Checks if the menubar contains a "load file" button
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void loadMenuItemShallBeDisplayed(FxRobot robot) {
+    MenuItem load = getLoadMenuItem(getFileMenu());
+    assertEquals(LOAD_FILE, load.getText());
   }
 
   /**
@@ -111,12 +155,12 @@ class MainWindowTest extends AppTestParent {
    * @param robot The injected FxRobot
    */
   @Test
-  void testClickOutsideOfTheGrid(FxRobot robot) {
+  void testClickOutsideOfAGridDot(FxRobot robot) {
     Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
 
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + WHITE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + WHITE_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + WHITE_PIXEL_X, canvas.getLayoutY() + WHITE_PIXEL_Y);
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + WHITE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + NO_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + WHITE_PIXEL_X, canvas.getLayoutY() + NO_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
     foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
@@ -161,19 +205,35 @@ class MainWindowTest extends AppTestParent {
   }
 
   private String getMainWindowTitle() {
-    return super.primaryStage.getTitle();
+    return this.primaryStage.getTitle();
   }
 
   private boolean isMainWindowDisplayed() {
-    return super.primaryStage.getScene().getWindow().isShowing();
+    return this.primaryStage.getScene().getWindow().isShowing();
   }
 
   private Menu getFileMenu() {
-    return super.app.getMainWindow().getMenuBar().getMenus().get(FILE_MENU_ENTRY_INDEX);
+    return this.app.getMainWindow().getMenuBar().getMenus().get(FILE_MENU_ENTRY_INDEX);
+  }
+
+  private Menu getToolMenu() {
+    return this.app.getMainWindow().getMenuBar().getMenus().get(TOOL_MENU_ENTRY_INDEX);
   }
 
   private MenuItem getShowHideGridMenuItem(Menu menu) {
     return menu.getItems().get(SHOW_HIDE_GRID_MENU_ITEM_INDEX);
+  }
+
+  private MenuItem getSaveMenuItem(Menu menu) {
+    return menu.getItems().get(SAVE_MENU_ITEM_INDEX);
+  }
+
+  private MenuItem getSaveAsMenuItem(Menu menu) {
+    return menu.getItems().get(SAVE_AS_MENU_ITEM_INDEX);
+  }
+
+  private MenuItem getLoadMenuItem(Menu menu) {
+    return menu.getItems().get(LOAD_MENU_ITEM_INDEX);
   }
 
   private MenuItem getQuitMenuItem(Menu menu) {

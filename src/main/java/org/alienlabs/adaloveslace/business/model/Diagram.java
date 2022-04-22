@@ -1,12 +1,28 @@
 package org.alienlabs.adaloveslace.business.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * What is drawn on a Canvas: the Diagram is the desired, final business object consisting of Knots drawn with Patterns.
+ *
+ * @see Pattern
+ * @see Knot
+ *
+ */
+@XmlRootElement(name = "Diagram")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Diagram {
 
   private final List<Pattern> patterns;
   private final List<Knot>    knots;
+
+  @XmlTransient
   private Pattern currentPattern;
 
   public Diagram() {

@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view;
+package org.alienlabs.adaloveslace.view.window;
 
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -12,31 +12,52 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.view.component.CanvasWithOptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.button.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.alienlabs.adaloveslace.view.QuitButton.QUIT_APP;
-import static org.alienlabs.adaloveslace.view.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
 
   public final MenuBar menuBar;
   private CanvasWithOptionalDotGrid canvasWithOptionalDotGrid;
 
-  public static final String MOUSE_CLICKED = "MOUSE_CLICKED";
+  public static final String SAVE_FILE      = "Save";
+  public static final String LOAD_FILE      = "Load";
 
-  private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
+  public static final String MOUSE_CLICKED  = "MOUSE_CLICKED";
+
+  public static final KeyCodeCombination SAVE_AS_KEY_COMBINATION = new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN);
+
+  private static final Logger logger        = LoggerFactory.getLogger(MainWindow.class);
 
   public MainWindow() {
     menuBar = new MenuBar();
   }
 
   public void createMenuBar(GridPane root, App app) {
-    Menu menu = new Menu("File");
+    Menu fileMenu = new Menu("File");
+    Menu toolMenu = new Menu("Tool");
 
     MenuItem showHideGridItem = new MenuItem(SHOW_HIDE_GRID_BUTTON_NAME);
     showHideGridItem.setOnAction(actionEvent -> ShowHideGridButton.showHideGrid(app));
     showHideGridItem.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
+
+    MenuItem saveItem = new MenuItem(SAVE_FILE);
+    saveItem.setOnAction(actionEvent -> SaveButton.onSaveAction(app, root));
+    saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
+
+    MenuItem saveAsItem = new MenuItem(SAVE_FILE_AS_BUTTON_NAME);
+    saveAsItem.setOnAction(actionEvent -> SaveAsButton.onSaveAsAction(app, root));
+    saveAsItem.setAccelerator(SAVE_AS_KEY_COMBINATION);
+
+    MenuItem loadItem = new MenuItem(LOAD_FILE);
+    loadItem.setOnAction(actionEvent -> LoadButton.onLoadAction(app, root));
+    loadItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
 
     SeparatorMenuItem separator = new SeparatorMenuItem();
 
@@ -44,8 +65,11 @@ public class MainWindow {
     quitItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
     quitItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
 
-    menu.getItems().addAll(showHideGridItem, separator, quitItem);
-    menuBar.getMenus().addAll(menu);
+    fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, separator, quitItem);
+    toolMenu.getItems().addAll(showHideGridItem);
+
+    menuBar.getMenus().addAll(fileMenu, toolMenu);
+
     VBox vBox = new VBox(menuBar); //Gives vertical box
     root.getChildren().addAll(vBox);
   }

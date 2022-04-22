@@ -1,5 +1,9 @@
 package org.alienlabs.adaloveslace.business.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -10,6 +14,8 @@ import java.util.UUID;
  * @see javafx.scene.canvas.Canvas
  *
   */
+@XmlType(name = "Knot")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Knot {
 
   // Two coinciding Knots can be different
@@ -18,6 +24,10 @@ public class Knot {
   private double x;
   private double y;
   private Pattern pattern;
+
+  public Knot() {
+    this.uuid = UUID.randomUUID();
+  }
 
   public Knot(final double x, final double y, final Pattern pattern) {
     this.uuid = UUID.randomUUID();
@@ -55,7 +65,7 @@ public class Knot {
   }
 
   public boolean coincide(Knot other) {
-    return this.x == other.x && this.y == other.y && this.pattern.filename().equals(other.getPattern().filename());
+    return this.x == other.x && this.y == other.y && this.pattern.getFilename().equals(other.getPattern().getFilename());
   }
 
   @Override

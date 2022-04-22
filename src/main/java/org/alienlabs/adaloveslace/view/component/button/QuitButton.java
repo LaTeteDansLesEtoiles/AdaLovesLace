@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view;
+package org.alienlabs.adaloveslace.view.component.button;
 
 import javafx.scene.control.Button;
 import org.slf4j.Logger;
@@ -8,7 +8,7 @@ public class QuitButton extends Button {
 
   public static final String QUIT_APP = "Quit";
 
-  private static final Logger logger = LoggerFactory.getLogger(QuitButton.class);
+  private static final Logger logger  = LoggerFactory.getLogger(QuitButton.class);
 
   public QuitButton(String buttonLabel) {
     super(buttonLabel);

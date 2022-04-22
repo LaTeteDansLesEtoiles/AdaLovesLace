@@ -32,6 +32,19 @@
       <version>${javafx.version}</version>
     </dependency>
 
+    <!-- JAXB API v4.0.0 -->
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>4.0.0</version>
+    </dependency>
+    <!-- JAXB v3.0.2 reference implementation (curiously with com.sun coordinates) -->
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>3.0.2</version>
+    </dependency>
+
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>

@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view;
+package org.alienlabs.adaloveslace.view.component;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -25,19 +25,20 @@ public class CanvasWithOptionalDotGrid extends Pane {
   private static final double RADIUS    = 2.5d; // The dots are ellipses, this is their radius
   double CANVAS_WIDTH                   = 1200d;
   double CANVAS_HEIGHT                  = 700d;
-  static final double TOP_MARGIN        = 30d;
+  public static final double TOP_MARGIN = 10d;
 
   private static final double SPACING_X = 25d; // The X space between the dots
   private static final double SPACING_Y = 10d; // The Y space between the dots
 
   private final SimpleBooleanProperty   showHideGridProperty;
   private SimpleObjectProperty<Pattern> currentPatternProperty;
+  private SimpleObjectProperty<Diagram> diagramProperty;
   private boolean showHideGrid          = true;
   private double radius;
 
   private final Canvas canvas           = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT); // We draw the dots on the grid using a Canvas
   private final GraphicsContext graphicsContext2D;
-  private final Diagram diagram;
+  private Diagram diagram;
 
   private double top;
   private double right;
@@ -55,7 +56,12 @@ public class CanvasWithOptionalDotGrid extends Pane {
    *
    */
   public CanvasWithOptionalDotGrid(Diagram diagram) {
-    this.diagram    = new Diagram(diagram);
+    if (diagram == null) {
+      this.diagram = new Diagram();
+    } else {
+      this.diagram = new Diagram(diagram);
+    }
+
     this.radius     = RADIUS;
 
     // TODO: display an error message if there is no pattern in the toolbox
@@ -64,6 +70,8 @@ public class CanvasWithOptionalDotGrid extends Pane {
 
       currentPatternProperty = new SimpleObjectProperty<>(this.diagram.getCurrentPattern());
       currentPatternProperty.addListener(observable -> this.diagram.setCurrentPattern(currentPatternProperty.getValue()));
+      diagramProperty = new SimpleObjectProperty<>(this.diagram);
+      diagramProperty.addListener(observable -> this.setDiagram(diagramProperty.getValue()));
     }
 
     showHideGridProperty = new SimpleBooleanProperty(this.showHideGrid);
@@ -84,7 +92,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
   }
 
   @Override
-  protected void layoutChildren() {
+  public void layoutChildren() {
     initCanvasAndGrid();
     drawDiagram();
   }
@@ -93,7 +101,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
     // If there are knots on the diagram, we must display them at each window refresh
     for (Knot knot : this.diagram.getKnots()) {
 
-      try (FileInputStream fis = new FileInputStream(knot.getPattern().filename())) {
+      try (FileInputStream fis = new FileInputStream(knot.getPattern().getFilename())) {
         Image image = new Image(fis);
         graphicsContext2D.drawImage(image, knot.getX(), knot.getY());
 
@@ -147,11 +155,11 @@ public class CanvasWithOptionalDotGrid extends Pane {
     }
   }
 
-  void addKnot(double x, double y) {
+  public void addKnot(double x, double y) {
     Pattern currentPattern = this.diagram.getCurrentPattern();
     logger.info("Current pattern  -> {}", currentPattern);
 
-    try (FileInputStream fis = new FileInputStream(currentPattern.filename())) {
+    try (FileInputStream fis = new FileInputStream(currentPattern.getFilename())) {
       this.canvas.getGraphicsContext2D().drawImage(new Image(fis), x, y);
       this.diagram.addKnot(new Knot(x, y, currentPattern));
     } catch (IOException e) {
@@ -159,8 +167,29 @@ public class CanvasWithOptionalDotGrid extends Pane {
     }
   }
 
-  SimpleObjectProperty<Pattern> getCurrentPatternProperty() {
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    value = "EI_EXPOSE_REP",
+    justification = "A JavaFX property is meant to be modified from the outside")
+  public SimpleObjectProperty<Pattern> getCurrentPatternProperty() {
     return this.currentPatternProperty;
+  }
+
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    value = "EI_EXPOSE_REP",
+    justification = "A JavaFX property is meant to be modified from the outside")
+  public SimpleObjectProperty<Diagram> getDiagramProperty() {
+    return this.diagramProperty;
+  }
+
+  public Diagram getDiagram() {
+    return new Diagram(this.diagram);
+  }
+
+  /** Use JavaFX property
+   * @see CanvasWithOptionalDotGrid#getDiagramProperty()
+   * */
+  private void setDiagram(Diagram diagram) {
+    this.diagram = new Diagram(diagram);
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
