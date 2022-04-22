@@ -12,10 +12,7 @@ import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
-import org.alienlabs.adaloveslace.view.component.button.PatternButton;
-import org.alienlabs.adaloveslace.view.component.button.QuitButton;
-import org.alienlabs.adaloveslace.view.component.button.SaveAsButton;
-import org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton;
+import org.alienlabs.adaloveslace.view.component.button.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +26,10 @@ import java.util.regex.Pattern;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.HOME_DIRECTORY_RESOURCES_PATH;
+import static org.alienlabs.adaloveslace.view.component.button.LoadButton.LOAD_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.SaveButton.SAVE_FILE_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class ToolboxWindow {
@@ -38,9 +37,9 @@ public class ToolboxWindow {
   public static final double TOOLBOX_WINDOW_X             = 750d;
   public static final double TOOLBOX_WINDOW_WIDTH         = 200d;
   public static final double TILE_HEIGHT                  = 50d;
-  public static final double TILE_PADDING                 = 15d;
-  public static final double VERTICAL_PADDING             = 50d;
-  public static final double VERTICAL_BUTTONS_PADDING     = 30d;
+  public static final double TILE_PADDING                 = 25d;
+  public static final double VERTICAL_PADDING             = 70d;
+  public static final double VERTICAL_BUTTONS_PADDING     = 50d;
   public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
 
   private List<String> classpathResourceFiles;
@@ -143,8 +142,10 @@ public class ToolboxWindow {
     buttonsPane.setPrefColumns(1);
     buttonsPane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
 
-    SaveAsButton saveAsButton = new SaveAsButton(app, buttonsPane, SAVE_FILE_AS_BUTTON_NAME);
-    buttonsPane.getChildren().add(saveAsButton);
+    SaveButton    saveButton      = new SaveButton  (app, buttonsPane, SAVE_FILE_BUTTON_NAME);
+    SaveAsButton  saveAsButton    = new SaveAsButton(app, buttonsPane, SAVE_FILE_AS_BUTTON_NAME);
+    LoadButton    loadButton      = new LoadButton  (app, buttonsPane, LOAD_BUTTON_NAME);
+    buttonsPane.getChildren().addAll(saveButton, saveAsButton, loadButton);
 
     ShowHideGridButton showHideGridButton = new ShowHideGridButton(SHOW_HIDE_GRID_BUTTON_NAME, app);
     buttonsPane.getChildren().add(showHideGridButton);

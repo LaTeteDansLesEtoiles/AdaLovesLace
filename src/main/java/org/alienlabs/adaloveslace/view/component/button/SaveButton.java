@@ -19,6 +19,7 @@ import static org.alienlabs.adaloveslace.util.Preferences.XML_FILE_FOLDER_SAVE_P
 
 public class SaveButton extends Button {
 
+  public static final String SAVE_FILE_BUTTON_NAME    = "Save";
   public static final String SAVE_FILE_DIALOG_TITLE   = "Save diagram as";
   public static final String DIAGRAM_FILES            = "XML files (*.xml)";
   public static final String DIAGRAM_FILE_FILTER      = "*.xml";
