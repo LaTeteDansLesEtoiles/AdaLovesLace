@@ -17,42 +17,48 @@ import java.io.File;
 import static org.alienlabs.adaloveslace.util.Preferences.SAVED_XML_FILE;
 import static org.alienlabs.adaloveslace.util.Preferences.XML_FILE_FOLDER_SAVE_PATH;
 
-public class SaveAsButton extends Button {
+public class SaveButton extends Button {
 
-  public static final String SAVE_FILE_AS_BUTTON_NAME   = "Save as";
-  public static final String SAVE_FILE_AS_DIALOG_TITLE  = "Save diagram as";
-  public static final String DIAGRAM_FILES              = "XML files (*.xml)";
-  public static final String DIAGRAM_FILE_FILTER        = "*.xml";
+  public static final String SAVE_FILE_DIALOG_TITLE   = "Save diagram as";
+  public static final String DIAGRAM_FILES            = "XML files (*.xml)";
+  public static final String DIAGRAM_FILE_FILTER      = "*.xml";
 
-  private static final Logger logger                  = LoggerFactory.getLogger(SaveAsButton.class);
+  private static final Logger logger                  = LoggerFactory.getLogger(SaveButton.class);
 
-  public SaveAsButton(App app, Pane root, String buttonLabel) {
+  public SaveButton(App app, Pane root, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onSaveAsAction(app, root));
+    this.setOnMouseClicked(event -> onSaveAction(app, root));
   }
 
-  public static void onSaveAsAction(App app, Pane root) {
-    logger.info("Saving file as");
+  public static void onSaveAction(App app, Pane root) {
+    logger.info("Saving file");
 
-    FileChooser saveAs = new FileChooser();
-    saveAs.setTitle(SAVE_FILE_AS_DIALOG_TITLE);
+    File file;
 
     Preferences preferences = new Preferences();
-    File xmlFilePath = preferences.getPathWithFileValue(XML_FILE_FOLDER_SAVE_PATH);
-    if (xmlFilePath == null) {
+    File xmlFilePath = preferences.getPathWithFileValue(SAVED_XML_FILE);
+
+    if (xmlFilePath == null || !xmlFilePath.canWrite()) {
+      // Save as anyway, since we don't know where to save
+      FileChooser saveAs = new FileChooser();
+      saveAs.setTitle(SAVE_FILE_DIALOG_TITLE);
+
       File userHome = new File(System.getProperty("user.home"));
       saveAs.setInitialDirectory(userHome);
       preferences.setPathWithFileValue(userHome, XML_FILE_FOLDER_SAVE_PATH);
+
+      FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(DIAGRAM_FILES, DIAGRAM_FILE_FILTER);
+      saveAs.getExtensionFilters().add(filter);
+      saveAs.setInitialDirectory(preferences.getPathWithFileValue(XML_FILE_FOLDER_SAVE_PATH));
+
+      file = saveAs.showSaveDialog(root.getScene().getWindow());
     } else {
-      saveAs.setInitialDirectory(xmlFilePath);
+      // We know where to save
+      file = xmlFilePath;
     }
 
-    FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(DIAGRAM_FILES, DIAGRAM_FILE_FILTER);
-    saveAs.getExtensionFilters().add(filter);
-
-    File file = saveAs.showSaveDialog(root.getScene().getWindow());
-
     if (file != null) {
+      // Save
       preferences.setPathWithFileValue(file,                  SAVED_XML_FILE);
       preferences.setPathWithFileValue(file.getParentFile(),  XML_FILE_FOLDER_SAVE_PATH);
 
@@ -62,7 +68,7 @@ public class SaveAsButton extends Button {
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         jaxbMarshaller.marshal(app.getCanvasWithOptionalDotGrid().getDiagram(), file);
       } catch (JAXBException e) {
-        logger.error("Error marshalling save as file: " + file.getAbsolutePath(), e);
+        logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
       }
     }
   }

@@ -13,10 +13,7 @@ import javafx.scene.layout.VBox;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.view.component.CanvasWithOptionalDotGrid;
-import org.alienlabs.adaloveslace.view.component.button.LoadButton;
-import org.alienlabs.adaloveslace.view.component.button.QuitButton;
-import org.alienlabs.adaloveslace.view.component.button.SaveAsButton;
-import org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton;
+import org.alienlabs.adaloveslace.view.component.button.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +48,7 @@ public class MainWindow {
     showHideGridItem.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
 
     MenuItem saveItem = new MenuItem(SAVE_FILE);
-    saveItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
+    saveItem.setOnAction(actionEvent -> SaveButton.onSaveAction(app, root));
     saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
 
     MenuItem saveAsItem = new MenuItem(SAVE_FILE_AS_BUTTON_NAME);
