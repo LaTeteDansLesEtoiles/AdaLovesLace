@@ -53,6 +53,11 @@ from the project root directory
 
 
 --------------------------------------------------------------------------------------------
+Create a branch:
+
+    git checkout -b 4-undoredoclear
+
+
 When creating a branch, if you wish to set tracking information for this branch you can do so with:
 
     git branch --set-upstream-to=origin/<branch> 1-basicdrawing
