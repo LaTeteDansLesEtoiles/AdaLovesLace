@@ -34,6 +34,8 @@ public class GeometryWindow {
   public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
 
   private static final Logger logger = LoggerFactory.getLogger(GeometryWindow.class);
+  private DrawingButton drawingButton;
+  private SelectionButton selectionButton;
 
   public Diagram createGeometryPane(TilePane geometryPane, App app, final Diagram diagram) {
     return diagram;
@@ -65,10 +67,11 @@ public class GeometryWindow {
       logger.error("Error loading button image!", e);
     }
     ImageView drawingButtonImageView  = new ImageView(drawingButtonImage);
-    DrawingButton drawingButton       = new DrawingButton(app, buttonsPane, DRAWING_BUTTON_NAME);
+    drawingButton = new DrawingButton(app, this, buttonsPane, DRAWING_BUTTON_NAME);
     drawingButtonImageView.setFitHeight(46);
     drawingButtonImageView.setPreserveRatio(true);
     drawingButton.setGraphic(drawingButtonImageView);
+    drawingButton.setSelected(true);
 
     Image selectionButtonImage = null;
     try {
@@ -77,14 +80,23 @@ public class GeometryWindow {
       logger.error("Error loading button image!", e);
     }
     ImageView selectionButtonImageView  = new ImageView(selectionButtonImage);
-    SelectionButton selectionButton     = new SelectionButton(app, buttonsPane, SELECTION_BUTTON_NAME);
+    selectionButton = new SelectionButton(app, this, buttonsPane, SELECTION_BUTTON_NAME);
     drawingButtonImageView.setFitHeight(46);
     drawingButtonImageView.setPreserveRatio(true);
     selectionButton.setGraphic(selectionButtonImageView);
+    selectionButton.setSelected(false);
 
     buttonsPane.getChildren().addAll(drawingButton, selectionButton);
 
     return buttonsPane;
+  }
+
+  public DrawingButton getDrawingButton() {
+    return drawingButton;
+  }
+
+  public SelectionButton getSelectionButton() {
+    return selectionButton;
   }
 
 }

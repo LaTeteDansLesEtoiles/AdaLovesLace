@@ -3,7 +3,10 @@ package org.alienlabs.adaloveslace.business.model;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlType;
+import javafx.scene.image.Image;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -66,6 +69,13 @@ public class Knot {
 
   public boolean coincide(Knot other) {
     return this.x == other.x && this.y == other.y && this.pattern.getFilename().equals(other.getPattern().getFilename());
+  }
+
+  public boolean isClicked(double mouseX, double mouseY) throws MalformedURLException {
+    Image img = new Image(new File(this.pattern.getFilename()).toURI().toURL().toExternalForm());
+
+    return (this.x <= mouseX) && (this.x + img.getWidth() >= mouseX) &&
+      (this.y <= mouseY) && (this.y + img.getHeight() >= mouseY);
   }
 
   @Override

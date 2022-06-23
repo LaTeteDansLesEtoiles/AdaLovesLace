@@ -12,10 +12,15 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.view.component.CanvasWithOptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.MalformedURLException;
+import java.util.Iterator;
 
 import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
@@ -140,7 +145,38 @@ public class MainWindow {
         logger.info("Coordinate X     -> {}",                 x);
         logger.info("Coordinate Y     -> {}, Y - TOP -> {}",  y, yMinusTop);
 
-        canvasWithOptionalDotGrid.addKnot(x, yMinusTop);
+        if (this.getCanvasWithOptionalDotGrid().getDiagram().getCurrentMode().equals(MouseMode.DRAWING)) {
+          canvasWithOptionalDotGrid.addKnot(x, yMinusTop);
+          canvasWithOptionalDotGrid.getDiagram().setKnotSelected(false);
+        } else if (this.getCanvasWithOptionalDotGrid().getDiagram().getCurrentMode().equals(MouseMode.SELECTION)){
+          Iterator<Knot> it = canvasWithOptionalDotGrid.getDiagram().getKnots().iterator();
+          boolean hasClickedOnAKnot = false;
+
+          while (it.hasNext()) {
+            Knot knot = it.next();
+
+            try {
+              if (knot.isClicked(x, yMinusTop)) {
+                // We have clicked on a knot, it shall be the current knot
+                logger.info("Knot is clicked: {}", knot.getPattern().getFilename());
+                canvasWithOptionalDotGrid.getDiagram().setCurrentKnot(knot);
+                canvasWithOptionalDotGrid.getDiagram().setKnotSelected(true);
+                hasClickedOnAKnot = true;
+              }
+            } catch (MalformedURLException e) {
+              logger.error("Error reading pattern image");
+            }
+          }
+          // If there is a current knot and we have clicked somewhere else than on a knot,
+          // we shall move the current knot
+          if (canvasWithOptionalDotGrid.getDiagram().isKnotSelected() && !hasClickedOnAKnot) {
+            Knot toMove = canvasWithOptionalDotGrid.getDiagram().getCurrentKnot();
+            toMove.setX(x);
+            toMove.setY(yMinusTop);
+
+            canvasWithOptionalDotGrid.layoutChildren();
+          }
+        }
       }
     });
   }
