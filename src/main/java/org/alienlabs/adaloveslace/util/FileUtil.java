@@ -1,5 +1,10 @@
 package org.alienlabs.adaloveslace.util;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +32,17 @@ public class FileUtil {
 
   public FileUtil() {
     // Nothing to do here, that's just to avoid an all-static class
+  }
+
+  public void saveFile(App app, File file) {
+    try {
+      JAXBContext context = JAXBContext.newInstance(Diagram.class);
+      Marshaller jaxbMarshaller = context.createMarshaller();
+      jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+      jaxbMarshaller.marshal(app.getCanvasWithOptionalDotGrid().getDiagram(), file);
+    } catch (JAXBException e) {
+      logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
+    }
   }
 
   /**

@@ -1,13 +1,10 @@
 package org.alienlabs.adaloveslace.view.component.button;
 
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,14 +53,7 @@ public class SaveAsButton extends Button {
       preferences.setPathWithFileValue(file,                  SAVED_XML_FILE);
       preferences.setPathWithFileValue(file.getParentFile(),  XML_FILE_FOLDER_SAVE_PATH);
 
-      try {
-        JAXBContext context = JAXBContext.newInstance(Diagram.class);
-        Marshaller jaxbMarshaller = context.createMarshaller();
-        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        jaxbMarshaller.marshal(app.getCanvasWithOptionalDotGrid().getDiagram(), file);
-      } catch (JAXBException e) {
-        logger.error("Error marshalling save as file: " + file.getAbsolutePath(), e);
-      }
+      new FileUtil().saveFile(app, file);
     }
   }
 
