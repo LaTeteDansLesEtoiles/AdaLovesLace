@@ -11,6 +11,7 @@ import org.testfx.matcher.control.LabeledMatchers;
 
 import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
 class ToolBoxButtonTest extends AppTestParent {
 
@@ -62,6 +63,36 @@ class ToolBoxButtonTest extends AppTestParent {
   @Test
   void should_contain_quit_button_with_text(FxRobot robot) {
     FxAssert.verifyThat(QUIT_APP, NodeMatchers.isVisible());
+  }
+
+  /**
+   * Checks if "Undo knot" toolbox button contains right text
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void should_contain_undo_knot_button_with_text(FxRobot robot) {
+    FxAssert.verifyThat(UNDO_KNOT_BUTTON_NAME, NodeMatchers.isVisible());
+  }
+
+  /**
+   * Checks if "Redo knot" toolbox button contains right text
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void should_contain_redo_knot_button_with_text(FxRobot robot) {
+    FxAssert.verifyThat(REDO_KNOT_BUTTON_NAME, NodeMatchers.isVisible());
+  }
+
+  /**
+   * Checks if "Reset diagram" toolbox button contains right text
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void should_contain_reset_diagram_button_with_text(FxRobot robot) {
+    FxAssert.verifyThat(RESET_DIAGRAM_BUTTON_NAME, NodeMatchers.isVisible());
   }
 
 }
