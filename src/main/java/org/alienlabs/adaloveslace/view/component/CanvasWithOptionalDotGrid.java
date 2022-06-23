@@ -2,9 +2,11 @@ package org.alienlabs.adaloveslace.view.component;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.business.model.Diagram;
@@ -118,7 +120,14 @@ public class CanvasWithOptionalDotGrid extends Pane {
 
       try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
         Image image = new Image(fis);
-        graphicsContext2D.drawImage(image, knot.getX(), knot.getY());
+        ImageView iv = new ImageView(image);
+        iv.setRotate(knot.getRotationAngle());
+
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+        Image rotatedImage = iv.snapshot(params, null);
+
+        graphicsContext2D.drawImage(rotatedImage, knot.getX(), knot.getY());
 
       } catch (IOException e) {
         logger.error("Problem with resource file!", e);
@@ -171,16 +180,20 @@ public class CanvasWithOptionalDotGrid extends Pane {
     }
   }
 
-  public void addKnot(double x, double y) {
+  public Knot addKnot(double x, double y) {
     Pattern currentPattern = this.diagram.getCurrentPattern();
     logger.info("Current pattern  -> {}", currentPattern);
+    Knot currentKnot = null;
 
     try (FileInputStream fis = new FileInputStream(currentPattern.getAbsoluteFilename())) {
       this.canvas.getGraphicsContext2D().drawImage(new Image(fis), x, y);
-      this.diagram.addKnot(new Knot(x, y, currentPattern));
+      currentKnot = new Knot(x, y, currentPattern);
+      this.diagram.addKnot(currentKnot);
     } catch (IOException e) {
       logger.error("Problem with pattern resource file!", e);
     }
+
+    return currentKnot;
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

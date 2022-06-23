@@ -146,7 +146,7 @@ public class MainWindow {
 
         switch (this.getCanvasWithOptionalDotGrid().getDiagram().getCurrentMode()) {
           case DRAWING -> {
-            canvasWithOptionalDotGrid.addKnot(x, yMinusTop);
+            canvasWithOptionalDotGrid.getDiagram().setCurrentKnot(canvasWithOptionalDotGrid.addKnot(x, yMinusTop));
             canvasWithOptionalDotGrid.getDiagram().setKnotSelected(false);
           }
           case SELECTION -> {

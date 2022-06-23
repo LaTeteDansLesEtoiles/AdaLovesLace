@@ -3,6 +3,8 @@ package org.alienlabs.adaloveslace.view.window;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,8 +31,8 @@ import static org.alienlabs.adaloveslace.view.component.button.ZoomButton.ZOOM_B
 public class GeometryWindow {
 
   public static final double GEOMETRY_WINDOW_X            = 1000d;
-  public static final double GEOMETRY_WINDOW_WIDTH         = 250d;
-  public static final double VERTICAL_BUTTONS_PADDING     = 50d;
+  public static final double GEOMETRY_WINDOW_WIDTH         = 400d;
+  public static final double VERTICAL_BUTTONS_PADDING     = 150d;
 
   public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
 
@@ -48,11 +50,11 @@ public class GeometryWindow {
     buttonsPane.setTranslateY(VERTICAL_BUTTONS_PADDING);
     patternsPane.getChildren().add(buttonsPane);
 
-    Scene geometryScene = new Scene(patternsPane, GEOMETRY_WINDOW_WIDTH, 150);
+    Scene geometryScene = new Scene(patternsPane, GEOMETRY_WINDOW_WIDTH, 350);
 
     geometryStage.setTitle(GEOMETRY_TITLE);
     geometryStage.setX(GEOMETRY_WINDOW_X);
-    geometryStage.setY(300);
+    geometryStage.setY(250);
     geometryStage.setScene(geometryScene);
     geometryStage.show();
   }
@@ -75,7 +77,44 @@ public class GeometryWindow {
     zoomButton = new ZoomButton(app, this, buttonsPane, ZOOM_BUTTON_NAME);
     getImageView(app, "assets/zoom.png", zoomButton, false);
 
-    buttonsPane.getChildren().addAll(drawingButton, selectionButton, rotationButton, zoomButton);
+    Spinner<Integer> rotate1 = new Spinner<>(0, 360, 0, 1);
+    SpinnerValueFactory<Integer> valueFactory1 = rotate1.getValueFactory();
+    rotate1.setOnMouseClicked(event -> {
+      app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
+        .setRotationAngle(valueFactory1.getValue());
+      app.getCanvasWithOptionalDotGrid().layoutChildren();
+    });
+    rotate1.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+
+    Spinner<Integer> rotate2 = new Spinner<>(0, 360, 0, 10);
+    SpinnerValueFactory<Integer> valueFactory2 = rotate2.getValueFactory();
+    rotate2.setOnMouseClicked(event -> {
+      app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
+        .setRotationAngle(valueFactory2.getValue());
+      app.getCanvasWithOptionalDotGrid().layoutChildren();
+    });
+    rotate2.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+
+    Spinner<Integer> rotate3 = new Spinner<>(0, 360, 0, 30);
+    SpinnerValueFactory<Integer> valueFactory3 = rotate3.getValueFactory();
+    rotate3.setOnMouseClicked(event -> {
+      app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
+        .setRotationAngle(valueFactory3.getValue());
+      app.getCanvasWithOptionalDotGrid().layoutChildren();
+    });
+    rotate3.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+
+    Spinner<Integer> zoom1 = new Spinner<>(-10, 10, 1, 1);
+    zoom1.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+
+    Spinner<Integer> zoom2 = new Spinner<>(-10, 10, 1, 2);
+    zoom2.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+
+    Spinner<Integer> zoom3 = new Spinner<>(-10, 10, 1, 3);
+    zoom3.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+
+    buttonsPane.getChildren().addAll(drawingButton, selectionButton, rotationButton, zoomButton,
+      rotate1, zoom1, rotate2, zoom2, rotate3, zoom3);
 
     return buttonsPane;
   }

@@ -26,6 +26,9 @@ public class Knot {
 
   private double x;
   private double y;
+
+  private double rotationAngle;
+
   private Pattern pattern;
 
   public Knot() {
@@ -36,6 +39,7 @@ public class Knot {
     this.uuid = UUID.randomUUID();
     this.x = x;
     this.y = y;
+    this.rotationAngle = 0;
     this.pattern = pattern;
   }
 
@@ -61,6 +65,14 @@ public class Knot {
 
   public void setY(double y) {
     this.y = y;
+  }
+
+  public double getRotationAngle() {
+    return rotationAngle;
+  }
+
+  public void setRotationAngle(double rotationAngle) {
+    this.rotationAngle = rotationAngle;
   }
 
   public void setPattern(Pattern pattern) {
