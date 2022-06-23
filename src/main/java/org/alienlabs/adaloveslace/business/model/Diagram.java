@@ -31,12 +31,24 @@ public class Diagram {
     this.patterns = new ArrayList<>();
     this.knots    = new ArrayList<>();
   }
+
+  public Diagram(final Diagram diagram) {
+    this.patterns         = new ArrayList<>(diagram.getPatterns());
+    this.knots            = new ArrayList<>(diagram.getKnots());
+    this.currentKnotIndex = diagram.getCurrentKnotIndex();
+    this.setCurrentPattern(diagram.getCurrentPattern());
+  }
+
   public List<Pattern> getPatterns() {
     return new ArrayList<>(this.patterns);
   }
 
   public List<Knot> getKnots() {
     return new ArrayList<>(this.knots);
+  }
+
+  public void setKnots(List<Knot> knots) {
+    this.knots = knots;
   }
 
   public List<Pattern> addPattern(final Pattern pattern) {

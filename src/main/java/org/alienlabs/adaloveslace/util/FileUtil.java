@@ -39,7 +39,12 @@ public class FileUtil {
       JAXBContext context = JAXBContext.newInstance(Diagram.class);
       Marshaller jaxbMarshaller = context.createMarshaller();
       jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-      jaxbMarshaller.marshal(app.getCanvasWithOptionalDotGrid().getDiagram(), file);
+
+      // In order not to lose the undo / redo history
+      Diagram toSave = new Diagram(app.getCanvasWithOptionalDotGrid().getDiagram());
+      toSave.setKnots(toSave.getKnots().subList(0, toSave.getCurrentKnotIndex()));
+
+      jaxbMarshaller.marshal(toSave, file);
     } catch (JAXBException e) {
       logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
     }
