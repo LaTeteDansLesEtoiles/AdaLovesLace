@@ -148,4 +148,8 @@ public class Diagram {
     this.currentMode = currentMode;
   }
 
+  public void setCurrentKnotIndex(int currentKnotIndex) {
+    this.currentKnotIndex = currentKnotIndex;
+  }
+
 }
