@@ -3,6 +3,9 @@ package org.alienlabs.adaloveslace.test.view;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -114,6 +117,89 @@ class MainWindowComponentTest extends AppTestParent {
     // All we can say is that if we click on the grid, the pixel is neither white (= empty) nor blue (= snowflake)
     assertFalse(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
     assertFalse(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid));
+  }
+
+
+  /**
+   * Checks if we can undo a snowflake (the second pattern) after we have drawn it on the canvas
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void testUndoSnowflake(FxRobot robot) {
+    // Init
+    selectSnowflake(robot);
+    drawSnowflake(robot);
+
+    // Move mouse and get the color of the pixel under the pointer
+    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X - 10,
+      canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y - 10);
+    robot.moveTo(pointToMoveTo);
+
+    // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
+    // have access to the UI thread for the copy without "Platform.runLater()"
+    Color foundColorOnGridBeforeUndo = getColor(canvas, pointToMoveToInCanvas);
+
+    // Run: issue an undo command
+    robot.push(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
+
+    // Verify
+    // Move mouse and get the color of the pixel under the pointer
+    pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
+    pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X - 10,
+      canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y - 10);
+    robot.moveTo(pointToMoveTo);
+
+    Color foundColorOnGridAfterUndo = getColor(canvas, pointToMoveToInCanvas);
+
+    assertNotEquals(foundColorOnGridAfterUndo, foundColorOnGridBeforeUndo,
+      "The color before and after undo must not be the same!");
+  }
+
+  /**
+   * Checks if we can undo and redo a snowflake (the second pattern) after we have drawn it on the canvas
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void testRedoSnowflake(FxRobot robot) {
+    // Init
+    selectSnowflake(robot);
+    drawSnowflake(robot);
+
+    // Move mouse and get the color of the pixel under the pointer
+    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X - 10,
+      canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y - 10);
+    robot.moveTo(pointToMoveTo);
+
+    // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
+    // have access to the UI thread for the copy without "Platform.runLater()"
+    Color foundColorOnGridBeforeRedo = getColor(canvas, pointToMoveToInCanvas);
+
+    // Issue an undo command
+    robot.push(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
+
+    // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
+    // have access to the UI thread for the copy without "Platform.runLater()"
+    getColor(canvas, pointToMoveToInCanvas);
+
+    // Run: Issue a redo command
+    robot.push(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
+
+    // Verify
+    // Move mouse and get the color of the pixel under the pointer
+    pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
+    pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X - 10,
+      canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y - 10);
+    robot.moveTo(pointToMoveTo);
+    Color foundColorOnGridAfterRedo = getColor(canvas, pointToMoveToInCanvas);
+
+    assertEquals(foundColorOnGridAfterRedo, foundColorOnGridBeforeRedo,
+      "The color before and after redo must be the same!");
   }
 
   // Click on the snowflake in the toolbox to select it
