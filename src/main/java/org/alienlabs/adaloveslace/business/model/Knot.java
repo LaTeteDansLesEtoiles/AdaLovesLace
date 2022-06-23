@@ -72,7 +72,7 @@ public class Knot {
   }
 
   public boolean isClicked(double mouseX, double mouseY) throws MalformedURLException {
-    Image img = new Image(new File(this.pattern.getFilename()).toURI().toURL().toExternalForm());
+    Image img = new Image(new File(this.pattern.getAbsoluteFilename()).toURI().toURL().toExternalForm());
 
     return (this.x <= mouseX) && (this.x + img.getWidth() >= mouseX) &&
       (this.y <= mouseY) && (this.y + img.getHeight() >= mouseY);

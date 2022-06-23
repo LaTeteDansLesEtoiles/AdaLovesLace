@@ -133,7 +133,9 @@ public class FileUtil {
       } else {
         throw new IllegalArgumentException("Home directory " + homeDirectoryResourcesPath.getAbsolutePath() + " not read accessible!");
       }
-    } catch (JAXBException e) {
+
+      deleteXmlFile();
+    } catch (JAXBException | IOException e) {
       logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
     }
   }
