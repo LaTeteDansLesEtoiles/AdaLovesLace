@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-import static org.alienlabs.adaloveslace.util.Preferences.SAVED_XML_FILE;
-import static org.alienlabs.adaloveslace.util.Preferences.XML_FILE_FOLDER_SAVE_PATH;
+import static org.alienlabs.adaloveslace.util.Preferences.LACE_FILE_FOLDER_SAVE_PATH;
+import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
 public class LoadButton extends Button {
 
@@ -39,8 +39,8 @@ public class LoadButton extends Button {
     load.setTitle(LOAD_FILE_DIALOG_TITLE);
 
     Preferences preferences = new Preferences();
-    File xmlFile      = preferences.getPathWithFileValue(SAVED_XML_FILE);
-    File xmlFilePath  = preferences.getPathWithFileValue(XML_FILE_FOLDER_SAVE_PATH);
+    File xmlFile      = preferences.getPathWithFileValue(SAVED_LACE_FILE);
+    File xmlFilePath  = preferences.getPathWithFileValue(LACE_FILE_FOLDER_SAVE_PATH);
 
     if (xmlFilePath == null || !xmlFilePath.canRead() || !xmlFile.canRead()) {
       // We don't know from where to load

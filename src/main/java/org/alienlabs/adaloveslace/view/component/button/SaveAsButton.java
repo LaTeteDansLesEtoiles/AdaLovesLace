@@ -11,15 +11,15 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-import static org.alienlabs.adaloveslace.util.Preferences.SAVED_XML_FILE;
-import static org.alienlabs.adaloveslace.util.Preferences.XML_FILE_FOLDER_SAVE_PATH;
+import static org.alienlabs.adaloveslace.util.Preferences.LACE_FILE_FOLDER_SAVE_PATH;
+import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
 public class SaveAsButton extends Button {
 
   public static final String SAVE_FILE_AS_BUTTON_NAME   = "Save as";
   public static final String SAVE_FILE_AS_DIALOG_TITLE  = "Save diagram as";
-  public static final String DIAGRAM_FILES              = "XML files (*.xml)";
-  public static final String DIAGRAM_FILE_FILTER        = "*.xml";
+  public static final String DIAGRAM_FILES              = ".lace files (*.lace)";
+  public static final String DIAGRAM_FILE_FILTER        = "*.lace";
 
   private static final Logger logger                  = LoggerFactory.getLogger(SaveAsButton.class);
 
@@ -35,11 +35,11 @@ public class SaveAsButton extends Button {
     saveAs.setTitle(SAVE_FILE_AS_DIALOG_TITLE);
 
     Preferences preferences = new Preferences();
-    File xmlFilePath = preferences.getPathWithFileValue(XML_FILE_FOLDER_SAVE_PATH);
+    File xmlFilePath = preferences.getPathWithFileValue(LACE_FILE_FOLDER_SAVE_PATH);
     if (xmlFilePath == null) {
       File userHome = new File(System.getProperty("user.home"));
       saveAs.setInitialDirectory(userHome);
-      preferences.setPathWithFileValue(userHome, XML_FILE_FOLDER_SAVE_PATH);
+      preferences.setPathWithFileValue(userHome, LACE_FILE_FOLDER_SAVE_PATH);
     } else {
       saveAs.setInitialDirectory(xmlFilePath);
     }
@@ -50,8 +50,8 @@ public class SaveAsButton extends Button {
     File file = saveAs.showSaveDialog(root.getScene().getWindow());
 
     if (file != null) {
-      preferences.setPathWithFileValue(file,                  SAVED_XML_FILE);
-      preferences.setPathWithFileValue(file.getParentFile(),  XML_FILE_FOLDER_SAVE_PATH);
+      preferences.setPathWithFileValue(file, SAVED_LACE_FILE);
+      preferences.setPathWithFileValue(file.getParentFile(), LACE_FILE_FOLDER_SAVE_PATH);
 
       new FileUtil().saveFile(app, file);
     }
