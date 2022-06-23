@@ -107,10 +107,6 @@ public class App extends Application {
     return this.toolboxStage;
   }
 
-  public Diagram getDiagram() {
-    return this.getCanvasWithOptionalDotGrid().getDiagram();
-  }
-
   public void setDiagram(Diagram diagram) {
     this.diagram = diagram;
   }

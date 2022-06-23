@@ -17,6 +17,8 @@ public class UndoKnotButton extends Button {
   }
 
   public static void undoKnot(App app) {
+    app.getCanvasWithOptionalDotGrid().getDiagram().undoLastKnot();
+    app.getCanvasWithOptionalDotGrid().layoutChildren();
     logger.info("Event undo knot: {}", app);
   }
 

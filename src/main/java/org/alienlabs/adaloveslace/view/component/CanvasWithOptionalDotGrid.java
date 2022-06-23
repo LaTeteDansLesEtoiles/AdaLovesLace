@@ -59,7 +59,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
     if (diagram == null) {
       this.diagram = new Diagram();
     } else {
-      this.diagram = new Diagram(diagram);
+      this.diagram = diagram;
     }
 
     this.radius     = RADIUS;
@@ -98,8 +98,23 @@ public class CanvasWithOptionalDotGrid extends Pane {
   }
 
   private void drawDiagram() {
+    // We whall not display the undone knots => delete them, then draw the grid again
+    if (!this.diagram.getKnots().isEmpty()) {
+      for (Knot knot : this.diagram.getKnots().subList(this.diagram.getCurrentKnotIndex(), this.diagram.getKnots().size())) {
+        try (FileInputStream fis = new FileInputStream(knot.getPattern().getFilename())) {
+          Image image = new Image(fis);
+          graphicsContext2D.clearRect(knot.getX(), knot.getY(),
+            image.getWidth(), image.getHeight());
+        } catch (IOException e) {
+          logger.error("Problem with resource file!", e);
+        }
+
+        initCanvasAndGrid();
+      }
+    }
+
     // If there are knots on the diagram, we must display them at each window refresh
-    for (Knot knot : this.diagram.getKnots()) {
+    for (Knot knot : this.diagram.getKnots().subList(0, this.diagram.getCurrentKnotIndex())) {
 
       try (FileInputStream fis = new FileInputStream(knot.getPattern().getFilename())) {
         Image image = new Image(fis);
@@ -109,6 +124,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
         logger.error("Problem with resource file!", e);
       }
     }
+
 
     // If there is no knot on the diagram, we must display a blank diagram
     if (this.diagram.getKnots() == null || this.diagram.getKnots().isEmpty()) {
@@ -182,14 +198,14 @@ public class CanvasWithOptionalDotGrid extends Pane {
   }
 
   public Diagram getDiagram() {
-    return new Diagram(this.diagram);
+    return this.diagram;
   }
 
   /** Use JavaFX property
    * @see CanvasWithOptionalDotGrid#getDiagramProperty()
    * */
   private void setDiagram(Diagram diagram) {
-    this.diagram = new Diagram(diagram);
+    this.diagram = diagram;
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

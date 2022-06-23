@@ -20,7 +20,9 @@ import java.util.List;
 public class Diagram {
 
   private final List<Pattern> patterns;
-  private final List<Knot>    knots;
+  private List<Knot>          knots;
+
+  private int currentKnotIndex = 0;
 
   @XmlTransient
   private Pattern currentPattern;
@@ -29,13 +31,6 @@ public class Diagram {
     this.patterns = new ArrayList<>();
     this.knots    = new ArrayList<>();
   }
-
-  public Diagram(final Diagram diagram) {
-    this.patterns = new ArrayList<>(diagram.getPatterns());
-    this.knots    = new ArrayList<>(diagram.getKnots());
-    this.setCurrentPattern(diagram.getCurrentPattern());
-  }
-
   public List<Pattern> getPatterns() {
     return new ArrayList<>(this.patterns);
   }
@@ -50,7 +45,27 @@ public class Diagram {
   }
 
   public List<Knot> addKnot(final Knot knot) {
+    // Add a knot to the end, deleting the knots after the current one
+    if (this.currentKnotIndex < this.knots.size()) {
+      this.knots = this.knots.subList(0, this.currentKnotIndex);
+    }
+
     this.knots.add(knot);
+    this.currentKnotIndex++;
+
+    return new ArrayList<>(this.knots);
+  }
+  public List<Knot> undoLastKnot() {
+    if (currentKnotIndex > 0) {
+      this.currentKnotIndex--;
+    }
+
+    return new ArrayList<>(this.knots);
+  }
+
+  public List<Knot> clearKnots() {
+    this.knots.clear();
+    this.currentKnotIndex = 0;
     return new ArrayList<>(this.knots);
   }
 
@@ -59,17 +74,16 @@ public class Diagram {
     return new ArrayList<>(this.patterns);
   }
 
-  public List<Knot> clearKnots() {
-    this.knots.clear();
-    return new ArrayList<>(this.knots);
-  }
-
   public Pattern getCurrentPattern() {
     return this.currentPattern;
   }
 
   public void setCurrentPattern(Pattern currentPattern) {
     this.currentPattern = currentPattern;
+  }
+
+  public int getCurrentKnotIndex() {
+    return this.currentKnotIndex;
   }
 
 }
