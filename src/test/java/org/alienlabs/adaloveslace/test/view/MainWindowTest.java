@@ -34,7 +34,7 @@ class MainWindowTest extends AppTestParent {
   public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xedededff");
 
   public static final int FILE_MENU_ENTRY_INDEX           = 0;
-  public static final int TOOL_MENU_ENTRY_INDEX           = 1;
+  public static final int TOOL_MENU_ENTRY_INDEX           = 2;
 
   public static final int SHOW_HIDE_GRID_MENU_ITEM_INDEX  = 0;
 
