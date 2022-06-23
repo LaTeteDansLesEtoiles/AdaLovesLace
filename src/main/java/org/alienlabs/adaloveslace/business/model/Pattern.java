@@ -20,18 +20,28 @@ import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Pattern {
 
+  private String absoluteFilename;
+
   private String filename;
 
-  public Pattern(String filename) {
-    this.filename = filename;
+  public Pattern(String absoluteFilename) {
+    this.absoluteFilename = absoluteFilename;
   }
 
   public Pattern() {
     this(null);
   }
 
+  public String getAbsoluteFilename() {
+    return this.absoluteFilename;
+  }
+
+  public void setAbsoluteFilename(String absoluteFilename) {
+    this.absoluteFilename = absoluteFilename;
+  }
+
   public String getFilename() {
-    return this.filename;
+    return filename;
   }
 
   public void setFilename(String filename) {

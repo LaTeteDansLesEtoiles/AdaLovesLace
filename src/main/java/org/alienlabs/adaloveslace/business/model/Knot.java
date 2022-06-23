@@ -65,7 +65,7 @@ public class Knot {
   }
 
   public boolean coincide(Knot other) {
-    return this.x == other.x && this.y == other.y && this.pattern.getFilename().equals(other.getPattern().getFilename());
+    return this.x == other.x && this.y == other.y && this.pattern.getAbsoluteFilename().equals(other.getPattern().getAbsoluteFilename());
   }
 
   @Override

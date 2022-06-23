@@ -101,7 +101,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
     // We whall not display the undone knots => delete them, then draw the grid again
     if (!this.diagram.getKnots().isEmpty()) {
       for (Knot knot : this.diagram.getKnots().subList(this.diagram.getCurrentKnotIndex(), this.diagram.getKnots().size())) {
-        try (FileInputStream fis = new FileInputStream(knot.getPattern().getFilename())) {
+        try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
           Image image = new Image(fis);
           graphicsContext2D.clearRect(knot.getX(), knot.getY(),
             image.getWidth(), image.getHeight());
@@ -116,7 +116,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
     // If there are knots on the diagram, we must display them at each window refresh
     for (Knot knot : this.diagram.getKnots().subList(0, this.diagram.getCurrentKnotIndex())) {
 
-      try (FileInputStream fis = new FileInputStream(knot.getPattern().getFilename())) {
+      try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
         Image image = new Image(fis);
         graphicsContext2D.drawImage(image, knot.getX(), knot.getY());
 
@@ -175,7 +175,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
     Pattern currentPattern = this.diagram.getCurrentPattern();
     logger.info("Current pattern  -> {}", currentPattern);
 
-    try (FileInputStream fis = new FileInputStream(currentPattern.getFilename())) {
+    try (FileInputStream fis = new FileInputStream(currentPattern.getAbsoluteFilename())) {
       this.canvas.getGraphicsContext2D().drawImage(new Image(fis), x, y);
       this.diagram.addKnot(new Knot(x, y, currentPattern));
     } catch (IOException e) {
