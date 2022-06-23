@@ -77,32 +77,9 @@ public class GeometryWindow {
     zoomButton = new ZoomButton(app, this, buttonsPane, ZOOM_BUTTON_NAME);
     getImageView(app, "assets/zoom.png", zoomButton, false);
 
-    Spinner<Integer> rotate1 = new Spinner<>(0, 360, 0, 1);
-    SpinnerValueFactory<Integer> valueFactory1 = rotate1.getValueFactory();
-    rotate1.setOnMouseClicked(event -> {
-      app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
-        .setRotationAngle(valueFactory1.getValue());
-      app.getCanvasWithOptionalDotGrid().layoutChildren();
-    });
-    rotate1.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
-
-    Spinner<Integer> rotate2 = new Spinner<>(0, 360, 0, 10);
-    SpinnerValueFactory<Integer> valueFactory2 = rotate2.getValueFactory();
-    rotate2.setOnMouseClicked(event -> {
-      app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
-        .setRotationAngle(valueFactory2.getValue());
-      app.getCanvasWithOptionalDotGrid().layoutChildren();
-    });
-    rotate2.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
-
-    Spinner<Integer> rotate3 = new Spinner<>(0, 360, 0, 30);
-    SpinnerValueFactory<Integer> valueFactory3 = rotate3.getValueFactory();
-    rotate3.setOnMouseClicked(event -> {
-      app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
-        .setRotationAngle(valueFactory3.getValue());
-      app.getCanvasWithOptionalDotGrid().layoutChildren();
-    });
-    rotate3.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+    Spinner<Integer> rotate1 = buildSpinner(app, new Spinner<>(0, 360, 0, 1));
+    Spinner<Integer> rotate2 = buildSpinner(app, new Spinner<>(0, 360, 0, 10));
+    Spinner<Integer> rotate3 = buildSpinner(app, new Spinner<>(0, 360, 0, 30));
 
     Spinner<Integer> zoom1 = new Spinner<>(-10, 10, 1, 1);
     zoom1.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
@@ -117,6 +94,18 @@ public class GeometryWindow {
       rotate1, zoom1, rotate2, zoom2, rotate3, zoom3);
 
     return buttonsPane;
+  }
+
+  private Spinner<Integer> buildSpinner(App app, Spinner<Integer> rotate) {
+    SpinnerValueFactory<Integer> valueFactory = rotate.getValueFactory();
+    rotate.setOnMouseClicked(event -> {
+      app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
+        .setRotationAngle(valueFactory.getValue());
+      app.getCanvasWithOptionalDotGrid().layoutChildren();
+    });
+    rotate.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+
+    return rotate;
   }
 
   private ImageView getImageView(App app, String pathname, ToggleButton button, boolean isSelected) {
