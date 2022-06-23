@@ -113,4 +113,8 @@ public class Diagram {
     return this.currentKnotIndex;
   }
 
+  public void setCurrentKnotIndex(int currentKnotIndex) {
+    this.currentKnotIndex = currentKnotIndex;
+  }
+
 }

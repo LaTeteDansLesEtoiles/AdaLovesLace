@@ -3,15 +3,19 @@ package org.alienlabs.adaloveslace.util;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.business.model.Knot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -33,12 +37,81 @@ public class FileUtil {
   public static final String CLASSPATH_RESOURCES_PATH       = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*.jpg";
   public static final String HOME_DIRECTORY_RESOURCES_PATH  = ".+\\.(png|jpg|gif|bmp|jpeg|PNG|JPG|GIF|BMP|JPEG)$";
 
-  private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
-
   public static final String XML_FILE_TO_SAVE_IN_LACE_FILE = "save.xml";
+
+  public static final String USER_HOME = "user.home";
+
+  private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
   public FileUtil() {
     // Nothing to do here, that's just to avoid an all-static class
+  }
+
+  public void loadFromLaceFile(App app, File file) {
+    Diagram diagram = null;
+
+    try (ZipFile zipFile = new ZipFile(file)) {
+      Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+      while(entries.hasMoreElements()) {
+        ZipEntry entry = entries.nextElement();
+
+        if (XML_FILE_TO_SAVE_IN_LACE_FILE.equals(entry.getName())) {
+          diagram = buildDiagram(zipFile, entry);
+        } else {
+          copyPattern(file, zipFile, entry);
+        }
+      }
+
+      deleteXmlFile();
+    } catch (JAXBException | IOException e) {
+      logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
+    }
+
+    app.getCanvasWithOptionalDotGrid().getDiagramProperty().set(diagram);
+    app.getCanvasWithOptionalDotGrid().layoutChildren();
+  }
+
+  private void deleteXmlFile() throws IOException {
+    File xmlFile = new File(System.getProperty(USER_HOME) + File.separator +
+      PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator +
+      XML_FILE_TO_SAVE_IN_LACE_FILE);
+    if (xmlFile.exists() && xmlFile.canWrite()) {
+      Files.delete(xmlFile.toPath());
+    }
+  }
+
+  private void copyPattern(File file, ZipFile zipFile, ZipEntry entry) {
+    try (InputStream initialStream = zipFile.getInputStream(entry)) {
+      File targetFile = new File(System.getProperty(USER_HOME) + File.separator +
+        PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator + entry.getName());
+
+      Files.copy(
+        initialStream,
+        targetFile.toPath(),
+        StandardCopyOption.REPLACE_EXISTING);
+    } catch (IOException e) {
+      logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
+    }
+  }
+
+  private Diagram buildDiagram(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
+    JAXBContext context = JAXBContext.newInstance(Diagram.class);
+    Unmarshaller jaxbUnmarshaller = context.createUnmarshaller();
+    Diagram diagram = (Diagram) jaxbUnmarshaller.unmarshal(zipFile.getInputStream(entry));
+
+    for (org.alienlabs.adaloveslace.business.model.Pattern p : diagram.getPatterns()) {
+      p.setAbsoluteFilename(System.getProperty(USER_HOME) + File.separator +
+        PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
+    }
+
+    for (Knot k : diagram.getKnots()) {
+      k.getPattern().setAbsoluteFilename(System.getProperty(USER_HOME) + File.separator +
+        PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator + k.getPattern().getFilename());
+    }
+    diagram.setCurrentKnotIndex(diagram.getKnots().size());
+    diagram.setCurrentPattern(diagram.getPatterns().get(0));
+    return diagram;
   }
 
   public void saveFile(App app, File file) {
@@ -49,7 +122,7 @@ public class FileUtil {
 
       // In order not to lose the undo / redo history
       Diagram toSave = buildDiagramToSave(app);
-      File homeDirectoryResourcesPath = new File(System.getProperty("user.home") + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
+      File homeDirectoryResourcesPath = new File(System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
 
       if (!file.getName().endsWith(LACE_FILE_EXTENSION)) {
         file = new File(file.getParent() + File.separator + file.getName() + LACE_FILE_EXTENSION);

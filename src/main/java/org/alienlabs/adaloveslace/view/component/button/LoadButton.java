@@ -1,13 +1,10 @@
 package org.alienlabs.adaloveslace.view.component.button;
 
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +19,8 @@ public class LoadButton extends Button {
   public static final String LOAD_BUTTON_NAME         = "Load";
 
   public static final String LOAD_FILE_DIALOG_TITLE   = "Load diagram";
-  public static final String DIAGRAM_FILES            = "XML files (*.xml)";
-  public static final String DIAGRAM_FILE_FILTER      = "*.xml";
+  public static final String DIAGRAM_FILES            = ".lace files (*.lace)";
+  public static final String DIAGRAM_FILE_FILTER      = "*.lace";
 
   private static final Logger logger                  = LoggerFactory.getLogger(LoadButton.class);
 
@@ -56,15 +53,7 @@ public class LoadButton extends Button {
     File file = load.showOpenDialog(root.getScene().getWindow());
 
     if (file != null) {
-      try {
-        JAXBContext context = JAXBContext.newInstance(Diagram.class);
-        Unmarshaller jaxbUnmarshaller = context.createUnmarshaller();
-        Diagram diagram = (Diagram) jaxbUnmarshaller.unmarshal(file);
-        app.getCanvasWithOptionalDotGrid().getDiagramProperty().set(diagram);
-        app.getCanvasWithOptionalDotGrid().layoutChildren();
-      } catch (JAXBException e) {
-        logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
-      }
+      new FileUtil().loadFromLaceFile(app, file);
     }
   }
 
