@@ -18,11 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
-import static org.alienlabs.adaloveslace.view.component.button.RedoKnotButton.REDO_KNOT_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.ResetDiagramButton.RESET_DIAGRAM_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.UndoKnotButton.UNDO_KNOT_BUTTON_NAME;
 
 public class MainWindow {
 
@@ -31,6 +28,12 @@ public class MainWindow {
 
   public static final String SAVE_FILE      = "Save";
   public static final String LOAD_FILE      = "Load";
+
+  public static final String UNDO_KNOT_BUTTON_NAME = "Undo knot";
+
+  public static final String REDO_KNOT_BUTTON_NAME = "Redo knot";
+
+  public static final String RESET_DIAGRAM_BUTTON_NAME = "Reset diagram";
 
   public static final String MOUSE_CLICKED  = "MOUSE_CLICKED";
 
