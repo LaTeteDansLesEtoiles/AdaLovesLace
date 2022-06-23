@@ -13,7 +13,6 @@ import javafx.scene.layout.VBox;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.view.component.CanvasWithOptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.*;
 import org.slf4j.Logger;
@@ -138,43 +137,46 @@ public class MainWindow {
       logger.info("Event type -> {}", eType);
 
       if (eType.equals(MOUSE_CLICKED)) {
-        double x                = event.getX();
-        double y                = event.getY();
-        double yMinusTop        = y - CanvasWithOptionalDotGrid.TOP_MARGIN;
+        double x          = event.getX();
+        double y          = event.getY();
+        double yMinusTop  = y - CanvasWithOptionalDotGrid.TOP_MARGIN;
 
-        logger.info("Coordinate X     -> {}",                 x);
-        logger.info("Coordinate Y     -> {}, Y - TOP -> {}",  y, yMinusTop);
+        logger.info("Coordinate X     -> {}", x);
+        logger.info("Coordinate Y     -> {}, Y - TOP -> {}", y, yMinusTop);
 
-        if (this.getCanvasWithOptionalDotGrid().getDiagram().getCurrentMode().equals(MouseMode.DRAWING)) {
-          canvasWithOptionalDotGrid.addKnot(x, yMinusTop);
-          canvasWithOptionalDotGrid.getDiagram().setKnotSelected(false);
-        } else if (this.getCanvasWithOptionalDotGrid().getDiagram().getCurrentMode().equals(MouseMode.SELECTION)){
-          Iterator<Knot> it = canvasWithOptionalDotGrid.getDiagram().getKnots().iterator();
-          boolean hasClickedOnAKnot = false;
-
-          while (it.hasNext()) {
-            Knot knot = it.next();
-
-            try {
-              if (knot.isClicked(x, yMinusTop)) {
-                // We have clicked on a knot, it shall be the current knot
-                logger.info("Knot is clicked: {}", knot.getPattern().getFilename());
-                canvasWithOptionalDotGrid.getDiagram().setCurrentKnot(knot);
-                canvasWithOptionalDotGrid.getDiagram().setKnotSelected(true);
-                hasClickedOnAKnot = true;
-              }
-            } catch (MalformedURLException e) {
-              logger.error("Error reading pattern image");
-            }
+        switch (this.getCanvasWithOptionalDotGrid().getDiagram().getCurrentMode()) {
+          case DRAWING -> {
+            canvasWithOptionalDotGrid.addKnot(x, yMinusTop);
+            canvasWithOptionalDotGrid.getDiagram().setKnotSelected(false);
           }
-          // If there is a current knot and we have clicked somewhere else than on a knot,
-          // we shall move the current knot
-          if (canvasWithOptionalDotGrid.getDiagram().isKnotSelected() && !hasClickedOnAKnot) {
-            Knot toMove = canvasWithOptionalDotGrid.getDiagram().getCurrentKnot();
-            toMove.setX(x);
-            toMove.setY(yMinusTop);
+          case SELECTION -> {
+            Iterator<Knot> it = canvasWithOptionalDotGrid.getDiagram().getKnots().iterator();
+            boolean hasClickedOnAKnot = false;
 
-            canvasWithOptionalDotGrid.layoutChildren();
+            while (it.hasNext()) {
+              Knot knot = it.next();
+
+              try {
+                if (knot.isClicked(x, yMinusTop)) {
+                  // We have clicked on a knot, it shall be the current knot
+                  logger.info("Knot is clicked: {}", knot.getPattern().getFilename());
+                  canvasWithOptionalDotGrid.getDiagram().setCurrentKnot(knot);
+                  canvasWithOptionalDotGrid.getDiagram().setKnotSelected(true);
+                  hasClickedOnAKnot = true;
+                }
+              } catch (MalformedURLException e) {
+                logger.error("Error reading pattern image");
+              }
+            }
+            // If there is a current knot and we have clicked somewhere else than on a knot,
+            // we shall move the current knot
+            if (canvasWithOptionalDotGrid.getDiagram().isKnotSelected() && !hasClickedOnAKnot) {
+              Knot toMove = canvasWithOptionalDotGrid.getDiagram().getCurrentKnot();
+              toMove.setX(x);
+              toMove.setY(yMinusTop);
+
+              canvasWithOptionalDotGrid.layoutChildren();
+            }
           }
         }
       }
