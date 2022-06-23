@@ -62,7 +62,7 @@ public class GeometryWindow {
 
     Image drawingButtonImage          = null;
     try {
-      drawingButtonImage = new Image(new File("adaloveslace/assets/drawing.png").toURI().toURL().toExternalForm());
+      drawingButtonImage = new Image(new File("assets/drawing.png").toURI().toURL().toExternalForm());
     } catch (MalformedURLException e) {
       logger.error("Error loading button image!", e);
     }
@@ -75,7 +75,7 @@ public class GeometryWindow {
 
     Image selectionButtonImage = null;
     try {
-      selectionButtonImage = new Image(new File("adaloveslace/assets/selection.png").toURI().toURL().toExternalForm());
+      selectionButtonImage = new Image(new File("assets/selection.png").toURI().toURL().toExternalForm());
     } catch (MalformedURLException e) {
       logger.error("Error loading button image!", e);
     }
