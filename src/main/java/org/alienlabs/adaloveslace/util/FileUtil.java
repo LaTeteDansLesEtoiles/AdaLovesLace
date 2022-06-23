@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -17,6 +19,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
+
+import static org.alienlabs.adaloveslace.App.*;
 
 public class FileUtil {
 
@@ -30,6 +35,8 @@ public class FileUtil {
 
   private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
+  public static final String XML_FILE_TO_SAVE_IN_LACE_FILE = "save.xml";
+
   public FileUtil() {
     // Nothing to do here, that's just to avoid an all-static class
   }
@@ -41,13 +48,53 @@ public class FileUtil {
       jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
       // In order not to lose the undo / redo history
-      Diagram toSave = new Diagram(app.getCanvasWithOptionalDotGrid().getDiagram());
-      toSave.setKnots(toSave.getKnots().subList(0, toSave.getCurrentKnotIndex()));
+      Diagram toSave = buildDiagramToSave(app);
+      File homeDirectoryResourcesPath = new File(System.getProperty("user.home") + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
 
-      jaxbMarshaller.marshal(toSave, file);
+      if (!file.getName().endsWith(LACE_FILE_EXTENSION)) {
+        file = new File(file.getParent() + File.separator + file.getName() + LACE_FILE_EXTENSION);
+      }
+
+      if (homeDirectoryResourcesPath.exists() && homeDirectoryResourcesPath.canRead()) {
+        writeLaceFile(file, jaxbMarshaller, toSave, homeDirectoryResourcesPath);
+      } else {
+        throw new IllegalArgumentException("Home directory " + homeDirectoryResourcesPath.getAbsolutePath() + " not read accessible!");
+      }
     } catch (JAXBException e) {
       logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
     }
+  }
+
+  private void writeLaceFile(File file, Marshaller jaxbMarshaller, Diagram toSave, File homeDirectoryResourcesPath) throws JAXBException {
+    try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(file))) {
+      writePatternsToLaceFile(toSave, zipOut);
+      writeDiagramToLaceFile(jaxbMarshaller, toSave, homeDirectoryResourcesPath, zipOut);
+    } catch (IOException e) {
+      logger.error("Error saving .lace file!", e);
+    }
+  }
+
+  private void writeDiagramToLaceFile(Marshaller jaxbMarshaller, Diagram toSave, File homeDirectoryResourcesPath, ZipOutputStream zipOut) throws JAXBException, IOException {
+    File xmlFile = new File(homeDirectoryResourcesPath + File.separator + XML_FILE_TO_SAVE_IN_LACE_FILE);
+    jaxbMarshaller.marshal(toSave, xmlFile);
+
+    zipOut.putNextEntry(new ZipEntry(xmlFile.getName()));
+    Files.copy(xmlFile.toPath(), zipOut);
+  }
+
+  private void writePatternsToLaceFile(Diagram toSave, ZipOutputStream zipOut) throws IOException {
+    for (org.alienlabs.adaloveslace.business.model.Pattern pattern : toSave.getPatterns()) {
+      File fileToZip = new File(pattern.getAbsoluteFilename());
+      zipOut.putNextEntry(new ZipEntry(pattern.getFilename()));
+      Files.copy(fileToZip.toPath(), zipOut);
+    }
+  }
+
+  private Diagram buildDiagramToSave(App app) {
+    Diagram toSave = new Diagram(app.getCanvasWithOptionalDotGrid().getDiagram());
+    toSave.setKnots(toSave.getKnots().subList(0, toSave.getCurrentKnotIndex()));
+
+    return toSave;
   }
 
   /**

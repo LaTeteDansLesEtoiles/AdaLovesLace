@@ -33,6 +33,9 @@ public class App extends Application {
   public static final String MAIN_WINDOW_TITLE        = ADA_LOVES_LACE;
   public static final String PROJECT_NAME             = "adaloveslace";
   public static final String TOOLBOX_TITLE            = "Toolbox";
+
+  public static final String LACE_FILE_EXTENSION      = ".lace";
+
   public static final String PATTERNS_DIRECTORY_NAME  = "patterns";
   public static final String ERROR                    = "Error!";
 

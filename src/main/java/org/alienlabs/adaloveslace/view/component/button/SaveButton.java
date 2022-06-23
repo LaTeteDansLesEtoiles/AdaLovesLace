@@ -34,9 +34,9 @@ public class SaveButton extends Button {
     File file;
 
     Preferences preferences = new Preferences();
-    File xmlFilePath = preferences.getPathWithFileValue(SAVED_LACE_FILE);
+    File laceFilePath = preferences.getPathWithFileValue(SAVED_LACE_FILE);
 
-    if (xmlFilePath == null || !xmlFilePath.canWrite()) {
+    if (laceFilePath == null || !laceFilePath.canWrite()) {
       // Save as anyway, since we don't know where to save
       FileChooser saveAs = new FileChooser();
       saveAs.setTitle(SAVE_FILE_DIALOG_TITLE);
@@ -52,7 +52,7 @@ public class SaveButton extends Button {
       file = saveAs.showSaveDialog(root.getScene().getWindow());
     } else {
       // We know where to save
-      file = xmlFilePath;
+      file = laceFilePath;
     }
 
     if (file != null) {

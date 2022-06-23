@@ -2,8 +2,11 @@ package org.alienlabs.adaloveslace.business.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
+
+import java.io.File;
 
 /**
  * An image, or at least the one represented by a Pattern filename, which can be put at will on a Canvas and chosen
@@ -20,12 +23,18 @@ import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Pattern {
 
+  @XmlTransient
   private String absoluteFilename;
 
   private String filename;
 
   public Pattern(String absoluteFilename) {
     this.absoluteFilename = absoluteFilename;
+    if (this.absoluteFilename == null) {
+      this.filename = null;
+    } else {
+      this.filename = new File(absoluteFilename).getName();
+    }
   }
 
   public Pattern() {

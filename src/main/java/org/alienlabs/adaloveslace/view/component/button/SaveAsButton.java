@@ -35,13 +35,13 @@ public class SaveAsButton extends Button {
     saveAs.setTitle(SAVE_FILE_AS_DIALOG_TITLE);
 
     Preferences preferences = new Preferences();
-    File xmlFilePath = preferences.getPathWithFileValue(LACE_FILE_FOLDER_SAVE_PATH);
-    if (xmlFilePath == null) {
+    File laceFilePath = preferences.getPathWithFileValue(LACE_FILE_FOLDER_SAVE_PATH);
+    if (laceFilePath == null) {
       File userHome = new File(System.getProperty("user.home"));
       saveAs.setInitialDirectory(userHome);
       preferences.setPathWithFileValue(userHome, LACE_FILE_FOLDER_SAVE_PATH);
     } else {
-      saveAs.setInitialDirectory(xmlFilePath);
+      saveAs.setInitialDirectory(laceFilePath);
     }
 
     FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(DIAGRAM_FILES, DIAGRAM_FILE_FILTER);
