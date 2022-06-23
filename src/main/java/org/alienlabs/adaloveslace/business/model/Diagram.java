@@ -55,9 +55,18 @@ public class Diagram {
 
     return new ArrayList<>(this.knots);
   }
+
   public List<Knot> undoLastKnot() {
     if (currentKnotIndex > 0) {
       this.currentKnotIndex--;
+    }
+
+    return new ArrayList<>(this.knots);
+  }
+
+  public List<Knot> redoLastKnot() {
+    if (currentKnotIndex < this.knots.size()) {
+      this.currentKnotIndex++;
     }
 
     return new ArrayList<>(this.knots);
