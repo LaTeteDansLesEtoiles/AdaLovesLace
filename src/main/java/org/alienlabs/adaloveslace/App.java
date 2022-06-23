@@ -12,6 +12,7 @@ import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.component.CanvasWithOptionalDotGrid;
+import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.slf4j.Logger;
@@ -45,12 +46,16 @@ public class App extends Application {
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   private Stage toolboxStage;
+  private Stage geometryStage;
   private Diagram diagram;
   private MainWindow mainWindow;
 
   @Override
   public void start(Stage primaryStage) {
     this.diagram = new Diagram();
+
+    logger.info("Opening geometry window");
+    showGeometryWindow(this);
 
     logger.info("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
@@ -96,6 +101,24 @@ public class App extends Application {
 
     toolboxWindow.createToolboxStage(this.toolboxStage, buttonsPane, patternsPane);
     return toolboxWindow;
+  }
+
+  public GeometryWindow showGeometryWindow(App app) {
+    this.geometryStage     = new Stage(StageStyle.DECORATED);
+
+    TilePane patternsPane  = new TilePane(Orientation.HORIZONTAL);
+    patternsPane.setVgap(TILE_PADDING);
+    patternsPane.setPrefColumns(1);
+    patternsPane.setPrefTileHeight(TILE_HEIGHT);
+    patternsPane.setAlignment(Pos.TOP_CENTER);
+
+
+    GeometryWindow geometryWindow = new GeometryWindow();
+    this.diagram = geometryWindow.createGeometryPane(patternsPane, app, this.diagram);
+    TilePane buttonsPane = geometryWindow.createGeometryButtons(app);
+
+    geometryWindow.createGeometryStage(this.geometryStage, buttonsPane, patternsPane);
+    return geometryWindow;
   }
 
   public static void main(String[] args) {
