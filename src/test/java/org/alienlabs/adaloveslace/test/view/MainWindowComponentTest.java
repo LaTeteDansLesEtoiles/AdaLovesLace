@@ -142,7 +142,7 @@ class MainWindowComponentTest extends AppTestParent {
     // have access to the UI thread for the copy without "Platform.runLater()"
     Color foundColorOnGridBeforeUndo = getColor(canvas, pointToMoveToInCanvas);
 
-    // Run: issue an undo command
+    // Run: issue an "Undo knot" command
     robot.push(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
 
     // Verify
@@ -180,14 +180,14 @@ class MainWindowComponentTest extends AppTestParent {
     // have access to the UI thread for the copy without "Platform.runLater()"
     Color foundColorOnGridBeforeRedo = getColor(canvas, pointToMoveToInCanvas);
 
-    // Issue an undo command
+    // Issue an "Undo knot" command
     robot.push(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
 
     // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
     // have access to the UI thread for the copy without "Platform.runLater()"
     getColor(canvas, pointToMoveToInCanvas);
 
-    // Run: Issue a redo command
+    // Run: Issue a "Redo knot" command
     robot.push(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
 
     // Verify
@@ -200,6 +200,44 @@ class MainWindowComponentTest extends AppTestParent {
 
     assertEquals(foundColorOnGridAfterRedo, foundColorOnGridBeforeRedo,
       "The color before and after redo must be the same!");
+  }
+
+  /**
+   * Checks if we can reset a snowflake (the second pattern) after we have drawn it on the canvas
+   *
+   * @param robot The injected FxRobot
+   */
+  @Test
+  void testResetSnowflake(FxRobot robot) {
+    // Init
+    selectSnowflake(robot);
+    drawSnowflake(robot);
+
+    // Move mouse and get the color of the pixel under the pointer
+    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
+    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
+    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X - 10,
+      canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y - 10);
+    robot.moveTo(pointToMoveTo);
+
+    // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
+    // have access to the UI thread for the copy without "Platform.runLater()"
+    Color foundColorOnGridBeforeReset = getColor(canvas, pointToMoveToInCanvas);
+
+    // Run: issue a "Reset diagram" command
+    robot.push(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
+
+    // Verify
+    // Move mouse and get the color of the pixel under the pointer
+    pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
+    pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X - 10,
+      canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y - 10);
+    robot.moveTo(pointToMoveTo);
+
+    Color foundColorOnGridAfterReset = getColor(canvas, pointToMoveToInCanvas);
+
+    assertNotEquals(foundColorOnGridAfterReset, foundColorOnGridBeforeReset,
+      "The color before and after 'reset diagram' must not be the same!");
   }
 
   // Click on the snowflake in the toolbox to select it
