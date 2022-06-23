@@ -17,9 +17,9 @@ import org.alienlabs.adaloveslace.view.component.button.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.alienlabs.adaloveslace.view.component.button.ClearDiagramButton.CLEAR_DIAGRAM_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.component.button.RedoKnotButton.REDO_KNOT_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.ResetDiagramButton.RESET_DIAGRAM_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.UndoKnotButton.UNDO_KNOT_BUTTON_NAME;
@@ -75,9 +75,9 @@ public class MainWindow {
 
     SeparatorMenuItem separator2 = new SeparatorMenuItem();
 
-    MenuItem clearDiagramItem = new MenuItem(CLEAR_DIAGRAM_BUTTON_NAME);
-    clearDiagramItem.setOnAction(actionEvent -> ClearDiagramButton.clearDiagram(app));
-    clearDiagramItem.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
+    MenuItem resetDiagramItem = new MenuItem(RESET_DIAGRAM_BUTTON_NAME);
+    resetDiagramItem.setOnAction(actionEvent -> ResetDiagramButton.resetDiagram(app));
+    resetDiagramItem.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
 
     MenuItem showHideGridItem = new MenuItem(SHOW_HIDE_GRID_BUTTON_NAME);
     showHideGridItem.setOnAction(actionEvent -> ShowHideGridButton.showHideGrid(app));
@@ -85,7 +85,7 @@ public class MainWindow {
 
 
     fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, separator1, quitItem);
-    editMenu.getItems().addAll(undoKnotItem, redoKnotItem, separator2, clearDiagramItem);
+    editMenu.getItems().addAll(undoKnotItem, redoKnotItem, separator2, resetDiagramItem);
     toolMenu.getItems().addAll(showHideGridItem);
 
     menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu);

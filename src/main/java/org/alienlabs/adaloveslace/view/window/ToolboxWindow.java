@@ -26,10 +26,10 @@ import java.util.regex.Pattern;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.HOME_DIRECTORY_RESOURCES_PATH;
-import static org.alienlabs.adaloveslace.view.component.button.ClearDiagramButton.CLEAR_DIAGRAM_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.LoadButton.LOAD_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.component.button.RedoKnotButton.REDO_KNOT_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.ResetDiagramButton.RESET_DIAGRAM_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.SaveButton.SAVE_FILE_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
@@ -154,8 +154,8 @@ public class ToolboxWindow {
 
     UndoKnotButton      undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
     RedoKnotButton      redoKnotButton      = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
-    ClearDiagramButton  clearDiagramButton  = new ClearDiagramButton  (CLEAR_DIAGRAM_BUTTON_NAME, app);
-    buttonsPane.getChildren().addAll(undoKnotButton, redoKnotButton, clearDiagramButton);
+    ResetDiagramButton resetDiagramButton = new ResetDiagramButton    (RESET_DIAGRAM_BUTTON_NAME, app);
+    buttonsPane.getChildren().addAll(undoKnotButton, redoKnotButton, resetDiagramButton);
 
     ShowHideGridButton  showHideGridButton  = new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app);
     buttonsPane.getChildren().add(showHideGridButton);

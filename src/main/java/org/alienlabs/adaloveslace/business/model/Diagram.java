@@ -84,6 +84,12 @@ public class Diagram {
     return new ArrayList<>(this.knots);
   }
 
+  // We don't lose the undo / redo history
+  public List<Knot> resetDiagram() {
+    this.currentKnotIndex = 0;
+    return new ArrayList<>(this.knots);
+  }
+
   public List<Knot> clearKnots() {
     this.knots.clear();
     this.currentKnotIndex = 0;
