@@ -29,6 +29,12 @@ public class MainWindow {
   public static final String SAVE_FILE      = "Save";
   public static final String LOAD_FILE      = "Load";
 
+  public static final String UNDO_KNOT_BUTTON_NAME = "Undo knot";
+
+  public static final String REDO_KNOT_BUTTON_NAME = "Redo knot";
+
+  public static final String RESET_DIAGRAM_BUTTON_NAME = "Reset diagram";
+
   public static final String MOUSE_CLICKED  = "MOUSE_CLICKED";
 
   public static final KeyCodeCombination SAVE_AS_KEY_COMBINATION = new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN);
@@ -41,11 +47,8 @@ public class MainWindow {
 
   public void createMenuBar(GridPane root, App app) {
     Menu fileMenu = new Menu("File");
+    Menu editMenu = new Menu("Edit");
     Menu toolMenu = new Menu("Tool");
-
-    MenuItem showHideGridItem = new MenuItem(SHOW_HIDE_GRID_BUTTON_NAME);
-    showHideGridItem.setOnAction(actionEvent -> ShowHideGridButton.showHideGrid(app));
-    showHideGridItem.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
 
     MenuItem saveItem = new MenuItem(SAVE_FILE);
     saveItem.setOnAction(actionEvent -> SaveButton.onSaveAction(app, root));
@@ -59,16 +62,36 @@ public class MainWindow {
     loadItem.setOnAction(actionEvent -> LoadButton.onLoadAction(app, root));
     loadItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
 
-    SeparatorMenuItem separator = new SeparatorMenuItem();
+    SeparatorMenuItem separator1 = new SeparatorMenuItem();
 
     MenuItem quitItem = new MenuItem(QUIT_APP);
     quitItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
     quitItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
 
-    fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, separator, quitItem);
+    MenuItem undoKnotItem = new MenuItem(UNDO_KNOT_BUTTON_NAME);
+    undoKnotItem.setOnAction(actionEvent -> UndoKnotButton.undoKnot(app));
+    undoKnotItem.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
+
+    MenuItem redoKnotItem = new MenuItem(REDO_KNOT_BUTTON_NAME);
+    redoKnotItem.setOnAction(actionEvent -> RedoKnotButton.redoKnot(app));
+    redoKnotItem.setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
+
+    SeparatorMenuItem separator2 = new SeparatorMenuItem();
+
+    MenuItem resetDiagramItem = new MenuItem(RESET_DIAGRAM_BUTTON_NAME);
+    resetDiagramItem.setOnAction(actionEvent -> ResetDiagramButton.resetDiagram(app));
+    resetDiagramItem.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
+
+    MenuItem showHideGridItem = new MenuItem(SHOW_HIDE_GRID_BUTTON_NAME);
+    showHideGridItem.setOnAction(actionEvent -> ShowHideGridButton.showHideGrid(app));
+    showHideGridItem.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
+
+
+    fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, separator1, quitItem);
+    editMenu.getItems().addAll(undoKnotItem, redoKnotItem, separator2, resetDiagramItem);
     toolMenu.getItems().addAll(showHideGridItem);
 
-    menuBar.getMenus().addAll(fileMenu, toolMenu);
+    menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu);
 
     VBox vBox = new VBox(menuBar); //Gives vertical box
     root.getChildren().addAll(vBox);

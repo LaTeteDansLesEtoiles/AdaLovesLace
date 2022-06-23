@@ -31,6 +31,7 @@ import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_A
 import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.SaveButton.SAVE_FILE_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
 public class ToolboxWindow {
 
@@ -39,7 +40,9 @@ public class ToolboxWindow {
   public static final double TILE_HEIGHT                  = 50d;
   public static final double TILE_PADDING                 = 20d;
   public static final double VERTICAL_PADDING             = 70d;
-  public static final double VERTICAL_BUTTONS_PADDING     = 50d;
+  public static final double VERTICAL_BUTTONS_PADDING     = 125d;
+
+  public static final double QUIT_BUTTON_PADDING          = 25d;
   public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
 
   private List<String> classpathResourceFiles;
@@ -127,7 +130,7 @@ public class ToolboxWindow {
     patternsPane.getChildren().add(buttonsPane);
 
     Scene toolboxScene = new Scene(patternsPane, TOOLBOX_WINDOW_WIDTH,
-      this.classpathResourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING * 3 + VERTICAL_GAP_BETWEEN_BUTTONS);
+      this.classpathResourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING * 5 + VERTICAL_GAP_BETWEEN_BUTTONS);
 
     toolboxStage.setTitle(TOOLBOX_TITLE);
     toolboxStage.setX(TOOLBOX_WINDOW_X);
@@ -142,16 +145,21 @@ public class ToolboxWindow {
     buttonsPane.setPrefColumns(1);
     buttonsPane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
 
-    SaveButton    saveButton      = new SaveButton  (app, buttonsPane, SAVE_FILE_BUTTON_NAME);
-    SaveAsButton  saveAsButton    = new SaveAsButton(app, buttonsPane, SAVE_FILE_AS_BUTTON_NAME);
-    LoadButton    loadButton      = new LoadButton  (app, buttonsPane, LOAD_BUTTON_NAME);
+    SaveButton          saveButton          = new SaveButton          (app, buttonsPane, SAVE_FILE_BUTTON_NAME);
+    SaveAsButton        saveAsButton        = new SaveAsButton        (app, buttonsPane, SAVE_FILE_AS_BUTTON_NAME);
+    LoadButton          loadButton          = new LoadButton          (app, buttonsPane, LOAD_BUTTON_NAME);
     buttonsPane.getChildren().addAll(saveButton, saveAsButton, loadButton);
 
-    ShowHideGridButton showHideGridButton = new ShowHideGridButton(SHOW_HIDE_GRID_BUTTON_NAME, app);
+    UndoKnotButton      undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
+    RedoKnotButton      redoKnotButton      = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
+    ResetDiagramButton resetDiagramButton = new ResetDiagramButton    (RESET_DIAGRAM_BUTTON_NAME, app);
+    buttonsPane.getChildren().addAll(undoKnotButton, redoKnotButton, resetDiagramButton);
+
+    ShowHideGridButton  showHideGridButton  = new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app);
     buttonsPane.getChildren().add(showHideGridButton);
 
     QuitButton showQuitButton = new QuitButton(QUIT_APP);
-    showQuitButton.setTranslateY(VERTICAL_BUTTONS_PADDING);
+    showQuitButton.setTranslateY(QUIT_BUTTON_PADDING);
     buttonsPane.getChildren().add(showQuitButton);
 
     return buttonsPane;

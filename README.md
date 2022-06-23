@@ -53,10 +53,20 @@ from the project root directory
 
 
 --------------------------------------------------------------------------------------------
+Create a local branch:
+
+    git checkout -b 4-undoredoclear
+
+
+Then, commit. On first push, create remote counterpart:
+
+    git push -u origin 4-undoredoclear
+
+
 When creating a branch, if you wish to set tracking information for this branch you can do so with:
 
-    git branch --set-upstream-to=origin/<branch> 1-basicdrawing
-    => Branch '1-basicdrawing' set up to track remote branch '1-basicdrawing' from 'origin'.
+    git branch --set-upstream-to=origin/4-undoredoclear 4-undoredoclear
+    => Branch '4-undoredoclear' set up to track remote branch '4-undoredoclear' from 'origin'.
 
 
 --------------------------------------------------------------------------------------------
