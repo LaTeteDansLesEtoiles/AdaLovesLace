@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 
-import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
-import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

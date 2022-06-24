@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view.component.button;
+package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.Pane;

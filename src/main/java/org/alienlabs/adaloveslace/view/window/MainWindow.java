@@ -14,16 +14,16 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.view.component.CanvasWithOptionalDotGrid;
-import org.alienlabs.adaloveslace.view.component.button.*;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.util.Iterator;
 
-import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
-import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
 

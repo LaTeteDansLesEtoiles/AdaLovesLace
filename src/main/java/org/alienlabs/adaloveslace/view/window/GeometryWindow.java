@@ -4,7 +4,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,10 +11,12 @@ import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
-import org.alienlabs.adaloveslace.view.component.button.DrawingButton;
-import org.alienlabs.adaloveslace.view.component.button.RotationButton;
-import org.alienlabs.adaloveslace.view.component.button.SelectionButton;
-import org.alienlabs.adaloveslace.view.component.button.ZoomButton;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.DrawingButton;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.RotationButton;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.ZoomButton;
+import org.alienlabs.adaloveslace.view.component.spinner.RotationSpinner;
+import org.alienlabs.adaloveslace.view.component.spinner.ZoomSpinner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,10 +24,10 @@ import java.io.File;
 import java.net.MalformedURLException;
 
 import static org.alienlabs.adaloveslace.App.GEOMETRY_TITLE;
-import static org.alienlabs.adaloveslace.view.component.button.DrawingButton.DRAWING_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.RotationButton.ROTATION_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.SelectionButton.SELECTION_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.ZoomButton.ZOOM_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.DrawingButton.DRAWING_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.RotationButton.ROTATION_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton.SELECTION_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.ZoomButton.ZOOM_BUTTON_NAME;
 
 public class GeometryWindow {
 
@@ -81,59 +82,24 @@ public class GeometryWindow {
     Spinner<Integer> rotate2 = new Spinner<>(0, 360, 0, 10);
     Spinner<Integer> rotate3 = new Spinner<>(0, 360, 0, 30);
 
-    buildRotationSpinner(app, rotate1, rotate2.getValueFactory(), rotate3.getValueFactory());
-    buildRotationSpinner(app, rotate2, rotate1.getValueFactory(), rotate3.getValueFactory());
-    buildRotationSpinner(app, rotate3, rotate1.getValueFactory(), rotate2.getValueFactory());
+    RotationSpinner rotationSpinner = new RotationSpinner();
+    rotationSpinner.buildRotationSpinner(app, rotate1, rotate2.getValueFactory(), rotate3.getValueFactory());
+    rotationSpinner.buildRotationSpinner(app, rotate2, rotate1.getValueFactory(), rotate3.getValueFactory());
+    rotationSpinner.buildRotationSpinner(app, rotate3, rotate1.getValueFactory(), rotate2.getValueFactory());
 
     Spinner<Integer> zoom1 = new Spinner<>(-10, 10, 1, 1);
     Spinner<Integer> zoom2 = new Spinner<>(-10, 10, 1, 2);
     Spinner<Integer> zoom3 = new Spinner<>(-10, 10, 1, 3);
 
-    buildZoomSpinner(app, zoom1, zoom2.getValueFactory(), zoom3.getValueFactory());
-    buildZoomSpinner(app, zoom2, zoom1.getValueFactory(), zoom3.getValueFactory());
-    buildZoomSpinner(app, zoom3, zoom1.getValueFactory(), zoom2.getValueFactory());
-
+    ZoomSpinner zoomSpinner = new ZoomSpinner();
+    zoomSpinner.buildZoomSpinner(app, zoom1, zoom2.getValueFactory(), zoom3.getValueFactory());
+    zoomSpinner.buildZoomSpinner(app, zoom2, zoom1.getValueFactory(), zoom3.getValueFactory());
+    zoomSpinner.buildZoomSpinner(app, zoom3, zoom1.getValueFactory(), zoom2.getValueFactory());
 
     buttonsPane.getChildren().addAll(drawingButton, selectionButton, rotationButton, zoomButton,
       rotate1, zoom1, rotate2, zoom2, rotate3, zoom3);
 
     return buttonsPane;
-  }
-
-  private void buildRotationSpinner(App app, Spinner<Integer> spinner,
-                                                    SpinnerValueFactory<Integer> spinnerToReflect1,
-                                                    SpinnerValueFactory<Integer> spinnerToReflect2) {
-    spinner.setOnMouseClicked(event -> {
-      app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
-        .setRotationAngle(spinner.getValueFactory().getValue());
-      app.getCanvasWithOptionalDotGrid().layoutChildren();
-    });
-
-    spinner.getValueFactory().valueProperty().addListener(
-      (observableValue, oldValue, newValue) -> {
-        spinnerToReflect1.setValue(newValue);
-        spinnerToReflect2.setValue(newValue);
-      });
-
-    spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
-  }
-
-  private void buildZoomSpinner(App app, Spinner<Integer> spinner,
-                                                    SpinnerValueFactory<Integer> spinnerToReflect1,
-                                                    SpinnerValueFactory<Integer> spinnerToReflect2) {
-    spinner.setOnMouseClicked(event -> {
-      app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
-        .setZoomFactor(spinner.getValueFactory().getValue());
-      app.getCanvasWithOptionalDotGrid().layoutChildren();
-    });
-
-    spinner.getValueFactory().valueProperty().addListener(
-      (observableValue, oldValue, newValue) -> {
-        spinnerToReflect1.setValue(newValue);
-        spinnerToReflect2.setValue(newValue);
-      });
-
-    spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
   }
 
   private ImageView getImageView(App app, String pathname, ToggleButton button, boolean isSelected) {

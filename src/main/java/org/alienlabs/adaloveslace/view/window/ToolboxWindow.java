@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
-import org.alienlabs.adaloveslace.view.component.button.*;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +26,11 @@ import java.util.regex.Pattern;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.HOME_DIRECTORY_RESOURCES_PATH;
-import static org.alienlabs.adaloveslace.view.component.button.LoadButton.LOAD_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
-import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.SaveButton.SAVE_FILE_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.LoadButton.LOAD_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.SaveButton.SAVE_FILE_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
 public class ToolboxWindow {
@@ -152,11 +152,11 @@ public class ToolboxWindow {
 
     SaveButton          saveButton          = new SaveButton          (app, buttonsPane, SAVE_FILE_BUTTON_NAME);
     SaveAsButton        saveAsButton        = new SaveAsButton        (app, buttonsPane, SAVE_FILE_AS_BUTTON_NAME);
-    LoadButton          loadButton          = new LoadButton          (app, buttonsPane, LOAD_BUTTON_NAME);
+    LoadButton loadButton          = new LoadButton          (app, buttonsPane, LOAD_BUTTON_NAME);
     buttonsPane.getChildren().addAll(saveButton, saveAsButton, loadButton);
 
     UndoKnotButton      undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
-    RedoKnotButton      redoKnotButton      = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
+    RedoKnotButton redoKnotButton      = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
     ResetDiagramButton resetDiagramButton = new ResetDiagramButton    (RESET_DIAGRAM_BUTTON_NAME, app);
     buttonsPane.getChildren().addAll(undoKnotButton, redoKnotButton, resetDiagramButton);
 

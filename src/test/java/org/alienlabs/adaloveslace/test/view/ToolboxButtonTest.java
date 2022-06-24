@@ -9,8 +9,8 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.matcher.control.LabeledMatchers;
 
-import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
-import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
 class ToolboxButtonTest extends AppTestParent {
