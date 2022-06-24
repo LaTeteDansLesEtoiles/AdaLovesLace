@@ -21,8 +21,6 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.util.Iterator;
 
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
@@ -31,13 +29,18 @@ public class MainWindow {
   private CanvasWithOptionalDotGrid canvasWithOptionalDotGrid;
 
   public static final String SAVE_FILE      = "Save";
+
+  public static final String SAVE_FILE_AS   = "Save as";
+
   public static final String LOAD_FILE      = "Load";
 
-  public static final String UNDO_KNOT_BUTTON_NAME = "Undo knot";
+  public static final String QUIT_APP       = "Quit";
 
-  public static final String REDO_KNOT_BUTTON_NAME = "Redo knot";
+  public static final String UNDO_KNOT      = "Undo knot";
 
-  public static final String RESET_DIAGRAM_BUTTON_NAME = "Reset diagram";
+  public static final String REDO_KNOT      = "Redo knot";
+
+  public static final String RESET_DIAGRAM  = "Reset diagram";
 
   public static final String MOUSE_CLICKED  = "MOUSE_CLICKED";
 
@@ -58,7 +61,7 @@ public class MainWindow {
     saveItem.setOnAction(actionEvent -> SaveButton.onSaveAction(app, root));
     saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
 
-    MenuItem saveAsItem = new MenuItem(SAVE_FILE_AS_BUTTON_NAME);
+    MenuItem saveAsItem = new MenuItem(SAVE_FILE_AS);
     saveAsItem.setOnAction(actionEvent -> SaveAsButton.onSaveAsAction(app, root));
     saveAsItem.setAccelerator(SAVE_AS_KEY_COMBINATION);
 
@@ -72,17 +75,17 @@ public class MainWindow {
     quitItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
     quitItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
 
-    MenuItem undoKnotItem = new MenuItem(UNDO_KNOT_BUTTON_NAME);
+    MenuItem undoKnotItem = new MenuItem(UNDO_KNOT);
     undoKnotItem.setOnAction(actionEvent -> UndoKnotButton.undoKnot(app));
     undoKnotItem.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
 
-    MenuItem redoKnotItem = new MenuItem(REDO_KNOT_BUTTON_NAME);
+    MenuItem redoKnotItem = new MenuItem(REDO_KNOT);
     redoKnotItem.setOnAction(actionEvent -> RedoKnotButton.redoKnot(app));
     redoKnotItem.setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
 
     SeparatorMenuItem separator2 = new SeparatorMenuItem();
 
-    MenuItem resetDiagramItem = new MenuItem(RESET_DIAGRAM_BUTTON_NAME);
+    MenuItem resetDiagramItem = new MenuItem(RESET_DIAGRAM);
     resetDiagramItem.setOnAction(actionEvent -> ResetDiagramButton.resetDiagram(app));
     resetDiagramItem.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
 

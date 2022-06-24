@@ -27,11 +27,13 @@ import java.util.regex.Pattern;
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.HOME_DIRECTORY_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.LoadButton.LOAD_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton.REDO_KNOT_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ResetDiagramButton.RESET_DIAGRAM_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.SaveButton.SAVE_FILE_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton.UNDO_KNOT_BUTTON_NAME;
 
 public class ToolboxWindow {
 
@@ -152,18 +154,18 @@ public class ToolboxWindow {
 
     SaveButton          saveButton          = new SaveButton          (app, buttonsPane, SAVE_FILE_BUTTON_NAME);
     SaveAsButton        saveAsButton        = new SaveAsButton        (app, buttonsPane, SAVE_FILE_AS_BUTTON_NAME);
-    LoadButton loadButton          = new LoadButton          (app, buttonsPane, LOAD_BUTTON_NAME);
+    LoadButton loadButton                   = new LoadButton          (app, buttonsPane, LOAD_BUTTON_NAME);
     buttonsPane.getChildren().addAll(saveButton, saveAsButton, loadButton);
 
     UndoKnotButton      undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
-    RedoKnotButton redoKnotButton      = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
-    ResetDiagramButton resetDiagramButton = new ResetDiagramButton    (RESET_DIAGRAM_BUTTON_NAME, app);
+    RedoKnotButton redoKnotButton           = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
+    ResetDiagramButton resetDiagramButton   = new ResetDiagramButton    (RESET_DIAGRAM_BUTTON_NAME, app);
     buttonsPane.getChildren().addAll(undoKnotButton, redoKnotButton, resetDiagramButton);
 
     ShowHideGridButton  showHideGridButton  = new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app);
     buttonsPane.getChildren().add(showHideGridButton);
 
-    QuitButton showQuitButton = new QuitButton(QUIT_APP);
+    QuitButton showQuitButton = new QuitButton(QUIT_APP_BUTTON_NAME);
     showQuitButton.setTranslateY(QUIT_BUTTON_PADDING);
     buttonsPane.getChildren().add(showQuitButton);
 

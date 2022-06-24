@@ -1,11 +1,11 @@
 package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
-import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
+import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +14,9 @@ import java.io.File;
 import static org.alienlabs.adaloveslace.util.Preferences.LACE_FILE_FOLDER_SAVE_PATH;
 import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
-public class LoadButton extends Button {
+public class LoadButton extends ImageButton {
 
-  public static final String LOAD_BUTTON_NAME         = "Load";
+  public static final String LOAD_BUTTON_NAME         = "          Load          ";
 
   public static final String LOAD_FILE_DIALOG_TITLE   = "Load diagram";
   public static final String DIAGRAM_FILES            = ".lace files (*.lace)";
@@ -27,6 +27,7 @@ public class LoadButton extends Button {
   public LoadButton(App app, Pane root, String buttonLabel) {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onLoadAction(app, root));
+    buildButtonImage("load.png");
   }
 
   public static void onLoadAction(App app, Pane root) {

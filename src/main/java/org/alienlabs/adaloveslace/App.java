@@ -41,6 +41,9 @@ public class App extends Application {
 
   public static final double  MAIN_WINDOW_Y           = 10d;
   private static final double MAIN_WINDOW_X           = 50d;
+  public static final int     ICON_SIZE               = 46;
+  public static final int     SMALL_ICON_SIZE         = 23;
+
   private static final double RADIUS                  = 2.5d;// The dots from the grid are ellipses, this is their radius
 
   private static final Logger logger = LoggerFactory.getLogger(App.class);

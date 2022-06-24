@@ -24,6 +24,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 
 import static org.alienlabs.adaloveslace.App.GEOMETRY_TITLE;
+import static org.alienlabs.adaloveslace.App.ICON_SIZE;
+import static org.alienlabs.adaloveslace.view.component.button.ImageButton.ASSETS_DIRECTORY;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.DrawingButton.DRAWING_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.RotationButton.ROTATION_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton.SELECTION_BUTTON_NAME;
@@ -67,16 +69,16 @@ public class GeometryWindow {
     buttonsPane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
 
     drawingButton = new DrawingButton(app, this, buttonsPane, DRAWING_BUTTON_NAME);
-    getImageView(app, "assets/drawing.png", drawingButton, true);
+    getImageView("drawing.png", drawingButton, true);
 
     selectionButton = new SelectionButton(app, this, buttonsPane, SELECTION_BUTTON_NAME);
-    getImageView(app, "assets/selection.png", selectionButton, false);
+    getImageView("selection.png", selectionButton, false);
 
     rotationButton = new RotationButton(app, this, buttonsPane, ROTATION_BUTTON_NAME);
-    getImageView(app, "assets/rotation.png", rotationButton, false);
+    getImageView("rotation.png", rotationButton, false);
 
     zoomButton = new ZoomButton(app, this, buttonsPane, ZOOM_BUTTON_NAME);
-    getImageView(app, "assets/zoom.png", zoomButton, false);
+    getImageView("zoom.png", zoomButton, false);
 
     Spinner<Integer> rotate1 = new Spinner<>(0, 360, 0, 1);
     Spinner<Integer> rotate2 = new Spinner<>(0, 360, 0, 10);
@@ -102,19 +104,18 @@ public class GeometryWindow {
     return buttonsPane;
   }
 
-  private ImageView getImageView(App app, String pathname, ToggleButton button, boolean isSelected) {
-    Image buttonImage          = null;
+  private void getImageView(String pathname, ToggleButton button, boolean isSelected) {
     try {
-      buttonImage = new Image(new File(pathname).toURI().toURL().toExternalForm());
+      Image buttonImage = new Image(new File(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm());
+
+      ImageView buttonImageView  = new ImageView(buttonImage);
+      buttonImageView.setFitHeight(ICON_SIZE);
+      buttonImageView.setPreserveRatio(true);
+      button.setGraphic(buttonImageView);
+      button.setSelected(isSelected);
     } catch (MalformedURLException e) {
       logger.error("Error loading button image!", e);
     }
-    ImageView buttonImageView  = new ImageView(buttonImage);
-    buttonImageView.setFitHeight(46);
-    buttonImageView.setPreserveRatio(true);
-    button.setGraphic(buttonImageView);
-    button.setSelected(isSelected);
-    return buttonImageView;
   }
 
   public DrawingButton getDrawingButton() {

@@ -1,18 +1,19 @@
 package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
-import javafx.scene.control.Button;
+import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class QuitButton extends Button {
+public class QuitButton extends ImageButton {
 
-  public static final String QUIT_APP = "Quit";
+  public static final String QUIT_APP_BUTTON_NAME = "         Quit           ";
 
   private static final Logger logger  = LoggerFactory.getLogger(QuitButton.class);
 
   public QuitButton(String buttonLabel) {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onQuitAction());
+    buildButtonImage("quit.png");
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

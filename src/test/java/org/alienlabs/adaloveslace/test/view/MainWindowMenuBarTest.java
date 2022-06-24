@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -81,7 +79,7 @@ class MainWindowMenuBarTest extends AppTestParent {
   @Test
   void saveAsMenuItemShallBeDisplayed(FxRobot robot) {
     MenuItem saveAs = getSaveAsMenuItem(getFileMenu());
-    assertEquals(SAVE_FILE_AS_BUTTON_NAME, saveAs.getText());
+    assertEquals(SAVE_FILE_AS, saveAs.getText());
   }
 
   /**
@@ -103,7 +101,7 @@ class MainWindowMenuBarTest extends AppTestParent {
   @Test
   void undoKnotMenuItemShallBeDisplayed(FxRobot robot) {
     MenuItem undo = getUndoKnotMenuItem(getEditMenu());
-    assertEquals(UNDO_KNOT_BUTTON_NAME, undo.getText());
+    assertEquals(UNDO_KNOT, undo.getText());
   }
 
   /**
@@ -114,7 +112,7 @@ class MainWindowMenuBarTest extends AppTestParent {
   @Test
   void redoKnotMenuItemShallBeDisplayed(FxRobot robot) {
     MenuItem redo = getRedoKnotMenuItem(getEditMenu());
-    assertEquals(REDO_KNOT_BUTTON_NAME, redo.getText());
+    assertEquals(REDO_KNOT, redo.getText());
   }
 
   /**
@@ -125,7 +123,7 @@ class MainWindowMenuBarTest extends AppTestParent {
   @Test
   void resetDiagramMenuItemShallBeDisplayed(FxRobot robot) {
     MenuItem reset = getResetDiagramMenuItem(getEditMenu());
-    assertEquals(RESET_DIAGRAM_BUTTON_NAME, reset.getText());
+    assertEquals(RESET_DIAGRAM, reset.getText());
   }
 
   /**
