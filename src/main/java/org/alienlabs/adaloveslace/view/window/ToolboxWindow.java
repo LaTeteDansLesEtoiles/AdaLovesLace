@@ -64,7 +64,12 @@ public class ToolboxWindow {
         if (homeDirectoryResourceFiles == null || homeDirectoryResourceFiles.isEmpty()) {
           showEmptyPatternDirectoryDialog(homeDirectoryResourcesPath);
         } else {
-          this.classpathResourceFiles.addAll(homeDirectoryResourceFiles);
+          // We don't add duplicated resources to our toolbox buttons (i.e. filename must be different in both
+          // classpathResourceFiles & homeDirectoryResourceFiles
+          this.classpathResourceFiles.addAll(
+            homeDirectoryResourceFiles.stream().filter(homeDirectoryResource -> classpathResourceFiles.stream().noneMatch(
+              classpathResource -> homeDirectoryResource.split(File.separator)[homeDirectoryResource.split(File.separator).length - 1]
+                .equals(classpathResource.split(File.separator)[classpathResource.split(File.separator).length - 1]))).toList());
         }
       }
     }

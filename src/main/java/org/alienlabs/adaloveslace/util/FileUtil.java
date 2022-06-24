@@ -86,10 +86,12 @@ public class FileUtil {
       File targetFile = new File(System.getProperty(USER_HOME) + File.separator +
         PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator + entry.getName());
 
-      Files.copy(
-        initialStream,
-        targetFile.toPath(),
-        StandardCopyOption.REPLACE_EXISTING);
+      if (!targetFile.exists()) {
+        Files.copy(
+          initialStream,
+          targetFile.toPath(),
+          StandardCopyOption.REPLACE_EXISTING);
+      }
     } catch (IOException e) {
       logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
     }
