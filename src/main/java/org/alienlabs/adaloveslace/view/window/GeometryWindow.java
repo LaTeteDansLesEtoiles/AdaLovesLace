@@ -77,9 +77,13 @@ public class GeometryWindow {
     zoomButton = new ZoomButton(app, this, buttonsPane, ZOOM_BUTTON_NAME);
     getImageView(app, "assets/zoom.png", zoomButton, false);
 
-    Spinner<Integer> rotate1 = buildSpinner(app, new Spinner<>(0, 360, 0, 1));
-    Spinner<Integer> rotate2 = buildSpinner(app, new Spinner<>(0, 360, 0, 10));
-    Spinner<Integer> rotate3 = buildSpinner(app, new Spinner<>(0, 360, 0, 30));
+    Spinner<Integer> rotate1 = new Spinner<>(0, 360, 0, 1);
+    Spinner<Integer> rotate2 = new Spinner<>(0, 360, 0, 10);
+    Spinner<Integer> rotate3 = new Spinner<>(0, 360, 0, 30);
+
+    buildSpinner(app, rotate1, rotate1.getValueFactory(), rotate2.getValueFactory(), rotate3.getValueFactory());
+    buildSpinner(app, rotate2, rotate2.getValueFactory(), rotate1.getValueFactory(), rotate3.getValueFactory());
+    buildSpinner(app, rotate3, rotate3.getValueFactory(), rotate1.getValueFactory(), rotate2.getValueFactory());
 
     Spinner<Integer> zoom1 = new Spinner<>(-10, 10, 1, 1);
     zoom1.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
@@ -96,17 +100,23 @@ public class GeometryWindow {
     return buttonsPane;
   }
 
-  private Spinner<Integer> buildSpinner(App app, Spinner<Integer> rotate) {
-    SpinnerValueFactory<Integer> valueFactory = rotate.getValueFactory();
-
+  private void buildSpinner(App app, Spinner<Integer> rotate,
+                                                    SpinnerValueFactory<Integer> toChange,
+                                                    SpinnerValueFactory<Integer> notToChange1,
+                                                    SpinnerValueFactory<Integer> notToChange2) {
     rotate.setOnMouseClicked(event -> {
       app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
-        .setRotationAngle(valueFactory.getValue());
+        .setRotationAngle(toChange.getValue());
       app.getCanvasWithOptionalDotGrid().layoutChildren();
     });
 
+    toChange.valueProperty().addListener(
+      (observableValue, oldValue, newValue) -> {
+        notToChange1.setValue(newValue);
+        notToChange2.setValue(newValue);
+      });
+
     rotate.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
-    return rotate;
   }
 
   private ImageView getImageView(App app, String pathname, ToggleButton button, boolean isSelected) {
