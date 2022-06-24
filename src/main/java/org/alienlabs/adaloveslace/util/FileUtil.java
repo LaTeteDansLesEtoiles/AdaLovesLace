@@ -68,6 +68,8 @@ public class FileUtil {
       logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
     }
 
+    app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
+
     app.getCanvasWithOptionalDotGrid().getDiagramProperty().set(diagram);
     app.getCanvasWithOptionalDotGrid().layoutChildren();
   }
