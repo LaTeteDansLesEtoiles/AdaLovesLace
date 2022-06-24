@@ -98,13 +98,14 @@ public class GeometryWindow {
 
   private Spinner<Integer> buildSpinner(App app, Spinner<Integer> rotate) {
     SpinnerValueFactory<Integer> valueFactory = rotate.getValueFactory();
+
     rotate.setOnMouseClicked(event -> {
       app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
         .setRotationAngle(valueFactory.getValue());
       app.getCanvasWithOptionalDotGrid().layoutChildren();
     });
-    rotate.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
 
+    rotate.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
     return rotate;
   }
 
