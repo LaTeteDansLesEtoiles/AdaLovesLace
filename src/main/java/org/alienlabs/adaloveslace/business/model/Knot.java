@@ -29,6 +29,8 @@ public class Knot {
 
   private double rotationAngle;
 
+  private double zoomFactor;
+
   private Pattern pattern;
 
   public Knot() {
@@ -73,6 +75,14 @@ public class Knot {
 
   public void setRotationAngle(double rotationAngle) {
     this.rotationAngle = rotationAngle;
+  }
+
+  public double getZoomFactor() {
+    return zoomFactor;
+  }
+
+  public void setZoomFactor(double zoomFactor) {
+    this.zoomFactor = zoomFactor;
   }
 
   public void setPattern(Pattern pattern) {

@@ -100,45 +100,71 @@ public class CanvasWithOptionalDotGrid extends Pane {
   }
 
   private void drawDiagram() {
-    // We whall not display the undone knots => delete them, then draw the grid again
-    if (!this.diagram.getKnots().isEmpty()) {
-      for (Knot knot : this.diagram.getKnots().subList(this.diagram.getCurrentKnotIndex(), this.diagram.getKnots().size())) {
-        try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
-          Image image = new Image(fis);
-          graphicsContext2D.clearRect(knot.getX(), knot.getY(),
-            image.getWidth(), image.getHeight());
-        } catch (IOException e) {
-          logger.error("Problem with resource file!", e);
-        }
-
-        initCanvasAndGrid();
-      }
-    }
+    // We whall not display the undone knots => delete them from canvas, then draw the grid again
+    deleteKnotsFromCanvas();
 
     // If there are knots on the diagram, we must display them at each window refresh
     for (Knot knot : this.diagram.getKnots().subList(0, this.diagram.getCurrentKnotIndex())) {
-
-      try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
-        Image image = new Image(fis);
-        ImageView iv = new ImageView(image);
-        iv.setRotate(knot.getRotationAngle());
-
-        SnapshotParameters params = new SnapshotParameters();
-        params.setFill(Color.TRANSPARENT);
-        Image rotatedImage = iv.snapshot(params, null);
-
-        graphicsContext2D.drawImage(rotatedImage, knot.getX(), knot.getY());
-
-      } catch (IOException e) {
-        logger.error("Problem with resource file!", e);
-      }
+      drawKnotWithRotationAndZoom(knot);
     }
-
 
     // If there is no knot on the diagram, we must display a blank diagram
     if (this.diagram.getKnots() == null || this.diagram.getKnots().isEmpty()) {
         graphicsContext2D.rect(0d, 0d, CANVAS_WIDTH, CANVAS_HEIGHT);
     }
+  }
+
+  // We whall not display the undone knots => delete them from canvas, then draw the grid again
+  private void deleteKnotsFromCanvas() {
+    if (!this.diagram.getKnots().isEmpty()) {
+      for (Knot knot : this.diagram.getKnots().subList(this.diagram.getCurrentKnotIndex(), this.diagram.getKnots().size())) {
+        deleteKnotFromCanvas(knot);
+        initCanvasAndGrid();
+      }
+    }
+  }
+
+  private void deleteKnotFromCanvas(Knot knot) {
+    try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
+      Image image = new Image(fis);
+      graphicsContext2D.clearRect(knot.getX(), knot.getY(),
+        image.getWidth(), image.getHeight());
+    } catch (IOException e) {
+      logger.error("Problem with resource file!", e);
+    }
+  }
+
+  private void drawKnotWithRotationAndZoom(Knot knot) {
+    try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
+      ImageView iv = rotateKnot(knot, fis);
+      zoomKnot(knot, iv);
+
+      graphicsContext2D.drawImage(writeImageToBuffer(iv), knot.getX(), knot.getY());
+    } catch (IOException e) {
+      logger.error("Problem with resource file!", e);
+    }
+  }
+
+  private Image writeImageToBuffer(ImageView iv) {
+    SnapshotParameters params = new SnapshotParameters();
+    params.setFill(Color.TRANSPARENT);
+    return iv.snapshot(params, null);
+  }
+
+  // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
+  private void zoomKnot(Knot knot, ImageView iv) {
+    if (knot.getZoomFactor() != 0) {
+      iv.setScaleX((knot.getZoomFactor() + 11) * 0.1);
+      iv.setScaleY((knot.getZoomFactor() + 11) * 0.1);
+    }
+  }
+
+  // Rotate knot with an angle in degrees
+  private ImageView rotateKnot(Knot knot, FileInputStream fis) {
+    Image image = new Image(fis);
+    ImageView iv = new ImageView(image);
+    iv.setRotate(knot.getRotationAngle());
+    return iv;
   }
 
   private void initCanvasAndGrid() {

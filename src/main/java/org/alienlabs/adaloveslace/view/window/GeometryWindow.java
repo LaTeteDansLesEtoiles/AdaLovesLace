@@ -81,18 +81,18 @@ public class GeometryWindow {
     Spinner<Integer> rotate2 = new Spinner<>(0, 360, 0, 10);
     Spinner<Integer> rotate3 = new Spinner<>(0, 360, 0, 30);
 
-    buildSpinner(app, rotate1, rotate1.getValueFactory(), rotate2.getValueFactory(), rotate3.getValueFactory());
-    buildSpinner(app, rotate2, rotate2.getValueFactory(), rotate1.getValueFactory(), rotate3.getValueFactory());
-    buildSpinner(app, rotate3, rotate3.getValueFactory(), rotate1.getValueFactory(), rotate2.getValueFactory());
+    buildRotationSpinner(app, rotate1, rotate2.getValueFactory(), rotate3.getValueFactory());
+    buildRotationSpinner(app, rotate2, rotate1.getValueFactory(), rotate3.getValueFactory());
+    buildRotationSpinner(app, rotate3, rotate1.getValueFactory(), rotate2.getValueFactory());
 
     Spinner<Integer> zoom1 = new Spinner<>(-10, 10, 1, 1);
-    zoom1.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
-
     Spinner<Integer> zoom2 = new Spinner<>(-10, 10, 1, 2);
-    zoom2.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
-
     Spinner<Integer> zoom3 = new Spinner<>(-10, 10, 1, 3);
-    zoom3.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+
+    buildZoomSpinner(app, zoom1, zoom2.getValueFactory(), zoom3.getValueFactory());
+    buildZoomSpinner(app, zoom2, zoom1.getValueFactory(), zoom3.getValueFactory());
+    buildZoomSpinner(app, zoom3, zoom1.getValueFactory(), zoom2.getValueFactory());
+
 
     buttonsPane.getChildren().addAll(drawingButton, selectionButton, rotationButton, zoomButton,
       rotate1, zoom1, rotate2, zoom2, rotate3, zoom3);
@@ -100,23 +100,40 @@ public class GeometryWindow {
     return buttonsPane;
   }
 
-  private void buildSpinner(App app, Spinner<Integer> rotate,
-                                                    SpinnerValueFactory<Integer> toChange,
-                                                    SpinnerValueFactory<Integer> notToChange1,
-                                                    SpinnerValueFactory<Integer> notToChange2) {
-    rotate.setOnMouseClicked(event -> {
+  private void buildRotationSpinner(App app, Spinner<Integer> spinner,
+                                                    SpinnerValueFactory<Integer> spinnerToReflect1,
+                                                    SpinnerValueFactory<Integer> spinnerToReflect2) {
+    spinner.setOnMouseClicked(event -> {
       app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
-        .setRotationAngle(toChange.getValue());
+        .setRotationAngle(spinner.getValueFactory().getValue());
       app.getCanvasWithOptionalDotGrid().layoutChildren();
     });
 
-    toChange.valueProperty().addListener(
+    spinner.getValueFactory().valueProperty().addListener(
       (observableValue, oldValue, newValue) -> {
-        notToChange1.setValue(newValue);
-        notToChange2.setValue(newValue);
+        spinnerToReflect1.setValue(newValue);
+        spinnerToReflect2.setValue(newValue);
       });
 
-    rotate.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+    spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+  }
+
+  private void buildZoomSpinner(App app, Spinner<Integer> spinner,
+                                                    SpinnerValueFactory<Integer> spinnerToReflect1,
+                                                    SpinnerValueFactory<Integer> spinnerToReflect2) {
+    spinner.setOnMouseClicked(event -> {
+      app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
+        .setZoomFactor(spinner.getValueFactory().getValue());
+      app.getCanvasWithOptionalDotGrid().layoutChildren();
+    });
+
+    spinner.getValueFactory().valueProperty().addListener(
+      (observableValue, oldValue, newValue) -> {
+        spinnerToReflect1.setValue(newValue);
+        spinnerToReflect2.setValue(newValue);
+      });
+
+    spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
   }
 
   private ImageView getImageView(App app, String pathname, ToggleButton button, boolean isSelected) {
