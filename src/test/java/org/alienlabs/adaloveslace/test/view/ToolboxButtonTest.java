@@ -13,7 +13,7 @@ import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_A
 import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
-class ToolBoxButtonTest extends AppTestParent {
+class ToolboxButtonTest extends AppTestParent {
 
   /**
    * Init method called before each test

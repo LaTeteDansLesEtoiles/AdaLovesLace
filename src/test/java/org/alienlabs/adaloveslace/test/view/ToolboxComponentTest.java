@@ -17,7 +17,7 @@ import static org.alienlabs.adaloveslace.test.view.MainWindowComponentTest.*;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ToolBoxComponentTest extends AppTestParent {
+class ToolboxComponentTest extends AppTestParent {
 
   /**
    * Init method called before each test
