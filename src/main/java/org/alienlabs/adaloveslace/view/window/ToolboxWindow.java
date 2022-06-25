@@ -140,6 +140,10 @@ public class ToolboxWindow {
       this.classpathResourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING * 5 + VERTICAL_GAP_BETWEEN_BUTTONS);
 
     toolboxStage.setTitle(TOOLBOX_TITLE);
+    toolboxStage.setOnCloseRequest(windowEvent -> {
+      logger.info("You shall not close the toolbox window directly!");
+      windowEvent.consume();
+    });
     toolboxStage.setX(TOOLBOX_WINDOW_X);
     toolboxStage.setY(MAIN_WINDOW_Y);
     toolboxStage.setScene(toolboxScene);

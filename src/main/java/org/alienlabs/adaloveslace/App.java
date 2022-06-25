@@ -84,6 +84,11 @@ public class App extends Application {
     primaryStage.setY(MAIN_WINDOW_Y);
     primaryStage.setTitle(MAIN_WINDOW_TITLE);
 
+    primaryStage.setOnCloseRequest(windowEvent -> {
+      logger.info("You shall close the app by closing this window!");
+      System.exit(0);
+    });
+
     this.mainWindow.createMenuBar(root, this);
     primaryStage.show();
   }

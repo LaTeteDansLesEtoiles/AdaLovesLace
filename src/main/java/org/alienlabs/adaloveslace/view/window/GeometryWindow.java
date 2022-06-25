@@ -56,6 +56,10 @@ public class GeometryWindow {
     Scene geometryScene = new Scene(patternsPane, GEOMETRY_WINDOW_WIDTH, 350);
 
     geometryStage.setTitle(GEOMETRY_TITLE);
+    geometryStage.setOnCloseRequest(windowEvent -> {
+      logger.info("You shall not close the geometry window directly!");
+      windowEvent.consume();
+    });
     geometryStage.setX(GEOMETRY_WINDOW_X);
     geometryStage.setY(250);
     geometryStage.setScene(geometryScene);
