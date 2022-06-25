@@ -60,6 +60,14 @@ https://wixtoolset.org/
 
 https://jrsoftware.org/isinfo.php (Use Inno 5!)
 
+- For Logback & log4j to support Java modules, you have to use alpha (for now!) versions: 
+
+https://leward.eu/2020/01/20/java-module-slf4j-jlink-javafx.html
+
+- For SpotBugs annotations & modules: 
+
+https://stackoverflow.com/questions/56170361/why-do-we-need-requires-static-in-java-9-module-system
+
 
 --------------------------------------------------------------------------------------------
 Create a local branch:

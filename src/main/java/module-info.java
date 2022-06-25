@@ -1,10 +1,10 @@
 module org.alienlabs.adaloveslace.impl {
-  requires com.github.spotbugs.annotations;
   requires javafx.controls;
   requires javafx.graphics;
-  requires org.slf4j;
   requires jakarta.xml.bind;
   requires java.prefs;
+  requires org.slf4j;
+  requires static com.github.spotbugs.annotations;
 
   opens org.alienlabs.adaloveslace                  to javafx.graphics, javafx.controls;
   opens org.alienlabs.adaloveslace.business.model   to jakarta.xml.bind;

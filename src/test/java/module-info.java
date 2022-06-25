@@ -7,10 +7,10 @@ module org.alienlabs.adaloveslace.test {
   requires javafx.controls;
   requires javafx.graphics;
 
-  requires org.hamcrest;
   requires org.slf4j;
   requires org.testfx;
   requires org.testfx.junit5;
+  requires org.hamcrest;
 
   requires transitive org.assertj.core;
   requires transitive org.junit.jupiter.engine;
