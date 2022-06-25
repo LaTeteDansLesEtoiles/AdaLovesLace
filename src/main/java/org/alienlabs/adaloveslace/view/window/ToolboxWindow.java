@@ -53,55 +53,95 @@ public class ToolboxWindow {
 
   public Diagram createToolboxPane(TilePane toolboxPane, Object classpathBase, String resourcesPath, App app, final Diagram diagram) {
     this.classpathResourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
-    List<String> homeDirectoryResourceFiles;
 
     if (classpathBase.equals(app)) {
-      File homeDirectoryResourcesPath = new File(System.getProperty("user.home") + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
-      if (!homeDirectoryResourcesPath.exists() || !homeDirectoryResourcesPath.canWrite()) {
-        showNoPatternDirectoryDialog(homeDirectoryResourcesPath);
-      } else {
-        homeDirectoryResourceFiles = loadPatternsFolderResourcesFiles(HOME_DIRECTORY_RESOURCES_PATH,
-          homeDirectoryResourcesPath);
-
-        if (homeDirectoryResourceFiles == null || homeDirectoryResourceFiles.isEmpty()) {
-          showEmptyPatternDirectoryDialog(homeDirectoryResourcesPath);
-        } else {
-          // We don't add duplicated resources to our toolbox buttons (i.e. filename must be different in both
-          // classpathResourceFiles & homeDirectoryResourceFiles
-          this.classpathResourceFiles.addAll(
-            homeDirectoryResourceFiles.stream().filter(homeDirectoryResource -> classpathResourceFiles.stream().noneMatch(
-              classpathResource -> homeDirectoryResource.split(File.separator)[homeDirectoryResource.split(File.separator).length - 1]
-                .equals(classpathResource.split(File.separator)[classpathResource.split(File.separator).length - 1]))).toList());
-        }
-      }
+      createProjectHomeDirectory(new File(System.getProperty("user.home") + File.separator + PROJECT_NAME));
+      File patternsDirectoryResourcesPath = createPatternDirectory();
+      managePatternResourceFiles(patternsDirectoryResourcesPath);
     }
 
     for (int i = 0; i < this.classpathResourceFiles.size(); i++) {
-      String filename = this.classpathResourceFiles.get(i);
-      File file = new File(filename);
-
-      if (file.exists()) {
-        String label = file.getName();
-
-        try (FileInputStream fis = new FileInputStream(filename)) {
-          org.alienlabs.adaloveslace.business.model.Pattern pattern = new org.alienlabs.adaloveslace.business.model.Pattern(filename);
-
-          if (i == 0) {
-            diagram.setCurrentPattern(pattern);
-          }
-
-          Button button = new PatternButton(app, label, new ImageView(new Image(fis)), pattern);
-          button.setId(TOOLBOX_BUTTON + (i + 1));
-          toolboxPane.getChildren().add(button);
-
-          diagram.addPattern(pattern);
-        } catch (IOException e) {
-          logger.error("Exception reading toolbox file!", e);
-        }
-      }
+      buildPatternButton(toolboxPane, app, diagram, i);
     }
 
     return diagram;
+  }
+
+  // Add a Pattern button to the toolbox for each image present in the home pattern folder
+  private void buildPatternButton(TilePane toolboxPane, App app, Diagram diagram, int buttonIndex) {
+    String filename = this.classpathResourceFiles.get(buttonIndex);
+    File file = new File(filename);
+
+    if (file.exists()) {
+      String label = file.getName();
+
+      try (FileInputStream fis = new FileInputStream(filename)) {
+        buildButton(toolboxPane, app, diagram, buttonIndex, filename, label, fis);
+      } catch (IOException e) {
+        logger.error("Exception reading toolbox file!", e);
+      }
+    }
+  }
+
+  // The Pattern button itself
+  private void buildButton(TilePane toolboxPane, App app, Diagram diagram, int i, String filename, String label, FileInputStream fis) {
+    org.alienlabs.adaloveslace.business.model.Pattern pattern = new org.alienlabs.adaloveslace.business.model.Pattern(filename);
+
+    if (i == 0) {
+      diagram.setCurrentPattern(pattern);
+    }
+
+    Button button = new PatternButton(app, label, new ImageView(new Image(fis)), pattern);
+    button.setId(TOOLBOX_BUTTON + (i + 1));
+    toolboxPane.getChildren().add(button);
+
+    diagram.addPattern(pattern);
+  }
+
+  private void managePatternResourceFiles(File patternsDirectoryResourcesPath) {
+    List<String> homeDirectoryResourceFiles;
+    homeDirectoryResourceFiles = loadPatternsFolderResourcesFiles(HOME_DIRECTORY_RESOURCES_PATH,
+      patternsDirectoryResourcesPath);
+
+    if (homeDirectoryResourceFiles == null || homeDirectoryResourceFiles.isEmpty()) {
+      showEmptyPatternDirectoryDialog(patternsDirectoryResourcesPath);
+    } else {
+      // We don't add duplicated resources to our toolbox buttons (i.e. filename must be different in both
+      // classpathResourceFiles & homeDirectoryResourceFiles
+      this.classpathResourceFiles.addAll(
+        getAllResourceFilesWithoutDuplicates(homeDirectoryResourceFiles));
+    }
+  }
+
+  // We don't add duplicated resources to our toolbox buttons (i.e. filename must be different in both
+  // classpathResourceFiles & homeDirectoryResourceFiles
+  private List<String> getAllResourceFilesWithoutDuplicates(List<String> homeDirectoryResourceFiles) {
+    return homeDirectoryResourceFiles.stream().filter(patternDirectoryResource -> classpathResourceFiles.stream().noneMatch(
+      classpathResource -> patternDirectoryResource.split(File.separator)[patternDirectoryResource.split(File.separator).length - 1]
+        .equals(classpathResource.split(File.separator)[classpathResource.split(File.separator).length - 1]))).toList();
+  }
+
+  private File createPatternDirectory() {
+    File patternsDirectoryResourcesPath = new File(System.getProperty("user.home") + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
+    if (!patternsDirectoryResourcesPath.exists() && !patternsDirectoryResourcesPath.mkdir()) {
+        showNoPatternDirectoryDialog(patternsDirectoryResourcesPath);
+    }
+
+    if (!patternsDirectoryResourcesPath.canWrite()) {
+      showNoPatternDirectoryDialog(patternsDirectoryResourcesPath);
+    }
+
+    return patternsDirectoryResourcesPath;
+  }
+
+  private void createProjectHomeDirectory(File projectHomeDirectory) {
+    if (!projectHomeDirectory.exists() && !projectHomeDirectory.mkdir()) {
+        showNoHomeDirectoryDialog(projectHomeDirectory);
+    }
+
+    if (!projectHomeDirectory.canWrite()) {
+      showNoHomeDirectoryDialog(projectHomeDirectory);
+    }
   }
 
   /**
@@ -176,20 +216,23 @@ public class ToolboxWindow {
     return buttonsPane;
   }
 
-  private void showNoPatternDirectoryDialog(final File directory) {
-    Alert alert = new Alert(Alert.AlertType.ERROR);
-    alert.setTitle(ADA_LOVES_LACE);
-    alert.setHeaderText(ERROR);
-    alert.setContentText("The following folder: '" + directory.getAbsolutePath() + "' shall be used for storing patterns images and it is either non-existent either non-writable!");
+  private void showNoHomeDirectoryDialog(final File directory) {
+    showErrorDialog("The following folder: '" + directory.getAbsolutePath() + "' shall be used as an " + ADA_LOVES_LACE + " home folder and it is either non-existent either non-writable!");
+  }
 
-    alert.showAndWait();
+  private void showNoPatternDirectoryDialog(final File directory) {
+    showErrorDialog("The following folder: '" + directory.getAbsolutePath() + "' shall be used for storing pattern images and it is either non-existent either non-writable!");
   }
 
   private void showEmptyPatternDirectoryDialog(final File directory) {
+    showErrorDialog("The following folder: '" + directory.getAbsolutePath() + "' shall be used for storing pattern images and it is empty!");
+  }
+
+  private void showErrorDialog(String text) {
     Alert alert = new Alert(Alert.AlertType.ERROR);
     alert.setTitle(ADA_LOVES_LACE);
     alert.setHeaderText(ERROR);
-    alert.setContentText("The following folder: '" + directory.getAbsolutePath() + "' shall be used for storing patterns images and it is empty!");
+    alert.setContentText(text);
 
     alert.showAndWait();
   }
