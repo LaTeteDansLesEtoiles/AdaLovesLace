@@ -143,12 +143,13 @@
               <mainClass>org.alienlabs.adaloveslace.App</mainClass>
               <generateInstaller>true</generateInstaller>
               <administratorRequired>false</administratorRequired>
-              <bundleJre>false</bundleJre>
+              <bundleJre>true</bundleJre>
               <customizedJre>true</customizedJre>
               <organizationName>AlienLabs</organizationName>
               <organizationEmail>goupilpierre@gmail.com</organizationEmail>
               <assetsDir>${basedir}/src/main/resources/assets</assetsDir>
               <outputDirectory>${project.build.directory}/artifacts</outputDirectory>
+              <platform>auto</platform>
               <winConfig>
                 <headerType>console</headerType>
                 <setupLanguages>
