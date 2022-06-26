@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.view.component;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -9,7 +10,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Shape;
-import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Pattern;
@@ -39,20 +39,15 @@ public class OptionalDotGrid extends Pane {
   private SimpleObjectProperty<Pattern> currentPatternProperty;
   private SimpleObjectProperty<Diagram> diagramProperty;
   private boolean showHideGrid          = true;
-  private double radius;
+
+  private double desiredRadius;
 
   private Diagram diagram;
-
-  private double top;
-  private double right;
-  private double bottom;
-  private double left;
-  private double width;
-  private double height;
 
   private Set<Shape> grid = new HashSet<>();
 
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
+  private final Group root;
 
   /**
    * We draw the dots on the grid using a Canvas.
@@ -60,14 +55,15 @@ public class OptionalDotGrid extends Pane {
    * @see Canvas
    *
    */
-  public OptionalDotGrid(Diagram diagram) {
+  public OptionalDotGrid(Diagram diagram, Group root) {
+    this.root = root;
     if (diagram == null) {
       this.diagram = new Diagram();
     } else {
       this.diagram = diagram;
     }
 
-    this.radius     = RADIUS;
+    this.desiredRadius = RADIUS;
 
     if (!this.diagram.getPatterns().isEmpty()) {
       this.diagram.setCurrentPattern(this.diagram.getPatterns().get(0));
@@ -85,11 +81,11 @@ public class OptionalDotGrid extends Pane {
     });
   }
 
-  public OptionalDotGrid(double width, double height, double radius, Diagram diagram) {
-    this(diagram);
+  public OptionalDotGrid(double width, double height, double desiredRadius, Diagram diagram, Group root) {
+    this(diagram, root);
     GRID_WIDTH = width;
     GRID_HEIGHT = height;
-    this.radius = radius;
+    this.desiredRadius = desiredRadius;
   }
 
   @Override
@@ -118,8 +114,8 @@ public class OptionalDotGrid extends Pane {
   }
 
   private void deleteKnotFromCanvas(Knot knot) {
-    if (App.getRoot().getChildren().contains(knot.getImageView())) {
-      App.getRoot().getChildren().remove(knot.getImageView());
+    if (root.getChildren().contains(knot.getImageView())) {
+      root.getChildren().remove(knot.getImageView());
     }
   }
 
@@ -142,8 +138,8 @@ public class OptionalDotGrid extends Pane {
 
   // Rotate knot with an angle in degrees
   private ImageView rotateKnot(Knot knot) {
-    if (!App.getRoot().getChildren().contains(knot.getImageView())) {
-      App.getRoot().getChildren().add(knot.getImageView());
+    if (!root.getChildren().contains(knot.getImageView())) {
+      root.getChildren().add(knot.getImageView());
     }
 
     knot.getImageView().setOpacity(1.0d);
@@ -154,14 +150,14 @@ public class OptionalDotGrid extends Pane {
   }
 
   private void initGrid() {
-    top     = (int)snappedTopInset() + TOP_MARGIN;
-    right   = (int)snappedRightInset();
-    bottom  = (int)snappedBottomInset();
-    left    = (int)snappedLeftInset();
-    width   = (int)getWidth() - left - right;
-    height  = (int)getHeight() - top - bottom - 20d;
-    App.getRoot().setLayoutX(left);
-    App.getRoot().setLayoutY(top);
+    double top = (int) snappedTopInset() + TOP_MARGIN;
+    double right = (int) snappedRightInset();
+    double bottom = (int) snappedBottomInset();
+    double left = (int) snappedLeftInset();
+    double width = (int) getWidth() - left - right;
+    double height = (int) getHeight() - top - bottom - 20d;
+    root.setLayoutX(left);
+    root.setLayoutY(top);
 
     if (this.showHideGrid) {
       drawGrid(width, height);
@@ -172,8 +168,8 @@ public class OptionalDotGrid extends Pane {
 
   private void hideGrid() {
     for (Shape shape : grid) {
-      if (App.getRoot().getChildren().contains(shape)) {
-        App.getRoot().getChildren().remove(shape);
+      if (root.getChildren().contains(shape)) {
+        root.getChildren().remove(shape);
       }
     }
   }
@@ -181,14 +177,14 @@ public class OptionalDotGrid extends Pane {
   private void drawGrid(double w, double h) {
     hideGrid();
 
-    for (double x = 40d; x < (w - 20d); x += SPACING_X) {
+    for (double x = 40d; x < (w - 185d); x += SPACING_X) {
       for (double y = 60d; y < (h - 50d); y += SPACING_Y) {
         double offsetY = (y % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
-        Ellipse ell = new Ellipse(x - this.radius + offsetY,y - this.radius,this.radius,this.radius); // A dot
+        Ellipse ell = new Ellipse(x - this.desiredRadius + offsetY,y - this.desiredRadius,this.desiredRadius,this.desiredRadius); // A dot
         ell.setFill(GRID_COLOR);
 
         grid.add(ell);
-        App.getRoot().getChildren().add(ell);
+        root.getChildren().add(ell);
       }
     }
   }
@@ -212,7 +208,7 @@ public class OptionalDotGrid extends Pane {
       logger.info("Top left corner of the knot {} is ({},{})", currentPattern.getFilename(), cornerX, cornerY);
       logger.info("Center of the knot {} is ({},{})", currentPattern.getFilename(), centerX, centerY);
 
-      App.getRoot().getChildren().add(iv);
+      root.getChildren().add(iv);
       currentKnot = new Knot(cornerX, cornerY, currentPattern, iv);
       this.diagram.addKnot(currentKnot);
       layoutChildren();

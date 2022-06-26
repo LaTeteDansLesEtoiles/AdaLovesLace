@@ -107,15 +107,16 @@ public class MainWindow {
     footer.getChildren().addAll(new Label("© 2022 AlienLabs"));
     footer.getChildren().addAll(new Label("This is Free Software under GPL license"));
     footer.getChildren().addAll(new Label("JavaFX " + javafxVersion + ", running on Java " + javaVersion));
-    footer.setAlignment(Pos.BOTTOM_CENTER);
+    footer.setAlignment(Pos.BOTTOM_LEFT);
     return footer;
   }
 
-  public StackPane createGrid(final double width, final double height, final double radius, final Diagram diagram) {
+  public StackPane createGrid(final double width, final double height, final double radius,
+                              final Diagram diagram, final Group root) {
     if (width == 0d || height == 0d) {
-      this.optionalDotGrid = new OptionalDotGrid(diagram);
+      this.optionalDotGrid = new OptionalDotGrid(diagram, root);
     } else {
-      this.optionalDotGrid = new OptionalDotGrid(width, height, radius, diagram);
+      this.optionalDotGrid = new OptionalDotGrid(width, height, radius, diagram, root);
     }
 
     StackPane grid = new StackPane(this.optionalDotGrid);

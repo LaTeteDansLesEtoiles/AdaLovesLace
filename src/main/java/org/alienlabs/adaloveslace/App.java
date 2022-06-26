@@ -41,7 +41,7 @@ public class App extends Application {
 
   public static final double  MAIN_WINDOW_Y           = 10d;
   private static final double MAIN_WINDOW_X           = 50d;
-  public static final double MAIN_WINDOW_WIDTH        = 660d;
+  public static final double MAIN_WINDOW_WIDTH        = 500d;
   public static final double MAIN_WINDOW_HEIGHT       = 680d;
   public static final double GRID_WIDTH               = 650d;
   public static final double GRID_HEIGHT              = 650d;
@@ -53,14 +53,15 @@ public class App extends Application {
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   private Stage toolboxStage;
-  private Stage geometryStage;
   private Diagram diagram;
   private MainWindow mainWindow;
-  private static Group root;
-  private static Scene scene;
+  private Group root;
+  private Scene scene;
+  private Stage primaryStage;
 
   @Override
   public void start(Stage primaryStage) {
+    this.primaryStage = primaryStage;
     this.diagram = new Diagram();
 
     logger.info("Opening geometry window");
@@ -80,9 +81,9 @@ public class App extends Application {
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
 
-    TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
-    StackPane grid            = mainWindow.createGrid(gridWidth, gridHeight, gridDotsRadius, this.diagram);
     root                      = new Group();
+    TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
+    StackPane grid            = mainWindow.createGrid(gridWidth, gridHeight, gridDotsRadius, this.diagram, root);
 
     grid.getChildren().add(footer);
     root.getChildren().add(grid);
@@ -117,12 +118,12 @@ public class App extends Application {
     this.diagram = toolboxWindow.createToolboxPane(patternsPane, classpathBase, resourcesPath, app, this.diagram);
     TilePane buttonsPane = toolboxWindow.createToolboxButtons(app);
 
-    toolboxWindow.createToolboxStage(this.toolboxStage, buttonsPane, patternsPane);
+    toolboxWindow.createToolboxStage(this.toolboxStage, buttonsPane, patternsPane, app);
     return toolboxWindow;
   }
 
   public GeometryWindow showGeometryWindow(App app) {
-    this.geometryStage     = new Stage(StageStyle.DECORATED);
+    Stage geometryStage    = new Stage(StageStyle.DECORATED);
 
     TilePane patternsPane  = new TilePane(Orientation.HORIZONTAL);
     patternsPane.setVgap(TILE_PADDING);
@@ -135,7 +136,7 @@ public class App extends Application {
     this.diagram = geometryWindow.createGeometryPane(patternsPane, app, this.diagram);
     TilePane buttonsPane = geometryWindow.createGeometryButtons(app);
 
-    geometryWindow.createGeometryStage(this.geometryStage, buttonsPane, patternsPane);
+    geometryWindow.createGeometryStage(geometryStage, buttonsPane, patternsPane);
     return geometryWindow;
   }
 
@@ -162,12 +163,16 @@ public class App extends Application {
     return this.mainWindow;
   }
 
-  public static Group getRoot() {
+  public Group getRoot() {
     return root;
   }
 
-  public static Scene getScene() {
+  public Scene getScene() {
     return scene;
+  }
+
+  public Stage getPrimaryStage() {
+    return primaryStage;
   }
 
 }

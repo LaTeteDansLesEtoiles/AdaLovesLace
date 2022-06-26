@@ -49,7 +49,7 @@ public class SaveButton extends ImageButton {
       saveAs.getExtensionFilters().add(filter);
       saveAs.setInitialDirectory(preferences.getPathWithFileValue(LACE_FILE_FOLDER_SAVE_PATH));
 
-      file = saveAs.showSaveDialog(App.getScene().getWindow());
+      file = saveAs.showSaveDialog(app.getScene().getWindow());
     } else {
       // We know where to save
       file = laceFilePath;

@@ -5,13 +5,16 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
+import org.alienlabs.adaloveslace.util.PrintUtil;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,15 +40,24 @@ import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.Und
 
 public class ToolboxWindow {
 
-  public static final double TOOLBOX_WINDOW_X             = 750d;
+  public static final double TOOLBOX_WINDOW_X             = 600d;
   public static final double TOOLBOX_WINDOW_WIDTH         = 200d;
   public static final double TILE_HEIGHT                  = 50d;
   public static final double TILE_PADDING                 = 20d;
   public static final double VERTICAL_PADDING             = 70d;
   public static final double VERTICAL_BUTTONS_PADDING     = 125d;
+  public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
+  public static final double NUMBER_OF_TILES              = 6.5d;
 
   public static final double QUIT_BUTTON_PADDING          = 25d;
-  public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
+  public static final double PRINT_BUTTONS_PADDING        = 300d;
+  private static final double ALL_PRINTERS_TEXT_AREA_PADDING = 50d;
+  public static final double PRINTERS_BUTTON_PADDING      = -25d;
+  public static final double PRINT_DIAGRAM_PADDING        = 0d;
+
+  public static final String GET_ALL_PRINTERS             = "Get all Printers";
+  public static final String PRINT_DIAGRAM                = "Print diagram";
+  public static final String THE_FOLLOWING_FOLDER_STRING  = "The following folder: '";
 
   private List<String> classpathResourceFiles;
 
@@ -178,12 +190,17 @@ public class ToolboxWindow {
     return resourceFiles;
   }
 
-  public void createToolboxStage(Stage toolboxStage, TilePane buttonsPane, TilePane patternsPane) {
+  public void createToolboxStage(Stage toolboxStage, TilePane buttonsPane, TilePane patternsPane, App app) {
     buttonsPane.setTranslateY(VERTICAL_BUTTONS_PADDING);
     patternsPane.getChildren().add(buttonsPane);
 
+    StackPane printButtons = buildPrintButtons(app);
+    printButtons.setTranslateY(PRINT_BUTTONS_PADDING);
+
+    patternsPane.getChildren().add(printButtons);
     Scene toolboxScene = new Scene(patternsPane, TOOLBOX_WINDOW_WIDTH,
-      this.classpathResourceFiles.size() * (TILE_HEIGHT + TILE_PADDING) + VERTICAL_PADDING * 5 + VERTICAL_GAP_BETWEEN_BUTTONS);
+      this.classpathResourceFiles.size() * (TILE_HEIGHT + TILE_PADDING)
+        + VERTICAL_PADDING * NUMBER_OF_TILES + VERTICAL_GAP_BETWEEN_BUTTONS);
 
     toolboxStage.setTitle(TOOLBOX_TITLE);
     toolboxStage.setOnCloseRequest(windowEvent -> {
@@ -204,6 +221,31 @@ public class ToolboxWindow {
     buildQuitButton(buttonsPane);
 
     return buttonsPane;
+  }
+
+  /** Print diagram buttons.
+   *
+   * @return the Buttons
+   */
+  public StackPane buildPrintButtons(App  app) {
+    StackPane stackPane         = new StackPane();
+    stackPane.setAlignment(Pos.BOTTOM_CENTER);
+
+    TextArea printersTextArea   = new TextArea();
+    Button getPrintersButton    = new Button(GET_ALL_PRINTERS);
+    Button printButton          = new Button(PRINT_DIAGRAM);
+
+    printersTextArea.setTranslateY(ALL_PRINTERS_TEXT_AREA_PADDING);
+    getPrintersButton.setTranslateY(PRINTERS_BUTTON_PADDING);
+    printButton.setTranslateY(PRINT_DIAGRAM_PADDING);
+
+    stackPane.getChildren().addAll(printersTextArea, getPrintersButton, printButton);
+
+    PrintUtil printer = new PrintUtil(app);
+    printer.printersButtonOnAction(printersTextArea, getPrintersButton);
+    printer.printButtonOnAction(printButton);
+
+    return stackPane;
   }
 
   private void buildQuitButton(TilePane buttonsPane) {
@@ -240,15 +282,15 @@ public class ToolboxWindow {
   }
 
   private void showNoHomeDirectoryDialog(final File directory) {
-    showErrorDialog("The following folder: '" + directory.getAbsolutePath() + "' shall be used as an " + ADA_LOVES_LACE + " home folder and it is either non-existent either non-writable!");
+    showErrorDialog(THE_FOLLOWING_FOLDER_STRING + directory.getAbsolutePath() + "' shall be used as an " + ADA_LOVES_LACE + " home folder and it is either non-existent either non-writable!");
   }
 
   private void showNoPatternDirectoryDialog(final File directory) {
-    showErrorDialog("The following folder: '" + directory.getAbsolutePath() + "' shall be used for storing pattern images and it is either non-existent either non-writable!");
+    showErrorDialog(THE_FOLLOWING_FOLDER_STRING + directory.getAbsolutePath() + "' shall be used for storing pattern images and it is either non-existent either non-writable!");
   }
 
   private void showEmptyPatternDirectoryDialog(final File directory) {
-    showErrorDialog("The following folder: '" + directory.getAbsolutePath() + "' shall be used for storing pattern images and it is empty!");
+    showErrorDialog(THE_FOLLOWING_FOLDER_STRING + directory.getAbsolutePath() + "' shall be used for storing pattern images and it is empty!");
   }
 
   private void showErrorDialog(String text) {

@@ -50,7 +50,7 @@ public class LoadButton extends ImageButton {
     FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(DIAGRAM_FILES, DIAGRAM_FILE_FILTER);
     load.getExtensionFilters().add(filter);
 
-    File file = load.showOpenDialog(App.getScene().getWindow());
+    File file = load.showOpenDialog(app.getScene().getWindow());
 
     if (file != null) {
       new FileUtil().loadFromLaceFile(app, file);
