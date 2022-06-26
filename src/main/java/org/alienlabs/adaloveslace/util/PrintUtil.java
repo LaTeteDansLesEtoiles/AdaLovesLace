@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 public class PrintUtil {
 
-  private App app;
+  private final App app;
   private ObservableSet<Printer> printers;
 
   private static final Logger logger = LoggerFactory.getLogger(PrintUtil.class);
@@ -75,7 +75,7 @@ public class PrintUtil {
 
     if (printed)
     {
-      logger.info("Printed diagram with success");
+      logger.info("Printed diagram successfully");
       job.endJob();
     } else {
       logger.error("Printing diagram failed!");
