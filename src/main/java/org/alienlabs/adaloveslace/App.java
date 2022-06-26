@@ -33,6 +33,7 @@ public class App extends Application {
   public static final String ADA_LOVES_LACE           = "Ada Loves Lace";
   public static final String MAIN_WINDOW_TITLE        = ADA_LOVES_LACE;
   public static final String PROJECT_NAME             = "adaloveslace";
+  public static final String USER_HOME                = "user.home";
   public static final String TOOLBOX_TITLE            = "Toolbox";
   public static final String GEOMETRY_TITLE           = "Geometry";
   public static final String LACE_FILE_EXTENSION      = ".lace";
@@ -41,14 +42,14 @@ public class App extends Application {
 
   public static final double  MAIN_WINDOW_Y           = 10d;
   private static final double MAIN_WINDOW_X           = 50d;
-  public static final double MAIN_WINDOW_WIDTH        = 500d;
-  public static final double MAIN_WINDOW_HEIGHT       = 680d;
-  public static final double GRID_WIDTH               = 650d;
-  public static final double GRID_HEIGHT              = 650d;
+  public static final double  MAIN_WINDOW_WIDTH       = 500d;
+  public static final double  MAIN_WINDOW_HEIGHT      = 680d;
+  public static final double  GRID_WIDTH              = 650d;
+  public static final double  GRID_HEIGHT             = 650d;
   public static final int     ICON_SIZE               = 46;
   public static final int     SMALL_ICON_SIZE         = 23;
 
-  public static final double GRID_DOTS_RADIUS         = 2.5d;// The dots from the grid are ellipses, this is their radius
+  public static final double  GRID_DOTS_RADIUS        = 2.5d;// The dots from the grid are ellipses, this is their radius
 
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 

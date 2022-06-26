@@ -38,8 +38,6 @@ public class FileUtil {
 
   public static final String XML_FILE_TO_SAVE_IN_LACE_FILE = "save.xml";
 
-  public static final String USER_HOME = "user.home";
-
   private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
   public FileUtil() {
@@ -62,7 +60,9 @@ public class FileUtil {
         }
       }
 
-      buildKnotsImageViews(diagram);
+      if (null != diagram) {
+        buildKnotsImageViews(diagram);
+      }
       deleteXmlFile();
     } catch (JAXBException | IOException e) {
       logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);

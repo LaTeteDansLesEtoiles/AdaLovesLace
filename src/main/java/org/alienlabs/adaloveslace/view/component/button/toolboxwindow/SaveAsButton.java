@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+import static org.alienlabs.adaloveslace.App.USER_HOME;
 import static org.alienlabs.adaloveslace.util.Preferences.LACE_FILE_FOLDER_SAVE_PATH;
 import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
@@ -38,7 +39,7 @@ public class SaveAsButton extends ImageButton {
     Preferences preferences = new Preferences();
     File laceFilePath = preferences.getPathWithFileValue(LACE_FILE_FOLDER_SAVE_PATH);
     if (laceFilePath == null) {
-      File userHome = new File(System.getProperty("user.home"));
+      File userHome = new File(System.getProperty(USER_HOME));
       saveAs.setInitialDirectory(userHome);
       preferences.setPathWithFileValue(userHome, LACE_FILE_FOLDER_SAVE_PATH);
     } else {

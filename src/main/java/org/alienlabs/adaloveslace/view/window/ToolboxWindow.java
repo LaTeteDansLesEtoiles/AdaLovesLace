@@ -67,7 +67,7 @@ public class ToolboxWindow {
     this.classpathResourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
 
     if (classpathBase.equals(app)) {
-      createProjectHomeDirectory(new File(System.getProperty("user.home") + File.separator + PROJECT_NAME));
+      createProjectHomeDirectory(new File(System.getProperty(USER_HOME) + File.separator + PROJECT_NAME));
       File patternsDirectoryResourcesPath = createPatternDirectory();
       managePatternResourceFiles(patternsDirectoryResourcesPath);
     }
@@ -140,7 +140,7 @@ public class ToolboxWindow {
   }
 
   private File createPatternDirectory() {
-    File patternsDirectoryResourcesPath = new File(System.getProperty("user.home") + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
+    File patternsDirectoryResourcesPath = new File(System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
     if (!patternsDirectoryResourcesPath.exists() && !patternsDirectoryResourcesPath.mkdir()) {
         showNoPatternDirectoryDialog(patternsDirectoryResourcesPath);
     }
