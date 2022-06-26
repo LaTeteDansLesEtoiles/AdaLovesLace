@@ -197,28 +197,45 @@ public class ToolboxWindow {
   }
 
   public TilePane createToolboxButtons(App app) {
-    TilePane buttonsPane  = new TilePane(Orientation.HORIZONTAL);
-    buttonsPane.setAlignment(Pos.BOTTOM_CENTER);
-    buttonsPane.setPrefColumns(1);
-    buttonsPane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
+    TilePane buttonsPane = buildButtonPane();
+    buildFileButtons(app, buttonsPane);
+    buildEditButtons(app, buttonsPane);
+    buildShowHideGridButton(app, buttonsPane);
+    buildQuitButton(buttonsPane);
 
+    return buttonsPane;
+  }
+
+  private void buildQuitButton(TilePane buttonsPane) {
+    QuitButton showQuitButton = new QuitButton(QUIT_APP_BUTTON_NAME);
+    showQuitButton.setTranslateY(QUIT_BUTTON_PADDING);
+    buttonsPane.getChildren().add(showQuitButton);
+  }
+
+  private void buildShowHideGridButton(App app, TilePane buttonsPane) {
+    ShowHideGridButton  showHideGridButton  = new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app);
+    buttonsPane.getChildren().add(showHideGridButton);
+  }
+
+  private void buildEditButtons(App app, TilePane buttonsPane) {
+    UndoKnotButton      undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
+    RedoKnotButton      redoKnotButton      = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
+    ResetDiagramButton  resetDiagramButton  = new ResetDiagramButton    (RESET_DIAGRAM_BUTTON_NAME, app);
+    buttonsPane.getChildren().addAll(undoKnotButton, redoKnotButton, resetDiagramButton);
+  }
+
+  private void buildFileButtons(App app, TilePane buttonsPane) {
     SaveButton          saveButton          = new SaveButton          (app, SAVE_FILE_BUTTON_NAME);
     SaveAsButton        saveAsButton        = new SaveAsButton        (app, SAVE_FILE_AS_BUTTON_NAME);
     LoadButton          loadButton          = new LoadButton          (app, LOAD_BUTTON_NAME);
     buttonsPane.getChildren().addAll(saveButton, saveAsButton, loadButton);
+  }
 
-    UndoKnotButton      undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
-    RedoKnotButton redoKnotButton           = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
-    ResetDiagramButton resetDiagramButton   = new ResetDiagramButton    (RESET_DIAGRAM_BUTTON_NAME, app);
-    buttonsPane.getChildren().addAll(undoKnotButton, redoKnotButton, resetDiagramButton);
-
-    ShowHideGridButton  showHideGridButton  = new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app);
-    buttonsPane.getChildren().add(showHideGridButton);
-
-    QuitButton showQuitButton = new QuitButton(QUIT_APP_BUTTON_NAME);
-    showQuitButton.setTranslateY(QUIT_BUTTON_PADDING);
-    buttonsPane.getChildren().add(showQuitButton);
-
+  private TilePane buildButtonPane() {
+    TilePane buttonsPane  = new TilePane(Orientation.HORIZONTAL);
+    buttonsPane.setAlignment(Pos.BOTTOM_CENTER);
+    buttonsPane.setPrefColumns(1);
+    buttonsPane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
     return buttonsPane;
   }
 
