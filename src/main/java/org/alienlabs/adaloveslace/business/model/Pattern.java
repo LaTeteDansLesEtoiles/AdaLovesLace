@@ -28,6 +28,10 @@ public class Pattern {
 
   private String filename;
 
+  private double centerX;
+
+  private double centerY;
+
   public Pattern(String absoluteFilename) {
     this.absoluteFilename = absoluteFilename;
     if (this.absoluteFilename == null) {
@@ -35,10 +39,6 @@ public class Pattern {
     } else {
       this.filename = new File(absoluteFilename).getName();
     }
-  }
-
-  public Pattern() {
-    this(null);
   }
 
   public String getAbsoluteFilename() {
@@ -55,6 +55,22 @@ public class Pattern {
 
   public void setFilename(String filename) {
     this.filename = filename;
+  }
+
+  public double getCenterX() {
+    return centerX;
+  }
+
+  public void setCenterX(double centerX) {
+    this.centerX = centerX;
+  }
+
+  public double getCenterY() {
+    return centerY;
+  }
+
+  public void setCenterY(double centerY) {
+    this.centerY = centerY;
   }
 
 }

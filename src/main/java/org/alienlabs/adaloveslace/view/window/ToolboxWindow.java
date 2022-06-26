@@ -87,13 +87,17 @@ public class ToolboxWindow {
   private void buildButton(TilePane toolboxPane, App app, Diagram diagram, int i, String filename, String label, FileInputStream fis) {
     org.alienlabs.adaloveslace.business.model.Pattern pattern = new org.alienlabs.adaloveslace.business.model.Pattern(filename);
 
+    Image img = new Image(fis);
+    pattern.setCenterX(img.getWidth() / 2);
+    pattern.setCenterY(img.getHeight() / 2);
+    ImageView iv = new ImageView(img);
+    Button button = new PatternButton(app, label, iv, pattern);
+    button.setId(TOOLBOX_BUTTON + (i + 1));
+    toolboxPane.getChildren().add(button);
+
     if (i == 0) {
       diagram.setCurrentPattern(pattern);
     }
-
-    Button button = new PatternButton(app, label, new ImageView(new Image(fis)), pattern);
-    button.setId(TOOLBOX_BUTTON + (i + 1));
-    toolboxPane.getChildren().add(button);
 
     diagram.addPattern(pattern);
   }

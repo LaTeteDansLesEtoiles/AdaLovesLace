@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Rotate;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Pattern;
@@ -66,7 +67,6 @@ public class CanvasWithOptionalDotGrid extends Pane {
 
     this.radius     = RADIUS;
 
-    // TODO: display an error message if there is no pattern in the toolbox
     if (!this.diagram.getPatterns().isEmpty()) {
       this.diagram.setCurrentPattern(this.diagram.getPatterns().get(0));
 
@@ -139,7 +139,8 @@ public class CanvasWithOptionalDotGrid extends Pane {
       ImageView iv = rotateKnot(knot, fis);
       zoomKnot(knot, iv);
 
-      graphicsContext2D.drawImage(writeImageToBuffer(iv), knot.getX(), knot.getY());
+      graphicsContext2D.drawImage(writeImageToBuffer(iv), knot.getX() - knot.getPattern().getCenterX(),
+        knot.getY() - knot.getPattern().getCenterX());
     } catch (IOException e) {
       logger.error("Problem with resource file!", e);
     }
@@ -163,7 +164,13 @@ public class CanvasWithOptionalDotGrid extends Pane {
   private ImageView rotateKnot(Knot knot, FileInputStream fis) {
     Image image = new Image(fis);
     ImageView iv = new ImageView(image);
-    iv.setRotate(knot.getRotationAngle());
+
+    Rotate rotate = new Rotate();
+    rotate.setPivotX(knot.getPattern().getCenterX());
+    rotate.setPivotY(knot.getPattern().getCenterY());
+    rotate.setAngle(knot.getRotationAngle());
+    iv.getTransforms().add(rotate);
+
     return iv;
   }
 
@@ -212,7 +219,8 @@ public class CanvasWithOptionalDotGrid extends Pane {
     Knot currentKnot = null;
 
     try (FileInputStream fis = new FileInputStream(currentPattern.getAbsoluteFilename())) {
-      this.canvas.getGraphicsContext2D().drawImage(new Image(fis), x, y);
+      this.canvas.getGraphicsContext2D().drawImage(new Image(fis), x - currentPattern.getCenterX(),
+        y - currentPattern.getCenterX());
       currentKnot = new Knot(x, y, currentPattern);
       this.diagram.addKnot(currentKnot);
     } catch (IOException e) {
