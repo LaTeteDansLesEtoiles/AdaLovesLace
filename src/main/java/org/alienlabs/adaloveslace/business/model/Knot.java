@@ -2,8 +2,10 @@ package org.alienlabs.adaloveslace.business.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -33,16 +35,21 @@ public class Knot {
 
   private Pattern pattern;
 
+  @XmlTransient
+  private ImageView imageView;
+
   public Knot() {
     this.uuid = UUID.randomUUID();
   }
 
-  public Knot(final double x, final double y, final Pattern pattern) {
-    this.uuid = UUID.randomUUID();
+  public Knot(final double x, final double y, final Pattern pattern, final ImageView imageView) {
     this.x = x;
     this.y = y;
-    this.rotationAngle = 0;
     this.pattern = pattern;
+    this.imageView = imageView;
+
+    this.uuid = UUID.randomUUID();
+    this.rotationAngle = 0;
   }
 
   public UUID getUuid() {
@@ -87,6 +94,14 @@ public class Knot {
 
   public void setPattern(Pattern pattern) {
     this.pattern = pattern;
+  }
+
+  public ImageView getImageView() {
+    return imageView;
+  }
+
+  public void setImageView(ImageView imageView) {
+    this.imageView = imageView;
   }
 
   public boolean coincide(Knot other) {

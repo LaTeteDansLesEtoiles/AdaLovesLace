@@ -1,6 +1,5 @@
 package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
-import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.FileUtil;
@@ -24,13 +23,13 @@ public class LoadButton extends ImageButton {
 
   private static final Logger logger                  = LoggerFactory.getLogger(LoadButton.class);
 
-  public LoadButton(App app, Pane root, String buttonLabel) {
+  public LoadButton(App app, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onLoadAction(app, root));
+    this.setOnMouseClicked(event -> onLoadAction(app));
     buildButtonImage("load.png");
   }
 
-  public static void onLoadAction(App app, Pane root) {
+  public static void onLoadAction(App app) {
     logger.info("Load file");
 
     FileChooser load = new FileChooser();
@@ -51,7 +50,7 @@ public class LoadButton extends ImageButton {
     FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(DIAGRAM_FILES, DIAGRAM_FILE_FILTER);
     load.getExtensionFilters().add(filter);
 
-    File file = load.showOpenDialog(root.getScene().getWindow());
+    File file = load.showOpenDialog(App.getScene().getWindow());
 
     if (file != null) {
       new FileUtil().loadFromLaceFile(app, file);

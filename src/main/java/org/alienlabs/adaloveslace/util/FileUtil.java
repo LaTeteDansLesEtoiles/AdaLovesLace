@@ -4,16 +4,15 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -63,6 +62,7 @@ public class FileUtil {
         }
       }
 
+      buildKnotsImageViews(diagram);
       deleteXmlFile();
     } catch (JAXBException | IOException e) {
       logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
@@ -70,8 +70,25 @@ public class FileUtil {
 
     app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
 
-    app.getCanvasWithOptionalDotGrid().getDiagramProperty().set(diagram);
-    app.getCanvasWithOptionalDotGrid().layoutChildren();
+    app.getOptionalDotGrid().getDiagramProperty().set(diagram);
+    app.getOptionalDotGrid().layoutChildren();
+  }
+
+  private void buildKnotsImageViews(Diagram diagram) {
+    for (Knot knot : diagram.getKnots()) {
+      try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
+        Image image = new Image(fis);
+        ImageView iv = new ImageView(image);
+
+        iv.setX(knot.getX());
+        iv.setY(knot.getY());
+        iv.setRotate(0d);
+        iv.setOpacity(1.0d);
+        knot.setImageView(iv);
+      } catch (IOException e) {
+        logger.error("Problem with pattern resource file!", e);
+      }
+    }
   }
 
   private void deleteXmlFile() throws IOException {
@@ -170,7 +187,7 @@ public class FileUtil {
   }
 
   private Diagram buildDiagramToSave(App app) {
-    Diagram toSave = new Diagram(app.getCanvasWithOptionalDotGrid().getDiagram());
+    Diagram toSave = new Diagram(app.getOptionalDotGrid().getDiagram());
     toSave.setKnots(toSave.getKnots().subList(0, toSave.getCurrentKnotIndex()));
 
     return toSave;

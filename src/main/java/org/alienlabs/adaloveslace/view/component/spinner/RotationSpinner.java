@@ -10,9 +10,9 @@ public class RotationSpinner {
                                     SpinnerValueFactory<Integer> spinnerToReflect1,
                                     SpinnerValueFactory<Integer> spinnerToReflect2) {
     spinner.setOnMouseClicked(event -> {
-      app.getCanvasWithOptionalDotGrid().getDiagram().getCurrentKnot()
+      app.getOptionalDotGrid().getDiagram().getCurrentKnot()
         .setRotationAngle(spinner.getValueFactory().getValue());
-      app.getCanvasWithOptionalDotGrid().layoutChildren();
+      app.getOptionalDotGrid().layoutChildren();
     });
 
     spinner.getValueFactory().valueProperty().addListener(

@@ -41,6 +41,10 @@ public class Pattern {
     }
   }
 
+  public Pattern() {
+    // For JAXB
+  }
+
   public String getAbsoluteFilename() {
     return this.absoluteFilename;
   }

@@ -3,15 +3,15 @@ package org.alienlabs.adaloveslace;
 import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.SystemInfo;
-import org.alienlabs.adaloveslace.view.component.CanvasWithOptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
@@ -41,10 +41,14 @@ public class App extends Application {
 
   public static final double  MAIN_WINDOW_Y           = 10d;
   private static final double MAIN_WINDOW_X           = 50d;
+  public static final double MAIN_WINDOW_WIDTH        = 660d;
+  public static final double MAIN_WINDOW_HEIGHT       = 680d;
+  public static final double GRID_WIDTH               = 650d;
+  public static final double GRID_HEIGHT              = 650d;
   public static final int     ICON_SIZE               = 46;
   public static final int     SMALL_ICON_SIZE         = 23;
 
-  private static final double RADIUS                  = 2.5d;// The dots from the grid are ellipses, this is their radius
+  public static final double GRID_DOTS_RADIUS         = 2.5d;// The dots from the grid are ellipses, this is their radius
 
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
@@ -52,6 +56,8 @@ public class App extends Application {
   private Stage geometryStage;
   private Diagram diagram;
   private MainWindow mainWindow;
+  private static Group root;
+  private static Scene scene;
 
   @Override
   public void start(Stage primaryStage) {
@@ -64,21 +70,25 @@ public class App extends Application {
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
 
     logger.info("Starting app: opening main window");
-    showMainWindow(660d, 700d, 0d, 0d, RADIUS, primaryStage);
+    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage);
   }
 
-  public void showMainWindow(double windowWidth, double windowHeight, double canvasWidth, double canvasHeight, double radius, Stage primaryStage) {
+  public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
+                             double gridDotsRadius, Stage primaryStage) {
     this.mainWindow = new MainWindow();
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
 
     TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
-    StackPane grid            = mainWindow.createGrid(canvasWidth, canvasHeight, radius, this.diagram);
-    GridPane root             = mainWindow.createGridPane(grid, footer);
+    StackPane grid            = mainWindow.createGrid(gridWidth, gridHeight, gridDotsRadius, this.diagram);
+    root                      = new Group();
+
+    grid.getChildren().add(footer);
+    root.getChildren().add(grid);
     this.mainWindow.onMainWindowClicked(root);
 
-    var scene                 = new Scene(root, windowWidth, windowHeight);
+    scene = new Scene(root, windowWidth, windowHeight);
     primaryStage.setScene(scene);
     primaryStage.setX(MAIN_WINDOW_X);
     primaryStage.setY(MAIN_WINDOW_Y);
@@ -144,12 +154,20 @@ public class App extends Application {
     this.diagram = diagram;
   }
 
-  public CanvasWithOptionalDotGrid getCanvasWithOptionalDotGrid() {
-    return this.mainWindow.getCanvasWithOptionalDotGrid();
+  public OptionalDotGrid getOptionalDotGrid() {
+    return this.mainWindow.getOptionalDotGrid();
   }
 
   public MainWindow getMainWindow() {
     return this.mainWindow;
+  }
+
+  public static Group getRoot() {
+    return root;
+  }
+
+  public static Scene getScene() {
+    return scene;
   }
 
 }

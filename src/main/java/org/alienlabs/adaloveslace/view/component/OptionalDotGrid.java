@@ -2,14 +2,14 @@ package org.alienlabs.adaloveslace.view.component;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Rotate;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Shape;
+import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Pattern;
@@ -18,16 +18,18 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A grid (= coordinate system) with dots (= used as landmarks for lace).
  */
-public class CanvasWithOptionalDotGrid extends Pane {
+public class OptionalDotGrid extends Pane {
 
   public static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
-  private static final double RADIUS    = 2.5d; // The dots are ellipses, this is their radius
-  double CANVAS_WIDTH                   = 1200d;
-  double CANVAS_HEIGHT                  = 700d;
+  private static final double RADIUS    = 0.5d; // The dots are ellipses, this is their radius
+  double GRID_WIDTH = 1240d;
+  double GRID_HEIGHT = 600d;
   public static final double TOP_MARGIN = 10d;
 
   private static final double SPACING_X = 25d; // The X space between the dots
@@ -39,8 +41,6 @@ public class CanvasWithOptionalDotGrid extends Pane {
   private boolean showHideGrid          = true;
   private double radius;
 
-  private final Canvas canvas           = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT); // We draw the dots on the grid using a Canvas
-  private final GraphicsContext graphicsContext2D;
   private Diagram diagram;
 
   private double top;
@@ -50,7 +50,9 @@ public class CanvasWithOptionalDotGrid extends Pane {
   private double width;
   private double height;
 
-  private static final Logger logger = LoggerFactory.getLogger(CanvasWithOptionalDotGrid.class);
+  private Set<Shape> grid = new HashSet<>();
+
+  private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
 
   /**
    * We draw the dots on the grid using a Canvas.
@@ -58,7 +60,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
    * @see Canvas
    *
    */
-  public CanvasWithOptionalDotGrid(Diagram diagram) {
+  public OptionalDotGrid(Diagram diagram) {
     if (diagram == null) {
       this.diagram = new Diagram();
     } else {
@@ -81,21 +83,18 @@ public class CanvasWithOptionalDotGrid extends Pane {
       this.showHideGrid = showHideGridProperty.getValue();
       setNeedsLayout(true);
     });
-
-    this.graphicsContext2D = this.canvas.getGraphicsContext2D();
-    getChildren().addAll(this.canvas);
   }
 
-  public CanvasWithOptionalDotGrid(double width, double height, double radius, Diagram diagram) {
+  public OptionalDotGrid(double width, double height, double radius, Diagram diagram) {
     this(diagram);
-    CANVAS_WIDTH = width;
-    CANVAS_HEIGHT = height;
+    GRID_WIDTH = width;
+    GRID_HEIGHT = height;
     this.radius = radius;
   }
 
   @Override
   public void layoutChildren() {
-    initCanvasAndGrid();
+    initGrid();
     drawDiagram();
   }
 
@@ -107,11 +106,6 @@ public class CanvasWithOptionalDotGrid extends Pane {
     for (Knot knot : this.diagram.getKnots().subList(0, this.diagram.getCurrentKnotIndex())) {
       drawKnotWithRotationAndZoom(knot);
     }
-
-    // If there is no knot on the diagram, we must display a blank diagram
-    if (this.diagram.getKnots() == null || this.diagram.getKnots().isEmpty()) {
-        graphicsContext2D.rect(0d, 0d, CANVAS_WIDTH, CANVAS_HEIGHT);
-    }
   }
 
   // We whall not display the undone knots => delete them from canvas, then draw the grid again
@@ -119,37 +113,23 @@ public class CanvasWithOptionalDotGrid extends Pane {
     if (!this.diagram.getKnots().isEmpty()) {
       for (Knot knot : this.diagram.getKnots().subList(this.diagram.getCurrentKnotIndex(), this.diagram.getKnots().size())) {
         deleteKnotFromCanvas(knot);
-        initCanvasAndGrid();
       }
     }
   }
 
   private void deleteKnotFromCanvas(Knot knot) {
-    try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
-      Image image = new Image(fis);
-      graphicsContext2D.clearRect(knot.getX(), knot.getY(),
-        image.getWidth(), image.getHeight());
-    } catch (IOException e) {
-      logger.error("Problem with resource file!", e);
+    if (App.getRoot().getChildren().contains(knot.getImageView())) {
+      App.getRoot().getChildren().remove(knot.getImageView());
     }
   }
 
   private void drawKnotWithRotationAndZoom(Knot knot) {
-    try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
-      ImageView iv = rotateKnot(knot, fis);
-      zoomKnot(knot, iv);
+    ImageView iv = rotateKnot(knot);
+    zoomKnot(knot, iv);
 
-      graphicsContext2D.drawImage(writeImageToBuffer(iv), knot.getX() - knot.getPattern().getCenterX(),
-        knot.getY() - knot.getPattern().getCenterX());
-    } catch (IOException e) {
-      logger.error("Problem with resource file!", e);
-    }
-  }
-
-  private Image writeImageToBuffer(ImageView iv) {
-    SnapshotParameters params = new SnapshotParameters();
-    params.setFill(Color.TRANSPARENT);
-    return iv.snapshot(params, null);
+    double x = knot.getX();
+    double y = knot.getY();
+    logger.info("drawing top left corner of knot {} to ({},{})", knot.getPattern().getFilename(), x, y);
   }
 
   // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
@@ -161,68 +141,81 @@ public class CanvasWithOptionalDotGrid extends Pane {
   }
 
   // Rotate knot with an angle in degrees
-  private ImageView rotateKnot(Knot knot, FileInputStream fis) {
-    Image image = new Image(fis);
-    ImageView iv = new ImageView(image);
+  private ImageView rotateKnot(Knot knot) {
+    if (!App.getRoot().getChildren().contains(knot.getImageView())) {
+      App.getRoot().getChildren().add(knot.getImageView());
+    }
 
-    Rotate rotate = new Rotate();
-    rotate.setPivotX(knot.getPattern().getCenterX());
-    rotate.setPivotY(knot.getPattern().getCenterY());
-    rotate.setAngle(knot.getRotationAngle());
-    iv.getTransforms().add(rotate);
+    knot.getImageView().setOpacity(1.0d);
+    knot.getImageView().setRotate(knot.getRotationAngle());
+    logger.info("rotating knot {} at angle {}", knot.getPattern().getFilename(), knot.getRotationAngle());
 
-    return iv;
+    return knot.getImageView();
   }
 
-  private void initCanvasAndGrid() {
+  private void initGrid() {
     top     = (int)snappedTopInset() + TOP_MARGIN;
     right   = (int)snappedRightInset();
     bottom  = (int)snappedBottomInset();
     left    = (int)snappedLeftInset();
     width   = (int)getWidth() - left - right;
     height  = (int)getHeight() - top - bottom - 20d;
-    this.canvas.setLayoutX(left);
-    this.canvas.setLayoutY(top);
-
-    if (width != this.canvas.getWidth() || height != this.canvas.getHeight()) {
-      this.canvas.setWidth(width);
-      this.canvas.setHeight(height);
-    }
-
-    fillEmptyRectangle();
+    App.getRoot().setLayoutX(left);
+    App.getRoot().setLayoutY(top);
 
     if (this.showHideGrid) {
       drawGrid(width, height);
+    } else {
+      hideGrid();
     }
   }
 
-  private void fillEmptyRectangle() {
-    this.graphicsContext2D.clearRect(0d, 0d, width, height);
-    this.graphicsContext2D.setFill(new Color(1.0d, 1.0d, 1.0d, 0.9d));
-    this.graphicsContext2D.fillRect(40d, 40d, width - 87d, height - 70d);
-
-    this.graphicsContext2D.setFill(GRID_COLOR);
-  }
-
-  private void drawGrid(double w, double h) {
-    for (double x = 40d; x < (w - 40d); x += SPACING_X) {
-      for (double y = 40d; y < (h - 20d); y += SPACING_Y) {
-        double offsetY = (y % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
-        this.graphicsContext2D.fillOval(x - this.radius + offsetY,y - this.radius,this.radius * 2,this.radius * 2); // A dot
+  private void hideGrid() {
+    for (Shape shape : grid) {
+      if (App.getRoot().getChildren().contains(shape)) {
+        App.getRoot().getChildren().remove(shape);
       }
     }
   }
 
-  public Knot addKnot(double x, double y) {
+  private void drawGrid(double w, double h) {
+    hideGrid();
+
+    for (double x = 40d; x < (w - 20d); x += SPACING_X) {
+      for (double y = 60d; y < (h - 50d); y += SPACING_Y) {
+        double offsetY = (y % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
+        Ellipse ell = new Ellipse(x - this.radius + offsetY,y - this.radius,this.radius,this.radius); // A dot
+        ell.setFill(GRID_COLOR);
+
+        grid.add(ell);
+        App.getRoot().getChildren().add(ell);
+      }
+    }
+  }
+
+  public Knot addKnot(double centerX, double centerY) {
     Pattern currentPattern = this.diagram.getCurrentPattern();
     logger.info("Current pattern  -> {}", currentPattern);
     Knot currentKnot = null;
 
     try (FileInputStream fis = new FileInputStream(currentPattern.getAbsoluteFilename())) {
-      this.canvas.getGraphicsContext2D().drawImage(new Image(fis), x - currentPattern.getCenterX(),
-        y - currentPattern.getCenterX());
-      currentKnot = new Knot(x, y, currentPattern);
+      Image image = new Image(fis);
+      ImageView iv = new ImageView(image);
+
+      double cornerX = centerX - currentPattern.getCenterX();
+      double cornerY = centerY - currentPattern.getCenterY();
+      iv.setX(cornerX);
+      iv.setY(cornerY);
+      iv.setRotate(0d);
+      iv.setOpacity(1.0d);
+
+      logger.info("Top left corner of the knot {} is ({},{})", currentPattern.getFilename(), cornerX, cornerY);
+      logger.info("Center of the knot {} is ({},{})", currentPattern.getFilename(), centerX, centerY);
+
+      App.getRoot().getChildren().add(iv);
+      currentKnot = new Knot(cornerX, cornerY, currentPattern, iv);
       this.diagram.addKnot(currentKnot);
+      layoutChildren();
     } catch (IOException e) {
       logger.error("Problem with pattern resource file!", e);
     }
@@ -249,7 +242,7 @@ public class CanvasWithOptionalDotGrid extends Pane {
   }
 
   /** Use JavaFX property
-   * @see CanvasWithOptionalDotGrid#getDiagramProperty()
+   * @see OptionalDotGrid#getDiagramProperty()
    * */
   private void setDiagram(Diagram diagram) {
     this.diagram = diagram;
@@ -260,13 +253,6 @@ public class CanvasWithOptionalDotGrid extends Pane {
     justification = "A JavaFX property is meant to be modified from the outside")
   public SimpleBooleanProperty isShowHideGridProperty() {
     return this.showHideGridProperty;
-  }
-
-  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
-    value = "EI_EXPOSE_REP",
-    justification = "The canvas can not be copied at will (because the copy would be asynchronous), so we are forced to reuse the same one")
-  public Canvas getCanvas() {
-    return this.canvas;
   }
 
 }

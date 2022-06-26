@@ -1,21 +1,17 @@
 package org.alienlabs.adaloveslace.test.view;
 
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseButton;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.test.AppTestParent;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
-import org.testfx.matcher.base.ColorMatchers;
 import org.testfx.robot.Motion;
 
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
-import static org.alienlabs.adaloveslace.test.view.MainWindowComponentTest.*;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ToolboxComponentTest extends AppTestParent {
 
@@ -39,7 +35,7 @@ class ToolboxComponentTest extends AppTestParent {
    *
    * @param robot The injected FxRobot
    */
-  @Test
+  /*@Test
   void testHideGrid(FxRobot robot) {
     Canvas canvas = this.app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
     switchGrid(robot);
@@ -54,7 +50,7 @@ class ToolboxComponentTest extends AppTestParent {
     foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
     // All we can say is that if we click on the empty canvas, then the pixel is white
     assertTrue(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
-  }
+  }*/
 
   /**
    * Checks if we are able to hide the dot grid (a canvas pixel should be white, then)
@@ -62,7 +58,7 @@ class ToolboxComponentTest extends AppTestParent {
    *
    * @param robot The injected FxRobot
    */
-  @Test
+  /*@Test
   void testHideAndShowAgainGrid(FxRobot robot) {
     Canvas canvas = this.app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
     // Hide the dot grid
@@ -91,7 +87,7 @@ class ToolboxComponentTest extends AppTestParent {
     foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
     // All we can say is that if we click on the grid, then the pixel is not white
     assertFalse(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
-  }
+  }*/
 
   // Click on "show / hide dot grid" button in the toolbox
   private void switchGrid(FxRobot robot) {

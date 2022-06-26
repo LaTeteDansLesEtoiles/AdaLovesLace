@@ -72,16 +72,16 @@ public class GeometryWindow {
     buttonsPane.setPrefColumns(2);
     buttonsPane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
 
-    drawingButton = new DrawingButton(app, this, buttonsPane, DRAWING_BUTTON_NAME);
+    drawingButton = new DrawingButton(app, this, DRAWING_BUTTON_NAME);
     getImageView("drawing.png", drawingButton, true);
 
-    selectionButton = new SelectionButton(app, this, buttonsPane, SELECTION_BUTTON_NAME);
+    selectionButton = new SelectionButton(app, this, SELECTION_BUTTON_NAME);
     getImageView("selection.png", selectionButton, false);
 
-    rotationButton = new RotationButton(app, this, buttonsPane, ROTATION_BUTTON_NAME);
+    rotationButton = new RotationButton(app, this, ROTATION_BUTTON_NAME);
     getImageView("rotation.png", rotationButton, false);
 
-    zoomButton = new ZoomButton(app, this, buttonsPane, ZOOM_BUTTON_NAME);
+    zoomButton = new ZoomButton(app, this, ZOOM_BUTTON_NAME);
     getImageView("zoom.png", zoomButton, false);
 
     Spinner<Integer> rotate1 = new Spinner<>(0, 360, 0, 1);

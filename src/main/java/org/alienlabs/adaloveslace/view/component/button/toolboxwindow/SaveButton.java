@@ -1,6 +1,5 @@
 package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
-import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.FileUtil;
@@ -23,13 +22,13 @@ public class SaveButton extends ImageButton {
 
   private static final Logger logger                  = LoggerFactory.getLogger(SaveButton.class);
 
-  public SaveButton(App app, Pane root, String buttonLabel) {
+  public SaveButton(App app, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onSaveAction(app, root));
+    this.setOnMouseClicked(event -> onSaveAction(app));
     buildButtonImage("save.png");
   }
 
-  public static void onSaveAction(App app, Pane root) {
+  public static void onSaveAction(App app) {
     logger.info("Saving file");
 
     File file;
@@ -50,7 +49,7 @@ public class SaveButton extends ImageButton {
       saveAs.getExtensionFilters().add(filter);
       saveAs.setInitialDirectory(preferences.getPathWithFileValue(LACE_FILE_FOLDER_SAVE_PATH));
 
-      file = saveAs.showSaveDialog(root.getScene().getWindow());
+      file = saveAs.showSaveDialog(App.getScene().getWindow());
     } else {
       // We know where to save
       file = laceFilePath;

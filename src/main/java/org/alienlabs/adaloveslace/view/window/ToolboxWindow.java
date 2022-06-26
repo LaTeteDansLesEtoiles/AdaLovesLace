@@ -88,9 +88,11 @@ public class ToolboxWindow {
     org.alienlabs.adaloveslace.business.model.Pattern pattern = new org.alienlabs.adaloveslace.business.model.Pattern(filename);
 
     Image img = new Image(fis);
+    ImageView iv = new ImageView(img);
+
     pattern.setCenterX(img.getWidth() / 2);
     pattern.setCenterY(img.getHeight() / 2);
-    ImageView iv = new ImageView(img);
+
     Button button = new PatternButton(app, label, iv, pattern);
     button.setId(TOOLBOX_BUTTON + (i + 1));
     toolboxPane.getChildren().add(button);
@@ -200,9 +202,9 @@ public class ToolboxWindow {
     buttonsPane.setPrefColumns(1);
     buttonsPane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
 
-    SaveButton          saveButton          = new SaveButton          (app, buttonsPane, SAVE_FILE_BUTTON_NAME);
-    SaveAsButton        saveAsButton        = new SaveAsButton        (app, buttonsPane, SAVE_FILE_AS_BUTTON_NAME);
-    LoadButton loadButton                   = new LoadButton          (app, buttonsPane, LOAD_BUTTON_NAME);
+    SaveButton          saveButton          = new SaveButton          (app, SAVE_FILE_BUTTON_NAME);
+    SaveAsButton        saveAsButton        = new SaveAsButton        (app, SAVE_FILE_AS_BUTTON_NAME);
+    LoadButton          loadButton          = new LoadButton          (app, LOAD_BUTTON_NAME);
     buttonsPane.getChildren().addAll(saveButton, saveAsButton, loadButton);
 
     UndoKnotButton      undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
