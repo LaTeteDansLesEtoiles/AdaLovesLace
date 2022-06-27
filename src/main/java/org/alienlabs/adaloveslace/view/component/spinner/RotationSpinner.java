@@ -7,18 +7,16 @@ import org.alienlabs.adaloveslace.App;
 public class RotationSpinner {
 
   public void buildRotationSpinner(App app, Spinner<Integer> spinner,
-                                    SpinnerValueFactory<Integer> spinnerToReflect1,
-                                    SpinnerValueFactory<Integer> spinnerToReflect2) {
-    spinner.setOnMouseClicked(event -> {
-      app.getOptionalDotGrid().getDiagram().getCurrentKnot()
-        .setRotationAngle(spinner.getValueFactory().getValue());
-      app.getOptionalDotGrid().layoutChildren();
-    });
-
+                                   SpinnerValueFactory<Integer> spinnerToReflect1,
+                                   SpinnerValueFactory<Integer> spinnerToReflect2) {
     spinner.getValueFactory().valueProperty().addListener(
       (observableValue, oldValue, newValue) -> {
         spinnerToReflect1.setValue(newValue);
         spinnerToReflect2.setValue(newValue);
+
+        app.getOptionalDotGrid().getDiagram().getCurrentKnot()
+          .setRotationAngle(spinner.getValueFactory().getValue());
+        app.getOptionalDotGrid().layoutChildren();
       });
 
     spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);

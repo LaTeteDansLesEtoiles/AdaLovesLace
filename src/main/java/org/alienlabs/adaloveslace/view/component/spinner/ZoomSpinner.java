@@ -7,18 +7,16 @@ import org.alienlabs.adaloveslace.App;
 public class ZoomSpinner {
 
   public void buildZoomSpinner(App app, Spinner<Integer> spinner,
-                                SpinnerValueFactory<Integer> spinnerToReflect1,
-                                SpinnerValueFactory<Integer> spinnerToReflect2) {
-    spinner.setOnMouseClicked(event -> {
-      app.getOptionalDotGrid().getDiagram().getCurrentKnot()
-        .setZoomFactor(spinner.getValueFactory().getValue());
-      app.getOptionalDotGrid().layoutChildren();
-    });
-
+                               SpinnerValueFactory<Integer> spinnerToReflect1,
+                               SpinnerValueFactory<Integer> spinnerToReflect2) {
     spinner.getValueFactory().valueProperty().addListener(
       (observableValue, oldValue, newValue) -> {
         spinnerToReflect1.setValue(newValue);
         spinnerToReflect2.setValue(newValue);
+
+        app.getOptionalDotGrid().getDiagram().getCurrentKnot()
+          .setZoomFactor(spinner.getValueFactory().getValue());
+        app.getOptionalDotGrid().layoutChildren();
       });
 
     spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
