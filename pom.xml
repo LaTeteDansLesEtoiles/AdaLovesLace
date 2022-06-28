@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.alienlabs.adaloveslace</groupId>
   <artifactId>adaloveslace</artifactId>
-  <version>0.0.3</version>
+  <version>0.0.5</version>
   <description>A tatting lace patterns creation software</description>
 
   <properties>
@@ -13,6 +13,7 @@
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <javafx.version>17.0.2</javafx.version>
     <testfx.version>4.0.16-alpha</testfx.version>
+    <logback.version>1.3.0-alpha16</logback.version>
   </properties>
 
   <dependencies>
@@ -54,23 +55,24 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.2.11</version>
+      <version>${logback.version}</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>1.2.11</version>
+      <version>${logback.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.36</version>
+      <version>2.0.0-alpha7</version>
     </dependency>
 
     <dependency>
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
-      <version>4.6.0</version>
+      <version>4.7.0</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
@@ -89,6 +91,12 @@
       <groupId>org.testfx</groupId>
       <artifactId>testfx-junit5</artifactId>
       <version>${testfx.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-swing</artifactId>
+      <version>${javafx.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -143,12 +151,14 @@
               <mainClass>org.alienlabs.adaloveslace.App</mainClass>
               <generateInstaller>true</generateInstaller>
               <administratorRequired>false</administratorRequired>
-              <bundleJre>false</bundleJre>
+              <bundleJre>true</bundleJre>
               <customizedJre>true</customizedJre>
               <organizationName>AlienLabs</organizationName>
               <organizationEmail>goupilpierre@gmail.com</organizationEmail>
               <assetsDir>${basedir}/src/main/resources/assets</assetsDir>
               <outputDirectory>${project.build.directory}/artifacts</outputDirectory>
+              <platform>auto</platform>
+              <copyDependencies>true</copyDependencies>
               <winConfig>
                 <headerType>console</headerType>
                 <setupLanguages>
@@ -158,7 +168,7 @@
               </winConfig>
               <vmArgs>
                 <vmArg>--module-path libs</vmArg>
-                <vmArg>--add-modules javafx.base,javafx.controls,javafx.graphics</vmArg>
+                <vmArg>--add-modules javafx.base,javafx.controls,javafx.graphics,org.slf4j</vmArg>
               </vmArgs>
               <additionalResources>
                 <additionalResource>${basedir}/target/classes/org/</additionalResource>
@@ -236,7 +246,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>3.1.1</version>
+        <version>3.2.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

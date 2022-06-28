@@ -9,11 +9,13 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.matcher.control.LabeledMatchers;
 
-import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
-import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton.REDO_KNOT_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ResetDiagramButton.RESET_DIAGRAM_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton.UNDO_KNOT_BUTTON_NAME;
 
-class ToolBoxButtonTest extends AppTestParent {
+class ToolboxButtonTest extends AppTestParent {
 
   /**
    * Init method called before each test
@@ -26,22 +28,12 @@ class ToolBoxButtonTest extends AppTestParent {
   }
 
   /**
-   * Checks if 1st pattern toolbox button contains image "mandala_small.jpg"
+   * Checks if 1st pattern toolbox button contains image "snowflake_small.jpg"
    *
    * @param robot The injected FxRobot
    */
   @Test
   void should_contain_1st_pattern_button_with_text(FxRobot robot) {
-    FxAssert.verifyThat(MANDALA_BUTTON, LabeledMatchers.hasText(MANDALA));
-  }
-
-  /**
-   * Checks if 2nd pattern toolbox button contains image "snowflake_small.jpg"
-   *
-   * @param robot The injected FxRobot
-   */
-  @Test
-  void should_contain_2nd_pattern_button_with_text(FxRobot robot) {
     FxAssert.verifyThat(SNOWFLAKE_BUTTON, LabeledMatchers.hasText(SNOWFLAKE));
   }
 
@@ -62,7 +54,7 @@ class ToolBoxButtonTest extends AppTestParent {
    */
   @Test
   void should_contain_quit_button_with_text(FxRobot robot) {
-    FxAssert.verifyThat(QUIT_APP, NodeMatchers.isVisible());
+    FxAssert.verifyThat(QUIT_APP_BUTTON_NAME, NodeMatchers.isVisible());
   }
 
   /**

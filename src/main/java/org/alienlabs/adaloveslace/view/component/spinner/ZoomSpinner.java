@@ -1,0 +1,25 @@
+package org.alienlabs.adaloveslace.view.component.spinner;
+
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import org.alienlabs.adaloveslace.App;
+
+public class ZoomSpinner {
+
+  public void buildZoomSpinner(App app, Spinner<Integer> spinner,
+                               SpinnerValueFactory<Integer> spinnerToReflect1,
+                               SpinnerValueFactory<Integer> spinnerToReflect2) {
+    spinner.getValueFactory().valueProperty().addListener(
+      (observableValue, oldValue, newValue) -> {
+        spinnerToReflect1.setValue(newValue);
+        spinnerToReflect2.setValue(newValue);
+
+        app.getOptionalDotGrid().getDiagram().getCurrentKnot()
+          .setZoomFactor(spinner.getValueFactory().getValue());
+        app.getOptionalDotGrid().layoutChildren();
+      });
+
+    spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+  }
+
+}

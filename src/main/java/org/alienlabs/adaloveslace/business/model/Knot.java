@@ -2,7 +2,9 @@ package org.alienlabs.adaloveslace.business.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
+import javafx.scene.image.ImageView;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -23,17 +25,28 @@ public class Knot {
 
   private double x;
   private double y;
+
+  private double rotationAngle;
+
+  private double zoomFactor;
+
   private Pattern pattern;
+
+  @XmlTransient
+  private ImageView imageView;
 
   public Knot() {
     this.uuid = UUID.randomUUID();
   }
 
-  public Knot(final double x, final double y, final Pattern pattern) {
-    this.uuid = UUID.randomUUID();
+  public Knot(final double x, final double y, final Pattern pattern, final ImageView imageView) {
     this.x = x;
     this.y = y;
     this.pattern = pattern;
+    this.imageView = imageView;
+
+    this.uuid = UUID.randomUUID();
+    this.rotationAngle = 0;
   }
 
   public UUID getUuid() {
@@ -60,12 +73,36 @@ public class Knot {
     this.y = y;
   }
 
+  public double getRotationAngle() {
+    return rotationAngle;
+  }
+
+  public void setRotationAngle(double rotationAngle) {
+    this.rotationAngle = rotationAngle;
+  }
+
+  public double getZoomFactor() {
+    return zoomFactor;
+  }
+
+  public void setZoomFactor(double zoomFactor) {
+    this.zoomFactor = zoomFactor;
+  }
+
   public void setPattern(Pattern pattern) {
     this.pattern = pattern;
   }
 
+  public ImageView getImageView() {
+    return imageView;
+  }
+
+  public void setImageView(ImageView imageView) {
+    this.imageView = imageView;
+  }
+
   public boolean coincide(Knot other) {
-    return this.x == other.x && this.y == other.y && this.pattern.getFilename().equals(other.getPattern().getFilename());
+    return this.x == other.x && this.y == other.y && this.pattern.getAbsoluteFilename().equals(other.getPattern().getAbsoluteFilename());
   }
 
   @Override

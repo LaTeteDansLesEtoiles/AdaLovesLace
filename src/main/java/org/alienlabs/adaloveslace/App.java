@@ -3,15 +3,16 @@ package org.alienlabs.adaloveslace;
 import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.SystemInfo;
-import org.alienlabs.adaloveslace.view.component.CanvasWithOptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
+import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.slf4j.Logger;
@@ -32,47 +33,74 @@ public class App extends Application {
   public static final String ADA_LOVES_LACE           = "Ada Loves Lace";
   public static final String MAIN_WINDOW_TITLE        = ADA_LOVES_LACE;
   public static final String PROJECT_NAME             = "adaloveslace";
+  public static final String USER_HOME                = "user.home";
   public static final String TOOLBOX_TITLE            = "Toolbox";
+  public static final String GEOMETRY_TITLE           = "Geometry";
+  public static final String LACE_FILE_EXTENSION      = ".lace";
   public static final String PATTERNS_DIRECTORY_NAME  = "patterns";
   public static final String ERROR                    = "Error!";
 
   public static final double  MAIN_WINDOW_Y           = 10d;
   private static final double MAIN_WINDOW_X           = 50d;
-  private static final double RADIUS                  = 2.5d;// The dots from the grid are ellipses, this is their radius
+  public static final double  MAIN_WINDOW_WIDTH       = 500d;
+  public static final double  MAIN_WINDOW_HEIGHT      = 680d;
+  public static final double  GRID_WIDTH              = 650d;
+  public static final double  GRID_HEIGHT             = 650d;
+  public static final int     ICON_SIZE               = 46;
+  public static final int     SMALL_ICON_SIZE         = 23;
+
+  public static final double  GRID_DOTS_RADIUS        = 2.5d;// The dots from the grid are ellipses, this is their radius
 
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   private Stage toolboxStage;
   private Diagram diagram;
   private MainWindow mainWindow;
+  private Group root;
+  private Scene scene;
+  private Stage primaryStage;
+  private Stage geometryStage;
 
   @Override
   public void start(Stage primaryStage) {
+    this.primaryStage = primaryStage;
     this.diagram = new Diagram();
+
+    logger.info("Opening geometry window");
+    showGeometryWindow(this);
 
     logger.info("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
 
     logger.info("Starting app: opening main window");
-    showMainWindow(660d, 700d, 0d, 0d, RADIUS, primaryStage);
+    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage);
   }
 
-  public void showMainWindow(double windowWidth, double windowHeight, double canvasWidth, double canvasHeight, double radius, Stage primaryStage) {
+  public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
+                             double gridDotsRadius, Stage primaryStage) {
     this.mainWindow = new MainWindow();
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
 
+    root                      = new Group();
     TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
-    StackPane grid            = mainWindow.createGrid(canvasWidth, canvasHeight, radius, this.diagram);
-    GridPane root             = mainWindow.createGridPane(grid, footer);
+    StackPane grid            = mainWindow.createGrid(gridWidth, gridHeight, gridDotsRadius, this.diagram, root);
+
+    grid.getChildren().add(footer);
+    root.getChildren().add(grid);
     this.mainWindow.onMainWindowClicked(root);
 
-    var scene                 = new Scene(root, windowWidth, windowHeight);
+    scene = new Scene(root, windowWidth, windowHeight);
     primaryStage.setScene(scene);
     primaryStage.setX(MAIN_WINDOW_X);
     primaryStage.setY(MAIN_WINDOW_Y);
     primaryStage.setTitle(MAIN_WINDOW_TITLE);
+
+    primaryStage.setOnCloseRequest(windowEvent -> {
+      logger.info("You shall close the app by closing this window!");
+      System.exit(0);
+    });
 
     this.mainWindow.createMenuBar(root, this);
     primaryStage.show();
@@ -92,8 +120,25 @@ public class App extends Application {
     this.diagram = toolboxWindow.createToolboxPane(patternsPane, classpathBase, resourcesPath, app, this.diagram);
     TilePane buttonsPane = toolboxWindow.createToolboxButtons(app);
 
-    toolboxWindow.createToolboxStage(this.toolboxStage, buttonsPane, patternsPane);
+    toolboxWindow.createToolboxStage(this.toolboxStage, buttonsPane, patternsPane, app);
     return toolboxWindow;
+  }
+
+  public GeometryWindow showGeometryWindow(App app) {
+    geometryStage = new Stage(StageStyle.DECORATED);
+
+    TilePane patternsPane  = new TilePane(Orientation.HORIZONTAL);
+    patternsPane.setVgap(TILE_PADDING);
+    patternsPane.setPrefColumns(1);
+    patternsPane.setPrefTileHeight(TILE_HEIGHT);
+    patternsPane.setAlignment(Pos.TOP_CENTER);
+
+
+    GeometryWindow geometryWindow = new GeometryWindow();
+    TilePane buttonsPane = geometryWindow.createGeometryButtons(app);
+
+    geometryWindow.createGeometryStage(geometryStage, buttonsPane, patternsPane);
+    return geometryWindow;
   }
 
   public static void main(String[] args) {
@@ -107,16 +152,32 @@ public class App extends Application {
     return this.toolboxStage;
   }
 
+  public Stage getGeometryStage() {
+    return geometryStage;
+  }
+
   public void setDiagram(Diagram diagram) {
     this.diagram = diagram;
   }
 
-  public CanvasWithOptionalDotGrid getCanvasWithOptionalDotGrid() {
-    return this.mainWindow.getCanvasWithOptionalDotGrid();
+  public OptionalDotGrid getOptionalDotGrid() {
+    return this.mainWindow.getOptionalDotGrid();
   }
 
   public MainWindow getMainWindow() {
     return this.mainWindow;
+  }
+
+  public Group getRoot() {
+    return root;
+  }
+
+  public Scene getScene() {
+    return scene;
+  }
+
+  public Stage getPrimaryStage() {
+    return primaryStage;
   }
 
 }

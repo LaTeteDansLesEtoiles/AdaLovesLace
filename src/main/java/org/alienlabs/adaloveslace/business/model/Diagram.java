@@ -27,15 +27,26 @@ public class Diagram {
   @XmlTransient
   private Pattern currentPattern;
 
+  @XmlTransient
+  private Knot currentKnot;
+
+  @XmlTransient
+  private boolean isKnotSelected;
+
+  @XmlTransient
+  private MouseMode currentMode;
+
   public Diagram() {
-    this.patterns = new ArrayList<>();
-    this.knots    = new ArrayList<>();
+    this.patterns     = new ArrayList<>();
+    this.knots        = new ArrayList<>();
+    this.currentMode  = MouseMode.DRAWING;
   }
 
   public Diagram(final Diagram diagram) {
     this.patterns         = new ArrayList<>(diagram.getPatterns());
     this.knots            = new ArrayList<>(diagram.getKnots());
     this.currentKnotIndex = diagram.getCurrentKnotIndex();
+    this.currentMode      = diagram.getCurrentMode();
     this.setCurrentPattern(diagram.getCurrentPattern());
   }
 
@@ -111,6 +122,34 @@ public class Diagram {
 
   public int getCurrentKnotIndex() {
     return this.currentKnotIndex;
+  }
+
+  public Knot getCurrentKnot() {
+    return currentKnot;
+  }
+
+  public void setCurrentKnot(Knot currentKnot) {
+    this.currentKnot = currentKnot;
+  }
+
+  public boolean isKnotSelected() {
+    return isKnotSelected;
+  }
+
+  public void setKnotSelected(boolean knotSelected) {
+    isKnotSelected = knotSelected;
+  }
+
+  public MouseMode getCurrentMode() {
+    return currentMode;
+  }
+
+  public void setCurrentMode(MouseMode currentMode) {
+    this.currentMode = currentMode;
+  }
+
+  public void setCurrentKnotIndex(int currentKnotIndex) {
+    this.currentKnotIndex = currentKnotIndex;
   }
 
 }

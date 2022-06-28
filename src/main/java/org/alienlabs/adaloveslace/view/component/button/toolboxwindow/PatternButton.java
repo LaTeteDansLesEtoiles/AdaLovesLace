@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view.component.button;
+package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -22,7 +22,7 @@ public class PatternButton extends Button {
       Pattern newCurrentPattern = ((PatternButton) event.getSource()).getPattern();
       logger.info("Event type -> {}, new current Pattern -> {}", eType, newCurrentPattern);
 
-      app.getCanvasWithOptionalDotGrid().getCurrentPatternProperty().set(newCurrentPattern);
+      app.getOptionalDotGrid().getCurrentPatternProperty().set(newCurrentPattern);
     });
   }
 
