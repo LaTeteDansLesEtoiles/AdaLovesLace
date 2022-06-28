@@ -42,24 +42,23 @@ public class PrintUtil {
    */
   public void printButtonOnAction(Button printButton) {
     printButton.setOnAction(actionEvent -> {
-      if (!printers.isEmpty()) {
-        logger.info("Printing attempt of diagram");
+        if (!printers.isEmpty()) {
+          logger.info("Printing attempt of diagram");
 
-        Printer printer = printers.iterator().next();
-        logger.info("Printing attempt of diagram with printer {}", printer.getName());
+          Printer printer = printers.iterator().next();
+          logger.info("Printing attempt of diagram with printer {}", printer.getName());
 
-        PrinterJob pJ = PrinterJob.createPrinterJob(printer);
+          PrinterJob pJ = PrinterJob.createPrinterJob(printer);
 
-        // Show the print setup dialog
-        boolean proceed = pJ.showPrintDialog(app.getPrimaryStage());
+          // Show the print setup dialog
+          boolean proceed = pJ.showPrintDialog(app.getPrimaryStage());
 
-        if (proceed)
-        {
-          print(pJ, printer, app.getRoot());
-        } else {
-          logger.info("Printing diagram aborted by user!");
+          if (proceed) {
+            print(pJ, app.getRoot());
+          } else {
+            logger.info("Printing diagram aborted by user!");
+          }
         }
-      }
     });
   }
 
@@ -68,18 +67,13 @@ public class PrintUtil {
    * @param job the printer job
    * @param node the node to print
    */
-  private void print(PrinterJob job, Printer printer, Node node)
+  private void print(PrinterJob job, Node node)
   {
     ImageUtil iu = new ImageUtil(app);
     iu.hideTechnicalElementsFromRootGroup();
 
     // Print the node
-    boolean printed = job.printPage(
-      printer.createPageLayout(
-        printer.getPrinterAttributes().getDefaultPaper(),
-        printer.getPrinterAttributes().getDefaultPageOrientation(),
-        Printer.MarginType.DEFAULT),
-      node);
+    boolean printed = job.printPage(job.getJobSettings().getPageLayout(), node);
 
     if (printed)
     {
