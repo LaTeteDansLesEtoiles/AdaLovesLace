@@ -12,6 +12,7 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
 import org.testfx.robot.Motion;
 
+import static java.lang.Thread.sleep;
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.api.FxAssert.verifyThat;
@@ -245,6 +246,13 @@ class MainWindowComponentTest extends AppTestParent {
 
   private void clickOnButton(FxRobot robot, Node button) {
     robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
+
+    // No choice to sleep because we want to have time for the action to perform
+    try {
+      sleep(1000l);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private String getMainWindowTitle() {
