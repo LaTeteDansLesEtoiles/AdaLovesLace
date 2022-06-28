@@ -55,7 +55,7 @@ public class PrintUtil {
 
         if (proceed)
         {
-          print(pJ, app.getRoot());
+          print(pJ, printer, app.getRoot());
         } else {
           logger.info("Printing diagram aborted by user!");
         }
@@ -68,13 +68,18 @@ public class PrintUtil {
    * @param job the printer job
    * @param node the node to print
    */
-  private void print(PrinterJob job, Node node)
+  private void print(PrinterJob job, Printer printer, Node node)
   {
     ImageUtil iu = new ImageUtil(app);
     iu.hideTechnicalElementsFromRootGroup();
 
     // Print the node
-    boolean printed = job.printPage(node);
+    boolean printed = job.printPage(
+      printer.createPageLayout(
+        printer.getPrinterAttributes().getDefaultPaper(),
+        printer.getPrinterAttributes().getDefaultPageOrientation(),
+        Printer.MarginType.DEFAULT),
+      node);
 
     if (printed)
     {
