@@ -6,6 +6,7 @@ module org.alienlabs.adaloveslace.test {
 
   requires javafx.controls;
   requires javafx.graphics;
+  requires javafx.swing;
 
   requires org.slf4j;
   requires org.testfx;

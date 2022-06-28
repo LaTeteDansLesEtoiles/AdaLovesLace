@@ -9,20 +9,21 @@ import org.alienlabs.adaloveslace.test.AppTestParent;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
+import org.testfx.matcher.base.ColorMatchers;
 import org.testfx.robot.Motion;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.testfx.api.FxAssert.verifyThat;
 
 class MainWindowComponentTest extends AppTestParent {
 
-  public static final double  WHITE_PIXEL_X               = 90d;
-  public static final long    WHITE_PIXEL_Y               = 60l;
+  public static final double  WHITE_PIXEL_X               = 86d;
+  public static final long    WHITE_PIXEL_Y               = 75l;
   public static final long    NO_PIXEL_Y                  = 70l;
-  public static final double  SNOWFLAKE_PIXEL_X           = 75d;
-  public static final long    SNOWFLAKE_PIXEL_Y           = 90l;
-  public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xedededff");
+  public static final double  SNOWFLAKE_PIXEL_X           = 545d;
+  public static final double  SNOWFLAKE_PIXEL_Y           = 145d;
+  public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xccccccff");
 
   private Stage primaryStage;
 
@@ -52,27 +53,31 @@ class MainWindowComponentTest extends AppTestParent {
    *
    * @param robot The injected FxRobot
    */
-  /*@Test
+  @Test
   void testDrawSnowflake(FxRobot robot) {
-    selectSnowflake(robot);
+    // Init
+    selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
     // Move mouse and get the color of the pixel under the pointer
-    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
+
+    // Run
+    Point2D pointToMoveTo = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
-    // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
-    // have access to the UI thread for the copy without "Platform.runLater()"
-    foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
+    // Verify
+    Point2D pointToCheck = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    foundColorOnGrid = getColor(pointToCheck);
 
     // If we choose a point in the snowflake it must not be of the same color than the grid dots
     assertFalse(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
 
     // If we choose a point in the snowflake it must not be of the same color than the grid background
     assertFalse(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
-  }*/
+
+    // If we choose a point in the snowflake it must be of the right color
+    assertTrue(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid));
+  }
 
   /**
    * Checks if we are able to click anywhere on the canvas, i.e. somewhere where there is no pattern
@@ -80,18 +85,20 @@ class MainWindowComponentTest extends AppTestParent {
    *
    * @param robot The injected FxRobot
    */
-  /*@Test
+  @Test
   void testClickOutsideOfAGridDot(FxRobot robot) {
-    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
-
+    // Init
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + WHITE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + NO_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + WHITE_PIXEL_X, canvas.getLayoutY() + NO_PIXEL_Y);
-    robot.moveTo(pointToMoveTo);
+    Point2D pointToMoveTo = newPointOnGrid(WHITE_PIXEL_X, app.getRoot().getLayoutY() + WHITE_PIXEL_Y);
 
-    foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
-    FxAssert.verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.WHITE));
-  }*/
+    // Run
+    robot.moveTo(pointToMoveTo);
+    Point2D pointToCheck = new Point2D(WHITE_PIXEL_X, WHITE_PIXEL_Y);
+    foundColorOnGrid = getColor(pointToCheck);
+
+    // Verify
+    verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.WHITE));
+  }
 
   /**
    * Checks if we are able to click on the canvas, somewhere where there is no pattern
@@ -99,20 +106,21 @@ class MainWindowComponentTest extends AppTestParent {
    *
    * @param robot The injected FxRobot
    */
-  /*@Test
+  @Test
   void testClickOnTheGrid(FxRobot robot) {
-    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
-
+    // Init
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + NOT_WHITE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + NOT_WHITE_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + NOT_WHITE_PIXEL_X, canvas.getLayoutY() + NOT_WHITE_PIXEL_Y);
-    robot.moveTo(pointToMoveTo);
+    Point2D pointToMoveTo = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
 
-    foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
-    // All we can say is that if we click on the grid, the pixel is neither white (= empty) nor blue (= snowflake)
-    assertFalse(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
-    assertFalse(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid));
-  }*/
+    // Run
+    robot.moveTo(pointToMoveTo);
+    Point2D pointToCheck = new Point2D(GRAY_PIXEL_X, GRAY_PIXEL_Y - app.getRoot().getLayoutY());
+    foundColorOnGrid = getColor(pointToCheck);
+
+    // Verify
+    // If we click on a grid dot, it is gray
+    assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR)     .matches(foundColorOnGrid));
+  }
 
 
   /**
@@ -120,136 +128,129 @@ class MainWindowComponentTest extends AppTestParent {
    *
    * @param robot The injected FxRobot
    */
-  /*@Test
+  @Test
   void testUndoSnowflake(FxRobot robot) {
     // Init
-    selectSnowflake(robot);
+    selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    // Move mouse and get the color of the pixel under the pointer
-    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X - 10,
-      canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y - 10);
-    robot.moveTo(pointToMoveTo);
+    Point2D snowflakePoint = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
 
     // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
     // have access to the UI thread for the copy without "Platform.runLater()"
-    Color foundColorOnGridBeforeUndo = getColor(canvas, pointToMoveToInCanvas);
+    Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
     // Run: issue an "Undo knot" command
-    robot.push(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
+    selectAndClickUndoKnot(robot);
 
     // Verify
     // Move mouse and get the color of the pixel under the pointer
-    pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
-    pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X - 10,
-      canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y - 10);
-    robot.moveTo(pointToMoveTo);
-
-    Color foundColorOnGridAfterUndo = getColor(canvas, pointToMoveToInCanvas);
+    snowflakePoint = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    Color foundColorOnGridAfterUndo = getColor(snowflakePoint);
 
     assertNotEquals(foundColorOnGridAfterUndo, foundColorOnGridBeforeUndo,
       "The color before and after undo must not be the same!");
-  }*/
+  }
 
   /**
    * Checks if we can undo and redo a snowflake (the second pattern) after we have drawn it on the canvas
    *
    * @param robot The injected FxRobot
    */
-  /*@Test
+  @Test
   void testRedoSnowflake(FxRobot robot) {
     // Init
-    selectSnowflake(robot);
+    selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    // Move mouse and get the color of the pixel under the pointer
-    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X - 10,
-      canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y - 10);
-    robot.moveTo(pointToMoveTo);
+    Point2D snowflakePoint = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
 
     // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
     // have access to the UI thread for the copy without "Platform.runLater()"
-    Color foundColorOnGridBeforeRedo = getColor(canvas, pointToMoveToInCanvas);
+    Color foundColorOnGridBeforeRedo = getColor(snowflakePoint);
 
     // Issue an "Undo knot" command
-    robot.push(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
-
-    // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
-    // have access to the UI thread for the copy without "Platform.runLater()"
-    getColor(canvas, pointToMoveToInCanvas);
+    selectAndClickUndoKnot(robot);
 
     // Run: Issue a "Redo knot" command
-    robot.push(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
+    selectAndClickRedoKnot(robot);
 
     // Verify
     // Move mouse and get the color of the pixel under the pointer
-    pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
-    pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X - 10,
-      canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y - 10);
-    robot.moveTo(pointToMoveTo);
-    Color foundColorOnGridAfterRedo = getColor(canvas, pointToMoveToInCanvas);
+    snowflakePoint = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    Color foundColorOnGridAfterRedo = getColor(snowflakePoint);
 
     assertEquals(foundColorOnGridAfterRedo, foundColorOnGridBeforeRedo,
       "The color before and after redo must be the same!");
-  }*/
+  }
 
   /**
    * Checks if we can reset a snowflake (the second pattern) after we have drawn it on the canvas
    *
    * @param robot The injected FxRobot
    */
-  /*@Test
+  @Test
   void testResetSnowflake(FxRobot robot) {
     // Init
-    selectSnowflake(robot);
+    selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
     // Move mouse and get the color of the pixel under the pointer
-    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X - 10,
-      canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y - 10);
+    Point2D pointToMoveTo = newPointOnGrid(SNOWFLAKE_PIXEL_X, GRAY_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
-    // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
-    // have access to the UI thread for the copy without "Platform.runLater()"
-    Color foundColorOnGridBeforeReset = getColor(canvas, pointToMoveToInCanvas);
+    Point2D pointToCheck = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    Color foundColorOnGridBeforeReset = getColor(pointToCheck);
 
     // Run: issue a "Reset diagram" command
-    robot.push(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
+    selectAndClickResetDiagramButton(robot);
 
     // Verify
     // Move mouse and get the color of the pixel under the pointer
-    pointToMoveTo = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + SNOWFLAKE_PIXEL_X, this.primaryStage.getY() + canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y);
-    pointToMoveToInCanvas = new Point2D(canvas.getLayoutX() + SNOWFLAKE_PIXEL_X - 10,
-      canvas.getLayoutY() + SNOWFLAKE_PIXEL_Y - 10);
-    robot.moveTo(pointToMoveTo);
+    pointToMoveTo = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
 
-    Color foundColorOnGridAfterReset = getColor(canvas, pointToMoveToInCanvas);
+    // Run
+    robot.moveTo(pointToMoveTo);
+    pointToCheck = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    Color foundColorOnGridAfterReset = getColor(pointToCheck);
 
     assertNotEquals(foundColorOnGridAfterReset, foundColorOnGridBeforeReset,
       "The color before and after 'reset diagram' must not be the same!");
-  }*/
+  }
 
-  // Click on the snowflake in the toolbox to select it
-  private void selectSnowflake(FxRobot robot) {
+  // Click on the snowflake in the toolbox to select its pattern
+  private void selectAndClickOnSnowflake(FxRobot robot) {
     Node button = app.getToolboxStage().getScene().lookup(SNOWFLAKE_BUTTON);
     Point2D snowflakeOnTheToolbox = new Point2D(app.getToolboxStage().getX() + button.getLayoutX() + 20l,
       app.getToolboxStage().getY() + button.getLayoutY() + 50l);
+
     robot.clickOn(snowflakeOnTheToolbox, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   // Click on the grid with the snowflake selected in order to draw a snowflake on the grid
-  /*private void drawSnowflake(FxRobot robot) {
-    Canvas canvas = app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
-    Point2D snowflakeOnTheGrid = new Point2D(this.primaryStage.getX() + canvas.getLayoutX() + 50l,
-      this.primaryStage.getY() + canvas.getLayoutY() + 50l);
+  private void drawSnowflake(FxRobot robot) {
+    Point2D snowflakeOnTheGrid = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
-  }*/
+  }
+
+  // Click on the 'undo knot' in the toolbox
+  private void selectAndClickUndoKnot(FxRobot robot) {
+    clickOnButton(robot, toolboxWindow.getUndoKnotButton());
+  }
+
+  // Click on the 'redo knot' in the toolbox
+  private void selectAndClickRedoKnot(FxRobot robot) {
+    clickOnButton(robot, toolboxWindow.getRedoKnotButton());
+  }
+
+  // Click on the 'reset diagram' in the toolbox
+  private void selectAndClickResetDiagramButton(FxRobot robot) {
+    clickOnButton(robot, toolboxWindow.getResetDiagramButton());
+  }
+
+  private FxRobot clickOnButton(FxRobot robot, Node button) {
+    return robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
 
   private String getMainWindowTitle() {
     return this.primaryStage.getTitle();

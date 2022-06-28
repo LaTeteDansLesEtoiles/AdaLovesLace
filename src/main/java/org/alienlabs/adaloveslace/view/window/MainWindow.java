@@ -12,6 +12,7 @@ import javafx.scene.layout.TilePane;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
 import org.slf4j.Logger;
@@ -145,45 +146,57 @@ public class MainWindow {
         logger.info("Coordinate Y     -> {}, Y - TOP -> {}", y, yMinusTop);
 
         switch (this.getOptionalDotGrid().getDiagram().getCurrentMode()) {
-          case DRAWING -> {
-            optionalDotGrid.getDiagram().setCurrentKnot(optionalDotGrid.addKnot(x, y));
-            optionalDotGrid.getDiagram().setKnotSelected(false);
-          }
-          case SELECTION -> {
-            Iterator<Knot> it = optionalDotGrid.getDiagram().getKnots().iterator();
-            boolean hasClickedOnAKnot = false;
-
-            while (it.hasNext()) {
-              Knot knot = it.next();
-
-              try {
-                if (knot.isClicked(x, y)) {
-                  // We have clicked on a knot, it shall be the current knot
-                  logger.info("Knot is clicked: {}", knot.getPattern().getFilename());
-                  optionalDotGrid.getDiagram().setCurrentKnot(knot);
-                  optionalDotGrid.getDiagram().setKnotSelected(true);
-                  hasClickedOnAKnot = true;
-                }
-              } catch (MalformedURLException e) {
-                logger.error("Error reading pattern image");
-              }
-            }
-            // If there is a current knot and we have clicked somewhere else than on a knot,
-            // we shall move the current knot
-            if (optionalDotGrid.getDiagram().isKnotSelected() && !hasClickedOnAKnot) {
-              Knot toMove = optionalDotGrid.getDiagram().getCurrentKnot();
-              toMove.setX(x);
-              toMove.setY(y);
-              toMove.getImageView().setX(x);
-              toMove.getImageView().setY(y);
-              toMove.getImageView().setOpacity(1.0d);
-
-              optionalDotGrid.layoutChildren();
-            }
-          }
+          case DRAWING    -> onClickWithDrawMode(this.getOptionalDotGrid().getDiagram(),
+            optionalDotGrid.addKnot(x, y), false);
+          case SELECTION  -> onClickWithSelectionMode(x, y);
         }
       }
     });
+  }
+
+  private void onClickWithDrawMode(Diagram diagram, Knot optionalDotGrid, boolean knotSelected) {
+    diagram.setCurrentKnot(optionalDotGrid);
+    diagram.setKnotSelected(knotSelected);
+  }
+
+  private void onClickWithSelectionMode(double x, double y) {
+    Iterator<Knot> it = optionalDotGrid.getDiagram().getKnots().iterator();
+    boolean hasClickedOnAKnot = false;
+
+    while (it.hasNext()) {
+      hasClickedOnAKnot = drawKnot(x, y, hasClickedOnAKnot, it.next());
+    }
+
+    // If there is a current knot and we have clicked somewhere else than on a knot,
+    // we shall move the current knot
+    moveKnot(x, y, hasClickedOnAKnot);
+  }
+
+  private void moveKnot(double x, double y, boolean hasClickedOnAKnot) {
+    if (optionalDotGrid.getDiagram().isKnotSelected() && !hasClickedOnAKnot) {
+      Knot toMove = optionalDotGrid.getDiagram().getCurrentKnot();
+      toMove.setX(x);
+      toMove.setY(y);
+      toMove.getImageView().setX(x);
+      toMove.getImageView().setY(y);
+      toMove.getImageView().setOpacity(1.0d);
+
+      optionalDotGrid.layoutChildren();
+    }
+  }
+
+  private boolean drawKnot(double x, double y, boolean hasClickedOnAKnot, Knot knot) {
+    try {
+      if (new NodeUtil().isClicked(knot, x, y)) {
+        // We have clicked on a knot, it shall be the current knot
+        logger.info("Knot is clicked: {}", knot.getPattern().getFilename());
+        onClickWithDrawMode(optionalDotGrid.getDiagram(), knot, true);
+        hasClickedOnAKnot = true;
+      }
+    } catch (MalformedURLException e) {
+      logger.error("Error reading pattern image");
+    }
+    return hasClickedOnAKnot;
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

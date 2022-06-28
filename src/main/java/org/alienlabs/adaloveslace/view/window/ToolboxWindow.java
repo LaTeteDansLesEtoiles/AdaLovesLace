@@ -62,6 +62,10 @@ public class ToolboxWindow {
   private List<String> classpathResourceFiles;
 
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
+  private UndoKnotButton undoKnotButton;
+  private RedoKnotButton redoKnotButton;
+  private ResetDiagramButton resetDiagramButton;
+  private ShowHideGridButton showHideGridButton;
 
   public Diagram createToolboxPane(TilePane toolboxPane, Object classpathBase, String resourcesPath, App app, final Diagram diagram) {
     this.classpathResourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
@@ -255,14 +259,14 @@ public class ToolboxWindow {
   }
 
   private void buildShowHideGridButton(App app, TilePane buttonsPane) {
-    ShowHideGridButton  showHideGridButton  = new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app);
+    showHideGridButton = new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app);
     buttonsPane.getChildren().add(showHideGridButton);
   }
 
   private void buildEditButtons(App app, TilePane buttonsPane) {
-    UndoKnotButton      undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
-    RedoKnotButton      redoKnotButton      = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
-    ResetDiagramButton  resetDiagramButton  = new ResetDiagramButton    (RESET_DIAGRAM_BUTTON_NAME, app);
+    undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
+    redoKnotButton      = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
+    resetDiagramButton  = new ResetDiagramButton  (RESET_DIAGRAM_BUTTON_NAME, app);
     buttonsPane.getChildren().addAll(undoKnotButton, redoKnotButton, resetDiagramButton);
   }
 
@@ -304,6 +308,22 @@ public class ToolboxWindow {
 
   public List<String> getClasspathResourceFiles() {
     return new ArrayList<>(this.classpathResourceFiles);
+  }
+
+  public UndoKnotButton getUndoKnotButton() {
+    return undoKnotButton;
+  }
+
+  public RedoKnotButton getRedoKnotButton() {
+    return redoKnotButton;
+  }
+
+  public ResetDiagramButton getResetDiagramButton() {
+    return resetDiagramButton;
+  }
+
+  public ShowHideGridButton getShowHideGridButton() {
+    return showHideGridButton;
   }
 
 }

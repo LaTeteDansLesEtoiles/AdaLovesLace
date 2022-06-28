@@ -10,7 +10,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.DrawingButton;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.RotationButton;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton;
@@ -44,10 +43,6 @@ public class GeometryWindow {
   private SelectionButton selectionButton;
   private RotationButton rotationButton;
   private ZoomButton zoomButton;
-
-  public Diagram createGeometryPane(TilePane geometryPane, App app, final Diagram diagram) {
-    return diagram;
-  }
 
   public void createGeometryStage(Stage geometryStage, TilePane buttonsPane, TilePane patternsPane) {
     buttonsPane.setTranslateY(VERTICAL_BUTTONS_PADDING);

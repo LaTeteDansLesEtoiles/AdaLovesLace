@@ -1,17 +1,21 @@
 package org.alienlabs.adaloveslace.test.view;
 
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
-import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.test.AppTestParent;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
-import org.testfx.robot.Motion;
+import org.testfx.matcher.base.ColorMatchers;
 
+import static java.lang.Thread.sleep;
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
-import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.*;
+import static org.alienlabs.adaloveslace.test.view.MainWindowComponentTest.GRAY_DOTS_COLOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ToolboxComponentTest extends AppTestParent {
 
@@ -35,22 +39,26 @@ class ToolboxComponentTest extends AppTestParent {
    *
    * @param robot The injected FxRobot
    */
-  /*@Test
+  @Test
   void testHideGrid(FxRobot robot) {
-    Canvas canvas = this.app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
-    switchGrid(robot);
+    // Init
+    Point2D pointToMoveTo = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
+    robot.moveTo(pointToMoveTo);
+    foundColorOnGrid = getColor(pointToMoveTo);
+    assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
+
+    // Run
+    switchGrid();
 
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + (canvas.getLayoutX() /2d) + GRAY_PIXEL_X,
-      this.primaryStage.getY() + (canvas.getLayoutY() / 2d) + GRAY_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D((canvas.getLayoutX() / 2d) + GRAY_PIXEL_X,
-      (canvas.getLayoutY() / 2d) + GRAY_PIXEL_Y);
+    pointToMoveTo = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
+    Point2D pointToCheck = new Point2D(GRAY_PIXEL_X, GRAY_PIXEL_Y - app.getRoot().getLayoutY());
+    foundColorOnGrid = getColor(pointToCheck);
 
-    foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
     // All we can say is that if we click on the empty canvas, then the pixel is white
     assertTrue(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
-  }*/
+  }
 
   /**
    * Checks if we are able to hide the dot grid (a canvas pixel should be white, then)
@@ -58,43 +66,50 @@ class ToolboxComponentTest extends AppTestParent {
    *
    * @param robot The injected FxRobot
    */
-  /*@Test
+  @Test
   void testHideAndShowAgainGrid(FxRobot robot) {
-    Canvas canvas = this.app.getMainWindow().getCanvasWithOptionalDotGrid().getCanvas();
-    // Hide the dot grid
-    switchGrid(robot);
+    // Init
+    Point2D pointToMoveTo = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
+    robot.moveTo(pointToMoveTo);
+    foundColorOnGrid = getColor(pointToMoveTo);
+    assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
+
+    // Run
+    switchGrid();
 
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = new Point2D(this.primaryStage.getX() + (canvas.getLayoutX() / 2d) +  WHITE_PIXEL_X, this.primaryStage.getY() + (canvas.getLayoutY() / 2d) + WHITE_PIXEL_Y);
-    Point2D pointToMoveToInCanvas = new Point2D((canvas.getLayoutX() / 2d) + WHITE_PIXEL_X, (canvas.getLayoutY() / 2d) + NO_PIXEL_Y);
+    pointToMoveTo = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
+    Point2D pointToCheck = new Point2D(GRAY_PIXEL_X, GRAY_PIXEL_Y - app.getRoot().getLayoutY());
+    foundColorOnGrid = getColor(pointToCheck);
 
-    foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
-
-    // All we can say is that if we click on the empty canvas, the pixel is white
+    // All we can say is that if we click on the empty canvas, then the pixel is white
     assertTrue(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
 
+    // Run
     // Show the dot grid again
-    switchGrid(robot);
+    switchGrid();
 
-    // Move mouse and get the color of the pixel under the pointer
-    pointToMoveTo = new Point2D(this.primaryStage.getX() + (canvas.getLayoutX() / 2d) + WHITE_PIXEL_X,
-      this.primaryStage.getY() + (canvas.getLayoutY() / 2d) + WHITE_PIXEL_Y);
-    pointToMoveToInCanvas = new Point2D((canvas.getLayoutX() / 2d) + WHITE_PIXEL_X,
-      (canvas.getLayoutY() / 2d) + WHITE_PIXEL_Y);
+    pointToMoveTo = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
+    pointToCheck = new Point2D(GRAY_PIXEL_X, GRAY_PIXEL_Y - app.getRoot().getLayoutY());
+    foundColorOnGrid = getColor(pointToCheck);
 
-    foundColorOnGrid = getColor(canvas, pointToMoveToInCanvas);
-    // All we can say is that if we click on the grid, then the pixel is not white
-    assertFalse(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
-  }*/
+    // All we can say is that if we click on the grid, then the pixel is gray
+    assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
+  }
 
   // Click on "show / hide dot grid" button in the toolbox
-  private void switchGrid(FxRobot robot) {
-    Point2D showHideGridButtonOnTheToolbox = new Point2D(this.app.getToolboxStage().getX() + TOOLBOX_WINDOW_WIDTH / 2d,
-      this.app.getToolboxStage().getY() +
-        (this.toolboxWindow.getClasspathResourceFiles().size() * TILE_HEIGHT + (VERTICAL_PADDING * 2d)) + 25d);
-    robot.clickOn(showHideGridButtonOnTheToolbox, Motion.DEFAULT, MouseButton.PRIMARY);
+  private void switchGrid() {
+    Platform.runLater(() -> ShowHideGridButton.showHideGrid(app));
+
+    // No choice to sleep because the grid show / hide is asynchronous in tests (because of the image of the grid
+    // that we produce, see: AppTestParent#copyCanvas()
+    try {
+      sleep(1000l);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }

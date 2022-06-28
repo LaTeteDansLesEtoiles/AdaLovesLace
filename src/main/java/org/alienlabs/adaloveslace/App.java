@@ -59,6 +59,7 @@ public class App extends Application {
   private Group root;
   private Scene scene;
   private Stage primaryStage;
+  private Stage geometryStage;
 
   @Override
   public void start(Stage primaryStage) {
@@ -124,7 +125,7 @@ public class App extends Application {
   }
 
   public GeometryWindow showGeometryWindow(App app) {
-    Stage geometryStage    = new Stage(StageStyle.DECORATED);
+    geometryStage = new Stage(StageStyle.DECORATED);
 
     TilePane patternsPane  = new TilePane(Orientation.HORIZONTAL);
     patternsPane.setVgap(TILE_PADDING);
@@ -134,7 +135,6 @@ public class App extends Application {
 
 
     GeometryWindow geometryWindow = new GeometryWindow();
-    this.diagram = geometryWindow.createGeometryPane(patternsPane, app, this.diagram);
     TilePane buttonsPane = geometryWindow.createGeometryButtons(app);
 
     geometryWindow.createGeometryStage(geometryStage, buttonsPane, patternsPane);
@@ -150,6 +150,10 @@ public class App extends Application {
     justification = "Copying a toolbox stage would mean working with another window")
   public Stage getToolboxStage() {
     return this.toolboxStage;
+  }
+
+  public Stage getGeometryStage() {
+    return geometryStage;
   }
 
   public void setDiagram(Diagram diagram) {
