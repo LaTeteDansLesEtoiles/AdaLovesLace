@@ -20,7 +20,6 @@ class MainWindowComponentTest extends AppTestParent {
 
   public static final double  WHITE_PIXEL_X               = 86d;
   public static final long    WHITE_PIXEL_Y               = 75l;
-  public static final long    NO_PIXEL_Y                  = 70l;
   public static final double  SNOWFLAKE_PIXEL_X           = 545d;
   public static final double  SNOWFLAKE_PIXEL_Y           = 145d;
   public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xccccccff");
@@ -196,7 +195,7 @@ class MainWindowComponentTest extends AppTestParent {
     drawSnowflake(robot);
 
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = newPointOnGrid(SNOWFLAKE_PIXEL_X, GRAY_PIXEL_Y);
+    Point2D pointToMoveTo = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
     robot.moveTo(pointToMoveTo);
 
     Point2D pointToCheck = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
@@ -218,19 +217,15 @@ class MainWindowComponentTest extends AppTestParent {
       "The color before and after 'reset diagram' must not be the same!");
   }
 
-  // Click on the snowflake in the toolbox to select its pattern
-  private void selectAndClickOnSnowflake(FxRobot robot) {
-    Node button = app.getToolboxStage().getScene().lookup(SNOWFLAKE_BUTTON);
-    Point2D snowflakeOnTheToolbox = new Point2D(app.getToolboxStage().getX() + button.getLayoutX() + 20l,
-      app.getToolboxStage().getY() + button.getLayoutY() + 50l);
-
-    robot.clickOn(snowflakeOnTheToolbox, Motion.DEFAULT, MouseButton.PRIMARY);
-  }
-
   // Click on the grid with the snowflake selected in order to draw a snowflake on the grid
   private void drawSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  // Click on the snowflake in the toolbox to select its pattern
+  private void selectAndClickOnSnowflake(FxRobot robot) {
+    clickOnButton(robot, toolboxWindow.getSnowflakeButton());
   }
 
   // Click on the 'undo knot' in the toolbox
@@ -248,8 +243,8 @@ class MainWindowComponentTest extends AppTestParent {
     clickOnButton(robot, toolboxWindow.getResetDiagramButton());
   }
 
-  private FxRobot clickOnButton(FxRobot robot, Node button) {
-    return robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
+  private void clickOnButton(FxRobot robot, Node button) {
+    robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   private String getMainWindowTitle() {

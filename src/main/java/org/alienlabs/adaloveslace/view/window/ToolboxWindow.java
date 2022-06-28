@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -65,7 +64,7 @@ public class ToolboxWindow {
   private UndoKnotButton undoKnotButton;
   private RedoKnotButton redoKnotButton;
   private ResetDiagramButton resetDiagramButton;
-  private ShowHideGridButton showHideGridButton;
+  private Button snowflakeButton;
 
   public Diagram createToolboxPane(TilePane toolboxPane, Object classpathBase, String resourcesPath, App app, final Diagram diagram) {
     this.classpathResourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
@@ -112,6 +111,10 @@ public class ToolboxWindow {
     Button button = new PatternButton(app, label, iv, pattern);
     button.setId(TOOLBOX_BUTTON + (i + 1));
     toolboxPane.getChildren().add(button);
+
+    if (pattern.getFilename().equals("snowflake_small.jpg")) {
+      this.snowflakeButton = button;
+    }
 
     if (i == 0) {
       diagram.setCurrentPattern(pattern);
@@ -259,8 +262,7 @@ public class ToolboxWindow {
   }
 
   private void buildShowHideGridButton(App app, TilePane buttonsPane) {
-    showHideGridButton = new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app);
-    buttonsPane.getChildren().add(showHideGridButton);
+    buttonsPane.getChildren().add(new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app));
   }
 
   private void buildEditButtons(App app, TilePane buttonsPane) {
@@ -306,10 +308,6 @@ public class ToolboxWindow {
     alert.showAndWait();
   }
 
-  public List<String> getClasspathResourceFiles() {
-    return new ArrayList<>(this.classpathResourceFiles);
-  }
-
   public UndoKnotButton getUndoKnotButton() {
     return undoKnotButton;
   }
@@ -322,8 +320,8 @@ public class ToolboxWindow {
     return resetDiagramButton;
   }
 
-  public ShowHideGridButton getShowHideGridButton() {
-    return showHideGridButton;
+  public Button getSnowflakeButton() {
+    return snowflakeButton;
   }
 
 }
