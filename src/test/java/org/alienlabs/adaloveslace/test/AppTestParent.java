@@ -42,10 +42,8 @@ public class AppTestParent {
 
   public static final String CLASSPATH_RESOURCES_PATH_JPG = ".*test" + PATH_SEPARATOR + ".*.jpg";
 
-  public static final String MANDALA              = "mandala_small";
   public static final String SNOWFLAKE            = "snowflake_small";
-  public static final String MANDALA_BUTTON       = TOOLBOX_BUTTON_ID + "1";
-  public static final String SNOWFLAKE_BUTTON     = TOOLBOX_BUTTON_ID + "2";
+  public static final String SNOWFLAKE_BUTTON     = TOOLBOX_BUTTON_ID + "1";
 
   public static final double  GRAY_PIXEL_X        = 98d;
   public static final double  GRAY_PIXEL_Y        = 67d;

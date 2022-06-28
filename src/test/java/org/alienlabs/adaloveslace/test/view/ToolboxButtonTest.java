@@ -28,22 +28,12 @@ class ToolboxButtonTest extends AppTestParent {
   }
 
   /**
-   * Checks if 1st pattern toolbox button contains image "mandala_small.jpg"
+   * Checks if 1st pattern toolbox button contains image "snowflake_small.jpg"
    *
    * @param robot The injected FxRobot
    */
   @Test
   void should_contain_1st_pattern_button_with_text(FxRobot robot) {
-    FxAssert.verifyThat(MANDALA_BUTTON, LabeledMatchers.hasText(MANDALA));
-  }
-
-  /**
-   * Checks if 2nd pattern toolbox button contains image "snowflake_small.jpg"
-   *
-   * @param robot The injected FxRobot
-   */
-  @Test
-  void should_contain_2nd_pattern_button_with_text(FxRobot robot) {
     FxAssert.verifyThat(SNOWFLAKE_BUTTON, LabeledMatchers.hasText(SNOWFLAKE));
   }
 
