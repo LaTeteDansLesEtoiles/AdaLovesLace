@@ -1,11 +1,15 @@
 package org.alienlabs.adaloveslace.test.view;
 
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.test.AppTestParent;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ResetDiagramButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -20,7 +24,7 @@ import static org.testfx.api.FxAssert.verifyThat;
 class MainWindowComponentTest extends AppTestParent {
 
   public static final double  WHITE_PIXEL_X               = 86d;
-  public static final long    WHITE_PIXEL_Y               = 75l;
+  public static final long    WHITE_PIXEL_Y               = 75L;
   public static final double  SNOWFLAKE_PIXEL_X           = 545d;
   public static final double  SNOWFLAKE_PIXEL_Y           = 145d;
   public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xccccccff");
@@ -141,7 +145,7 @@ class MainWindowComponentTest extends AppTestParent {
     Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
     // Run: issue an "Undo knot" command
-    selectAndClickUndoKnot(robot);
+    selectAndClickUndoKnot();
 
     // Verify
     // Move mouse and get the color of the pixel under the pointer
@@ -170,10 +174,10 @@ class MainWindowComponentTest extends AppTestParent {
     Color foundColorOnGridBeforeRedo = getColor(snowflakePoint);
 
     // Issue an "Undo knot" command
-    selectAndClickUndoKnot(robot);
+    selectAndClickUndoKnot();
 
     // Run: Issue a "Redo knot" command
-    selectAndClickRedoKnot(robot);
+    selectAndClickRedoKnot();
 
     // Verify
     // Move mouse and get the color of the pixel under the pointer
@@ -203,7 +207,7 @@ class MainWindowComponentTest extends AppTestParent {
     Color foundColorOnGridBeforeReset = getColor(pointToCheck);
 
     // Run: issue a "Reset diagram" command
-    selectAndClickResetDiagramButton(robot);
+    selectAndClickResetDiagramButton();
 
     // Verify
     // Move mouse and get the color of the pixel under the pointer
@@ -230,18 +234,42 @@ class MainWindowComponentTest extends AppTestParent {
   }
 
   // Click on the 'undo knot' in the toolbox
-  private void selectAndClickUndoKnot(FxRobot robot) {
-    clickOnButton(robot, toolboxWindow.getUndoKnotButton());
+  private void selectAndClickUndoKnot() {
+    Platform.runLater(() -> {
+      UndoKnotButton.undoKnot(app);
+
+      try {
+        Thread.sleep(2000L);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 
   // Click on the 'redo knot' in the toolbox
-  private void selectAndClickRedoKnot(FxRobot robot) {
-    clickOnButton(robot, toolboxWindow.getRedoKnotButton());
+  private void selectAndClickRedoKnot() {
+    Platform.runLater(() -> {
+      RedoKnotButton.redoKnot(app);
+
+      try {
+        Thread.sleep(2000L);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 
   // Click on the 'reset diagram' in the toolbox
-  private void selectAndClickResetDiagramButton(FxRobot robot) {
-    clickOnButton(robot, toolboxWindow.getResetDiagramButton());
+  private void selectAndClickResetDiagramButton() {
+    Platform.runLater(() -> {
+      ResetDiagramButton.resetDiagram(app);
+
+      try {
+        Thread.sleep(2000L);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 
   private void clickOnButton(FxRobot robot, Node button) {
@@ -249,7 +277,7 @@ class MainWindowComponentTest extends AppTestParent {
 
     // No choice to sleep because we want to have time for the action to perform
     try {
-      sleep(1000l);
+      sleep(2000L);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
