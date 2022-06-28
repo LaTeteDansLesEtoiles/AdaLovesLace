@@ -71,11 +71,11 @@ public class AppTestParent {
     this.app.setDiagram(new Diagram());
 
     this.geometryWindow = this.app.showGeometryWindow(this.app);
-    this.app.getGeometryStage().setX(1000d);
+    this.app.getGeometryStage().setX(1100d);
     this.app.getGeometryStage().setY(50d);
 
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
-    this.app.getToolboxStage().setX(750d);
+    this.app.getToolboxStage().setX(1600d);
     this.app.getToolboxStage().setY(50d);
 
     this.primaryStage = primaryStage;
