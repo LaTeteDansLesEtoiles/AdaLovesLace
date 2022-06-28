@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.alienlabs.adaloveslace</groupId>
   <artifactId>adaloveslace</artifactId>
-  <version>0.0.5</version>
+  <version>0.0.6</version>
   <description>A tatting lace patterns creation software</description>
 
   <properties>
@@ -30,6 +30,11 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-swing</artifactId>
       <version>${javafx.version}</version>
     </dependency>
 
@@ -91,12 +96,6 @@
       <groupId>org.testfx</groupId>
       <artifactId>testfx-junit5</artifactId>
       <version>${testfx.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-swing</artifactId>
-      <version>${javafx.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -168,7 +167,7 @@
               </winConfig>
               <vmArgs>
                 <vmArg>--module-path libs</vmArg>
-                <vmArg>--add-modules javafx.base,javafx.controls,javafx.graphics,org.slf4j</vmArg>
+                <vmArg>--add-modules javafx.base,javafx.controls,javafx.graphics,javafx.swing,org.slf4j</vmArg>
               </vmArgs>
               <additionalResources>
                 <additionalResource>${basedir}/target/classes/org/</additionalResource>

@@ -27,12 +27,15 @@ public class MainWindow {
 
   public final MenuBar menuBar;
   private OptionalDotGrid optionalDotGrid;
+  private TilePane footer;
 
   public static final String SAVE_FILE      = "Save";
 
   public static final String SAVE_FILE_AS   = "Save as";
 
   public static final String LOAD_FILE      = "Load";
+
+  public static final String EXPORT_IMAGE   = "Export an image";
 
   public static final String QUIT_APP       = "Quit";
 
@@ -69,6 +72,10 @@ public class MainWindow {
     loadItem.setOnAction(actionEvent -> LoadButton.onLoadAction(app));
     loadItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
 
+    MenuItem exportImageItem = new MenuItem(EXPORT_IMAGE);
+    exportImageItem.setOnAction(actionEvent -> ExportImageButton.onExportAction(app));
+    exportImageItem.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN));
+
     SeparatorMenuItem separator1 = new SeparatorMenuItem();
 
     MenuItem quitItem = new MenuItem(QUIT_APP);
@@ -94,7 +101,7 @@ public class MainWindow {
     showHideGridItem.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
 
 
-    fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, separator1, quitItem);
+    fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, exportImageItem, separator1, quitItem);
     editMenu.getItems().addAll(undoKnotItem, redoKnotItem, separator2, resetDiagramItem);
     toolMenu.getItems().addAll(showHideGridItem);
 
@@ -103,7 +110,7 @@ public class MainWindow {
   }
 
   public TilePane createFooter(String javafxVersion, String javaVersion) {
-    TilePane footer           = new TilePane(Orientation.VERTICAL);
+    footer = new TilePane(Orientation.VERTICAL);
     footer.getChildren().addAll(new Label("Ada Loves Lace - A tatting lace patterns creation software"));
     footer.getChildren().addAll(new Label("© 2022 AlienLabs"));
     footer.getChildren().addAll(new Label("This is Free Software under GPL license"));
@@ -208,6 +215,10 @@ public class MainWindow {
 
   public MenuBar getMenuBar() {
     return this.menuBar;
+  }
+
+  public TilePane getFooter() {
+    return footer;
   }
 
 }

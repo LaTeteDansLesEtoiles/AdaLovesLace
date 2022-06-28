@@ -1,6 +1,7 @@
 module org.alienlabs.adaloveslace.impl {
   requires javafx.controls;
   requires javafx.graphics;
+  requires javafx.swing;
   requires jakarta.xml.bind;
   requires java.prefs;
   requires org.slf4j;

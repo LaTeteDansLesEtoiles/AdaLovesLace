@@ -70,6 +70,9 @@ public class PrintUtil {
    */
   private void print(PrinterJob job, Node node)
   {
+    ImageUtil iu = new ImageUtil(app);
+    iu.hideTechnicalElementsFromRootGroup();
+
     // Print the node
     boolean printed = job.printPage(node);
 
@@ -80,6 +83,8 @@ public class PrintUtil {
     } else {
       logger.error("Printing diagram failed!");
     }
+
+    iu.showTechnicalElementsFromRootGroup();
   }
 
 }

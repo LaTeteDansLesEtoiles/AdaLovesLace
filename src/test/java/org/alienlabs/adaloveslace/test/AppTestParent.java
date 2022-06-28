@@ -1,15 +1,14 @@
 package org.alienlabs.adaloveslace.test;
 
 import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Point2D;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,14 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.alienlabs.adaloveslace.App.GRID_DOTS_RADIUS;
-import static org.alienlabs.adaloveslace.App.TOOLBOX_BUTTON_ID;
+import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.PATH_SEPARATOR;
 
 @ExtendWith(ApplicationExtension.class)
@@ -39,6 +34,7 @@ public class AppTestParent {
   public static final double GRID_WIDTH           = 600d;
   public static final double GRID_HEIGHT          = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
+  public static final String TEST_SCREEN_CAPTURE_FILE     = "test_screen_capture" + EXPORT_FILE_TYPE;
 
   public static final String CLASSPATH_RESOURCES_PATH_JPG = ".*test" + PATH_SEPARATOR + ".*.jpg";
 
@@ -99,18 +95,8 @@ public class AppTestParent {
 
   private void copyCanvas(Point2D pointToMoveTo) {
     Platform.runLater(() -> {
-      WritableImage wi = new WritableImage(Double.valueOf(this.primaryStage.getX() + app.getRoot().getLayoutX() + GRID_WIDTH).intValue(),
-        Double.valueOf(this.primaryStage.getY() + app.getRoot().getLayoutY() + GRID_HEIGHT).intValue());
-      WritableImage snapshot = app.getRoot().snapshot(new SnapshotParameters(), wi);
-
-      File output = new File(BUILD_TOOL_OUTPUT_DIRECTORY + "test_screen_capture.png");
-      try {
-        ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", output);
-      } catch (IOException e) {
-        logger.error("Problem writing root group image file!", e);
-      }
-
-      logger.info("Snapshot done!");
+      WritableImage snapshot = new ImageUtil(this.app).buildWritableImage(
+        BUILD_TOOL_OUTPUT_DIRECTORY + TEST_SCREEN_CAPTURE_FILE);
 
       PixelReader pr = snapshot.getPixelReader();
       this.foundColorOnGrid = pr.getColor(Double.valueOf(pointToMoveTo.getX()).intValue(), Double.valueOf(pointToMoveTo.getY()).intValue());

@@ -37,6 +37,9 @@ public class App extends Application {
   public static final String TOOLBOX_TITLE            = "Toolbox";
   public static final String GEOMETRY_TITLE           = "Geometry";
   public static final String LACE_FILE_EXTENSION      = ".lace";
+  public static final String EXPORT_FILE_FORMAT       = "png";
+  public static final String EXPORT_FILE_TYPE           = ".png";
+
   public static final String PATTERNS_DIRECTORY_NAME  = "patterns";
   public static final String ERROR                    = "Error!";
 
@@ -103,6 +106,7 @@ public class App extends Application {
     });
 
     this.mainWindow.createMenuBar(root, this);
+    this.primaryStage = primaryStage;
     primaryStage.show();
   }
 
