@@ -36,7 +36,7 @@ public class AppTestParent {
   public App app;
 
   // For tests:
-  public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = 2000L;
+  public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = 5000L;
   public static final double GRID_WIDTH           = 600d;
   public static final double GRID_HEIGHT          = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
