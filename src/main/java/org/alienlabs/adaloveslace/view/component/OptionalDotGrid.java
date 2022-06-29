@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNullElseGet;
+
 /**
  * A grid (= coordinate system) with dots (= used as landmarks for lace).
  */
@@ -44,7 +46,7 @@ public class OptionalDotGrid extends Pane {
 
   private Diagram diagram;
 
-  private Set<Shape> grid = new HashSet<>();
+  private final Set<Shape> grid = new HashSet<>();
 
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
   private final Group root;
@@ -57,11 +59,7 @@ public class OptionalDotGrid extends Pane {
    */
   public OptionalDotGrid(Diagram diagram, Group root) {
     this.root = root;
-    if (diagram == null) {
-      this.diagram = new Diagram();
-    } else {
-      this.diagram = diagram;
-    }
+    this.diagram = requireNonNullElseGet(diagram, Diagram::new);
 
     this.desiredRadius = RADIUS;
 
@@ -114,9 +112,7 @@ public class OptionalDotGrid extends Pane {
   }
 
   private void deleteKnotFromCanvas(Knot knot) {
-    if (root.getChildren().contains(knot.getImageView())) {
-      root.getChildren().remove(knot.getImageView());
-    }
+    root.getChildren().remove(knot.getImageView());
   }
 
   private void drawKnotWithRotationAndZoom(Knot knot) {
@@ -168,9 +164,7 @@ public class OptionalDotGrid extends Pane {
 
   private void hideGrid() {
     for (Shape shape : grid) {
-      if (root.getChildren().contains(shape)) {
-        root.getChildren().remove(shape);
-      }
+      root.getChildren().remove(shape);
     }
   }
 
