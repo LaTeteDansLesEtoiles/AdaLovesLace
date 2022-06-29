@@ -33,16 +33,25 @@ import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.Zo
 public class GeometryWindow {
 
   public static final double GEOMETRY_WINDOW_X            = 850d;
-  public static final double GEOMETRY_WINDOW_WIDTH         = 400d;
+  public static final double GEOMETRY_WINDOW_WIDTH        = 400d;
   public static final double VERTICAL_BUTTONS_PADDING     = 150d;
-
   public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
+
+  public static final int ROTATION_SPINNER_MIN_VALUE      = -360;
+  public static final int ROTATION_SPINNER_MAX_VALUE      = 360;
+  public static final int ROTATION_SPINNER_DEFAULT_VALUE  = 0;
+  public static final int ROTATION_SPINNER_INCREMENTS_1   = 1;
+  public static final int ROTATION_SPINNER_INCREMENTS_2   = 10;
+  public static final int ROTATION_SPINNER_INCREMENTS_3   = 30;
 
   private static final Logger logger = LoggerFactory.getLogger(GeometryWindow.class);
   private DrawingButton drawingButton;
   private SelectionButton selectionButton;
   private RotationButton rotationButton;
   private ZoomButton zoomButton;
+  private Spinner<Integer> rotationSpinner1;
+  private Spinner<Integer> rotationSpinner2;
+  private Spinner<Integer> rotationSpinner3;
 
   public void createGeometryStage(Stage geometryStage, TilePane buttonsPane, TilePane patternsPane) {
     buttonsPane.setTranslateY(VERTICAL_BUTTONS_PADDING);
@@ -67,26 +76,32 @@ public class GeometryWindow {
     buttonsPane.setPrefColumns(2);
     buttonsPane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
 
-    drawingButton = new DrawingButton(app, this, DRAWING_BUTTON_NAME);
+    this.drawingButton = new DrawingButton(app, this, DRAWING_BUTTON_NAME);
     getImageView("drawing.png", drawingButton, true);
 
-    selectionButton = new SelectionButton(app, this, SELECTION_BUTTON_NAME);
+    this.selectionButton = new SelectionButton(app, this, SELECTION_BUTTON_NAME);
     getImageView("selection.png", selectionButton, false);
 
-    rotationButton = new RotationButton(app, this, ROTATION_BUTTON_NAME);
+    this.rotationButton = new RotationButton(app, this, ROTATION_BUTTON_NAME);
     getImageView("rotation.png", rotationButton, false);
 
-    zoomButton = new ZoomButton(app, this, ZOOM_BUTTON_NAME);
+    this.zoomButton = new ZoomButton(app, this, ZOOM_BUTTON_NAME);
     getImageView("zoom.png", zoomButton, false);
 
-    Spinner<Integer> rotate1 = new Spinner<>(0, 360, 0, 1);
-    Spinner<Integer> rotate2 = new Spinner<>(0, 360, 0, 10);
-    Spinner<Integer> rotate3 = new Spinner<>(0, 360, 0, 30);
+    this.rotationSpinner1 = new Spinner<>(ROTATION_SPINNER_MIN_VALUE, ROTATION_SPINNER_MAX_VALUE,
+      ROTATION_SPINNER_DEFAULT_VALUE, ROTATION_SPINNER_INCREMENTS_1);
+    this.rotationSpinner2 = new Spinner<>(ROTATION_SPINNER_MIN_VALUE, ROTATION_SPINNER_MAX_VALUE,
+      ROTATION_SPINNER_DEFAULT_VALUE, ROTATION_SPINNER_INCREMENTS_2);
+    this.rotationSpinner3 = new Spinner<>(ROTATION_SPINNER_MIN_VALUE, ROTATION_SPINNER_MAX_VALUE,
+      ROTATION_SPINNER_DEFAULT_VALUE, ROTATION_SPINNER_INCREMENTS_3);
 
     RotationSpinner rotationSpinner = new RotationSpinner();
-    rotationSpinner.buildRotationSpinner(app, rotate1, rotate2.getValueFactory(), rotate3.getValueFactory());
-    rotationSpinner.buildRotationSpinner(app, rotate2, rotate1.getValueFactory(), rotate3.getValueFactory());
-    rotationSpinner.buildRotationSpinner(app, rotate3, rotate1.getValueFactory(), rotate2.getValueFactory());
+    rotationSpinner.buildRotationSpinner(app, this.rotationSpinner1,
+      this.rotationSpinner2.getValueFactory(), this.rotationSpinner3.getValueFactory());
+    rotationSpinner.buildRotationSpinner(app, this.rotationSpinner2,
+      this.rotationSpinner1.getValueFactory(), this.rotationSpinner3.getValueFactory());
+    rotationSpinner.buildRotationSpinner(app, this.rotationSpinner3,
+      this.rotationSpinner1.getValueFactory(), this.rotationSpinner2.getValueFactory());
 
     Spinner<Integer> zoom1 = new Spinner<>(-10, 10, 1, 1);
     Spinner<Integer> zoom2 = new Spinner<>(-10, 10, 1, 2);
@@ -97,8 +112,8 @@ public class GeometryWindow {
     zoomSpinner.buildZoomSpinner(app, zoom2, zoom1.getValueFactory(), zoom3.getValueFactory());
     zoomSpinner.buildZoomSpinner(app, zoom3, zoom1.getValueFactory(), zoom2.getValueFactory());
 
-    buttonsPane.getChildren().addAll(drawingButton, selectionButton, rotationButton, zoomButton,
-      rotate1, zoom1, rotate2, zoom2, rotate3, zoom3);
+    buttonsPane.getChildren().addAll(this.drawingButton, this.selectionButton, this.rotationButton, this.zoomButton,
+      this.rotationSpinner1, zoom1, this.rotationSpinner2, zoom2, this.rotationSpinner3, zoom3);
 
     return buttonsPane;
   }
@@ -127,6 +142,18 @@ public class GeometryWindow {
 
   public RotationButton getRotationButton() {
     return rotationButton;
+  }
+
+  public Spinner<Integer> getRotationSpinner1() {
+    return rotationSpinner1;
+  }
+
+  public Spinner<Integer> getRotationSpinner2() {
+    return rotationSpinner2;
+  }
+
+  public Spinner<Integer> getRotationSpinner3() {
+    return rotationSpinner3;
   }
 
   public ZoomButton getZoomButton() {

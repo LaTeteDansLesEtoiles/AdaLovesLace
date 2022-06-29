@@ -2,8 +2,6 @@ package org.alienlabs.adaloveslace.test.view;
 
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.test.AppTestParent;
@@ -14,9 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
-import org.testfx.robot.Motion;
 
-import static java.lang.Thread.sleep;
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.api.FxAssert.verifyThat;
@@ -25,8 +21,6 @@ class MainWindowComponentTest extends AppTestParent {
 
   public static final double  WHITE_PIXEL_X               = 86d;
   public static final long    WHITE_PIXEL_Y               = 75L;
-  public static final double  SNOWFLAKE_PIXEL_X           = 545d;
-  public static final double  SNOWFLAKE_PIXEL_Y           = 145d;
   public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xccccccff");
 
   private Stage primaryStage;
@@ -222,24 +216,13 @@ class MainWindowComponentTest extends AppTestParent {
       "The color before and after 'reset diagram' must not be the same!");
   }
 
-  // Click on the grid with the snowflake selected in order to draw a snowflake on the grid
-  private void drawSnowflake(FxRobot robot) {
-    Point2D snowflakeOnTheGrid = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
-    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
-  }
-
-  // Click on the snowflake in the toolbox to select its pattern
-  private void selectAndClickOnSnowflake(FxRobot robot) {
-    clickOnButton(robot, toolboxWindow.getSnowflakeButton());
-  }
-
   // Click on the 'undo knot' in the toolbox
   private void selectAndClickUndoKnot() {
     Platform.runLater(() -> {
       UndoKnotButton.undoKnot(app);
 
       try {
-        Thread.sleep(2000L);
+        Thread.sleep(SLEEP_TIME);
       } catch (InterruptedException e) {
         throw new RuntimeException(e);
       }
@@ -252,7 +235,7 @@ class MainWindowComponentTest extends AppTestParent {
       RedoKnotButton.redoKnot(app);
 
       try {
-        Thread.sleep(2000L);
+        Thread.sleep(SLEEP_TIME);
       } catch (InterruptedException e) {
         throw new RuntimeException(e);
       }
@@ -265,22 +248,11 @@ class MainWindowComponentTest extends AppTestParent {
       ResetDiagramButton.resetDiagram(app);
 
       try {
-        Thread.sleep(2000L);
+        Thread.sleep(SLEEP_TIME);
       } catch (InterruptedException e) {
         throw new RuntimeException(e);
       }
     });
-  }
-
-  private void clickOnButton(FxRobot robot, Node button) {
-    robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
-
-    // No choice to sleep because we want to have time for the action to perform
-    try {
-      sleep(2000L);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   private String getMainWindowTitle() {

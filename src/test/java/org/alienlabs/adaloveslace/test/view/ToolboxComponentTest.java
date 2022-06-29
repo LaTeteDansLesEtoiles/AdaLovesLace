@@ -106,7 +106,7 @@ class ToolboxComponentTest extends AppTestParent {
     // No choice to sleep because the grid show / hide is asynchronous in tests (because of the image of the grid
     // that we produce, see: AppTestParent#copyCanvas()
     try {
-      sleep(1000l);
+      sleep(SLEEP_TIME);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }

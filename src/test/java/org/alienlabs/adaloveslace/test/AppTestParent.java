@@ -2,8 +2,10 @@ package org.alienlabs.adaloveslace.test;
 
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
@@ -14,12 +16,15 @@ import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
+import org.testfx.robot.Motion;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Thread.sleep;
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.PATH_SEPARATOR;
 
@@ -31,6 +36,7 @@ public class AppTestParent {
   public App app;
 
   // For tests:
+  public static final long   SLEEP_TIME           = 1000L;
   public static final double GRID_WIDTH           = 600d;
   public static final double GRID_HEIGHT          = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
@@ -41,9 +47,13 @@ public class AppTestParent {
   public static final String SNOWFLAKE            = "snowflake_small";
   public static final String SNOWFLAKE_BUTTON     = TOOLBOX_BUTTON_ID + "1";
 
-  public static final double  GRAY_PIXEL_X        = 98d;
-  public static final double  GRAY_PIXEL_Y        = 67d;
-  public static final Color   SNOWFLAKE_DOT_COLOR = Color.valueOf("0x9bf4ffff");
+  public static final double SNOWFLAKE_PIXEL_X    = 545d;
+
+  public static final double SNOWFLAKE_PIXEL_Y    = 145d;
+
+  public static final double GRAY_PIXEL_X         = 98d;
+  public static final double GRAY_PIXEL_Y         = 67d;
+  public static final Color  SNOWFLAKE_DOT_COLOR  = Color.valueOf("0x9bf4ffff");
 
   public Color foundColorOnGrid;
 
@@ -91,6 +101,28 @@ public class AppTestParent {
     }
 
     return this.foundColorOnGrid;
+  }
+
+  // Click on the grid with the snowflake selected in order to draw a snowflake on the grid
+  protected void drawSnowflake(FxRobot robot) {
+    Point2D snowflakeOnTheGrid = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  // Click on the snowflake in the toolbox to select its pattern
+  protected void selectAndClickOnSnowflake(FxRobot robot) {
+    clickOnButton(robot, toolboxWindow.getSnowflakeButton());
+  }
+
+  private void clickOnButton(FxRobot robot, Node button) {
+    robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
+
+    // No choice to sleep because we want to have time for the action to perform
+    try {
+      sleep(SLEEP_TIME);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private void copyCanvas(Point2D pointToMoveTo) {
