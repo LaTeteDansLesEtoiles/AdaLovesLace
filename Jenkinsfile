@@ -19,7 +19,7 @@ node {
     wrap([$class: 'Xvfb']) {
         stage('unit tests') {
             try {
-                sh "./mvnw test -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=60000"
+                sh "./mvnw test -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=5000 -Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw"
             } catch(err) {
                 throw err
             } finally {
@@ -29,11 +29,11 @@ node {
 
         stage('integration & functional tests') {
             try {
-                sh "./mvnw verify -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=60000"
+                sh "./mvnw integration-test -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=5000 -Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw"
             } catch(err) {
                 throw err
             } finally {
-                junit '**/target/surefire-reports/TEST-*.xml,**/target/failsafe-reports/TEST-*.xml'
+                junit '**/target/surefire-reports/TEST-*.xml,**/target/failsafe-reports/T*.xml'
             }
         }
 
