@@ -135,4 +135,9 @@ When creating a branch, if you wish to set tracking information for this branch 
     https://stackoverflow.com/questions/46684972/jenkins-throws-java-lang-illegalargumentexception-invalid-refspec-refs-heads/58348530#58348530
 
 
+- In case of TimeoutException in TestFX, tweak these JVM parameters:
+
+-Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=20000
+
+
 --------------------------------------------------------------------------------------------
