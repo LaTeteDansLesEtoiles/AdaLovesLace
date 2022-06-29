@@ -222,7 +222,7 @@ class MainWindowComponentTest extends AppTestParent {
       UndoKnotButton.undoKnot(app);
 
       try {
-        Thread.sleep(SLEEP_TIME);
+        Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
       } catch (InterruptedException e) {
         throw new RuntimeException(e);
       }
@@ -235,7 +235,7 @@ class MainWindowComponentTest extends AppTestParent {
       RedoKnotButton.redoKnot(app);
 
       try {
-        Thread.sleep(SLEEP_TIME);
+        Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
       } catch (InterruptedException e) {
         throw new RuntimeException(e);
       }
@@ -248,7 +248,7 @@ class MainWindowComponentTest extends AppTestParent {
       ResetDiagramButton.resetDiagram(app);
 
       try {
-        Thread.sleep(SLEEP_TIME);
+        Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
       } catch (InterruptedException e) {
         throw new RuntimeException(e);
       }

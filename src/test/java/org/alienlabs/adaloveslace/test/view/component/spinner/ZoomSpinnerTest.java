@@ -12,20 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ZoomSpinnerTest extends AppTestParent {
 
-  private static final double SPINNER_1_UP_X     = 250d;
-  private static final double SPINNER_1_UP_Y     = 180d;
-  private static final double SPINNER_1_DOWN_X   = 250d;
-  private static final double SPINNER_1_DOWN_Y   = 220d;
+  private static final double SPINNER_DOWN_Y     = 40d;
 
-  private static final double SPINNER_2_UP_X     = 250d;
-  private static final double SPINNER_2_UP_Y     = 245d;
-  private static final double SPINNER_2_DOWN_X   = 250d;
-  private static final double SPINNER_2_DOWN_Y   = 285d;
-
-  private static final double SPINNER_3_UP_X     = 250d;
-  private static final double SPINNER_3_UP_Y     = 310d;
-  private static final double SPINNER_3_DOWN_X   = 250d;
-  private static final double SPINNER_3_DOWN_Y   = 345d;
 
   /**
    * Init method called before each test
@@ -71,7 +59,10 @@ class ZoomSpinnerTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    Point2D pointToMoveTo = newSpinnerPoint(SPINNER_1_UP_X, SPINNER_1_UP_Y);
+    Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner1().getLayoutX() +
+        this.geometryWindow.getZoomSpinner1().getWidth(),
+      this.geometryWindow.getZoomSpinner1().getLayoutY() +
+        this.geometryWindow.getZoomSpinner1().getHeight());
 
     // Run
     robot.moveTo(pointToMoveTo);
@@ -79,7 +70,7 @@ class ZoomSpinnerTest extends AppTestParent {
 
     // Verify
     try {
-      Thread.sleep(SLEEP_TIME);
+      Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
@@ -105,7 +96,10 @@ class ZoomSpinnerTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    Point2D pointToMoveTo = newSpinnerPoint(SPINNER_1_DOWN_X, SPINNER_1_DOWN_Y);
+    Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner1().getLayoutX() +
+        this.geometryWindow.getZoomSpinner1().getWidth(),
+      this.geometryWindow.getZoomSpinner1().getLayoutY() +
+        this.geometryWindow.getZoomSpinner1().getHeight() + SPINNER_DOWN_Y);
 
     // Run
     robot.moveTo(pointToMoveTo);
@@ -113,7 +107,7 @@ class ZoomSpinnerTest extends AppTestParent {
 
     // Verify
     try {
-      Thread.sleep(SLEEP_TIME);
+      Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
@@ -139,7 +133,10 @@ class ZoomSpinnerTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    Point2D pointToMoveTo = newSpinnerPoint(SPINNER_2_UP_X, SPINNER_2_UP_Y);
+    Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner2().getLayoutX() +
+        this.geometryWindow.getZoomSpinner2().getWidth(),
+      this.geometryWindow.getZoomSpinner2().getLayoutY() +
+        this.geometryWindow.getZoomSpinner2().getHeight());
 
     // Run
     robot.moveTo(pointToMoveTo);
@@ -147,7 +144,7 @@ class ZoomSpinnerTest extends AppTestParent {
 
     // Verify
     try {
-      Thread.sleep(SLEEP_TIME);
+      Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
@@ -173,7 +170,10 @@ class ZoomSpinnerTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    Point2D pointToMoveTo = newSpinnerPoint(SPINNER_2_DOWN_X, SPINNER_2_DOWN_Y);
+    Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner2().getLayoutX() +
+        this.geometryWindow.getZoomSpinner2().getWidth(),
+      this.geometryWindow.getZoomSpinner2().getLayoutY() +
+        this.geometryWindow.getZoomSpinner2().getHeight() + SPINNER_DOWN_Y);
 
     // Run
     robot.moveTo(pointToMoveTo);
@@ -181,7 +181,7 @@ class ZoomSpinnerTest extends AppTestParent {
 
     // Verify
     try {
-      Thread.sleep(SLEEP_TIME);
+      Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
@@ -207,7 +207,10 @@ class ZoomSpinnerTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    Point2D pointToMoveTo = newSpinnerPoint(SPINNER_3_UP_X, SPINNER_3_UP_Y);
+    Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner3().getLayoutX() +
+        this.geometryWindow.getZoomSpinner3().getWidth(),
+      this.geometryWindow.getZoomSpinner3().getLayoutY() +
+        this.geometryWindow.getZoomSpinner3().getHeight());
 
     // Run
     robot.moveTo(pointToMoveTo);
@@ -215,7 +218,7 @@ class ZoomSpinnerTest extends AppTestParent {
 
     // Verify
     try {
-      Thread.sleep(SLEEP_TIME);
+      Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
@@ -241,7 +244,10 @@ class ZoomSpinnerTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    Point2D pointToMoveTo = newSpinnerPoint(SPINNER_3_DOWN_X, SPINNER_3_DOWN_Y);
+    Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner3().getLayoutX() +
+        this.geometryWindow.getZoomSpinner3().getWidth(),
+      this.geometryWindow.getZoomSpinner3().getLayoutY() +
+        this.geometryWindow.getZoomSpinner3().getHeight() + SPINNER_DOWN_Y);
 
     // Run
     robot.moveTo(pointToMoveTo);
@@ -249,7 +255,7 @@ class ZoomSpinnerTest extends AppTestParent {
 
     // Verify
     try {
-      Thread.sleep(SLEEP_TIME);
+      Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }

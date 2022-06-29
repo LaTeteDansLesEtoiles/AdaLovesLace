@@ -32,8 +32,8 @@ public class OptionalDotGrid extends Pane {
 
   public static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
   private static final double RADIUS    = 0.5d; // The dots are ellipses, this is their radius
-  double GRID_WIDTH = 1240d;
-  double GRID_HEIGHT = 600d;
+  double GRID_WIDTH                     = 1240d;
+  double GRID_HEIGHT                    = 600d;
   public static final double TOP_MARGIN = 10d;
 
   private static final double SPACING_X = 25d; // The X space between the dots

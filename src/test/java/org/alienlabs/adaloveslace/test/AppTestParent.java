@@ -36,7 +36,7 @@ public class AppTestParent {
   public App app;
 
   // For tests:
-  public static final long   SLEEP_TIME           = 2000L;
+  public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = 2000L;
   public static final double GRID_WIDTH           = 600d;
   public static final double GRID_HEIGHT          = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
@@ -124,7 +124,7 @@ public class AppTestParent {
 
     // No choice to sleep because we want to have time for the action to perform
     try {
-      sleep(SLEEP_TIME);
+      sleep(SLEEP_BETWEEN_ACTIONS_TIME);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
