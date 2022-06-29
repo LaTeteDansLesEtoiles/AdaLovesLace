@@ -19,7 +19,7 @@ node {
     wrap([$class: 'Xvfb']) {
         stage('unit tests') {
             try {
-                sh "./mvnw test"
+                sh "./mvnw test -Dtestfx.setup.timeout=25000"
             } catch(err) {
                 throw err
             } finally {
@@ -29,7 +29,7 @@ node {
 
         stage('integration & functional tests') {
             try {
-                sh "./mvnw verify"
+                sh "./mvnw verify -Dtestfx.setup.timeout=25000"
             } catch(err) {
                 throw err
             } finally {
