@@ -12,7 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RotationSpinnerTest extends AppTestParent {
 
-  private static final double SPINNER_DOWN_Y = 40d;
+  private static final double SPINNER_UP_Y    = 18d;
+  private static final double SPINNER_DOWN_Y  = 20d;
 
   /**
    * Init method called before each test
@@ -59,9 +60,9 @@ class RotationSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getRotationSpinner1().getLayoutX() +
-        this.geometryWindow.getRotationSpinner1().getWidth(),
-      this.geometryWindow.getRotationSpinner1().getLayoutY() +
-        this.geometryWindow.getRotationSpinner1().getHeight());
+        this.geometryWindow.getRotationSpinner1().getWidth() / 2d,
+      this.geometryWindow.getRotationSpinner1().getLayoutY() + this.geometryWindow.getRotationSpinner1().getHeight() - SPINNER_UP_Y);
+
     // Run
     robot.moveTo(pointToMoveTo);
     robot.clickOn(pointToMoveTo);
@@ -95,9 +96,8 @@ class RotationSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getRotationSpinner1().getLayoutX() +
-        this.geometryWindow.getRotationSpinner1().getWidth(),
-      this.geometryWindow.getRotationSpinner1().getLayoutY() +
-        this.geometryWindow.getRotationSpinner1().getHeight() + SPINNER_DOWN_Y);
+        this.geometryWindow.getRotationSpinner1().getWidth() / 2d,
+      this.geometryWindow.getRotationSpinner1().getLayoutY() + this.geometryWindow.getRotationSpinner1().getHeight() + SPINNER_DOWN_Y);
 
     // Run
     robot.moveTo(pointToMoveTo);
@@ -132,9 +132,8 @@ class RotationSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getRotationSpinner2().getLayoutX() +
-        this.geometryWindow.getRotationSpinner2().getWidth(),
-      this.geometryWindow.getRotationSpinner2().getLayoutY() +
-        this.geometryWindow.getRotationSpinner2().getHeight());
+        this.geometryWindow.getRotationSpinner2().getWidth() / 2d,
+      this.geometryWindow.getRotationSpinner2().getLayoutY() + this.geometryWindow.getRotationSpinner2().getHeight() - SPINNER_UP_Y);
 
     // Run
     robot.moveTo(pointToMoveTo);
@@ -169,9 +168,8 @@ class RotationSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getRotationSpinner2().getLayoutX() +
-        this.geometryWindow.getRotationSpinner2().getWidth(),
-      this.geometryWindow.getRotationSpinner2().getLayoutY() +
-        this.geometryWindow.getRotationSpinner2().getHeight() + SPINNER_DOWN_Y);
+        this.geometryWindow.getRotationSpinner2().getWidth() / 2d,
+      this.geometryWindow.getRotationSpinner2().getLayoutY() + this.geometryWindow.getRotationSpinner2().getHeight() + SPINNER_DOWN_Y);
 
     // Run
     robot.moveTo(pointToMoveTo);
@@ -206,9 +204,8 @@ class RotationSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getRotationSpinner3().getLayoutX() +
-        this.geometryWindow.getRotationSpinner3().getWidth(),
-      this.geometryWindow.getRotationSpinner3().getLayoutY() +
-        this.geometryWindow.getRotationSpinner3().getHeight());
+        this.geometryWindow.getRotationSpinner3().getWidth() / 2d,
+      this.geometryWindow.getRotationSpinner3().getLayoutY() + this.geometryWindow.getRotationSpinner3().getHeight() - SPINNER_UP_Y);
 
     // Run
     robot.moveTo(pointToMoveTo);
@@ -243,9 +240,8 @@ class RotationSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getRotationSpinner3().getLayoutX() +
-        this.geometryWindow.getRotationSpinner3().getWidth(),
-      this.geometryWindow.getRotationSpinner3().getLayoutY() +
-        this.geometryWindow.getRotationSpinner3().getHeight() + SPINNER_DOWN_Y);
+        this.geometryWindow.getRotationSpinner3().getWidth() / 2d,
+      this.geometryWindow.getRotationSpinner3().getLayoutY() + this.geometryWindow.getRotationSpinner3().getHeight() + SPINNER_DOWN_Y);
 
     // Run
     robot.moveTo(pointToMoveTo);

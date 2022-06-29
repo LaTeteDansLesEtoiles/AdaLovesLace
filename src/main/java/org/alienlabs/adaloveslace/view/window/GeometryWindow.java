@@ -34,9 +34,10 @@ public class GeometryWindow {
 
   public static final double GEOMETRY_WINDOW_X            = 850d;
   public static final double GEOMETRY_WINDOW_WIDTH        = 400d;
-  public static final double VERTICAL_BUTTONS_PADDING     = 150d;
+  public static final double VERTICAL_BUTTONS_PADDING     = 135d;
   public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
 
+  public static final double GEOMETRY_BUTTONS_HEIGHT      = 50d;
   public static final int ROTATION_SPINNER_MIN_VALUE      = -360;
   public static final int ROTATION_SPINNER_MAX_VALUE      = 360;
   public static final int ROTATION_SPINNER_DEFAULT_VALUE  = 0;
@@ -127,8 +128,8 @@ public class GeometryWindow {
     zoomSpinner.buildZoomSpinner(app, this.zoomSpinner3, this.zoomSpinner1.getValueFactory(),
       this.zoomSpinner2.getValueFactory());
 
-    buttonsPane.getChildren().addAll(this.drawingButton, this.selectionButton, this.rotationButton, this.zoomButton,
-      this.rotationSpinner1, this.zoomSpinner1, this.rotationSpinner2, this.zoomSpinner2, this.rotationSpinner3, this.zoomSpinner3);
+    buttonsPane.getChildren().addAll(this.rotationSpinner1, this.zoomSpinner1, this.rotationSpinner2, this.zoomSpinner2, this.rotationSpinner3, this.zoomSpinner3,
+      this.rotationButton, this.zoomButton, this.drawingButton, this.selectionButton);
 
     return buttonsPane;
   }

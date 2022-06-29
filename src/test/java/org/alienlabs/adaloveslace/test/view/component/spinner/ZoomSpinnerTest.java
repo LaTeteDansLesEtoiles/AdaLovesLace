@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ZoomSpinnerTest extends AppTestParent {
 
-  private static final double SPINNER_DOWN_Y     = 40d;
-
+  private static final double SPINNER_UP_Y    = 18d;
+  private static final double SPINNER_DOWN_Y  = 20d;
 
   /**
    * Init method called before each test
@@ -60,9 +60,9 @@ class ZoomSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner1().getLayoutX() +
-        this.geometryWindow.getZoomSpinner1().getWidth(),
+        this.geometryWindow.getZoomSpinner1().getWidth() / 2,
       this.geometryWindow.getZoomSpinner1().getLayoutY() +
-        this.geometryWindow.getZoomSpinner1().getHeight());
+        this.geometryWindow.getZoomSpinner1().getHeight() - SPINNER_UP_Y);
 
     // Run
     robot.moveTo(pointToMoveTo);
@@ -97,7 +97,7 @@ class ZoomSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner1().getLayoutX() +
-        this.geometryWindow.getZoomSpinner1().getWidth(),
+        this.geometryWindow.getZoomSpinner1().getWidth() / 2d,
       this.geometryWindow.getZoomSpinner1().getLayoutY() +
         this.geometryWindow.getZoomSpinner1().getHeight() + SPINNER_DOWN_Y);
 
@@ -134,9 +134,9 @@ class ZoomSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner2().getLayoutX() +
-        this.geometryWindow.getZoomSpinner2().getWidth(),
+        this.geometryWindow.getZoomSpinner2().getWidth() / 2d,
       this.geometryWindow.getZoomSpinner2().getLayoutY() +
-        this.geometryWindow.getZoomSpinner2().getHeight());
+        this.geometryWindow.getZoomSpinner2().getHeight() - SPINNER_UP_Y);
 
     // Run
     robot.moveTo(pointToMoveTo);
@@ -171,7 +171,7 @@ class ZoomSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner2().getLayoutX() +
-        this.geometryWindow.getZoomSpinner2().getWidth(),
+        this.geometryWindow.getZoomSpinner2().getWidth() / 2d,
       this.geometryWindow.getZoomSpinner2().getLayoutY() +
         this.geometryWindow.getZoomSpinner2().getHeight() + SPINNER_DOWN_Y);
 
@@ -208,9 +208,9 @@ class ZoomSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner3().getLayoutX() +
-        this.geometryWindow.getZoomSpinner3().getWidth(),
+        this.geometryWindow.getZoomSpinner3().getWidth() / 2d,
       this.geometryWindow.getZoomSpinner3().getLayoutY() +
-        this.geometryWindow.getZoomSpinner3().getHeight());
+        this.geometryWindow.getZoomSpinner3().getHeight() - SPINNER_UP_Y);
 
     // Run
     robot.moveTo(pointToMoveTo);
@@ -245,7 +245,7 @@ class ZoomSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner3().getLayoutX() +
-        this.geometryWindow.getZoomSpinner3().getWidth(),
+        this.geometryWindow.getZoomSpinner3().getWidth() / 2d,
       this.geometryWindow.getZoomSpinner3().getLayoutY() +
         this.geometryWindow.getZoomSpinner3().getHeight() + SPINNER_DOWN_Y);
 

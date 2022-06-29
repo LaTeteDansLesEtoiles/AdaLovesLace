@@ -7,6 +7,8 @@ import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+
 public class SelectionButton extends ToggleButton {
 
   public static final String SELECTION_BUTTON_NAME    = "Select ";
@@ -16,6 +18,8 @@ public class SelectionButton extends ToggleButton {
   public SelectionButton(App app, GeometryWindow window, String buttonLabel) {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onSetSelectionModeAction(app, window));
+    this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
+    this.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
   }
 
   public static void onSetSelectionModeAction(App app, GeometryWindow window) {
