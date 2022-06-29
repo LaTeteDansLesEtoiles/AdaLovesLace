@@ -47,7 +47,7 @@ public class ToolboxWindow {
   public static final double VERTICAL_PADDING             = 70d;
   public static final double VERTICAL_BUTTONS_PADDING     = 150d;
   public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
-  public static final double NUMBER_OF_TILES              = 6.5d;
+  public static final double NUMBER_OF_TILES              = 7d;
 
   public static final double QUIT_BUTTON_PADDING          = 25d;
   public static final double PRINT_BUTTONS_PADDING        = 340d;
