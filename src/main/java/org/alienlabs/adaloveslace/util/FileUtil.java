@@ -77,24 +77,29 @@ public class FileUtil {
   private void buildKnotsImageViews(Diagram diagram) {
     for (Knot knot : diagram.getKnots()) {
       try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
-        Image image = new Image(fis);
-        ImageView iv = new ImageView(image);
-
-        iv.setX(knot.getX());
-        iv.setY(knot.getY());
-        iv.setRotate(0d);
-        iv.setOpacity(1.0d);
-        knot.setImageView(iv);
+        buildKnotImageView(knot, fis);
       } catch (IOException e) {
         logger.error("Problem with pattern resource file!", e);
       }
     }
   }
 
+  private void buildKnotImageView(Knot knot, FileInputStream fis) {
+    Image image = new Image(fis);
+    ImageView iv = new ImageView(image);
+
+    iv.setX(knot.getX());
+    iv.setY(knot.getY());
+    iv.setRotate(0d);
+    iv.setOpacity(1.0d);
+    knot.setImageView(iv);
+  }
+
   private void deleteXmlFile() throws IOException {
     File xmlFile = new File(System.getProperty(USER_HOME) + File.separator +
       PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator +
       XML_FILE_TO_SAVE_IN_LACE_FILE);
+
     if (xmlFile.exists() && xmlFile.canWrite()) {
       Files.delete(xmlFile.toPath());
     }
@@ -121,18 +126,26 @@ public class FileUtil {
     Unmarshaller jaxbUnmarshaller = context.createUnmarshaller();
     Diagram diagram = (Diagram) jaxbUnmarshaller.unmarshal(zipFile.getInputStream(entry));
 
-    for (org.alienlabs.adaloveslace.business.model.Pattern p : diagram.getPatterns()) {
-      p.setAbsoluteFilename(System.getProperty(USER_HOME) + File.separator +
-        PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
-    }
+    buildAbsoluteFilenamesForPatterns(diagram);
+    buildAbsoluteFilenamesForKnots(diagram);
 
+    diagram.setCurrentKnotIndex(diagram.getKnots().size());
+    diagram.setCurrentPattern(diagram.getPatterns().get(0));
+    return diagram;
+  }
+
+  private void buildAbsoluteFilenamesForKnots(Diagram diagram) {
     for (Knot k : diagram.getKnots()) {
       k.getPattern().setAbsoluteFilename(System.getProperty(USER_HOME) + File.separator +
         PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator + k.getPattern().getFilename());
     }
-    diagram.setCurrentKnotIndex(diagram.getKnots().size());
-    diagram.setCurrentPattern(diagram.getPatterns().get(0));
-    return diagram;
+  }
+
+  private void buildAbsoluteFilenamesForPatterns(Diagram diagram) {
+    for (org.alienlabs.adaloveslace.business.model.Pattern p : diagram.getPatterns()) {
+      p.setAbsoluteFilename(System.getProperty(USER_HOME) + File.separator +
+        PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
+    }
   }
 
   public void saveFile(App app, File file) {
@@ -202,23 +215,34 @@ public class FileUtil {
    * @return the resources in the order they are found
    */
   public List<String> getResources(Object classpathBase, final Pattern pattern) {
-    final ArrayList<String> retval = new ArrayList<>();
+    final List<String> retval = new ArrayList<>();
     final String classPath = JAVA_CLASS_PATH_PROPERTY;
-    logger.info("classpath: {}", classPath);
+    logger.debug("classpath: {}", classPath);
 
     if (classPath != null && !"".equals(classPath.trim())) {
-      final String[] classPathElements = classPath.split(PATH_SEPARATOR_PROPERTY);
-      for (final String element : classPathElements) {
-        logger.info("element: {}, pattern: {}", element, pattern);
-        retval.addAll(getResources(element, pattern));
-      }
+      processClasspath(pattern, retval, classPath);
     } else {
-      File file = new File(classpathBase.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
-      String absolutePath = file.getAbsolutePath();
-      logger.info("absolute path: {}", absolutePath);
-      retval.addAll(getResources(absolutePath, pattern));
+      processLocationPath(classpathBase, pattern, retval);
     }
+
     return retval;
+  }
+
+  private void processLocationPath(Object classpathBase, Pattern pattern, List<String> retval) {
+    File file = new File(classpathBase.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+    String absolutePath = file.getAbsolutePath();
+    logger.debug("absolute path: {}", absolutePath);
+
+    retval.addAll(getResources(absolutePath, pattern));
+  }
+
+  private void processClasspath(Pattern pattern, List<String> retval, String classPath) {
+    final String[] classPathElements = classPath.split(PATH_SEPARATOR_PROPERTY);
+    for (final String element : classPathElements) {
+      logger.debug("element: {}, pattern: {}", element, pattern);
+
+      retval.addAll(getResources(element, pattern));
+    }
   }
 
   /**
@@ -230,15 +254,14 @@ public class FileUtil {
    */
   public List<String> getDirectoryResources(File directory, final Pattern pattern) {
     String absolutePath = directory.getAbsolutePath();
-    logger.info("absolute path: {}", absolutePath);
-    return  new ArrayList<>(getResources(absolutePath, pattern));
+    logger.debug("absolute path: {}", absolutePath);
+    return new ArrayList<>(getResources(absolutePath, pattern));
   }
 
-  private Collection<String> getResources(
-    final String element,
-    final Pattern pattern){
-    final ArrayList<String> retval = new ArrayList<>();
+  private Collection<String> getResources(final String element, final Pattern pattern) {
+    final List<String> retval = new ArrayList<>();
     final File file = new File(element);
+
     if(file.isDirectory()) {
       retval.addAll(getResourcesFromDirectory(file, pattern));
     } else{
@@ -247,10 +270,9 @@ public class FileUtil {
     return retval;
   }
 
-  private Collection<String> getResourcesFromJarFile(
-    final File file,
-    final Pattern pattern){
-    final ArrayList<String> retval = new ArrayList<>();
+  private Collection<String> getResourcesFromJarFile(final File file, final Pattern pattern) {
+    final List<String> retval = new ArrayList<>();
+
     ZipFile zf;
     try {
       zf = new ZipFile(file);
@@ -259,14 +281,24 @@ public class FileUtil {
       return retval;
     }
     final Enumeration<? extends ZipEntry> e = zf.entries();
+
     while(e.hasMoreElements()) {
-      final ZipEntry ze = e.nextElement();
-      final String fileName = ze.getName();
-      final boolean accept = pattern.matcher(fileName).matches();
-      if(accept) {
-        retval.add(fileName);
-      }
+      addElementFromZipFile(pattern, retval, e);
     }
+
+    return closeZipFile(retval, zf);
+  }
+
+  private void addElementFromZipFile(Pattern pattern, List<String> retval, Enumeration<? extends ZipEntry> e) {
+    final ZipEntry ze = e.nextElement();
+    final String fileName = ze.getName();
+
+    if(pattern.matcher(fileName).matches()) {
+      retval.add(fileName);
+    }
+  }
+
+  private List<String> closeZipFile(List<String> retval, ZipFile zf) {
     try {
       zf.close();
     } catch (final IOException e1) {
@@ -275,39 +307,45 @@ public class FileUtil {
     return retval;
   }
 
-  private Collection<String> getResourcesFromDirectory(
-    final File directory,
-    final Pattern pattern){
-    final ArrayList<String> retval = new ArrayList<>();
+  private Collection<String> getResourcesFromDirectory(final File directory, final Pattern pattern) {
+    final List<String> retval = new ArrayList<>();
     final File[] fileList = directory.listFiles();
 
-    logger.info("Directory: {}", directory.getAbsolutePath());
+    logger.debug("Directory: {}", directory.getAbsolutePath());
 
     if (null != fileList) {
       for (final File file : fileList) {
-        if (file.isDirectory()) {
-          logger.info("loading from directory: {}", file.getAbsolutePath());
-          retval.addAll(getResourcesFromDirectory(file, pattern));
-        } else {
-          logger.info("loading from file: {}", file.getAbsolutePath());
-
-          try {
-            final String fileName = file.getCanonicalPath();
-            final boolean accept = pattern.matcher(fileName).matches();
-            if (accept) {
-              logger.info("matches");
-              retval.add(fileName);
-            } else {
-              logger.info("doesn't match");
-            }
-          } catch (final IOException e) {
-            throw new IllegalStateException("Error reading file / directory from classpath: " + file, e);
-          }
-        }
+        getResourceFromFileOrDirectory(pattern, retval, file);
       }
     }
 
     return retval;
+  }
+
+  private void getResourceFromFileOrDirectory(Pattern pattern, List<String> retval, File file) {
+    if (file.isDirectory()) {
+      logger.debug("loading from directory: {}", file.getAbsolutePath());
+      retval.addAll(getResourcesFromDirectory(file, pattern));
+    } else {
+      getResourceFromFile(pattern, retval, file);
+    }
+  }
+
+  private void getResourceFromFile(Pattern pattern, List<String> retval, File file) {
+    logger.debug("loading from file: {}", file.getAbsolutePath());
+
+    try {
+      final String fileName = file.getCanonicalPath();
+
+      if (pattern.matcher(fileName).matches()) {
+        logger.debug("matches");
+        retval.add(fileName);
+      } else {
+        logger.debug("doesn't match");
+      }
+    } catch (final IOException e) {
+      throw new IllegalStateException("Error reading file / directory from classpath: " + file, e);
+    }
   }
 
 }
