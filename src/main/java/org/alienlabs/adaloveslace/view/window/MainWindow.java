@@ -161,8 +161,9 @@ public class MainWindow {
     });
   }
 
-  private void onClickWithDrawMode(Diagram diagram, Knot optionalDotGrid, boolean knotSelected) {
-    diagram.setCurrentKnot(optionalDotGrid);
+  private void onClickWithDrawMode(Diagram diagram, Knot knot, boolean knotSelected) {
+    knot.setZoomFactor(1d);
+    diagram.setCurrentKnot(knot);
     diagram.setKnotSelected(knotSelected);
   }
 

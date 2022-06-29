@@ -12,20 +12,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RotationSpinnerTest extends AppTestParent {
 
-  public static final double SPINNER_1_UP_X     = 100d;
-  public static final double SPINNER_1_UP_Y     = 180d;
-  public static final double SPINNER_1_DOWN_X   = 100d;
-  public static final double SPINNER_1_DOWN_Y   = 220d;
+  private static final double SPINNER_1_UP_X     = 100d;
+  private static final double SPINNER_1_UP_Y     = 180d;
+  private static final double SPINNER_1_DOWN_X   = 100d;
+  private static final double SPINNER_1_DOWN_Y   = 220d;
 
-  public static final double SPINNER_2_UP_X     = 100d;
-  public static final double SPINNER_2_UP_Y     = 245d;
-  public static final double SPINNER_2_DOWN_X   = 100d;
-  public static final double SPINNER_2_DOWN_Y   = 285d;
+  private static final double SPINNER_2_UP_X     = 100d;
+  private static final double SPINNER_2_UP_Y     = 245d;
+  private static final double SPINNER_2_DOWN_X   = 100d;
+  private static final double SPINNER_2_DOWN_Y   = 285d;
 
-  public static final double SPINNER_3_UP_X     = 100d;
-  public static final double SPINNER_3_UP_Y     = 310d;
-  public static final double SPINNER_3_DOWN_X   = 100d;
-  public static final double SPINNER_3_DOWN_Y   = 345d;
+  private static final double SPINNER_3_UP_X     = 100d;
+  private static final double SPINNER_3_UP_Y     = 310d;
+  private static final double SPINNER_3_DOWN_X   = 100d;
+  private static final double SPINNER_3_DOWN_Y   = 345d;
 
   /**
    * Init method called before each test
@@ -262,11 +262,6 @@ class RotationSpinnerTest extends AppTestParent {
       this.geometryWindow.getRotationSpinner2().getValue());
     assertEquals(ROTATION_SPINNER_DEFAULT_VALUE - ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner3().getValue());
-  }
-
-  private Point2D newSpinnerPoint(double x, double y) {
-    return new Point2D(this.app.getGeometryStage().getX() + x,
-      this.app.getGeometryStage().getY() + y);
   }
 
 }

@@ -44,6 +44,15 @@ public class GeometryWindow {
   public static final int ROTATION_SPINNER_INCREMENTS_2   = 10;
   public static final int ROTATION_SPINNER_INCREMENTS_3   = 30;
 
+  public static final int ZOOM_SPINNER_MIN_VALUE      = -20;
+  public static final int ZOOM_SPINNER_MAX_VALUE      = 20;
+  public static final double ZOOM_SPINNER_ZOOM_FACTOR     = 9d;
+  public static final double ZOOM_SPINNER_MULTIPLY_FACTOR = 0.1d;
+  public static final int ZOOM_SPINNER_DEFAULT_VALUE  = 1;
+  public static final int ZOOM_SPINNER_INCREMENTS_1   = 1;
+  public static final int ZOOM_SPINNER_INCREMENTS_2   = 2;
+  public static final int ZOOM_SPINNER_INCREMENTS_3   = 3;
+
   private static final Logger logger = LoggerFactory.getLogger(GeometryWindow.class);
   private DrawingButton drawingButton;
   private SelectionButton selectionButton;
@@ -52,6 +61,9 @@ public class GeometryWindow {
   private Spinner<Integer> rotationSpinner1;
   private Spinner<Integer> rotationSpinner2;
   private Spinner<Integer> rotationSpinner3;
+  private Spinner<Integer> zoomSpinner1;
+  private Spinner<Integer> zoomSpinner2;
+  private Spinner<Integer> zoomSpinner3;
 
   public void createGeometryStage(Stage geometryStage, TilePane buttonsPane, TilePane patternsPane) {
     buttonsPane.setTranslateY(VERTICAL_BUTTONS_PADDING);
@@ -103,17 +115,20 @@ public class GeometryWindow {
     rotationSpinner.buildRotationSpinner(app, this.rotationSpinner3,
       this.rotationSpinner1.getValueFactory(), this.rotationSpinner2.getValueFactory());
 
-    Spinner<Integer> zoom1 = new Spinner<>(-10, 10, 1, 1);
-    Spinner<Integer> zoom2 = new Spinner<>(-10, 10, 1, 2);
-    Spinner<Integer> zoom3 = new Spinner<>(-10, 10, 1, 3);
+    this.zoomSpinner1 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, ZOOM_SPINNER_DEFAULT_VALUE, ZOOM_SPINNER_INCREMENTS_1);
+    this.zoomSpinner2 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, ZOOM_SPINNER_DEFAULT_VALUE, ZOOM_SPINNER_INCREMENTS_2);
+    this.zoomSpinner3 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, ZOOM_SPINNER_DEFAULT_VALUE, ZOOM_SPINNER_INCREMENTS_3);
 
     ZoomSpinner zoomSpinner = new ZoomSpinner();
-    zoomSpinner.buildZoomSpinner(app, zoom1, zoom2.getValueFactory(), zoom3.getValueFactory());
-    zoomSpinner.buildZoomSpinner(app, zoom2, zoom1.getValueFactory(), zoom3.getValueFactory());
-    zoomSpinner.buildZoomSpinner(app, zoom3, zoom1.getValueFactory(), zoom2.getValueFactory());
+    zoomSpinner.buildZoomSpinner(app, this.zoomSpinner1, this.zoomSpinner2.getValueFactory(),
+      this.zoomSpinner3.getValueFactory());
+    zoomSpinner.buildZoomSpinner(app, this.zoomSpinner2, this.zoomSpinner1.getValueFactory(),
+      this.zoomSpinner3.getValueFactory());
+    zoomSpinner.buildZoomSpinner(app, this.zoomSpinner3, this.zoomSpinner1.getValueFactory(),
+      this.zoomSpinner2.getValueFactory());
 
     buttonsPane.getChildren().addAll(this.drawingButton, this.selectionButton, this.rotationButton, this.zoomButton,
-      this.rotationSpinner1, zoom1, this.rotationSpinner2, zoom2, this.rotationSpinner3, zoom3);
+      this.rotationSpinner1, this.zoomSpinner1, this.rotationSpinner2, this.zoomSpinner2, this.rotationSpinner3, this.zoomSpinner3);
 
     return buttonsPane;
   }
@@ -154,6 +169,18 @@ public class GeometryWindow {
 
   public Spinner<Integer> getRotationSpinner3() {
     return rotationSpinner3;
+  }
+
+  public Spinner<Integer> getZoomSpinner1() {
+    return zoomSpinner1;
+  }
+
+  public Spinner<Integer> getZoomSpinner2() {
+    return zoomSpinner2;
+  }
+
+  public Spinner<Integer> getZoomSpinner3() {
+    return zoomSpinner3;
   }
 
   public ZoomButton getZoomButton() {

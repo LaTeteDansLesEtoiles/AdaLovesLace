@@ -114,6 +114,11 @@ public class AppTestParent {
     clickOnButton(robot, toolboxWindow.getSnowflakeButton());
   }
 
+  protected Point2D newSpinnerPoint(double x, double y) {
+    return new Point2D(this.app.getGeometryStage().getX() + x,
+      this.app.getGeometryStage().getY() + y);
+  }
+
   private void clickOnButton(FxRobot robot, Node button) {
     robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
 

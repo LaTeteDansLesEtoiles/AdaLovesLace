@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNullElseGet;
+import static org.alienlabs.adaloveslace.view.window.GeometryWindow.ZOOM_SPINNER_MULTIPLY_FACTOR;
+import static org.alienlabs.adaloveslace.view.window.GeometryWindow.ZOOM_SPINNER_ZOOM_FACTOR;
 
 /**
  * A grid (= coordinate system) with dots (= used as landmarks for lace).
@@ -127,8 +129,8 @@ public class OptionalDotGrid extends Pane {
   // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
   private void zoomKnot(Knot knot, ImageView iv) {
     if (knot.getZoomFactor() != 0) {
-      iv.setScaleX((knot.getZoomFactor() + 11) * 0.1);
-      iv.setScaleY((knot.getZoomFactor() + 11) * 0.1);
+      iv.setScaleX((knot.getZoomFactor() + ZOOM_SPINNER_ZOOM_FACTOR) * ZOOM_SPINNER_MULTIPLY_FACTOR);
+      iv.setScaleY((knot.getZoomFactor() + ZOOM_SPINNER_ZOOM_FACTOR) * ZOOM_SPINNER_MULTIPLY_FACTOR);
     }
   }
 
