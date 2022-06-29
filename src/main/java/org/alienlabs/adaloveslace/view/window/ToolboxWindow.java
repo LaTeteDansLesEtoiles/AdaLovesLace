@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.HOME_DIRECTORY_RESOURCES_PATH;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ExportImageButton.EXPORT_IMAGE_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.LoadButton.LOAD_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton.REDO_KNOT_BUTTON_NAME;
@@ -44,12 +45,12 @@ public class ToolboxWindow {
   public static final double TILE_HEIGHT                  = 50d;
   public static final double TILE_PADDING                 = 20d;
   public static final double VERTICAL_PADDING             = 70d;
-  public static final double VERTICAL_BUTTONS_PADDING     = 125d;
+  public static final double VERTICAL_BUTTONS_PADDING     = 150d;
   public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
   public static final double NUMBER_OF_TILES              = 6.5d;
 
   public static final double QUIT_BUTTON_PADDING          = 25d;
-  public static final double PRINT_BUTTONS_PADDING        = 300d;
+  public static final double PRINT_BUTTONS_PADDING        = 340d;
   private static final double ALL_PRINTERS_TEXT_AREA_PADDING = 50d;
   public static final double PRINTERS_BUTTON_PADDING      = -25d;
   public static final double PRINT_DIAGRAM_PADDING        = 0d;
@@ -276,7 +277,8 @@ public class ToolboxWindow {
     SaveButton          saveButton          = new SaveButton          (app, SAVE_FILE_BUTTON_NAME);
     SaveAsButton        saveAsButton        = new SaveAsButton        (app, SAVE_FILE_AS_BUTTON_NAME);
     LoadButton          loadButton          = new LoadButton          (app, LOAD_BUTTON_NAME);
-    buttonsPane.getChildren().addAll(saveButton, saveAsButton, loadButton);
+    ExportImageButton   exportImageButton   = new ExportImageButton   (app, EXPORT_IMAGE_BUTTON_NAME);
+    buttonsPane.getChildren().addAll(saveButton, saveAsButton, loadButton, exportImageButton);
   }
 
   private TilePane buildButtonPane() {
