@@ -198,11 +198,20 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
         <version>${compiler-plugins.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>9.3</version>
+          </dependency>
+        </dependencies>
         <configuration>
           <argLine>@{argLine} --add-exports javafx.graphics/com.sun.javafx.application=org.testfx</argLine>
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
           </additionalClasspathElements>
+          <forkCount>0</forkCount>
+          <useSystemClassLoader>false</useSystemClassLoader>
         </configuration>
       </plugin>
       <plugin>
@@ -225,6 +234,8 @@
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
           </additionalClasspathElements>
+          <forkCount>0</forkCount>
+          <useSystemClassLoader>false</useSystemClassLoader>
         </configuration>
       </plugin>
 
