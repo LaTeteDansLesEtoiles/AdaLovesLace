@@ -19,7 +19,7 @@ node {
     wrap([$class: 'Xvfb']) {
         stage('unit tests') {
             try {
-                sh "./mvnw test -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=20000"
+                sh "./mvnw test -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=60000"
             } catch(err) {
                 throw err
             } finally {
@@ -29,7 +29,7 @@ node {
 
         stage('integration & functional tests') {
             try {
-                sh "./mvnw verify -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=20000"
+                sh "./mvnw verify -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=60000"
             } catch(err) {
                 throw err
             } finally {
