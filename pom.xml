@@ -99,12 +99,6 @@
       <version>${testfx.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.testfx</groupId>
-      <artifactId>openjfx-monocle</artifactId>
-      <version>8u76-b04</version> <!-- jdk-9+181 for Java 9, jdk-11+26 for Java 11 -->
-      <scope>test</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.hamcrest</groupId>
