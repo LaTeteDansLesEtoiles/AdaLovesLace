@@ -167,6 +167,7 @@
               </winConfig>
               <vmArgs>
                 <vmArg>--module-path libs</vmArg>
+                <vmArg>-Dsun.java2d.uiScale=2.0</vmArg>
                 <vmArg>--add-modules javafx.base,javafx.controls,javafx.graphics,javafx.swing,org.slf4j</vmArg>
               </vmArgs>
               <additionalResources>
