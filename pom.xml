@@ -199,28 +199,6 @@
           </additionalClasspathElements>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${test-plugins.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <includes>
-            <include>**/*ITest</include>
-          </includes>
-          <argLine>@{argLine} --add-exports javafx.graphics/com.sun.javafx.application=org.testfx</argLine>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
-          </additionalClasspathElements>
-        </configuration>
-      </plugin>
 
       <plugin>
         <groupId>com.github.spotbugs</groupId>
