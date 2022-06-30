@@ -99,7 +99,7 @@ public class OptionalDotGrid extends Pane {
     deleteKnotsFromCanvas();
 
     // If there are knots on the diagram, we must display them at each window refresh
-    for (Knot knot : this.diagram.getKnots().subList(0, this.diagram.getCurrentKnotIndex())) {
+   for (Knot knot : this.diagram.getKnots().subList(0, this.diagram.getCurrentKnotIndex())) {
       drawKnotWithRotationAndZoom(knot);
     }
   }

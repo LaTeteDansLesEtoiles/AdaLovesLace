@@ -36,13 +36,13 @@ public class AppTestParent {
   public App app;
 
   // For tests:
-  public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = Long.getLong("SLEEP_BETWEEN_ACTIONS_TIME", 500L);
+  public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = Long.getLong("SLEEP_BETWEEN_ACTIONS_TIME", 750L);
   public static final double GRID_WIDTH           = 600d;
   public static final double GRID_HEIGHT          = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
   public static final String TEST_SCREEN_CAPTURE_FILE     = "test_screen_capture" + EXPORT_FILE_TYPE;
 
-  public static final String CLASSPATH_RESOURCES_PATH_JPG = ".*test" + PATH_SEPARATOR + ".*.jpg";
+  public static final String CLASSPATH_RESOURCES_PATH_JPG = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*test" + PATH_SEPARATOR + ".*.jpg";
 
   public static final String SNOWFLAKE            = "snowflake_small";
   public static final String SNOWFLAKE_BUTTON     = TOOLBOX_BUTTON_ID + "1";
@@ -53,14 +53,14 @@ public class AppTestParent {
 
   public static final double GRAY_PIXEL_X         = 98d;
   public static final double GRAY_PIXEL_Y         = 67d;
-  public static final Color  SNOWFLAKE_DOT_COLOR  = Color.valueOf("0x9bf4ffff");
+  public static final Color  SNOWFLAKE_DOT_COLOR  = Color.valueOf("0x9df6feff");
 
   public Color foundColorOnGrid;
 
   /**
    * Countdown latch
    */
-  public CountDownLatch lock = new CountDownLatch(1);
+  protected CountDownLatch lock = new CountDownLatch(1);
 
   private static final Logger logger = LoggerFactory.getLogger(AppTestParent.class);
 
@@ -95,7 +95,7 @@ public class AppTestParent {
     copyCanvas(pointToMoveTo);
 
     try {
-      lock.await(5_000, TimeUnit.MILLISECONDS);
+      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
       logger.error("Interrupted!", e);
     }
@@ -132,12 +132,15 @@ public class AppTestParent {
 
   private void copyCanvas(Point2D pointToMoveTo) {
     Platform.runLater(() -> {
-      WritableImage snapshot = new ImageUtil(this.app).buildWritableImage(
+      WritableImage snapshot = new ImageUtil(this.app).buildWritableImageWithTechnicalElements(
         BUILD_TOOL_OUTPUT_DIRECTORY + TEST_SCREEN_CAPTURE_FILE);
 
       PixelReader pr = snapshot.getPixelReader();
-      this.foundColorOnGrid = pr.getColor(Double.valueOf(pointToMoveTo.getX()).intValue(), Double.valueOf(pointToMoveTo.getY()).intValue());
-      logger.info("# argb: {}", this.foundColorOnGrid);
+      int x = Double.valueOf(pointToMoveTo.getX() - this.primaryStage.getX()).intValue();
+      int y = Double.valueOf(pointToMoveTo.getY() - this.primaryStage.getY()).intValue();
+
+      this.foundColorOnGrid = pr.getColor(x, y);
+      logger.info("# argb: {} at ({}, {}), with stage at ({}, {})", this.foundColorOnGrid, x, y, this.primaryStage.getX(), this.primaryStage.getY());
 
       lock.countDown();
     });

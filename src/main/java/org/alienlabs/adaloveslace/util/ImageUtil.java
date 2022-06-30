@@ -24,11 +24,25 @@ public class ImageUtil {
     this.app = app;
   }
 
-  public WritableImage buildWritableImage(String pathname) {
+  public void buildWritableImageWithoutTechnicalElements(String pathname) {
     this.hideTechnicalElementsFromRootGroup();
 
-    WritableImage wi = new WritableImage(Double.valueOf(app.getPrimaryStage().getX() + app.getRoot().getLayoutX() + GRID_WIDTH).intValue(),
-      Double.valueOf(app.getPrimaryStage().getY() + app.getRoot().getLayoutY() + GRID_HEIGHT).intValue());
+    buildWritableImage(pathname);
+
+    this.showTechnicalElementsFromRootGroup();
+    logger.info("Snapshot done!");
+  }
+
+  public WritableImage buildWritableImageWithTechnicalElements(String pathname) {
+    WritableImage snapshot = buildWritableImage(pathname);
+    logger.info("Snapshot done!");
+
+    return snapshot;
+  }
+
+  private WritableImage buildWritableImage(String pathname) {
+    WritableImage wi = new WritableImage(Double.valueOf(app.getPrimaryStage().getX() + GRID_WIDTH).intValue(),
+      Double.valueOf(app.getPrimaryStage().getY() + GRID_HEIGHT).intValue());
     WritableImage snapshot = app.getRoot().snapshot(new SnapshotParameters(), wi);
 
     File output = new File(pathname);
@@ -37,10 +51,6 @@ public class ImageUtil {
     } catch (IOException e) {
       logger.error("Problem writing root group image file!", e);
     }
-
-    this.showTechnicalElementsFromRootGroup();
-    logger.info("Snapshot done!");
-
     return snapshot;
   }
 

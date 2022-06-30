@@ -43,7 +43,7 @@ public class App extends Application {
   public static final String PATTERNS_DIRECTORY_NAME  = "patterns";
   public static final String ERROR                    = "Error!";
 
-  public static final double  MAIN_WINDOW_Y           = 10d;
+  public static final double  MAIN_WINDOW_Y           = 20d;
   private static final double MAIN_WINDOW_X           = 50d;
   public static final double  MAIN_WINDOW_WIDTH       = 500d;
   public static final double  MAIN_WINDOW_HEIGHT      = 680d;
@@ -131,17 +131,17 @@ public class App extends Application {
   public GeometryWindow showGeometryWindow(App app) {
     geometryStage = new Stage(StageStyle.DECORATED);
 
-    TilePane patternsPane  = new TilePane(Orientation.HORIZONTAL);
-    patternsPane.setVgap(TILE_PADDING);
-    patternsPane.setPrefColumns(1);
-    patternsPane.setPrefTileHeight(TILE_HEIGHT);
-    patternsPane.setAlignment(Pos.TOP_CENTER);
+    TilePane geometryPane  = new TilePane(Orientation.HORIZONTAL);
+    geometryPane.setVgap(TILE_PADDING);
+    geometryPane.setPrefColumns(2);
+    geometryPane.setPrefTileHeight(TILE_HEIGHT);
+    geometryPane.setAlignment(Pos.TOP_CENTER);
 
 
     GeometryWindow geometryWindow = new GeometryWindow();
     TilePane buttonsPane = geometryWindow.createGeometryButtons(app);
 
-    geometryWindow.createGeometryStage(geometryStage, buttonsPane, patternsPane);
+    geometryWindow.createGeometryStage(geometryStage, buttonsPane, geometryPane);
     return geometryWindow;
   }
 

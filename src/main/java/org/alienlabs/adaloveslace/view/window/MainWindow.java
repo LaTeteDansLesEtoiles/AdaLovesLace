@@ -25,6 +25,8 @@ import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.Sho
 
 public class MainWindow {
 
+  private static final double FOOTER_X      = 60d;
+  public static final double MENU_BAR_Y     = -10d;
   public final MenuBar menuBar;
   private OptionalDotGrid optionalDotGrid;
   private TilePane footer;
@@ -106,6 +108,7 @@ public class MainWindow {
     toolMenu.getItems().addAll(showHideGridItem);
 
     menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu);
+    menuBar.setTranslateY(MENU_BAR_Y);
     root.getChildren().addAll(menuBar);
   }
 
@@ -116,6 +119,7 @@ public class MainWindow {
     footer.getChildren().addAll(new Label("This is Free Software under GPL license"));
     footer.getChildren().addAll(new Label("JavaFX " + javafxVersion + ", running on Java " + javaVersion));
     footer.setAlignment(Pos.BOTTOM_LEFT);
+    footer.setTranslateX(FOOTER_X);
     return footer;
   }
 

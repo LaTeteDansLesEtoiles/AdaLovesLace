@@ -22,8 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.MalformedURLException;
 
-import static org.alienlabs.adaloveslace.App.GEOMETRY_TITLE;
-import static org.alienlabs.adaloveslace.App.ICON_SIZE;
+import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.view.component.button.ImageButton.ASSETS_DIRECTORY;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.DrawingButton.DRAWING_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.RotationButton.ROTATION_BUTTON_NAME;
@@ -32,7 +31,7 @@ import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.Zo
 
 public class GeometryWindow {
 
-  public static final double GEOMETRY_WINDOW_X            = 850d;
+  public static final double GEOMETRY_WINDOW_X            = 1100d;
   public static final double GEOMETRY_WINDOW_WIDTH        = 400d;
   public static final double VERTICAL_BUTTONS_PADDING     = 135d;
   public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
@@ -78,7 +77,7 @@ public class GeometryWindow {
       windowEvent.consume();
     });
     geometryStage.setX(GEOMETRY_WINDOW_X);
-    geometryStage.setY(250);
+    geometryStage.setY(MAIN_WINDOW_Y);
     geometryStage.setScene(geometryScene);
     geometryStage.show();
   }

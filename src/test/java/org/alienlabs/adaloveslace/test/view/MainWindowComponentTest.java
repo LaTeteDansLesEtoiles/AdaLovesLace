@@ -9,9 +9,14 @@ import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotBu
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ResetDiagramButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +29,8 @@ class MainWindowComponentTest extends AppTestParent {
   public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xccccccff");
 
   private Stage primaryStage;
+
+  private static final Logger logger                      = LoggerFactory.getLogger(MainWindowComponentTest.class);
 
   /**
    * Init method called before each test
@@ -60,11 +67,10 @@ class MainWindowComponentTest extends AppTestParent {
     // Move mouse and get the color of the pixel under the pointer
 
     // Run
-    Point2D pointToMoveTo = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
-    robot.moveTo(pointToMoveTo);
+    Point2D pointToCheck = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    robot.moveTo(pointToCheck);
 
     // Verify
-    Point2D pointToCheck = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
     foundColorOnGrid = getColor(pointToCheck);
 
     // If we choose a point in the snowflake it must not be of the same color than the grid dots
@@ -108,16 +114,15 @@ class MainWindowComponentTest extends AppTestParent {
   void testClickOnTheGrid(FxRobot robot) {
     // Init
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
+    Point2D pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
 
     // Run
-    robot.moveTo(pointToMoveTo);
-    Point2D pointToCheck = new Point2D(GRAY_PIXEL_X, GRAY_PIXEL_Y - app.getRoot().getLayoutY());
+    robot.moveTo(pointToCheck);
     foundColorOnGrid = getColor(pointToCheck);
 
     // Verify
     // If we click on a grid dot, it is gray
-    assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR)     .matches(foundColorOnGrid));
+    assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
   }
 
 
@@ -132,18 +137,19 @@ class MainWindowComponentTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    Point2D snowflakePoint = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    Point2D snowflakePoint = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
 
     // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
     // have access to the UI thread for the copy without "Platform.runLater()"
     Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
     // Run: issue an "Undo knot" command
+    lock = new CountDownLatch(1);
     selectAndClickUndoKnot();
 
     // Verify
     // Move mouse and get the color of the pixel under the pointer
-    snowflakePoint = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    snowflakePoint = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
     Color foundColorOnGridAfterUndo = getColor(snowflakePoint);
 
     assertNotEquals(foundColorOnGridAfterUndo, foundColorOnGridBeforeUndo,
@@ -168,9 +174,11 @@ class MainWindowComponentTest extends AppTestParent {
     Color foundColorOnGridBeforeRedo = getColor(snowflakePoint);
 
     // Issue an "Undo knot" command
+    lock = new CountDownLatch(1);
     selectAndClickUndoKnot();
 
     // Run: Issue a "Redo knot" command
+    lock = new CountDownLatch(1);
     selectAndClickRedoKnot();
 
     // Verify
@@ -194,22 +202,19 @@ class MainWindowComponentTest extends AppTestParent {
     drawSnowflake(robot);
 
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
-    robot.moveTo(pointToMoveTo);
+    Point2D pointToCheck = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    robot.moveTo(pointToCheck);
 
-    Point2D pointToCheck = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
     Color foundColorOnGridBeforeReset = getColor(pointToCheck);
 
     // Run: issue a "Reset diagram" command
+    lock = new CountDownLatch(1);
     selectAndClickResetDiagramButton();
 
     // Verify
     // Move mouse and get the color of the pixel under the pointer
-    pointToMoveTo = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
-
-    // Run
-    robot.moveTo(pointToMoveTo);
-    pointToCheck = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    pointToCheck = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    robot.moveTo(pointToCheck);
     Color foundColorOnGridAfterReset = getColor(pointToCheck);
 
     assertNotEquals(foundColorOnGridAfterReset, foundColorOnGridBeforeReset,
@@ -220,39 +225,42 @@ class MainWindowComponentTest extends AppTestParent {
   private void selectAndClickUndoKnot() {
     Platform.runLater(() -> {
       UndoKnotButton.undoKnot(app);
-
-      try {
-        Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
+      lock.countDown();
     });
+
+    try {
+      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
+    } catch (InterruptedException e) {
+      logger.error("Interrupted!", e);
+    }
   }
 
   // Click on the 'redo knot' in the toolbox
   private void selectAndClickRedoKnot() {
     Platform.runLater(() -> {
       RedoKnotButton.redoKnot(app);
-
-      try {
-        Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
+      lock.countDown();
     });
+
+    try {
+      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
+    } catch (InterruptedException e) {
+      logger.error("Interrupted!", e);
+    }
   }
 
   // Click on the 'reset diagram' in the toolbox
   private void selectAndClickResetDiagramButton() {
     Platform.runLater(() -> {
       ResetDiagramButton.resetDiagram(app);
-
-      try {
-        Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
+      lock.countDown();
     });
+
+    try {
+      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
+    } catch (InterruptedException e) {
+      logger.error("Interrupted!", e);
+    }
   }
 
   private String getMainWindowTitle() {

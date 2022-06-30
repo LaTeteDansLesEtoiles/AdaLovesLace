@@ -16,7 +16,7 @@ import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
 public class ExportImageButton extends ImageButton {
 
-  public static final String EXPORT_IMAGE_BUTTON_NAME   = " Export an image";
+  public static final String EXPORT_IMAGE_BUTTON_NAME   = " Export as image";
 
   public static final String EXPORT_IMAGE_DIALOG_TITLE  = "Export a diagram image";
 
@@ -39,7 +39,7 @@ public class ExportImageButton extends ImageButton {
     File file = export.showSaveDialog(app.getScene().getWindow());
 
     if (file != null) {
-      new ImageUtil(app).buildWritableImage(
+      new ImageUtil(app).buildWritableImageWithoutTechnicalElements(
         file.getAbsolutePath().endsWith(EXPORT_FILE_TYPE) ?
           file.getAbsolutePath() :
           file.getAbsolutePath() + EXPORT_FILE_TYPE
