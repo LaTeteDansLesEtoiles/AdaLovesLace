@@ -23,7 +23,7 @@ node {
             } catch(err) {
                 throw err
             } finally {
-                junit '**/target/surefire-reports/TEST-*.xml,**/target/failsafe-reports/Unit-TEST-*.xml'
+                junit '**/target/surefire-reports/TEST-*.xml'
             }
         }
 
@@ -33,7 +33,7 @@ node {
             } catch(err) {
                 throw err
             } finally {
-                junit '**/target/surefire-reports/TEST-*.xml,**/target/failsafe-reports/T*.xml'
+                junit '**/target/failsafe-reports/*TEST-*.xml'
             }
         }
 
