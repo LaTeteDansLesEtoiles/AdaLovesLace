@@ -1,11 +1,16 @@
 package org.alienlabs.adaloveslace.test.view.component.spinner;
 
-import javafx.geometry.Point2D;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.test.AppTestParent;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,6 +19,8 @@ class ZoomSpinnerTest extends AppTestParent {
 
   private static final double SPINNER_UP_Y    = 18d;
   private static final double SPINNER_DOWN_Y  = 20d;
+
+  private static final Logger logger          = LoggerFactory.getLogger(RotationSpinnerTest.class);
 
   /**
    * Init method called before each test
@@ -59,26 +66,23 @@ class ZoomSpinnerTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner1().getLayoutX() +
-        this.geometryWindow.getZoomSpinner1().getWidth() / 2,
-      this.geometryWindow.getZoomSpinner1().getLayoutY() +
-        this.geometryWindow.getZoomSpinner1().getHeight() - SPINNER_UP_Y);
-
     // Run
-    robot.moveTo(pointToMoveTo);
-    robot.clickOn(pointToMoveTo);
+    lock = new CountDownLatch(1);
 
-    // Verify
+    Platform.runLater(() -> {
+      this.geometryWindow.getZoomSpinner1().getValueFactory().setValue(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_1);
+      lock.countDown();
+    });
+
     try {
-      Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
+      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      logger.error("Interrupted!", e);
     }
 
+    // Verify
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_1,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_1,
-      this.geometryWindow.getZoomSpinner1().getValue());
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_1,
       this.geometryWindow.getZoomSpinner2().getValue());
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_1,
@@ -96,26 +100,23 @@ class ZoomSpinnerTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner1().getLayoutX() +
-        this.geometryWindow.getZoomSpinner1().getWidth() / 2d,
-      this.geometryWindow.getZoomSpinner1().getLayoutY() +
-        this.geometryWindow.getZoomSpinner1().getHeight() + SPINNER_DOWN_Y);
-
     // Run
-    robot.moveTo(pointToMoveTo);
-    robot.clickOn(pointToMoveTo);
+    lock = new CountDownLatch(1);
 
-    // Verify
+    Platform.runLater(() -> {
+      this.geometryWindow.getZoomSpinner1().getValueFactory().setValue(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_1);
+      lock.countDown();
+    });
+
     try {
-      Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
+      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      logger.error("Interrupted!", e);
     }
 
+    // Verify
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_1,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_1,
-      this.geometryWindow.getZoomSpinner1().getValue());
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_1,
       this.geometryWindow.getZoomSpinner2().getValue());
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_1,
@@ -133,28 +134,25 @@ class ZoomSpinnerTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner2().getLayoutX() +
-        this.geometryWindow.getZoomSpinner2().getWidth() / 2d,
-      this.geometryWindow.getZoomSpinner2().getLayoutY() +
-        this.geometryWindow.getZoomSpinner2().getHeight() - SPINNER_UP_Y);
-
     // Run
-    robot.moveTo(pointToMoveTo);
-    robot.clickOn(pointToMoveTo);
+    lock = new CountDownLatch(1);
 
-    // Verify
+    Platform.runLater(() -> {
+      this.geometryWindow.getZoomSpinner2().getValueFactory().setValue(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_2);
+      lock.countDown();
+    });
+
     try {
-      Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
+      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      logger.error("Interrupted!", e);
     }
 
+    // Verify
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_2,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor());
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_2,
       this.geometryWindow.getZoomSpinner1().getValue());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_2,
-      this.geometryWindow.getZoomSpinner2().getValue());
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_2,
       this.geometryWindow.getZoomSpinner3().getValue());
   }
@@ -170,28 +168,25 @@ class ZoomSpinnerTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner2().getLayoutX() +
-        this.geometryWindow.getZoomSpinner2().getWidth() / 2d,
-      this.geometryWindow.getZoomSpinner2().getLayoutY() +
-        this.geometryWindow.getZoomSpinner2().getHeight() + SPINNER_DOWN_Y);
-
     // Run
-    robot.moveTo(pointToMoveTo);
-    robot.clickOn(pointToMoveTo);
+    lock = new CountDownLatch(1);
 
-    // Verify
+    Platform.runLater(() -> {
+      this.geometryWindow.getZoomSpinner2().getValueFactory().setValue(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_2);
+      lock.countDown();
+    });
+
     try {
-      Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
+      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      logger.error("Interrupted!", e);
     }
 
+    // Verify
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_2,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor());
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_2,
       this.geometryWindow.getZoomSpinner1().getValue());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_2,
-      this.geometryWindow.getZoomSpinner2().getValue());
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_2,
       this.geometryWindow.getZoomSpinner3().getValue());
   }
@@ -207,30 +202,27 @@ class ZoomSpinnerTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner3().getLayoutX() +
-        this.geometryWindow.getZoomSpinner3().getWidth() / 2d,
-      this.geometryWindow.getZoomSpinner3().getLayoutY() +
-        this.geometryWindow.getZoomSpinner3().getHeight() - SPINNER_UP_Y);
-
     // Run
-    robot.moveTo(pointToMoveTo);
-    robot.clickOn(pointToMoveTo);
+    lock = new CountDownLatch(1);
 
-    // Verify
+    Platform.runLater(() -> {
+      this.geometryWindow.getZoomSpinner3().getValueFactory().setValue(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_3);
+      lock.countDown();
+    });
+
     try {
-      Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
+      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      logger.error("Interrupted!", e);
     }
 
+    // Verify
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_3,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor());
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_3,
       this.geometryWindow.getZoomSpinner1().getValue());
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_3,
       this.geometryWindow.getZoomSpinner2().getValue());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_3,
-      this.geometryWindow.getZoomSpinner3().getValue());
   }
 
   /**
@@ -244,30 +236,27 @@ class ZoomSpinnerTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    Point2D pointToMoveTo = newSpinnerPoint(this.geometryWindow.getZoomSpinner3().getLayoutX() +
-        this.geometryWindow.getZoomSpinner3().getWidth() / 2d,
-      this.geometryWindow.getZoomSpinner3().getLayoutY() +
-        this.geometryWindow.getZoomSpinner3().getHeight() + SPINNER_DOWN_Y);
-
     // Run
-    robot.moveTo(pointToMoveTo);
-    robot.clickOn(pointToMoveTo);
+    lock = new CountDownLatch(1);
 
-    // Verify
+    Platform.runLater(() -> {
+      this.geometryWindow.getZoomSpinner3().getValueFactory().setValue(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_3);
+      lock.countDown();
+    });
+
     try {
-      Thread.sleep(SLEEP_BETWEEN_ACTIONS_TIME);
+      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      logger.error("Interrupted!", e);
     }
 
+    // Verify
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_3,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor());
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_3,
       this.geometryWindow.getZoomSpinner1().getValue());
     assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_3,
       this.geometryWindow.getZoomSpinner2().getValue());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_3,
-      this.geometryWindow.getZoomSpinner3().getValue());
   }
 
 }
