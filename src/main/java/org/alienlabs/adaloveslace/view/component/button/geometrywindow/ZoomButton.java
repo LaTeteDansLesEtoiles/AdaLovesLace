@@ -13,7 +13,7 @@ import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUT
 public class ZoomButton extends Button {
 
   public static final String ZOOM_BUTTON_NAME    = " Zoom ";
-  public static final String BUTTON_TOOLTIP      = "Use the fields above to\nzoom in or out the\ncurrently selected knot\n";
+  public static final String BUTTON_TOOLTIP      = "Use the fields above to zoom in or out\nthe currently selected knot\n";
 
   private static final Logger logger             = LoggerFactory.getLogger(ZoomButton.class);
 
