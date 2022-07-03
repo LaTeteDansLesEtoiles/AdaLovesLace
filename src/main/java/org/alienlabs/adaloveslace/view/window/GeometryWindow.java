@@ -1,5 +1,6 @@
 package org.alienlabs.adaloveslace.view.window;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -7,6 +8,8 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
@@ -14,6 +17,10 @@ import org.alienlabs.adaloveslace.view.component.button.geometrywindow.DrawingBu
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.RotationButton;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.ZoomButton;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.DownButton;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.LeftButton;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.RightButton;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.UpButton;
 import org.alienlabs.adaloveslace.view.component.spinner.RotationSpinner;
 import org.alienlabs.adaloveslace.view.component.spinner.ZoomSpinner;
 import org.slf4j.Logger;
@@ -31,30 +38,35 @@ import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.Zo
 
 public class GeometryWindow {
 
-  public static final double GEOMETRY_WINDOW_X            = 1100d;
-  public static final double GEOMETRY_WINDOW_WIDTH        = 400d;
-  public static final double VERTICAL_BUTTONS_PADDING     = 135d;
-  public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
+  public static final double GEOMETRY_WINDOW_X                  = 1100d;
+  public static final double GEOMETRY_WINDOW_WIDTH              = 400d;
+  public static final double GEOMETRY_WINDOW_HEIGHT             = 535d;
+  public static final double VERTICAL_GEOMETRY_BUTTONS_PADDING  = 135d;
+  public static final double VERTICAL_MOVE_KNOTS_BUTTONS_PADDING= 350d;
+  public static final double GAP_BETWEEN_BUTTONS                = 10d;
 
-  public static final double GEOMETRY_BUTTONS_HEIGHT      = 50d;
-  public static final int ROTATION_SPINNER_MIN_VALUE      = -360;
-  public static final int ROTATION_SPINNER_MAX_VALUE      = 360;
-  public static final int ROTATION_SPINNER_DEFAULT_VALUE  = 0;
-  public static final int ROTATION_SPINNER_INCREMENTS_1   = 1;
-  public static final int ROTATION_SPINNER_INCREMENTS_2   = 10;
-  public static final int ROTATION_SPINNER_INCREMENTS_3   = 30;
+  public static final double GEOMETRY_BUTTONS_HEIGHT            = 50d;
+  public static final int ROTATION_SPINNER_MIN_VALUE            = -360;
+  public static final int ROTATION_SPINNER_MAX_VALUE            = 360;
+  public static final int ROTATION_SPINNER_DEFAULT_VALUE        = 0;
+  public static final int ROTATION_SPINNER_INCREMENTS_1         = 1;
+  public static final int ROTATION_SPINNER_INCREMENTS_2         = 10;
+  public static final int ROTATION_SPINNER_INCREMENTS_3         = 30;
 
-  public static final int ZOOM_SPINNER_MIN_VALUE          = -20;
-  public static final int ZOOM_SPINNER_MAX_VALUE          = 20;
-  public static final double ZOOM_SPINNER_ZOOM_FACTOR     = 9d;
-  public static final double ZOOM_SPINNER_MULTIPLY_FACTOR = 0.1d;
-  public static final int ZOOM_SPINNER_DEFAULT_VALUE      = 1;
-  public static final int ZOOM_SPINNER_INCREMENTS_1       = 1;
-  public static final int ZOOM_SPINNER_INCREMENTS_2       = 2;
-  public static final int ZOOM_SPINNER_INCREMENTS_3       = 3;
+  public static final int ZOOM_SPINNER_MIN_VALUE                = -20;
+  public static final int ZOOM_SPINNER_MAX_VALUE                = 20;
+  public static final double ZOOM_SPINNER_ZOOM_FACTOR           = 9d;
+  public static final double ZOOM_SPINNER_MULTIPLY_FACTOR       = 0.1d;
+  public static final int ZOOM_SPINNER_DEFAULT_VALUE            = 1;
+  public static final int ZOOM_SPINNER_INCREMENTS_1             = 1;
+  public static final int ZOOM_SPINNER_INCREMENTS_2             = 2;
+  public static final int ZOOM_SPINNER_INCREMENTS_3             = 3;
 
-  private static final Logger logger = LoggerFactory.getLogger(GeometryWindow.class);
   private DrawingButton drawingButton;
+  private UpButton upButton;
+  private DownButton downButton;
+  private LeftButton leftButton;
+  private RightButton rightButton;
   private SelectionButton selectionButton;
   private RotationButton rotationButton;
   private ZoomButton zoomButton;
@@ -65,11 +77,16 @@ public class GeometryWindow {
   private Spinner<Integer> zoomSpinner2;
   private Spinner<Integer> zoomSpinner3;
 
-  public void createGeometryStage(Stage geometryStage, TilePane buttonsPane, TilePane patternsPane) {
-    buttonsPane.setTranslateY(VERTICAL_BUTTONS_PADDING);
+  private static final Logger logger = LoggerFactory.getLogger(GeometryWindow.class);
+
+  public void createGeometryStage(Stage geometryStage, Pane buttonsPane, Pane moveKnotPane, Pane patternsPane) {
+    buttonsPane.setTranslateY(VERTICAL_GEOMETRY_BUTTONS_PADDING);
     patternsPane.getChildren().add(buttonsPane);
 
-    Scene geometryScene = new Scene(patternsPane, GEOMETRY_WINDOW_WIDTH, 350);
+    moveKnotPane.setTranslateY(VERTICAL_MOVE_KNOTS_BUTTONS_PADDING);
+    patternsPane.getChildren().add(moveKnotPane);
+
+    Scene geometryScene = new Scene(patternsPane, GEOMETRY_WINDOW_WIDTH, GEOMETRY_WINDOW_HEIGHT);
 
     geometryStage.setTitle(GEOMETRY_TITLE);
     geometryStage.setOnCloseRequest(windowEvent -> {
@@ -86,7 +103,7 @@ public class GeometryWindow {
     TilePane buttonsPane  = new TilePane(Orientation.HORIZONTAL);
     buttonsPane.setAlignment(Pos.BOTTOM_CENTER);
     buttonsPane.setPrefColumns(2);
-    buttonsPane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
+    buttonsPane.setVgap(GAP_BETWEEN_BUTTONS);
 
     this.drawingButton = new DrawingButton(app, this, DRAWING_BUTTON_NAME);
     getImageView("drawing.png", drawingButton, true);
@@ -133,6 +150,34 @@ public class GeometryWindow {
     return buttonsPane;
   }
 
+  public GridPane createMoveKnotButtons(App app) {
+    GridPane moveKnotPane = new GridPane();
+    moveKnotPane.setAlignment(Pos.BOTTOM_CENTER);
+    //Setting the padding
+    moveKnotPane.setPadding(new Insets(10, 10, 10, 10));
+    //Setting the vertical and horizontal gaps between the columns
+    moveKnotPane.setVgap(GAP_BETWEEN_BUTTONS);
+    moveKnotPane.setHgap(GAP_BETWEEN_BUTTONS);
+
+    this.upButton = new UpButton(app, this);
+    getImageView("Up.png", this.upButton, false);
+    moveKnotPane.add(this.upButton, 1, 0);
+
+    this.downButton = new DownButton(app, this);
+    getImageView("Down.png", this.downButton, false);
+    moveKnotPane.add(this.downButton, 1, 2);
+
+    this.leftButton = new LeftButton(app, this);
+    getImageView("Left.png", this.leftButton, false);
+    moveKnotPane.add(this.leftButton, 0, 1);
+
+    this.rightButton = new RightButton(app, this);
+    getImageView("Right.png", this.rightButton, false);
+    moveKnotPane.add(this.rightButton, 2, 1);
+
+    return moveKnotPane;
+  }
+
   private void getImageView(String pathname, ToggleButton button, boolean isSelected) {
     try {
       Image buttonImage = new Image(new File(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm());
@@ -141,7 +186,10 @@ public class GeometryWindow {
       buttonImageView.setFitHeight(ICON_SIZE);
       buttonImageView.setPreserveRatio(true);
       button.setGraphic(buttonImageView);
-      button.setSelected(isSelected);
+
+      if (isSelected) {
+        button.setSelected(true);
+      }
     } catch (MalformedURLException e) {
       logger.error("Error loading button image!", e);
     }

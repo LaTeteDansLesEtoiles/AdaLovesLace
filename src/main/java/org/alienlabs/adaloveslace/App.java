@@ -5,6 +5,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
@@ -139,9 +140,10 @@ public class App extends Application {
 
 
     GeometryWindow geometryWindow = new GeometryWindow();
-    TilePane buttonsPane = geometryWindow.createGeometryButtons(app);
+    Pane buttonsPane              = geometryWindow.createGeometryButtons(app);
+    Pane moveKnotPane             = geometryWindow.createMoveKnotButtons(app);
 
-    geometryWindow.createGeometryStage(geometryStage, buttonsPane, geometryPane);
+    geometryWindow.createGeometryStage(geometryStage, buttonsPane, moveKnotPane, geometryPane);
     return geometryWindow;
   }
 

@@ -123,6 +123,9 @@ public class OptionalDotGrid extends Pane {
 
     double x = knot.getX();
     double y = knot.getY();
+
+    iv.setX(x);
+    iv.setY(y);
     logger.info("drawing top left corner of knot {} to ({},{})", knot.getPattern().getFilename(), x, y);
   }
 
