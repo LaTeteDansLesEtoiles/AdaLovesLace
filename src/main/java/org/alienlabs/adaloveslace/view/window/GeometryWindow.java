@@ -44,14 +44,14 @@ public class GeometryWindow {
   public static final int ROTATION_SPINNER_INCREMENTS_2   = 10;
   public static final int ROTATION_SPINNER_INCREMENTS_3   = 30;
 
-  public static final int ZOOM_SPINNER_MIN_VALUE      = -20;
-  public static final int ZOOM_SPINNER_MAX_VALUE      = 20;
+  public static final int ZOOM_SPINNER_MIN_VALUE          = -20;
+  public static final int ZOOM_SPINNER_MAX_VALUE          = 20;
   public static final double ZOOM_SPINNER_ZOOM_FACTOR     = 9d;
   public static final double ZOOM_SPINNER_MULTIPLY_FACTOR = 0.1d;
-  public static final int ZOOM_SPINNER_DEFAULT_VALUE  = 1;
-  public static final int ZOOM_SPINNER_INCREMENTS_1   = 1;
-  public static final int ZOOM_SPINNER_INCREMENTS_2   = 2;
-  public static final int ZOOM_SPINNER_INCREMENTS_3   = 3;
+  public static final int ZOOM_SPINNER_DEFAULT_VALUE      = 1;
+  public static final int ZOOM_SPINNER_INCREMENTS_1       = 1;
+  public static final int ZOOM_SPINNER_INCREMENTS_2       = 2;
+  public static final int ZOOM_SPINNER_INCREMENTS_3       = 3;
 
   private static final Logger logger = LoggerFactory.getLogger(GeometryWindow.class);
   private DrawingButton drawingButton;
