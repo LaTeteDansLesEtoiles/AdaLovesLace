@@ -12,12 +12,15 @@ import javafx.scene.layout.TilePane;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Iterator;
 
@@ -27,6 +30,7 @@ public class MainWindow {
 
   private static final double FOOTER_X      = 60d;
   public static final double MENU_BAR_Y     = -10d;
+  public static final double  NEW_KNOT_GAP  = 15d;
   public final MenuBar menuBar;
   private OptionalDotGrid optionalDotGrid;
   private TilePane footer;
@@ -146,7 +150,7 @@ public class MainWindow {
   public void onMainWindowClicked(final Group root) {
     root.setOnMouseClicked(event -> {
       String eType = event.getEventType().toString();
-      logger.info("Event type -> {}", eType);
+      logger.info("Event type -> {},  current Knot index {}", eType, this.getOptionalDotGrid().getDiagram().getCurrentKnotIndex());
 
       if (eType.equals(MOUSE_CLICKED)) {
         double x          = event.getX();
@@ -157,9 +161,11 @@ public class MainWindow {
         logger.info("Coordinate Y     -> {}, Y - TOP -> {}", y, yMinusTop);
 
         switch (this.getOptionalDotGrid().getDiagram().getCurrentMode()) {
-          case DRAWING    -> onClickWithDrawMode(this.getOptionalDotGrid().getDiagram(),
+          case DRAWING      -> onClickWithDrawMode(this.getOptionalDotGrid().getDiagram(),
             optionalDotGrid.addKnot(x, y), false);
-          case SELECTION  -> onClickWithSelectionMode(x, y);
+          case SELECTION    -> onClickWithSelectionMode(x, y);
+          case DELETION     -> onClickWithDeletionMode(this.getOptionalDotGrid().getDiagram(), x, y) ;
+          case DUPLICATION  -> onClickWithDuplicationMode(this.getOptionalDotGrid().getDiagram(), x, y);
         }
       }
     });
@@ -195,6 +201,76 @@ public class MainWindow {
 
       optionalDotGrid.layoutChildren();
     }
+  }
+
+  private void onClickWithDeletionMode(Diagram diagram, double x, double y) {
+    for (Knot knot : diagram.getKnots()) {
+      try {
+        if (removeKnotIfClicked(diagram, x, y, knot)) {
+          optionalDotGrid.layoutChildren();
+
+          return;
+        }
+      } catch (MalformedURLException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  private void onClickWithDuplicationMode(Diagram diagram, double x, double y) {
+    for (Knot knot : diagram.getKnots()) {
+      try {
+        if ((new NodeUtil().isClicked(knot, x, y)) && (duplicateKnot(diagram, x, y, knot))) {
+          break;
+        }
+      } catch (MalformedURLException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  private boolean duplicateKnot(Diagram diagram, double x, double y, Knot knot) {
+    logger.info("Duplicating Knot {}", knot);
+
+    try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
+      Knot newKnot = newKnot(x, y, knot, fis);
+      diagram.addKnot(newKnot);
+      optionalDotGrid.layoutChildren();
+
+      return true;
+    } catch (IOException e) {
+      logger.error("Problem with pattern resource file!", e);
+    }
+    return false;
+  }
+
+  private Knot newKnot(double x, double y, Knot knot, FileInputStream fis) {
+    Knot newKnot = new Knot();
+    newKnot.setX(x + NEW_KNOT_GAP);
+    newKnot.setY(y + NEW_KNOT_GAP);
+    newKnot.setPattern(knot.getPattern());
+    newKnot.setRotationAngle(0d);
+    newKnot.setZoomFactor(1d);
+    newKnot.setVisible(true);
+
+    new FileUtil().buildKnotImageView(newKnot, fis);
+    return newKnot;
+  }
+
+  private boolean removeKnotIfClicked(Diagram diagram, double x, double y, Knot knot) throws MalformedURLException {
+    if (new NodeUtil().isClicked(knot, x, y)) {
+      logger.info("Removing Knot {}", knot);
+      knot.setVisible(false);
+
+      if (diagram.getCurrentKnotIndex() >= diagram.getKnots().size()) {
+        // We shall shift left the current Knot index if it is after the end of the Knot list
+        diagram.setCurrentKnotIndex(diagram.getKnots().size());
+      }
+
+      return true;
+    }
+
+    return false;
   }
 
   private boolean drawKnot(double x, double y, boolean hasClickedOnAKnot, Knot knot) {

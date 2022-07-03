@@ -32,21 +32,26 @@ public class Knot {
 
   private Pattern pattern;
 
+  private boolean visible;
+
   @XmlTransient
   private ImageView imageView;
 
   public Knot() {
     this.uuid = UUID.randomUUID();
+    this.visible = true;
   }
 
   public Knot(final double x, final double y, final Pattern pattern, final ImageView imageView) {
-    this.x = x;
-    this.y = y;
-    this.pattern = pattern;
-    this.imageView = imageView;
+    this.x              = x;
+    this.y              = y;
+    this.pattern        = pattern;
+    this.imageView      = imageView;
 
-    this.uuid = UUID.randomUUID();
-    this.rotationAngle = 0;
+    this.uuid           = UUID.randomUUID();
+    this.rotationAngle  = 0d;
+    this.zoomFactor     = 0d;
+    this.visible        = true;
   }
 
   public UUID getUuid() {
@@ -101,6 +106,14 @@ public class Knot {
     this.imageView = imageView;
   }
 
+  public boolean isVisible() {
+    return visible;
+  }
+
+  public void setVisible(boolean visible) {
+    this.visible = visible;
+  }
+
   public boolean coincide(Knot other) {
     return this.x == other.x && this.y == other.y &&
       this.pattern.getAbsoluteFilename().equals(other.getPattern().getAbsoluteFilename());
@@ -128,6 +141,8 @@ public class Knot {
       ", rotationAngle=" + rotationAngle +
       ", zoomFactor=" + zoomFactor +
       ", pattern=" + pattern +
+      ", visible=" + visible +
       '}';
   }
+
 }

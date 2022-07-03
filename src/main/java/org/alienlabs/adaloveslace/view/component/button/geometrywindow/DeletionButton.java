@@ -10,14 +10,14 @@ import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
-public class SelectionButton extends ToggleButton {
+public class DeletionButton extends ToggleButton {
 
-  public static final String SELECTION_BUTTON_NAME    = "Select ";
-  public static final String BUTTON_TOOLTIP           = "Select this button then click on a\nknot in the canvas to select it\n";
+  public static final String DELETION_BUTTON_NAME     = "Delete ";
+  public static final String BUTTON_TOOLTIP           = "Select this button then click on a\nknot in the canvas to delete it\n";
 
-  private static final Logger logger                  = LoggerFactory.getLogger(SelectionButton.class);
+  private static final Logger logger                  = LoggerFactory.getLogger(DeletionButton.class);
 
-  public SelectionButton(App app, GeometryWindow window, String buttonLabel) {
+  public DeletionButton(App app, GeometryWindow window, String buttonLabel) {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onSetSelectionModeAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
@@ -29,12 +29,12 @@ public class SelectionButton extends ToggleButton {
   }
 
   public static void onSetSelectionModeAction(App app, GeometryWindow window) {
-    logger.info("Setting selection mode");
-    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
+    logger.info("Setting deletion mode");
+    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DELETION);
 
     window.getDrawingButton()     .setSelected(false);
-    window.getSelectionButton()   .setSelected(true);
-    window.getDeletionButton()    .setSelected(false);
+    window.getSelectionButton()   .setSelected(false);
+    window.getDeletionButton()    .setSelected(true);
     window.getDuplicationButton() .setSelected(false);
   }
 
