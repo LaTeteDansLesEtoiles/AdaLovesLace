@@ -14,6 +14,7 @@ public class ZoomButton extends ToggleButton {
   public static final String ZOOM_BUTTON_NAME    = " Zoom ";
 
   private static final Logger logger                  = LoggerFactory.getLogger(ZoomButton.class);
+
   public ZoomButton(App app, GeometryWindow window, String buttonLabel) {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onSetSelectionModeAction(app, window));
