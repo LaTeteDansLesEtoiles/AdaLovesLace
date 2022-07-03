@@ -72,6 +72,7 @@ public class App extends Application {
   private Stage primaryStage;
   private Stage geometryStage;
   private GeometryWindow geometryWindow;
+  private ToolboxWindow toolboxWindow;
 
   @Override
   public void start(Stage primaryStage) {
@@ -129,7 +130,7 @@ public class App extends Application {
     patternsPane.setAlignment(Pos.TOP_CENTER);
 
 
-    ToolboxWindow toolboxWindow = new ToolboxWindow();
+    toolboxWindow = new ToolboxWindow();
     this.diagram = toolboxWindow.createToolboxPane(patternsPane, classpathBase, resourcesPath, app, this.diagram);
     TilePane buttonsPane = toolboxWindow.createToolboxButtons(app);
 
@@ -179,6 +180,10 @@ public class App extends Application {
     justification = "Copying a toolbox stage would mean working with another window")
   public Stage getToolboxStage() {
     return this.toolboxStage;
+  }
+
+  public ToolboxWindow getToolboxWindow() {
+    return toolboxWindow;
   }
 
   public Stage getGeometryStage() {

@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -60,13 +61,19 @@ public class ToolboxWindow {
   public static final String PRINT_DIAGRAM                = "Print diagram";
   public static final String THE_FOLLOWING_FOLDER_STRING  = "The following folder: '";
 
-  private List<String> classpathResourceFiles;
+  private List<String>        classpathResourceFiles;
+
+  private UndoKnotButton      undoKnotButton;
+  private RedoKnotButton      redoKnotButton;
+  private ResetDiagramButton  resetDiagramButton;
+  private ToggleButton        snowflakeButton;
+  private List<ToggleButton>  allPatterns;
 
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
-  private UndoKnotButton undoKnotButton;
-  private RedoKnotButton redoKnotButton;
-  private ResetDiagramButton resetDiagramButton;
-  private ToggleButton snowflakeButton;
+
+  public ToolboxWindow() {
+    this.allPatterns = new ArrayList<>();
+  }
 
   public Diagram createToolboxPane(TilePane toolboxPane, Object classpathBase, String resourcesPath, App app, final Diagram diagram) {
     this.classpathResourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
@@ -123,6 +130,7 @@ public class ToolboxWindow {
     ToggleButton button = new PatternButton(app, label, iv, pattern);
     button.setId(TOOLBOX_BUTTON + (i + 1));
     patternsPane.getChildren().add(button);
+    this.allPatterns.add(button);
 
     if (pattern.getFilename().equals("snowflake_small.jpg")) {
       this.snowflakeButton = button;
@@ -278,10 +286,10 @@ public class ToolboxWindow {
   }
 
   private void buildEditButtons(App app, TilePane buttonsPane) {
-    undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
-    redoKnotButton      = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
-    resetDiagramButton  = new ResetDiagramButton  (RESET_DIAGRAM_BUTTON_NAME, app);
-    buttonsPane.getChildren().addAll(undoKnotButton, redoKnotButton, resetDiagramButton);
+    this.undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
+    this.redoKnotButton      = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
+    this.resetDiagramButton  = new ResetDiagramButton  (RESET_DIAGRAM_BUTTON_NAME, app);
+    buttonsPane.getChildren().addAll(this.undoKnotButton, this.redoKnotButton, this.resetDiagramButton);
   }
 
   private void buildFileButtons(App app, TilePane buttonsPane) {
@@ -322,19 +330,23 @@ public class ToolboxWindow {
   }
 
   public UndoKnotButton getUndoKnotButton() {
-    return undoKnotButton;
+    return this.undoKnotButton;
   }
 
   public RedoKnotButton getRedoKnotButton() {
-    return redoKnotButton;
+    return this.redoKnotButton;
   }
 
   public ResetDiagramButton getResetDiagramButton() {
-    return resetDiagramButton;
+    return this.resetDiagramButton;
+  }
+
+  public List<ToggleButton> getAllPatterns() {
+    return this.allPatterns;
   }
 
   public ToggleButton getSnowflakeButton() {
-    return snowflakeButton;
+    return this.snowflakeButton;
   }
 
 }

@@ -31,9 +31,6 @@ public class RotationButton extends Button {
   public static void onSetRotationModeAction(App app, GeometryWindow window) {
     logger.info("Setting rotation mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.ROTATION);
-
-    window.getDrawingButton().setSelected(false);
-    window.getSelectionButton().setSelected(false);
   }
 
 }

@@ -31,9 +31,6 @@ public class ZoomButton extends Button {
   public static void onSetSelectionModeAction(App app, GeometryWindow window) {
     logger.info("Setting selection mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.ZOOM);
-
-    window.getDrawingButton().setSelected(false);
-    window.getSelectionButton().setSelected(false);
   }
 
 }

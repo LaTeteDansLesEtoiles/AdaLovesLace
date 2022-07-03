@@ -19,6 +19,11 @@ public class PatternButton extends ToggleButton {
     this.setSelected(false);
 
     this.setOnMouseClicked(event -> {
+      // Unselect all Pattern Buttons
+      app.getToolboxWindow().getAllPatterns().forEach(toggleButton -> toggleButton.setSelected(false));
+
+      // Treat click on the Pattern Button: set it as current Pattern of the Diagram
+      // (So it is selected)
       String eType = event.getEventType().toString();
       Pattern newCurrentPattern = ((PatternButton) event.getSource()).getPattern();
       PatternButton.this.setSelected(true);
