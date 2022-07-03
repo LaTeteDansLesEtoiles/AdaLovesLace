@@ -119,4 +119,15 @@ public class Knot {
     return Objects.hash(uuid);
   }
 
+  @Override
+  public String toString() {
+    return "Knot{" +
+      "uuid=" + uuid +
+      ", x=" + x +
+      ", y=" + y +
+      ", rotationAngle=" + rotationAngle +
+      ", zoomFactor=" + zoomFactor +
+      ", pattern=" + pattern +
+      '}';
+  }
 }
