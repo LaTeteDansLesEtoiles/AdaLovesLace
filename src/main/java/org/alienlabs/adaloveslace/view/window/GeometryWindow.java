@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
@@ -200,7 +201,7 @@ public class GeometryWindow {
     return moveKnotPane;
   }
 
-  private void getImageView(String pathname, ToggleButton button, boolean isSelected) {
+  private void getImageView(String pathname, ButtonBase button, boolean isSelected) {
     try {
       Image buttonImage = new Image(new File(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm());
 
@@ -210,7 +211,7 @@ public class GeometryWindow {
       button.setGraphic(buttonImageView);
 
       if (isSelected) {
-        button.setSelected(true);
+        ((ToggleButton)button).setSelected(true);
       }
     } catch (MalformedURLException e) {
       logger.error("Error loading button image!", e);

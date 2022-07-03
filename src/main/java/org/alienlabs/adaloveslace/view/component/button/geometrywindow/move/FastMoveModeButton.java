@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow.move;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
@@ -11,9 +12,12 @@ import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUT
 
 public class FastMoveModeButton extends ToggleButton {
 
-  private static SimpleBooleanProperty isFastMode;
+  public static final String BUTTON_TOOLTIP             = "Set \"fast knot move\" mode on or off\n";
+  public static final double FAST_MODE_SPEED            = 5d;
+  public static final double SLOW_MODE_SPEED            = 1d;
 
-  public static final boolean DEFAULT_FAST_MODE         = false;
+  private static SimpleBooleanProperty isFastMode;
+  private static final boolean DEFAULT_FAST_MODE        = false;
 
   private static final Logger logger                    = LoggerFactory.getLogger(FastMoveModeButton.class);
 
@@ -23,6 +27,10 @@ public class FastMoveModeButton extends ToggleButton {
     this.setOnMouseClicked(event -> onSwitchSlowModeAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
     this.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
+
+    final Tooltip tooltip = new Tooltip();
+    tooltip.setText(BUTTON_TOOLTIP);
+    this.setTooltip(tooltip);
   }
 
   public static void onSwitchSlowModeAction(App app, GeometryWindow window) {
@@ -31,7 +39,7 @@ public class FastMoveModeButton extends ToggleButton {
   }
 
   public static double getMoveSpeed() {
-    return isFastMode.get() ? 5d : 1d;
+    return isFastMode.get() ? FAST_MODE_SPEED : SLOW_MODE_SPEED;
   }
 
 }

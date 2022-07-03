@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -65,7 +66,7 @@ public class ToolboxWindow {
   private UndoKnotButton undoKnotButton;
   private RedoKnotButton redoKnotButton;
   private ResetDiagramButton resetDiagramButton;
-  private Button snowflakeButton;
+  private ToggleButton snowflakeButton;
 
   public Diagram createToolboxPane(TilePane toolboxPane, Object classpathBase, String resourcesPath, App app, final Diagram diagram) {
     this.classpathResourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
@@ -119,7 +120,7 @@ public class ToolboxWindow {
     pattern.setCenterX(img.getWidth() / 2);
     pattern.setCenterY(img.getHeight() / 2);
 
-    Button button = new PatternButton(app, label, iv, pattern);
+    ToggleButton button = new PatternButton(app, label, iv, pattern);
     button.setId(TOOLBOX_BUTTON + (i + 1));
     patternsPane.getChildren().add(button);
 
@@ -332,7 +333,7 @@ public class ToolboxWindow {
     return resetDiagramButton;
   }
 
-  public Button getSnowflakeButton() {
+  public ToggleButton getSnowflakeButton() {
     return snowflakeButton;
   }
 

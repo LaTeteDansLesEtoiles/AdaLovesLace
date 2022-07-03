@@ -1,6 +1,7 @@
 package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
@@ -12,6 +13,7 @@ import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUT
 public class SelectionButton extends ToggleButton {
 
   public static final String SELECTION_BUTTON_NAME    = "Select ";
+  public static final String BUTTON_TOOLTIP           = "Select this button then click on a\nknot in the canvas to select it\n";
 
   private static final Logger logger                  = LoggerFactory.getLogger(SelectionButton.class);
 
@@ -20,6 +22,10 @@ public class SelectionButton extends ToggleButton {
     this.setOnMouseClicked(event -> onSetSelectionModeAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
     this.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
+
+    final Tooltip tooltip = new Tooltip();
+    tooltip.setText(BUTTON_TOOLTIP);
+    this.setTooltip(tooltip);
   }
 
   public static void onSetSelectionModeAction(App app, GeometryWindow window) {
@@ -28,8 +34,6 @@ public class SelectionButton extends ToggleButton {
 
     window.getDrawingButton().setSelected(false);
     window.getSelectionButton().setSelected(true);
-    window.getRotationButton().setSelected(false);
-    window.getZoomButton().setSelected(false);
   }
 
 }
