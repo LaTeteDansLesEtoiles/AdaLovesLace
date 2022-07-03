@@ -43,6 +43,7 @@ public class OptionalDotGrid extends Pane {
   private SimpleObjectProperty<Pattern> currentPatternProperty;
   private SimpleObjectProperty<Diagram> diagramProperty;
   private boolean showHideGrid          = true;
+  private boolean gridNeedsToBeRedrawn;
 
   private double desiredRadius;
 
@@ -79,6 +80,8 @@ public class OptionalDotGrid extends Pane {
       this.showHideGrid = showHideGridProperty.getValue();
       setNeedsLayout(true);
     });
+
+    this.gridNeedsToBeRedrawn = true;
   }
 
   public OptionalDotGrid(double width, double height, double desiredRadius, Diagram diagram, Group root) {
@@ -90,7 +93,10 @@ public class OptionalDotGrid extends Pane {
 
   @Override
   public void layoutChildren() {
-    initGrid();
+    if (this.gridNeedsToBeRedrawn) {
+      drawGrid();
+    }
+
     drawDiagram();
   }
 
@@ -123,7 +129,10 @@ public class OptionalDotGrid extends Pane {
 
     double x = knot.getX();
     double y = knot.getY();
-    logger.info("drawing top left corner of knot {} to ({},{})", knot.getPattern().getFilename(), x, y);
+
+    iv.setX(x);
+    iv.setY(y);
+    logger.debug("drawing top left corner of knot {} to ({},{})", knot.getPattern().getFilename(), x, y);
   }
 
   // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
@@ -142,12 +151,12 @@ public class OptionalDotGrid extends Pane {
 
     knot.getImageView().setOpacity(1.0d);
     knot.getImageView().setRotate(knot.getRotationAngle());
-    logger.info("rotating knot {} at angle {}", knot.getPattern().getFilename(), knot.getRotationAngle());
+    logger.debug("rotating knot {} at angle {}", knot.getPattern().getFilename(), knot.getRotationAngle());
 
     return knot.getImageView();
   }
 
-  private void initGrid() {
+  private void drawGrid() {
     double top = (int) snappedTopInset() + TOP_MARGIN;
     double right = (int) snappedRightInset();
     double bottom = (int) snappedBottomInset();
@@ -157,11 +166,13 @@ public class OptionalDotGrid extends Pane {
     root.setLayoutX(left);
     root.setLayoutY(top);
 
-    if (this.showHideGrid) {
+    if (this.showHideGrid && this.gridNeedsToBeRedrawn) {
       drawGrid(width, height);
     } else {
       hideGrid();
     }
+
+    this.gridNeedsToBeRedrawn = false;
   }
 
   private void hideGrid() {
@@ -187,7 +198,7 @@ public class OptionalDotGrid extends Pane {
 
   public Knot addKnot(double centerX, double centerY) {
     Pattern currentPattern = this.diagram.getCurrentPattern();
-    logger.info("Current pattern  -> {}", currentPattern);
+    logger.debug("Current pattern  -> {}", currentPattern);
     Knot currentKnot = null;
 
     try (FileInputStream fis = new FileInputStream(currentPattern.getAbsoluteFilename())) {
@@ -201,8 +212,8 @@ public class OptionalDotGrid extends Pane {
       iv.setRotate(0d);
       iv.setOpacity(1.0d);
 
-      logger.info("Top left corner of the knot {} is ({},{})", currentPattern.getFilename(), cornerX, cornerY);
-      logger.info("Center of the knot {} is ({},{})", currentPattern.getFilename(), centerX, centerY);
+      logger.debug("Top left corner of the knot {} is ({},{})", currentPattern.getFilename(), cornerX, cornerY);
+      logger.debug("Center of the knot {} is ({},{})", currentPattern.getFilename(), centerX, centerY);
 
       root.getChildren().add(iv);
       currentKnot = new Knot(cornerX, cornerY, currentPattern, iv);
@@ -213,6 +224,10 @@ public class OptionalDotGrid extends Pane {
     }
 
     return currentKnot;
+  }
+
+  public void setGridNeedsToBeRedrawn(boolean gridNeedsToBeRedrawn) {
+    this.gridNeedsToBeRedrawn = gridNeedsToBeRedrawn;
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
