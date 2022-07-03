@@ -10,8 +10,6 @@ import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUT
 
 public class LeftButton extends ToggleButton {
 
-  public static final String LeftButton     = "";
-
   private static final Logger logger        = LoggerFactory.getLogger(LeftButton.class);
 
   public LeftButton(App app, GeometryWindow window, String buttonLabel) {
