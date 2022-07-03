@@ -102,13 +102,15 @@ public class Knot {
   }
 
   public boolean coincide(Knot other) {
-    return this.x == other.x && this.y == other.y && this.pattern.getAbsoluteFilename().equals(other.getPattern().getAbsoluteFilename());
+    return this.x == other.x && this.y == other.y &&
+      this.pattern.getAbsoluteFilename().equals(other.getPattern().getAbsoluteFilename());
   }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof Knot knot)) return false;
+
     return uuid.equals(knot.uuid);
   }
 

@@ -7,6 +7,8 @@ import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+
 public class DrawingButton extends ToggleButton {
 
   public static final String DRAWING_BUTTON_NAME    = " Draw ";
@@ -16,6 +18,8 @@ public class DrawingButton extends ToggleButton {
   public DrawingButton(App app, GeometryWindow window, String buttonLabel) {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onSetDrawModeAction(app, window));
+    this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
+    this.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
   }
 
   public static void onSetDrawModeAction(App app, GeometryWindow window) {

@@ -21,6 +21,10 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNullElseGet;
+import static org.alienlabs.adaloveslace.view.window.GeometryWindow.ZOOM_SPINNER_MULTIPLY_FACTOR;
+import static org.alienlabs.adaloveslace.view.window.GeometryWindow.ZOOM_SPINNER_ZOOM_FACTOR;
+
 /**
  * A grid (= coordinate system) with dots (= used as landmarks for lace).
  */
@@ -28,8 +32,8 @@ public class OptionalDotGrid extends Pane {
 
   public static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
   private static final double RADIUS    = 0.5d; // The dots are ellipses, this is their radius
-  double GRID_WIDTH = 1240d;
-  double GRID_HEIGHT = 600d;
+  double GRID_WIDTH                     = 1240d;
+  double GRID_HEIGHT                    = 600d;
   public static final double TOP_MARGIN = 10d;
 
   private static final double SPACING_X = 25d; // The X space between the dots
@@ -44,7 +48,7 @@ public class OptionalDotGrid extends Pane {
 
   private Diagram diagram;
 
-  private Set<Shape> grid = new HashSet<>();
+  private final Set<Shape> grid = new HashSet<>();
 
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
   private final Group root;
@@ -57,11 +61,7 @@ public class OptionalDotGrid extends Pane {
    */
   public OptionalDotGrid(Diagram diagram, Group root) {
     this.root = root;
-    if (diagram == null) {
-      this.diagram = new Diagram();
-    } else {
-      this.diagram = diagram;
-    }
+    this.diagram = requireNonNullElseGet(diagram, Diagram::new);
 
     this.desiredRadius = RADIUS;
 
@@ -99,7 +99,7 @@ public class OptionalDotGrid extends Pane {
     deleteKnotsFromCanvas();
 
     // If there are knots on the diagram, we must display them at each window refresh
-    for (Knot knot : this.diagram.getKnots().subList(0, this.diagram.getCurrentKnotIndex())) {
+   for (Knot knot : this.diagram.getKnots().subList(0, this.diagram.getCurrentKnotIndex())) {
       drawKnotWithRotationAndZoom(knot);
     }
   }
@@ -114,9 +114,7 @@ public class OptionalDotGrid extends Pane {
   }
 
   private void deleteKnotFromCanvas(Knot knot) {
-    if (root.getChildren().contains(knot.getImageView())) {
-      root.getChildren().remove(knot.getImageView());
-    }
+    root.getChildren().remove(knot.getImageView());
   }
 
   private void drawKnotWithRotationAndZoom(Knot knot) {
@@ -131,8 +129,8 @@ public class OptionalDotGrid extends Pane {
   // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
   private void zoomKnot(Knot knot, ImageView iv) {
     if (knot.getZoomFactor() != 0) {
-      iv.setScaleX((knot.getZoomFactor() + 11) * 0.1);
-      iv.setScaleY((knot.getZoomFactor() + 11) * 0.1);
+      iv.setScaleX((knot.getZoomFactor() + ZOOM_SPINNER_ZOOM_FACTOR) * ZOOM_SPINNER_MULTIPLY_FACTOR);
+      iv.setScaleY((knot.getZoomFactor() + ZOOM_SPINNER_ZOOM_FACTOR) * ZOOM_SPINNER_MULTIPLY_FACTOR);
     }
   }
 
@@ -168,9 +166,7 @@ public class OptionalDotGrid extends Pane {
 
   private void hideGrid() {
     for (Shape shape : grid) {
-      if (root.getChildren().contains(shape)) {
-        root.getChildren().remove(shape);
-      }
+      root.getChildren().remove(shape);
     }
   }
 

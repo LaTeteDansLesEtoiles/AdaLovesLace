@@ -7,17 +7,23 @@ import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.test.AppTestParent;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
 
-import static java.lang.Thread.sleep;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
 import static org.alienlabs.adaloveslace.test.view.MainWindowComponentTest.GRAY_DOTS_COLOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ToolboxComponentTest extends AppTestParent {
+
+  private static final Logger logger = LoggerFactory.getLogger(MainWindowComponentTest.class);
 
   /**
    * Init method called before each test
@@ -30,7 +36,12 @@ class ToolboxComponentTest extends AppTestParent {
   }
 
   @Test
-  void testShowToolboxWindow() {
+  void testToolWindowShallBeDisplayedByDefault() {
+    assertTrue(this.app.getToolboxStage().isShowing());
+  }
+
+  @Test
+  void testToolboxWindowTitle() {
     assertEquals(TOOLBOX_TITLE, this.app.getToolboxStage().getTitle());
   }
 
@@ -42,18 +53,18 @@ class ToolboxComponentTest extends AppTestParent {
   @Test
   void testHideGrid(FxRobot robot) {
     // Init
-    Point2D pointToMoveTo = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
-    robot.moveTo(pointToMoveTo);
-    foundColorOnGrid = getColor(pointToMoveTo);
+    Point2D pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
+    robot.moveTo(pointToCheck);
+    foundColorOnGrid = getColor(pointToCheck);
     assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
 
     // Run
+    lock = new CountDownLatch(1);
     switchGrid();
 
     // Move mouse and get the color of the pixel under the pointer
-    pointToMoveTo = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
-    robot.moveTo(pointToMoveTo);
-    Point2D pointToCheck = new Point2D(GRAY_PIXEL_X, GRAY_PIXEL_Y - app.getRoot().getLayoutY());
+    pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
+    robot.moveTo(pointToCheck);
     foundColorOnGrid = getColor(pointToCheck);
 
     // All we can say is that if we click on the empty canvas, then the pixel is white
@@ -69,18 +80,18 @@ class ToolboxComponentTest extends AppTestParent {
   @Test
   void testHideAndShowAgainGrid(FxRobot robot) {
     // Init
-    Point2D pointToMoveTo = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
-    robot.moveTo(pointToMoveTo);
-    foundColorOnGrid = getColor(pointToMoveTo);
+    Point2D pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
+    robot.moveTo(pointToCheck);
+    foundColorOnGrid = getColor(pointToCheck);
     assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
 
     // Run
+    lock = new CountDownLatch(1);
     switchGrid();
 
     // Move mouse and get the color of the pixel under the pointer
-    pointToMoveTo = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
-    robot.moveTo(pointToMoveTo);
-    Point2D pointToCheck = new Point2D(GRAY_PIXEL_X, GRAY_PIXEL_Y - app.getRoot().getLayoutY());
+    pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
+    robot.moveTo(pointToCheck);
     foundColorOnGrid = getColor(pointToCheck);
 
     // All we can say is that if we click on the empty canvas, then the pixel is white
@@ -88,11 +99,11 @@ class ToolboxComponentTest extends AppTestParent {
 
     // Run
     // Show the dot grid again
+    lock = new CountDownLatch(1);
     switchGrid();
 
-    pointToMoveTo = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
-    robot.moveTo(pointToMoveTo);
-    pointToCheck = new Point2D(GRAY_PIXEL_X, GRAY_PIXEL_Y - app.getRoot().getLayoutY());
+    pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
+    robot.moveTo(pointToCheck);
     foundColorOnGrid = getColor(pointToCheck);
 
     // All we can say is that if we click on the grid, then the pixel is gray
@@ -101,14 +112,17 @@ class ToolboxComponentTest extends AppTestParent {
 
   // Click on "show / hide dot grid" button in the toolbox
   private void switchGrid() {
-    Platform.runLater(() -> ShowHideGridButton.showHideGrid(app));
+    Platform.runLater(() -> {
+      ShowHideGridButton.showHideGrid(app);
+      lock.countDown();
+    });
 
     // No choice to sleep because the grid show / hide is asynchronous in tests (because of the image of the grid
     // that we produce, see: AppTestParent#copyCanvas()
     try {
-      sleep(1000l);
+      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      logger.error("Interrupted!", e);
     }
   }
 

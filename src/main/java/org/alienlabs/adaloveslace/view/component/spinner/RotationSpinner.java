@@ -4,6 +4,8 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import org.alienlabs.adaloveslace.App;
 
+import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+
 public class RotationSpinner {
 
   public void buildRotationSpinner(App app, Spinner<Integer> spinner,
@@ -20,6 +22,8 @@ public class RotationSpinner {
       });
 
     spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+    spinner.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
+    spinner.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
   }
 
 }

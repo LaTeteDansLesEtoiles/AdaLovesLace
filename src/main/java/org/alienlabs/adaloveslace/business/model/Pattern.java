@@ -77,4 +77,11 @@ public class Pattern {
     this.centerY = centerY;
   }
 
+  @Override
+  public String toString() {
+    return "Pattern{" +
+      "absoluteFilename='" + absoluteFilename + '\'' +
+      '}';
+  }
+
 }
