@@ -21,7 +21,7 @@ public class UpRightButton extends ToggleButton {
 
   public static void onMoveKnotUpRightAction(App app, GeometryWindow window) {
     Knot currentKnot = app.getOptionalDotGrid().getDiagram().getCurrentKnot();
-    logger.info("Moving up knot {}", currentKnot);
+    logger.debug("Moving up knot {}", currentKnot);
 
     currentKnot.setX(currentKnot.getX() + FastMoveModeButton.getMoveSpeed());
     currentKnot.setY(currentKnot.getY() - FastMoveModeButton.getMoveSpeed());
