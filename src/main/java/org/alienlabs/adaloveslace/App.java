@@ -1,10 +1,13 @@
 package org.alienlabs.adaloveslace;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
@@ -13,6 +16,10 @@ import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.DownButton;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.LeftButton;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.RightButton;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.UpButton;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
@@ -64,6 +71,7 @@ public class App extends Application {
   private Scene scene;
   private Stage primaryStage;
   private Stage geometryStage;
+  private GeometryWindow geometryWindow;
 
   @Override
   public void start(Stage primaryStage) {
@@ -139,16 +147,31 @@ public class App extends Application {
     geometryPane.setAlignment(Pos.TOP_CENTER);
 
 
-    GeometryWindow geometryWindow = new GeometryWindow();
+    geometryWindow = new GeometryWindow();
     Pane buttonsPane              = geometryWindow.createGeometryButtons(app);
     Pane moveKnotPane             = geometryWindow.createMoveKnotButtons(app);
 
-    geometryWindow.createGeometryStage(geometryStage, buttonsPane, moveKnotPane, geometryPane);
+    geometryWindow.createGeometryStage(app, geometryStage, buttonsPane, moveKnotPane, geometryPane);
+
+    initializeKeyboardShorcuts();
     return geometryWindow;
   }
 
   public static void main(String[] args) {
     launch();
+  }
+
+  public void initializeKeyboardShorcuts() {
+    Platform.runLater(() -> {
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.UP),
+        () -> UpButton.onMoveKnotUpAction       (this, this.getGeometryWindow()));
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN),
+        () -> DownButton.onMoveKnotDownAction   (this, this.getGeometryWindow()));
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.LEFT),
+        () -> LeftButton.onMoveKnotLeftAction   (this, this.getGeometryWindow()));
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT),
+        () -> RightButton.onMoveKnotRightAction (this, this.getGeometryWindow()));
+    });
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
@@ -172,6 +195,10 @@ public class App extends Application {
 
   public MainWindow getMainWindow() {
     return this.mainWindow;
+  }
+
+  public GeometryWindow getGeometryWindow() {
+    return geometryWindow;
   }
 
   public Group getRoot() {

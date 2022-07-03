@@ -21,9 +21,9 @@ public class RightButton extends ToggleButton {
 
   public static void onMoveKnotRightAction(App app, GeometryWindow window) {
     Knot currentKnot = app.getOptionalDotGrid().getDiagram().getCurrentKnot();
-    logger.info("Moving right knot {}", currentKnot);
+    logger.debug("Moving right knot {}", currentKnot);
 
-    currentKnot.setX(currentKnot.getX() + 5d);
+    currentKnot.setX(currentKnot.getX() + FastMoveModeButton.getMoveSpeed());
     app.getOptionalDotGrid().layoutChildren();
   }
 

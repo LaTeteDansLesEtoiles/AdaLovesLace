@@ -21,9 +21,9 @@ public class DownButton extends ToggleButton {
 
   public static void onMoveKnotDownAction(App app, GeometryWindow window) {
     Knot currentKnot = app.getOptionalDotGrid().getDiagram().getCurrentKnot();
-    logger.info("Moving down knot {}", currentKnot);
+    logger.debug("Moving down knot {}", currentKnot);
 
-    currentKnot.setY(currentKnot.getY() + 5d);
+    currentKnot.setY(currentKnot.getY() + FastMoveModeButton.getMoveSpeed());
     app.getOptionalDotGrid().layoutChildren();
   }
 

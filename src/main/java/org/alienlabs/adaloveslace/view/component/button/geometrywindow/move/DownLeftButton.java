@@ -9,21 +9,22 @@ import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
-public class LeftButton extends ToggleButton {
+public class DownLeftButton extends ToggleButton {
 
-  private static final Logger logger        = LoggerFactory.getLogger(LeftButton.class);
+  private static final Logger logger        = LoggerFactory.getLogger(DownLeftButton.class);
 
-  public LeftButton(App app, GeometryWindow window) {
-    this.setOnMouseClicked(event -> onMoveKnotLeftAction(app, window));
+  public DownLeftButton(App app, GeometryWindow window) {
+    this.setOnMouseClicked(event -> onMoveKnotDownLeftAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
     this.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
   }
 
-  public static void onMoveKnotLeftAction(App app, GeometryWindow window) {
+  public static void onMoveKnotDownLeftAction(App app, GeometryWindow window) {
     Knot currentKnot = app.getOptionalDotGrid().getDiagram().getCurrentKnot();
-    logger.debug("Moving left knot {}", currentKnot);
+    logger.info("Moving down knot {}", currentKnot);
 
     currentKnot.setX(currentKnot.getX() - FastMoveModeButton.getMoveSpeed());
+    currentKnot.setY(currentKnot.getY() + FastMoveModeButton.getMoveSpeed());
     app.getOptionalDotGrid().layoutChildren();
   }
 

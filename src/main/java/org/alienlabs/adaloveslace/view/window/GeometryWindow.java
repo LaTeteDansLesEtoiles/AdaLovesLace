@@ -17,10 +17,7 @@ import org.alienlabs.adaloveslace.view.component.button.geometrywindow.DrawingBu
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.RotationButton;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.ZoomButton;
-import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.DownButton;
-import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.LeftButton;
-import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.RightButton;
-import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.UpButton;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.*;
 import org.alienlabs.adaloveslace.view.component.spinner.RotationSpinner;
 import org.alienlabs.adaloveslace.view.component.spinner.ZoomSpinner;
 import org.slf4j.Logger;
@@ -67,6 +64,11 @@ public class GeometryWindow {
   private DownButton downButton;
   private LeftButton leftButton;
   private RightButton rightButton;
+  private DownLeftButton downLeftButton;
+  private DownRightButton downRightButton;
+  private UpLeftButton upLeftButton;
+  private UpRightButton upRightButton;
+  private FastMoveModeButton fastMoveModeButton;
   private SelectionButton selectionButton;
   private RotationButton rotationButton;
   private ZoomButton zoomButton;
@@ -79,7 +81,7 @@ public class GeometryWindow {
 
   private static final Logger logger = LoggerFactory.getLogger(GeometryWindow.class);
 
-  public void createGeometryStage(Stage geometryStage, Pane buttonsPane, Pane moveKnotPane, Pane patternsPane) {
+  public void createGeometryStage(App app, Stage geometryStage, Pane buttonsPane, Pane moveKnotPane, Pane patternsPane) {
     buttonsPane.setTranslateY(VERTICAL_GEOMETRY_BUTTONS_PADDING);
     patternsPane.getChildren().add(buttonsPane);
 
@@ -87,7 +89,6 @@ public class GeometryWindow {
     patternsPane.getChildren().add(moveKnotPane);
 
     Scene geometryScene = new Scene(patternsPane, GEOMETRY_WINDOW_WIDTH, GEOMETRY_WINDOW_HEIGHT);
-
     geometryStage.setTitle(GEOMETRY_TITLE);
     geometryStage.setOnCloseRequest(windowEvent -> {
       logger.info("You shall not close the geometry window directly!");
@@ -150,6 +151,7 @@ public class GeometryWindow {
     return buttonsPane;
   }
 
+
   public GridPane createMoveKnotButtons(App app) {
     GridPane moveKnotPane = new GridPane();
     moveKnotPane.setAlignment(Pos.BOTTOM_CENTER);
@@ -160,20 +162,40 @@ public class GeometryWindow {
     moveKnotPane.setHgap(GAP_BETWEEN_BUTTONS);
 
     this.upButton = new UpButton(app, this);
-    getImageView("Up.png", this.upButton, false);
+    getImageView("up.png", this.upButton, false);
     moveKnotPane.add(this.upButton, 1, 0);
 
     this.downButton = new DownButton(app, this);
-    getImageView("Down.png", this.downButton, false);
+    getImageView("down.png", this.downButton, false);
     moveKnotPane.add(this.downButton, 1, 2);
 
     this.leftButton = new LeftButton(app, this);
-    getImageView("Left.png", this.leftButton, false);
+    getImageView("left.png", this.leftButton, false);
     moveKnotPane.add(this.leftButton, 0, 1);
 
     this.rightButton = new RightButton(app, this);
-    getImageView("Right.png", this.rightButton, false);
+    getImageView("right.png", this.rightButton, false);
     moveKnotPane.add(this.rightButton, 2, 1);
+
+    this.downLeftButton = new DownLeftButton(app, this);
+    getImageView("down_left.png", this.downLeftButton, false);
+    moveKnotPane.add(this.downLeftButton, 0, 2);
+
+    this.upLeftButton = new UpLeftButton(app, this);
+    getImageView("up_left.png", this.upLeftButton, false);
+    moveKnotPane.add(this.upLeftButton, 0, 0);
+
+    this.downRightButton = new DownRightButton(app, this);
+    getImageView("down_right.png", this.downRightButton, false);
+    moveKnotPane.add(this.downRightButton, 2, 2);
+
+    this.upRightButton = new UpRightButton(app, this);
+    getImageView("up_right.png", this.upRightButton, false);
+    moveKnotPane.add(this.upRightButton, 2, 0);
+
+    this.fastMoveModeButton = new FastMoveModeButton(app, this);
+    getImageView("fast.png", this.fastMoveModeButton, false);
+    moveKnotPane.add(this.fastMoveModeButton, 1, 1);
 
     return moveKnotPane;
   }
