@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace.view.component;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -106,21 +108,25 @@ public class OptionalDotGrid extends Pane {
 
     // If there are knots on the diagram, we must display them at each window refresh
    for (Knot knot : this.diagram.getKnots().subList(0, this.diagram.getCurrentKnotIndex())) {
-      drawKnotWithRotationAndZoom(knot);
+     if (knot.isVisible()) {
+       drawKnotWithRotationAndZoom(knot);
+     }
     }
   }
 
   // We whall not display the undone knots => delete them from canvas, then draw the grid again
   private void deleteKnotsFromCanvas() {
-    if (!this.diagram.getKnots().isEmpty()) {
-      for (Knot knot : this.diagram.getKnots().subList(this.diagram.getCurrentKnotIndex(), this.diagram.getKnots().size())) {
-        deleteKnotFromCanvas(knot);
+    ArrayList<Node> listOfAllNodes  = new ArrayList<>(root.getChildren());
+    ArrayList<Node> listToRemove    = new ArrayList<>(root.getChildren());
+
+    for (Node node : listOfAllNodes) {
+      if (node instanceof ImageView) {
+        listToRemove.remove(node);
       }
     }
-  }
 
-  private void deleteKnotFromCanvas(Knot knot) {
-    root.getChildren().remove(knot.getImageView());
+    root.getChildren().clear();
+    root.getChildren().addAll(listToRemove);
   }
 
   private void drawKnotWithRotationAndZoom(Knot knot) {

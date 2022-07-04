@@ -47,15 +47,17 @@ public class Diagram {
     this.knots            = new ArrayList<>(diagram.getKnots());
     this.currentKnotIndex = diagram.getCurrentKnotIndex();
     this.currentMode      = diagram.getCurrentMode();
+    this.currentKnot      = diagram.getCurrentKnot();
+    this.isKnotSelected   = diagram.isKnotSelected();
     this.setCurrentPattern(diagram.getCurrentPattern());
   }
 
   public List<Pattern> getPatterns() {
-    return new ArrayList<>(this.patterns);
+    return this.patterns;
   }
 
   public List<Knot> getKnots() {
-    return new ArrayList<>(this.knots);
+    return this.knots;
   }
 
   public void setKnots(List<Knot> knots) {
@@ -64,7 +66,7 @@ public class Diagram {
 
   public List<Pattern> addPattern(final Pattern pattern) {
     this.patterns.add(pattern);
-    return new ArrayList<>(this.patterns);
+    return this.patterns;
   }
 
   public List<Knot> addKnot(final Knot knot) {
@@ -76,40 +78,48 @@ public class Diagram {
     this.knots.add(knot);
     this.currentKnotIndex++;
 
-    return new ArrayList<>(this.knots);
+    return this.knots;
   }
 
   public List<Knot> undoLastKnot() {
     if (currentKnotIndex > 0) {
       this.currentKnotIndex--;
+
+      while ((this.currentKnotIndex > 0) && (!knots.get(currentKnotIndex).isVisible())) {
+        this.currentKnotIndex--;
+      }
     }
 
-    return new ArrayList<>(this.knots);
+    return this.knots;
   }
 
   public List<Knot> redoLastKnot() {
     if (currentKnotIndex < this.knots.size()) {
       this.currentKnotIndex++;
+
+      while ((this.currentKnotIndex < knots.size()) && (!knots.get(currentKnotIndex).isVisible())) {
+        this.currentKnotIndex++;
+      }
     }
 
-    return new ArrayList<>(this.knots);
+    return this.knots;
   }
 
   // We don't lose the undo / redo history
   public List<Knot> resetDiagram() {
     this.currentKnotIndex = 0;
-    return new ArrayList<>(this.knots);
+    return this.knots;
   }
 
   public List<Knot> clearKnots() {
     this.knots.clear();
     this.currentKnotIndex = 0;
-    return new ArrayList<>(this.knots);
+    return this.knots;
   }
 
   public List<Pattern> clearPatterns() {
     this.patterns.clear();
-    return new ArrayList<>(this.patterns);
+    return this.patterns;
   }
 
   public Pattern getCurrentPattern() {

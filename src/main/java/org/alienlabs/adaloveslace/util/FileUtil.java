@@ -84,7 +84,7 @@ public class FileUtil {
     }
   }
 
-  private void buildKnotImageView(Knot knot, FileInputStream fis) {
+  public void buildKnotImageView(Knot knot, FileInputStream fis) {
     Image image = new Image(fis);
     ImageView iv = new ImageView(image);
 

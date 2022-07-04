@@ -1,6 +1,6 @@
 package org.alienlabs.adaloveslace.view.component.button.geometrywindow.move;
 
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Button;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
-public class UpLeftButton extends ToggleButton {
+public class UpLeftButton extends Button {
 
   private static final Logger logger      = LoggerFactory.getLogger(UpLeftButton.class);
 
