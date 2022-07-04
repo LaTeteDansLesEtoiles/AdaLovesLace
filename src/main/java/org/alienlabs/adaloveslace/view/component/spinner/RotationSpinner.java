@@ -26,7 +26,6 @@ public class RotationSpinner {
 
     spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
     spinner.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
-    spinner.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(BUTTON_TOOLTIP);
