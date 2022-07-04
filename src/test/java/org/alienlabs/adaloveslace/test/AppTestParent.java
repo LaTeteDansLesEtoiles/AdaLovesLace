@@ -45,7 +45,7 @@ public class AppTestParent {
   public static final String CLASSPATH_RESOURCES_PATH_JPG = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*test" + PATH_SEPARATOR + ".*.jpg";
 
   public static final String SNOWFLAKE            = "snowflake_small";
-  public static final String SNOWFLAKE_BUTTON     = TOOLBOX_BUTTON_ID + "1";
+  public static final String SNOWFLAKE_BUTTON     = TOOLBOX_BUTTON_ID + "3";
 
   public static final double SNOWFLAKE_PIXEL_X    = 545d;
 

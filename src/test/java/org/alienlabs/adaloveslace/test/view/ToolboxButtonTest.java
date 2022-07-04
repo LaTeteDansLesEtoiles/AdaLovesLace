@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.NodeMatchers;
-import org.testfx.matcher.control.LabeledMatchers;
 
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton.REDO_KNOT_BUTTON_NAME;
@@ -31,8 +30,8 @@ class ToolboxButtonTest extends AppTestParent {
    *
    */
   @Test
-  void should_contain_1st_pattern_button_with_text() {
-    FxAssert.verifyThat(SNOWFLAKE_BUTTON, LabeledMatchers.hasText(SNOWFLAKE));
+  void should_contain_snowflake_pattern_button_with_text() {
+    FxAssert.verifyThat(SNOWFLAKE, NodeMatchers.isVisible());
   }
 
   /**
