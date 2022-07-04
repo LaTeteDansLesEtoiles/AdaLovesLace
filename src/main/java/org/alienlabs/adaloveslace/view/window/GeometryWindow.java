@@ -36,9 +36,9 @@ public class GeometryWindow {
 
   public static final double GEOMETRY_WINDOW_X                  = 1100d;
   public static final double GEOMETRY_WINDOW_WIDTH              = 400d;
-  public static final double GEOMETRY_WINDOW_HEIGHT             = 610d;
+  public static final double GEOMETRY_WINDOW_HEIGHT             = 670d;
   public static final double VERTICAL_SPINNERS_PADDING          = 10d;
-  public static final double VERTICAL_GEOMETRY_BUTTONS_PADDING  = 175d;
+  public static final double VERTICAL_GEOMETRY_BUTTONS_PADDING  = 325d;
   public static final double VERTICAL_MOVE_KNOTS_BUTTONS_PADDING= 410d;
   public static final double GAP_BETWEEN_BUTTONS                = 10d;
 

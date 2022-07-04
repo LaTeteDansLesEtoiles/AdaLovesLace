@@ -1,13 +1,10 @@
 package org.alienlabs.adaloveslace.view.window;
 
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
@@ -40,22 +37,11 @@ import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.Und
 public class ToolboxWindow {
 
   public static final double TOOLBOX_WINDOW_X             = 600d;
-  public static final double TOOLBOX_WINDOW_WIDTH         = 450d;
   public static final double TILE_HEIGHT                  = 50d;
-  public static final double TILE_PADDING                 = 10d;
-  public static final double VERTICAL_PADDING             = 60d;
-  public static final double VERTICAL_BUTTONS_PADDING     = 160d;
-  public static final double VERTICAL_GAP_BETWEEN_BUTTONS = 10d;
-  public static final double NUMBER_OF_TILES              = 4d;
+  public static final double TILE_PADDING                 = -40d;
 
-  public static final double QUIT_BUTTON_PADDING          = 15d;
-  public static final double PRINT_BUTTONS_PADDING        = 240d;
-  private static final double ALL_PRINTERS_TEXT_AREA_PADDING = 80d;
-  public static final double GET_PRINTERS_BUTTON_PADDING  = -10d;
-  public static final double PRINT_DIAGRAM_PADDING        = 20d;
-
-  public static final String GET_ALL_PRINTERS             = "Get all Printers";
-  public static final String PRINT_DIAGRAM                = "Print diagram";
+  public static final String GET_ALL_PRINTERS             = "   Get all Printers       ";
+  public static final String PRINT_DIAGRAM                = "     Print diagram        ";
   public static final String THE_FOLLOWING_FOLDER_STRING  = "The following folder: '";
 
   private List<String>        classpathResourceFiles;
@@ -64,7 +50,7 @@ public class ToolboxWindow {
   private RedoKnotButton      redoKnotButton;
   private ResetDiagramButton  resetDiagramButton;
   private ToggleButton        snowflakeButton;
-  private List<ToggleButton>  allPatterns;
+  private final List<ToggleButton>  allPatterns;
 
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
 
@@ -72,7 +58,7 @@ public class ToolboxWindow {
     this.allPatterns = new ArrayList<>();
   }
 
-  public Diagram createToolboxPane(TilePane toolboxPane, Object classpathBase, String resourcesPath, App app, final Diagram diagram) {
+  public Diagram createToolboxPane(GridPane parent, Object classpathBase, String resourcesPath, App app, final Diagram diagram) {
     this.classpathResourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
 
     if (classpathBase.equals(app)) {
@@ -81,25 +67,18 @@ public class ToolboxWindow {
       managePatternResourceFiles(patternsDirectoryResourcesPath);
     }
 
-    TilePane patternsPane  = new TilePane(Orientation.HORIZONTAL);
-    patternsPane.setVgap(TILE_PADDING);
-    patternsPane.setPrefColumns(2);
-    patternsPane.setPrefRows(this.classpathResourceFiles.size() / 2);
-    patternsPane.setPrefTileHeight(TILE_HEIGHT);
-    patternsPane.setAlignment(Pos.TOP_CENTER);
-    patternsPane.setTranslateY(TILE_HEIGHT);
-
     for (int i = 0; i < this.classpathResourceFiles.size(); i++) {
-      buildPatternButton(patternsPane, app, diagram, i);
+      // i % 2 = 2 columns
+      // i / 2 = as many rows as necessary
+      parent.add(buildPatternButton(app, diagram, i), i % 2, i / 2);
     }
 
-    toolboxPane.getChildren().add(patternsPane);
 
     return diagram;
   }
 
   // Add a Pattern button to the toolbox for each image present in the home pattern folder
-  private void buildPatternButton(TilePane patternsPane, App app, Diagram diagram, int buttonIndex) {
+  private ToggleButton buildPatternButton(App app, Diagram diagram, int buttonIndex) {
     String filename = this.classpathResourceFiles.get(buttonIndex);
     File file = new File(filename);
 
@@ -107,30 +86,31 @@ public class ToolboxWindow {
       String label = file.getName();
 
       try (FileInputStream fis = new FileInputStream(filename)) {
-        buildPatternButton(patternsPane, app, diagram, buttonIndex, filename, label, fis);
+        return buildPatternButton(app, diagram, buttonIndex, filename, label, fis);
       } catch (IOException e) {
         logger.error("Exception reading toolbox file!", e);
       }
     }
+
+    return null;
   }
 
   // The Pattern button itself
-  private void buildPatternButton(TilePane patternsPane, App app, Diagram diagram, int i, String filename, String label, FileInputStream fis) {
+  private ToggleButton buildPatternButton(App app, Diagram diagram, int i, String filename, String label, FileInputStream fis) {
     org.alienlabs.adaloveslace.business.model.Pattern pattern = new org.alienlabs.adaloveslace.business.model.Pattern(filename);
 
     Image img = new Image(fis);
-    ImageView iv = new ImageView(img);
 
     pattern.setCenterX(img.getWidth() / 2);
     pattern.setCenterY(img.getHeight() / 2);
 
-    ToggleButton button = new PatternButton(app, label, iv, pattern);
+    ToggleButton button = new PatternButton(app, label, img, pattern);
     button.setId(TOOLBOX_BUTTON + (i + 1));
-    patternsPane.getChildren().add(button);
     this.allPatterns.add(button);
 
     if (pattern.getFilename().equals("snowflake_small.jpg")) {
       this.snowflakeButton = button;
+      button.setStyle("-fx-border-color: blue;");
     }
 
     if (i == 0) {
@@ -138,6 +118,8 @@ public class ToolboxWindow {
     }
 
     diagram.addPattern(pattern);
+
+    return button;
   }
 
   private void managePatternResourceFiles(File patternsDirectoryResourcesPath) {
@@ -214,48 +196,49 @@ public class ToolboxWindow {
     return resourceFiles;
   }
 
-  public void createToolboxStage(Stage toolboxStage, TilePane buttonsPane, TilePane patternsPane, App app) {
-    buttonsPane.setTranslateY(VERTICAL_BUTTONS_PADDING);
-    patternsPane.getChildren().add(buttonsPane);
+  public void createToolboxStage(Pane root, Stage toolboxStage, GridPane parent, App app, int posY) {
+    buildPrintButtons(app, parent, posY);
 
-    StackPane printButtons = buildPrintButtons(app);
-    printButtons.setTranslateY(PRINT_BUTTONS_PADDING);
-
-    patternsPane.getChildren().add(printButtons);
-    Scene toolboxScene = new Scene(patternsPane, TOOLBOX_WINDOW_WIDTH,
-      this.classpathResourceFiles.size() * (TILE_HEIGHT + TILE_PADDING)
-        + VERTICAL_PADDING * NUMBER_OF_TILES + VERTICAL_GAP_BETWEEN_BUTTONS);
+    Scene toolboxScene = new Scene(root);
+    toolboxStage.setX(TOOLBOX_WINDOW_X);
+    toolboxStage.setY(MAIN_WINDOW_Y);
+    toolboxStage.setWidth(500);
+    toolboxStage.setHeight(computeWindowHeight(app));
+    toolboxStage.setScene(toolboxScene);
+    toolboxStage.show();
 
     toolboxStage.setTitle(TOOLBOX_TITLE);
     toolboxStage.setOnCloseRequest(windowEvent -> {
       logger.info("You shall not close the toolbox window directly!");
       windowEvent.consume();
     });
-    toolboxStage.setX(TOOLBOX_WINDOW_X);
-    toolboxStage.setY(MAIN_WINDOW_Y);
-    toolboxStage.setScene(toolboxScene);
-    toolboxStage.show();
   }
 
-  public TilePane createToolboxButtons(App app) {
-    TilePane allButtonsPane = buildAllButtonsPane();
-    buildFileButtons(app, allButtonsPane);
-    buildEditButtons(app, allButtonsPane);
-    buildShowHideGridButton(app, allButtonsPane);
-    buildQuitButton(allButtonsPane);
+  private int computeWindowHeight(App app) {
+    if (app.getDiagram().getPatterns().isEmpty()) {
+      return 600;
+    } else {
+      if (app.getDiagram().getPatterns().size() > 12) {
+        return 600;
+      }
 
-    return allButtonsPane;
+      return app.getDiagram().getPatterns().size() * 60;
+    }
+  }
+
+  public void createToolboxButtons(GridPane parent, App app, int posY) {
+    buildFileButtons(app, parent, posY);
+    buildEditButtons(app, parent, posY);
+    buildShowHideGridButton(app, parent, posY);
+    buildQuitButton(parent, posY);
   }
 
   /** Print diagram buttons.
    *
-   * @return the Buttons
    */
-  public StackPane buildPrintButtons(App  app) {
-    StackPane stackPane         = new StackPane();
-    stackPane.setAlignment(Pos.BOTTOM_CENTER);
-
+  public void buildPrintButtons(App  app, GridPane parent, int posY) {
     TextArea printersTextArea   = new TextArea();
+    printersTextArea.setPrefColumnCount(8);
 
     Button getPrintersButton    = new Button(GET_ALL_PRINTERS);
     final Tooltip tooltip       = new Tooltip();
@@ -267,50 +250,42 @@ public class ToolboxWindow {
     tooltip2.setText("Please click here secondly in order to print");
     printButton.setTooltip(tooltip2);
 
-    printersTextArea.setTranslateY(ALL_PRINTERS_TEXT_AREA_PADDING);
-    getPrintersButton.setTranslateY(GET_PRINTERS_BUTTON_PADDING);
-    printButton.setTranslateY(PRINT_DIAGRAM_PADDING);
-
-    stackPane.getChildren().addAll(printersTextArea, getPrintersButton, printButton);
+    parent.add(getPrintersButton, 0, posY + 5);
+    parent.add(printButton, 1, posY + 5);
+    parent.add(printersTextArea, 0, posY + 6);
 
     PrintUtil printer = new PrintUtil(app);
     printer.printersButtonOnAction(printersTextArea, getPrintersButton);
     printer.printButtonOnAction(printButton);
-
-    return stackPane;
   }
 
-  private void buildQuitButton(TilePane buttonsPane) {
+  private void buildQuitButton(GridPane buttonsPane, int posY) {
     QuitButton showQuitButton = new QuitButton(QUIT_APP_BUTTON_NAME);
-    showQuitButton.setTranslateY(QUIT_BUTTON_PADDING);
-    buttonsPane.getChildren().add(showQuitButton);
+    buttonsPane.add(showQuitButton, 0, posY + 4);
   }
 
-  private void buildShowHideGridButton(App app, TilePane buttonsPane) {
-    buttonsPane.getChildren().add(new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app));
+  private void buildShowHideGridButton(App app, GridPane buttonsPane, int posY) {
+    buttonsPane.add(new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app), 1, posY + 3);
   }
 
-  private void buildEditButtons(App app, TilePane buttonsPane) {
+  private void buildEditButtons(App app, GridPane buttonsPane, int posY) {
     this.undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
     this.redoKnotButton      = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
     this.resetDiagramButton  = new ResetDiagramButton  (RESET_DIAGRAM_BUTTON_NAME, app);
-    buttonsPane.getChildren().addAll(this.undoKnotButton, this.redoKnotButton, this.resetDiagramButton);
+    buttonsPane.add(this.undoKnotButton, 0, posY + 2);
+    buttonsPane.add(this.redoKnotButton, 1, posY + 2);
+    buttonsPane.add(this.resetDiagramButton, 0, posY + 3);
   }
 
-  private void buildFileButtons(App app, TilePane buttonsPane) {
+  private void buildFileButtons(App app, GridPane buttonsPane, int posY) {
     SaveButton          saveButton          = new SaveButton          (app, SAVE_FILE_BUTTON_NAME);
     SaveAsButton        saveAsButton        = new SaveAsButton        (app, SAVE_FILE_AS_BUTTON_NAME);
     LoadButton          loadButton          = new LoadButton          (app, LOAD_BUTTON_NAME);
     ExportImageButton   exportImageButton   = new ExportImageButton   (app, EXPORT_IMAGE_BUTTON_NAME);
-    buttonsPane.getChildren().addAll(saveButton, saveAsButton, loadButton, exportImageButton);
-  }
-
-  private TilePane buildAllButtonsPane() {
-    TilePane buttonsPane  = new TilePane(Orientation.HORIZONTAL);
-    buttonsPane.setAlignment(Pos.BOTTOM_CENTER);
-    buttonsPane.setPrefColumns(2);
-    buttonsPane.setVgap(VERTICAL_GAP_BETWEEN_BUTTONS);
-    return buttonsPane;
+    buttonsPane.add(saveButton, 0, posY);
+    buttonsPane.add(saveAsButton, 1, posY);
+    buttonsPane.add(loadButton, 0, posY + 1);
+    buttonsPane.add(exportImageButton, 1, posY + 1);
   }
 
   private void showNoHomeDirectoryDialog(final File directory) {

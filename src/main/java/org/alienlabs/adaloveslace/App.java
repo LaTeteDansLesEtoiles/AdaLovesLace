@@ -2,15 +2,15 @@ package org.alienlabs.adaloveslace;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.business.model.Diagram;
@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
+import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_BUTTONS;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.TILE_HEIGHT;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.TILE_PADDING;
 
@@ -47,7 +48,6 @@ public class App extends Application {
   public static final String LACE_FILE_EXTENSION      = ".lace";
   public static final String EXPORT_FILE_FORMAT       = "png";
   public static final String EXPORT_FILE_TYPE           = ".png";
-
   public static final String PATTERNS_DIRECTORY_NAME  = "patterns";
   public static final String ERROR                    = "Error!";
 
@@ -123,18 +123,26 @@ public class App extends Application {
   public ToolboxWindow showToolboxWindow(App app, Object classpathBase, String resourcesPath) {
     this.toolboxStage     = new Stage(StageStyle.DECORATED);
 
-    TilePane patternsPane  = new TilePane(Orientation.HORIZONTAL);
-    patternsPane.setVgap(TILE_PADDING);
-    patternsPane.setPrefColumns(1);
-    patternsPane.setPrefTileHeight(TILE_HEIGHT);
-    patternsPane.setAlignment(Pos.TOP_CENTER);
+    GridPane parent = new GridPane();
+    parent.setAlignment(Pos.TOP_CENTER);
+    //Setting the padding
+    parent.setPadding(new Insets(10, 10, 10, 10));
+    //Setting the vertical and horizontal gaps between the columns
+    parent.setVgap(GAP_BETWEEN_BUTTONS);
+    parent.setHgap(GAP_BETWEEN_BUTTONS);
 
+    ScrollPane scrollPane = new ScrollPane(parent);
+    scrollPane.setFitToHeight(true);
+
+    BorderPane borderPane = new BorderPane(scrollPane);
+    borderPane.setPadding(new Insets(15));
+    borderPane.getChildren().add(parent);
 
     toolboxWindow = new ToolboxWindow();
-    this.diagram = toolboxWindow.createToolboxPane(patternsPane, classpathBase, resourcesPath, app, this.diagram);
-    TilePane buttonsPane = toolboxWindow.createToolboxButtons(app);
-
-    toolboxWindow.createToolboxStage(this.toolboxStage, buttonsPane, patternsPane, app);
+    this.diagram = toolboxWindow.createToolboxPane(parent, classpathBase, resourcesPath, app, this.diagram);
+    int posY = this.diagram.getPatterns().size() / 2 + 1;
+    toolboxWindow.createToolboxButtons(parent, app, posY);
+    toolboxWindow.createToolboxStage(borderPane, this.toolboxStage, parent, app, posY);
     return toolboxWindow;
   }
 
@@ -146,7 +154,6 @@ public class App extends Application {
     geometryPane.setPrefColumns(2);
     geometryPane.setPrefTileHeight(TILE_HEIGHT);
     geometryPane.setAlignment(Pos.TOP_CENTER);
-
 
     geometryWindow = new GeometryWindow();
     Pane buttonsPane              = geometryWindow.createGeometryButtons(app);
@@ -188,6 +195,10 @@ public class App extends Application {
 
   public Stage getGeometryStage() {
     return geometryStage;
+  }
+
+  public Diagram getDiagram() {
+    return diagram;
   }
 
   public void setDiagram(Diagram diagram) {
