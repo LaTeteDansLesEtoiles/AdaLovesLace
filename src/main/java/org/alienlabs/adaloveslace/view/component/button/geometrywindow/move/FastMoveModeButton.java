@@ -8,8 +8,6 @@ import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
-
 public class FastMoveModeButton extends ToggleButton {
 
   public static final String BUTTON_TOOLTIP             = "Set \"fast knot move\" mode on or off\n";
@@ -25,8 +23,6 @@ public class FastMoveModeButton extends ToggleButton {
     isFastMode = new SimpleBooleanProperty(DEFAULT_FAST_MODE);
 
     this.setOnMouseClicked(event -> onSwitchSlowModeAction(app, window));
-    this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
-    this.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(BUTTON_TOOLTIP);

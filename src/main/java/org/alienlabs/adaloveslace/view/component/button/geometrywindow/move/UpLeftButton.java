@@ -16,7 +16,6 @@ public class UpLeftButton extends Button {
   public UpLeftButton(App app, GeometryWindow window) {
     this.setOnMouseClicked(event -> onMoveKnotUpLeftAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
-    this.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
   }
 
   public static void onMoveKnotUpLeftAction(App app, GeometryWindow window) {

@@ -16,7 +16,6 @@ public class DownButton extends Button {
   public DownButton(App app, GeometryWindow window) {
     this.setOnMouseClicked(event -> onMoveKnotDownAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
-    this.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
   }
 
   public static void onMoveKnotDownAction(App app, GeometryWindow window) {

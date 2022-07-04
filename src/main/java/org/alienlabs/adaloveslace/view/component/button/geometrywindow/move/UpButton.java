@@ -16,7 +16,6 @@ public class UpButton extends Button {
   public UpButton(App app, GeometryWindow window) {
     this.setOnMouseClicked(event -> onMoveKnotUpAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
-    this.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
   }
 
   public static void onMoveKnotUpAction(App app, GeometryWindow window) {

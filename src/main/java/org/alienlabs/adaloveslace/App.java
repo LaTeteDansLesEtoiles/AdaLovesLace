@@ -3,14 +3,16 @@ package org.alienlabs.adaloveslace;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.business.model.Diagram;
@@ -28,8 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_BUTTONS;
-import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.TILE_HEIGHT;
-import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.TILE_PADDING;
 
 /**
  * JavaFX App
@@ -149,17 +149,19 @@ public class App extends Application {
   public GeometryWindow showGeometryWindow(App app) {
     geometryStage = new Stage(StageStyle.DECORATED);
 
-    TilePane geometryPane  = new TilePane(Orientation.HORIZONTAL);
-    geometryPane.setVgap(TILE_PADDING);
-    geometryPane.setPrefColumns(2);
-    geometryPane.setPrefTileHeight(TILE_HEIGHT);
-    geometryPane.setAlignment(Pos.TOP_CENTER);
+    GridPane parent = new GridPane();
+    parent.setAlignment(Pos.TOP_CENTER);
+    //Setting the padding
+    parent.setPadding(new Insets(10, 10, 10, 10));
+    //Setting the vertical and horizontal gaps between the columns
+    parent.setVgap(GAP_BETWEEN_BUTTONS);
+    parent.setHgap(GAP_BETWEEN_BUTTONS);
 
     geometryWindow = new GeometryWindow();
-    Pane buttonsPane              = geometryWindow.createGeometryButtons(app);
-    Pane moveKnotPane             = geometryWindow.createMoveKnotButtons(app);
+    geometryWindow.createGeometryButtons(app, parent);
+    geometryWindow.createMoveKnotButtons(app, parent);
 
-    geometryWindow.createGeometryStage(app, geometryStage, buttonsPane, moveKnotPane, geometryPane);
+    geometryWindow.createGeometryStage(app, geometryStage, parent);
 
     initializeKeyboardShorcuts();
     return geometryWindow;

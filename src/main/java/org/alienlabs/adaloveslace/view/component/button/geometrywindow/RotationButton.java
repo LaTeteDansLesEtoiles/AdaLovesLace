@@ -15,7 +15,6 @@ public class RotationButton extends Button {
   public RotationButton(App app, GeometryWindow window, String buttonLabel) {
     super(buttonLabel);
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
-    this.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(BUTTON_TOOLTIP);

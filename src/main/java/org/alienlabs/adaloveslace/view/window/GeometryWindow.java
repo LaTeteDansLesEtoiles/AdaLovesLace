@@ -83,15 +83,8 @@ public class GeometryWindow {
 
   private static final Logger logger = LoggerFactory.getLogger(GeometryWindow.class);
 
-  public void createGeometryStage(App app, Stage geometryStage, Pane buttonsPane, Pane moveKnotPane, Pane patternsPane) {
-    buttonsPane.setTranslateY(VERTICAL_GEOMETRY_BUTTONS_PADDING);
-    patternsPane.getChildren().add(buttonsPane);
-
-    moveKnotPane.setTranslateY(VERTICAL_MOVE_KNOTS_BUTTONS_PADDING);
-    patternsPane.getChildren().add(moveKnotPane);
-
-    patternsPane.setTranslateY(VERTICAL_SPINNERS_PADDING);
-    Scene geometryScene = new Scene(patternsPane, GEOMETRY_WINDOW_WIDTH, GEOMETRY_WINDOW_HEIGHT);
+  public void createGeometryStage(App app, Stage geometryStage, Pane parent) {
+    Scene geometryScene = new Scene(parent, GEOMETRY_WINDOW_WIDTH, GEOMETRY_WINDOW_HEIGHT);
     geometryStage.setTitle(GEOMETRY_TITLE);
     geometryStage.setOnCloseRequest(windowEvent -> {
       logger.info("You shall not close the geometry window directly!");
@@ -103,7 +96,7 @@ public class GeometryWindow {
     geometryStage.show();
   }
 
-  public TilePane createGeometryButtons(App app) {
+  public void createGeometryButtons(App app, GridPane parent) {
     TilePane buttonsPane  = new TilePane(Orientation.HORIZONTAL);
     buttonsPane.setAlignment(Pos.BOTTOM_CENTER);
     buttonsPane.setPrefColumns(2);
@@ -161,11 +154,11 @@ public class GeometryWindow {
       this.drawingButton, this.selectionButton,
       this.deletionButton, this.duplicationButton);
 
-    return buttonsPane;
+    parent.add(buttonsPane, 0, 0);
   }
 
 
-  public GridPane createMoveKnotButtons(App app) {
+  public void createMoveKnotButtons(App app, GridPane parent) {
     GridPane moveKnotPane = new GridPane();
     moveKnotPane.setAlignment(Pos.BOTTOM_CENTER);
     //Setting the padding
@@ -210,7 +203,7 @@ public class GeometryWindow {
     getImageView("fast.png", this.fastMoveModeButton, false);
     moveKnotPane.add(this.fastMoveModeButton, 1, 1);
 
-    return moveKnotPane;
+    parent.add(moveKnotPane, 0, 2);
   }
 
   private void getImageView(String pathname, ButtonBase button, boolean isSelected) {
