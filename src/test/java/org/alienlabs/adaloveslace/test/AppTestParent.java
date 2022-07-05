@@ -25,7 +25,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.sleep;
-import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.App.EXPORT_FILE_TYPE;
+import static org.alienlabs.adaloveslace.App.GRID_DOTS_RADIUS;
 import static org.alienlabs.adaloveslace.util.FileUtil.PATH_SEPARATOR;
 
 @ExtendWith(ApplicationExtension.class)
@@ -45,9 +46,8 @@ public class AppTestParent {
   public static final String CLASSPATH_RESOURCES_PATH_JPG = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*test" + PATH_SEPARATOR + ".*.jpg";
 
   public static final String SNOWFLAKE            = "snowflake_small";
-  public static final String SNOWFLAKE_BUTTON     = TOOLBOX_BUTTON_ID + "3";
 
-  public static final double SNOWFLAKE_PIXEL_X    = 545d;
+  public static final double SNOWFLAKE_PIXEL_X    = 445d;
 
   public static final double SNOWFLAKE_PIXEL_Y    = 145d;
 
