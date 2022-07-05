@@ -47,7 +47,7 @@ public class AppTestParent {
 
   public static final String SNOWFLAKE            = "snowflake_small";
 
-  public static final double SNOWFLAKE_PIXEL_X    = 445d;
+  public static final double SNOWFLAKE_PIXEL_X    = 405d;
 
   public static final double SNOWFLAKE_PIXEL_Y    = 145d;
 
