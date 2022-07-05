@@ -95,11 +95,11 @@ public class OptionalDotGrid extends Pane {
 
   @Override
   public void layoutChildren() {
+    drawDiagram();
+
     if (this.gridNeedsToBeRedrawn) {
       drawGrid();
     }
-
-    drawDiagram();
   }
 
   private void drawDiagram() {
@@ -153,6 +153,7 @@ public class OptionalDotGrid extends Pane {
   private ImageView rotateKnot(Knot knot) {
     if (!root.getChildren().contains(knot.getImageView())) {
       root.getChildren().add(knot.getImageView());
+      knot.getImageView().toBack();
     }
 
     knot.getImageView().setOpacity(1.0d);
@@ -195,6 +196,7 @@ public class OptionalDotGrid extends Pane {
         double offsetY = (y % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
         Ellipse ell = new Ellipse(x - this.desiredRadius + offsetY,y - this.desiredRadius,this.desiredRadius,this.desiredRadius); // A dot
         ell.setFill(GRID_COLOR);
+        ell.toFront();
 
         grid.add(ell);
         root.getChildren().add(ell);

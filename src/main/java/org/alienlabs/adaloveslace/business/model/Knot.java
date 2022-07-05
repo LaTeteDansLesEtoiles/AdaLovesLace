@@ -20,6 +20,9 @@ import java.util.UUID;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Knot {
 
+  public static final int DEFAULT_ROTATION  = 0;
+  public static final int DEFAULT_ZOOM      = 1;
+
   // Two coinciding Knots can be different
   private final UUID uuid;
 
@@ -49,8 +52,8 @@ public class Knot {
     this.imageView      = imageView;
 
     this.uuid           = UUID.randomUUID();
-    this.rotationAngle  = 0;
-    this.zoomFactor     = 0;
+    this.rotationAngle  = DEFAULT_ROTATION;
+    this.zoomFactor     = DEFAULT_ZOOM;
     this.visible        = true;
   }
 

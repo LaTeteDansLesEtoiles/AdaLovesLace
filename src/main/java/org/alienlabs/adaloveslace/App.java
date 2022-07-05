@@ -102,7 +102,7 @@ public class App extends Application {
 
     grid.getChildren().add(footer);
     root.getChildren().add(grid);
-    this.mainWindow.onMainWindowClicked(root);
+    this.mainWindow.onMainWindowClicked(this, root);
 
     scene = new Scene(root, windowWidth, windowHeight);
     primaryStage.setScene(scene);

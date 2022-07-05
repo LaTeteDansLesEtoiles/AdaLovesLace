@@ -11,13 +11,13 @@ import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUT
 public class ZoomSpinner {
 
   public static final String BUTTON_TOOLTIP = "Use these fields to zoom in or out\nthe currently selected knot\n";
-  private static SpinnerValueFactory<Integer> valueFactory;
+  private SpinnerValueFactory<Integer> valueFactory;
 
   public void buildZoomSpinner(App app, Spinner<Integer> spinner,
                                SpinnerValueFactory<Integer> spinnerToReflect1,
                                SpinnerValueFactory<Integer> spinnerToReflect2) {
-    valueFactory = spinner.getValueFactory();
-    valueFactory.valueProperty().addListener(
+    this.valueFactory = spinner.getValueFactory();
+    this.valueFactory.valueProperty().addListener(
       (observableValue, oldValue, newValue) -> {
         spinnerToReflect1.setValue(newValue);
         spinnerToReflect2.setValue(newValue);
@@ -35,8 +35,8 @@ public class ZoomSpinner {
     spinner.setTooltip(tooltip);
   }
 
-  public static void restoreZoomSpinnersState(final Knot knot) {
-    valueFactory.valueProperty().setValue(knot.getZoomFactor());
+  public void restoreZoomSpinnersState(final Knot knot) {
+    this.valueFactory.valueProperty().setValue(knot.getZoomFactor());
   }
 
 }
