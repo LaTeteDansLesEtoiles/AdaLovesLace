@@ -80,7 +80,8 @@ class MainWindowComponentTest extends AppTestParent {
     assertFalse(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
 
     // If we choose a point in the snowflake it must be of the right color
-    assertTrue(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid));
+    assertTrue(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid),
+      "Expected color: " + SNOWFLAKE_DOT_COLOR + ", actual color: " + foundColorOnGrid);
   }
 
   /**
