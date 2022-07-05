@@ -26,9 +26,9 @@ public class Knot {
   private double x;
   private double y;
 
-  private double rotationAngle;
+  private int rotationAngle;
 
-  private double zoomFactor;
+  private int zoomFactor;
 
   private Pattern pattern;
 
@@ -49,8 +49,8 @@ public class Knot {
     this.imageView      = imageView;
 
     this.uuid           = UUID.randomUUID();
-    this.rotationAngle  = 0d;
-    this.zoomFactor     = 0d;
+    this.rotationAngle  = 0;
+    this.zoomFactor     = 0;
     this.visible        = true;
   }
 
@@ -78,19 +78,19 @@ public class Knot {
     this.y = y;
   }
 
-  public double getRotationAngle() {
+  public int getRotationAngle() {
     return rotationAngle;
   }
 
-  public void setRotationAngle(double rotationAngle) {
+  public void setRotationAngle(int rotationAngle) {
     this.rotationAngle = rotationAngle;
   }
 
-  public double getZoomFactor() {
+  public int getZoomFactor() {
     return zoomFactor;
   }
 
-  public void setZoomFactor(double zoomFactor) {
+  public void setZoomFactor(int zoomFactor) {
     this.zoomFactor = zoomFactor;
   }
 

@@ -16,6 +16,8 @@ import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
+import org.alienlabs.adaloveslace.view.component.spinner.RotationSpinner;
+import org.alienlabs.adaloveslace.view.component.spinner.ZoomSpinner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,7 +152,9 @@ public class MainWindow {
   public void onMainWindowClicked(final Group root) {
     root.setOnMouseClicked(event -> {
       String eType = event.getEventType().toString();
-      logger.info("Event type -> {},  current Knot index {}", eType, this.getOptionalDotGrid().getDiagram().getCurrentKnotIndex());
+      logger.info("Event type -> {},  current Knot index {}, current mode: {}", eType,
+        this.getOptionalDotGrid().getDiagram().getCurrentKnotIndex(),
+        this.getOptionalDotGrid().getDiagram().getCurrentMode());
 
       if (eType.equals(MOUSE_CLICKED)) {
         double x          = event.getX();
@@ -160,19 +164,23 @@ public class MainWindow {
         logger.info("Coordinate X     -> {}", x);
         logger.info("Coordinate Y     -> {}, Y - TOP -> {}", y, yMinusTop);
 
-        switch (this.getOptionalDotGrid().getDiagram().getCurrentMode()) {
-          case DRAWING      -> onClickWithDrawMode(this.getOptionalDotGrid().getDiagram(),
-            optionalDotGrid.addKnot(x, y), false);
-          case SELECTION    -> onClickWithSelectionMode(x, y);
-          case DELETION     -> onClickWithDeletionMode(this.getOptionalDotGrid().getDiagram(), x, y) ;
-          case DUPLICATION  -> onClickWithDuplicationMode(this.getOptionalDotGrid().getDiagram(), x, y);
-        }
+        processMouseClick(x, y);
       }
     });
   }
 
+  private void processMouseClick(double x, double y) {
+    switch (this.getOptionalDotGrid().getDiagram().getCurrentMode()) {
+      case DRAWING      -> onClickWithDrawMode(this.getOptionalDotGrid().getDiagram(),
+        optionalDotGrid.addKnot(x, y), false);
+      case SELECTION    -> onClickWithSelectionMode(x, y);
+      case DELETION     -> onClickWithDeletionMode(this.getOptionalDotGrid().getDiagram(), x, y) ;
+      case DUPLICATION  -> onClickWithDuplicationMode(this.getOptionalDotGrid().getDiagram(), x, y);
+    }
+  }
+
   private void onClickWithDrawMode(Diagram diagram, Knot knot, boolean knotSelected) {
-    knot.setZoomFactor(1d);
+    knot.setZoomFactor(1);
     diagram.setCurrentKnot(knot);
     diagram.setKnotSelected(knotSelected);
   }
@@ -181,26 +189,44 @@ public class MainWindow {
     Iterator<Knot> it = optionalDotGrid.getDiagram().getKnots().iterator();
     boolean hasClickedOnAKnot = false;
 
-    while (it.hasNext()) {
-      hasClickedOnAKnot = drawKnot(x, y, hasClickedOnAKnot, it.next());
+    // We iterate on the Knots as long as they are still Knots left to iterate
+    // And we stop at the first clicked Knot
+    while (it.hasNext() && !hasClickedOnAKnot) {
+      Knot knot = it.next();
+      try {
+        hasClickedOnAKnot = new NodeUtil().isClicked(knot, x, y);
+
+        if (hasClickedOnAKnot) {
+          logger.info("Clicked Knot index {}", this.getOptionalDotGrid().getDiagram().getKnots().indexOf(knot));
+
+          // If there is a current knot and we have clicked somewhere else than on a knot,
+          // we shall restore the zoom & rotation spinners values with the values from the knot
+          this.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          RotationSpinner.restoreRotationSpinnersState(knot);
+          ZoomSpinner.restoreZoomSpinnersState(knot);
+
+        }
+      } catch (MalformedURLException e) {
+        throw new RuntimeException(e);
+      }
     }
 
     // If there is a current knot and we have clicked somewhere else than on a knot,
     // we shall move the current knot
-    moveKnot(x, y, hasClickedOnAKnot);
+    if (!hasClickedOnAKnot) {
+      moveKnot(this.getOptionalDotGrid().getDiagram().getCurrentKnot(), x, y);
+    }
+
   }
 
-  private void moveKnot(double x, double y, boolean hasClickedOnAKnot) {
-    if (optionalDotGrid.getDiagram().isKnotSelected() && !hasClickedOnAKnot) {
-      Knot toMove = optionalDotGrid.getDiagram().getCurrentKnot();
-      toMove.setX(x);
-      toMove.setY(y);
-      toMove.getImageView().setX(x);
-      toMove.getImageView().setY(y);
-      toMove.getImageView().setOpacity(1.0d);
+  private void moveKnot(Knot toMove, double x, double y) {
+    toMove.setX(x);
+    toMove.setY(y);
+    toMove.getImageView().setX(x);
+    toMove.getImageView().setY(y);
+    toMove.getImageView().setOpacity(1.0d);
 
-      optionalDotGrid.layoutChildren();
-    }
+    optionalDotGrid.layoutChildren();
   }
 
   private void onClickWithDeletionMode(Diagram diagram, double x, double y) {
@@ -249,8 +275,8 @@ public class MainWindow {
     newKnot.setX(x + NEW_KNOT_GAP);
     newKnot.setY(y + NEW_KNOT_GAP);
     newKnot.setPattern(knot.getPattern());
-    newKnot.setRotationAngle(0d);
-    newKnot.setZoomFactor(1d);
+    newKnot.setRotationAngle(0);
+    newKnot.setZoomFactor(1);
     newKnot.setVisible(true);
 
     new FileUtil().buildKnotImageView(newKnot, fis);

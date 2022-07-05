@@ -1,6 +1,5 @@
 package org.alienlabs.adaloveslace.view.window;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -159,13 +158,7 @@ public class GeometryWindow {
 
 
   public void createMoveKnotButtons(App app, GridPane parent) {
-    GridPane moveKnotPane = new GridPane();
-    moveKnotPane.setAlignment(Pos.BOTTOM_CENTER);
-    //Setting the padding
-    moveKnotPane.setPadding(new Insets(10, 10, 10, 10));
-    //Setting the vertical and horizontal gaps between the columns
-    moveKnotPane.setVgap(GAP_BETWEEN_BUTTONS);
-    moveKnotPane.setHgap(GAP_BETWEEN_BUTTONS);
+    GridPane moveKnotPane = app.newGridPane();
 
     this.upButton = new UpButton(app, this);
     getImageView("up.png", this.upButton, false);

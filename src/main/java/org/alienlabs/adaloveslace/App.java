@@ -123,14 +123,7 @@ public class App extends Application {
   public ToolboxWindow showToolboxWindow(App app, Object classpathBase, String resourcesPath) {
     this.toolboxStage     = new Stage(StageStyle.DECORATED);
 
-    GridPane parent = new GridPane();
-    parent.setAlignment(Pos.TOP_CENTER);
-    //Setting the padding
-    parent.setPadding(new Insets(10, 10, 10, 10));
-    //Setting the vertical and horizontal gaps between the columns
-    parent.setVgap(GAP_BETWEEN_BUTTONS);
-    parent.setHgap(GAP_BETWEEN_BUTTONS);
-
+    GridPane parent       = newGridPane();
     ScrollPane scrollPane = new ScrollPane(parent);
     scrollPane.setFitToHeight(true);
 
@@ -138,26 +131,18 @@ public class App extends Application {
     borderPane.setPadding(new Insets(15));
     borderPane.getChildren().add(parent);
 
-    toolboxWindow = new ToolboxWindow();
-    this.diagram = toolboxWindow.createToolboxPane(parent, classpathBase, resourcesPath, app, this.diagram);
-    int posY = this.diagram.getPatterns().size() / 2 + 1;
+    toolboxWindow         = new ToolboxWindow();
+    this.diagram          = toolboxWindow.createToolboxPane(parent, classpathBase, resourcesPath, app, this.diagram);
+    int posY              = this.diagram.getPatterns().size() / 2 + 1;
     toolboxWindow.createToolboxButtons(parent, app, posY);
     toolboxWindow.createToolboxStage(borderPane, this.toolboxStage, parent, app, posY);
     return toolboxWindow;
   }
 
   public GeometryWindow showGeometryWindow(App app) {
-    geometryStage = new Stage(StageStyle.DECORATED);
-
-    GridPane parent = new GridPane();
-    parent.setAlignment(Pos.TOP_CENTER);
-    //Setting the padding
-    parent.setPadding(new Insets(10, 10, 10, 10));
-    //Setting the vertical and horizontal gaps between the columns
-    parent.setVgap(GAP_BETWEEN_BUTTONS);
-    parent.setHgap(GAP_BETWEEN_BUTTONS);
-
-    geometryWindow = new GeometryWindow();
+    geometryStage   = new Stage(StageStyle.DECORATED);
+    GridPane parent = newGridPane();
+    geometryWindow  = new GeometryWindow();
     geometryWindow.createGeometryButtons(app, parent);
     geometryWindow.createMoveKnotButtons(app, parent);
 
@@ -165,6 +150,17 @@ public class App extends Application {
 
     initializeKeyboardShorcuts();
     return geometryWindow;
+  }
+
+  public GridPane newGridPane() {
+    GridPane parent = new GridPane();
+    parent.setAlignment(Pos.TOP_CENTER);
+    //Setting the padding
+    parent.setPadding(new Insets(10, 10, 10, 10));
+    //Setting the vertical and horizontal gaps between the columns
+    parent.setVgap(GAP_BETWEEN_BUTTONS);
+    parent.setHgap(GAP_BETWEEN_BUTTONS);
+    return parent;
   }
 
   public static void main(String[] args) {
