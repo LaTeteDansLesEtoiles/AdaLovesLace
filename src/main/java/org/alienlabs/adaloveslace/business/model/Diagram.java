@@ -27,24 +27,37 @@ public class Diagram {
   @XmlTransient
   private Pattern currentPattern;
 
+  @XmlTransient
+  private Knot currentKnot;
+
+  @XmlTransient
+  private boolean isKnotSelected;
+
+  @XmlTransient
+  private MouseMode currentMode;
+
   public Diagram() {
-    this.patterns = new ArrayList<>();
-    this.knots    = new ArrayList<>();
+    this.patterns     = new ArrayList<>();
+    this.knots        = new ArrayList<>();
+    this.currentMode  = MouseMode.DRAWING;
   }
 
   public Diagram(final Diagram diagram) {
     this.patterns         = new ArrayList<>(diagram.getPatterns());
     this.knots            = new ArrayList<>(diagram.getKnots());
     this.currentKnotIndex = diagram.getCurrentKnotIndex();
+    this.currentMode      = diagram.getCurrentMode();
+    this.currentKnot      = diagram.getCurrentKnot();
+    this.isKnotSelected   = diagram.isKnotSelected();
     this.setCurrentPattern(diagram.getCurrentPattern());
   }
 
   public List<Pattern> getPatterns() {
-    return new ArrayList<>(this.patterns);
+    return this.patterns;
   }
 
   public List<Knot> getKnots() {
-    return new ArrayList<>(this.knots);
+    return this.knots;
   }
 
   public void setKnots(List<Knot> knots) {
@@ -53,7 +66,7 @@ public class Diagram {
 
   public List<Pattern> addPattern(final Pattern pattern) {
     this.patterns.add(pattern);
-    return new ArrayList<>(this.patterns);
+    return this.patterns;
   }
 
   public List<Knot> addKnot(final Knot knot) {
@@ -65,40 +78,48 @@ public class Diagram {
     this.knots.add(knot);
     this.currentKnotIndex++;
 
-    return new ArrayList<>(this.knots);
+    return this.knots;
   }
 
   public List<Knot> undoLastKnot() {
     if (currentKnotIndex > 0) {
       this.currentKnotIndex--;
+
+      while ((this.currentKnotIndex > 0) && (!knots.get(currentKnotIndex).isVisible())) {
+        this.currentKnotIndex--;
+      }
     }
 
-    return new ArrayList<>(this.knots);
+    return this.knots;
   }
 
   public List<Knot> redoLastKnot() {
     if (currentKnotIndex < this.knots.size()) {
       this.currentKnotIndex++;
+
+      while ((this.currentKnotIndex < knots.size()) && (!knots.get(currentKnotIndex).isVisible())) {
+        this.currentKnotIndex++;
+      }
     }
 
-    return new ArrayList<>(this.knots);
+    return this.knots;
   }
 
   // We don't lose the undo / redo history
   public List<Knot> resetDiagram() {
     this.currentKnotIndex = 0;
-    return new ArrayList<>(this.knots);
+    return this.knots;
   }
 
   public List<Knot> clearKnots() {
     this.knots.clear();
     this.currentKnotIndex = 0;
-    return new ArrayList<>(this.knots);
+    return this.knots;
   }
 
   public List<Pattern> clearPatterns() {
     this.patterns.clear();
-    return new ArrayList<>(this.patterns);
+    return this.patterns;
   }
 
   public Pattern getCurrentPattern() {
@@ -111,6 +132,34 @@ public class Diagram {
 
   public int getCurrentKnotIndex() {
     return this.currentKnotIndex;
+  }
+
+  public Knot getCurrentKnot() {
+    return currentKnot;
+  }
+
+  public void setCurrentKnot(Knot currentKnot) {
+    this.currentKnot = currentKnot;
+  }
+
+  public boolean isKnotSelected() {
+    return isKnotSelected;
+  }
+
+  public void setKnotSelected(boolean knotSelected) {
+    isKnotSelected = knotSelected;
+  }
+
+  public MouseMode getCurrentMode() {
+    return currentMode;
+  }
+
+  public void setCurrentMode(MouseMode currentMode) {
+    this.currentMode = currentMode;
+  }
+
+  public void setCurrentKnotIndex(int currentKnotIndex) {
+    this.currentKnotIndex = currentKnotIndex;
   }
 
 }

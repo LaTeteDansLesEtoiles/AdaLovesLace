@@ -13,6 +13,9 @@ This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by app
 
 - This project uses Java JDK 17 (because it is an LTS JDK) & JavaFX 17.0.2
 
+- You need to copy the jmods for Javafx 17 (from here: https://gluonhq.com/products/javafx/ => check 'Include older versions')
+ into your JDK 17 folder.
+
 - Project generated with:
 
 
@@ -50,6 +53,20 @@ or:
     ./mvnw clean jacoco:prepare-agent package jacoco:report pmd:pmd pmd:cpd-check spotbugs:spotbugs
 
 from the project root directory
+
+- You may use this when generating an executable / installer on Winows: https://github.com/fvarrui/JavaPackager/issues/129
+
+https://wixtoolset.org/
+
+https://jrsoftware.org/isinfo.php (Use Inno 5!)
+
+- For Logback & log4j to support Java modules, you have to use alpha (for now!) versions: 
+
+https://leward.eu/2020/01/20/java-module-slf4j-jlink-javafx.html
+
+- For SpotBugs annotations & modules: 
+
+https://stackoverflow.com/questions/56170361/why-do-we-need-requires-static-in-java-9-module-system
 
 
 --------------------------------------------------------------------------------------------
@@ -116,6 +133,11 @@ When creating a branch, if you wish to set tracking information for this branch 
 
 
     https://stackoverflow.com/questions/46684972/jenkins-throws-java-lang-illegalargumentexception-invalid-refspec-refs-heads/58348530#58348530
+
+
+- In case of TimeoutException in TestFX, tweak these JVM parameters:
+
+-Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=20000
 
 
 --------------------------------------------------------------------------------------------

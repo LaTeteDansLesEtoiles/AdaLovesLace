@@ -5,12 +5,9 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.test.AppTestParent;
 import org.junit.jupiter.api.Test;
-import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 
-import static org.alienlabs.adaloveslace.view.component.button.QuitButton.QUIT_APP;
-import static org.alienlabs.adaloveslace.view.component.button.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -30,15 +27,15 @@ class MainWindowMenuBarTest extends AppTestParent {
 
   public static final int LOAD_MENU_ITEM_INDEX            = 2;
 
-  public static final int QUIT_MENU_ITEM_INDEX            = 4;
+  public static final int EXPORT_IMAGE_MENU_ITEM_INDEX    = 3;
+
+  public static final int QUIT_MENU_ITEM_INDEX            = 5;
 
   public static final int UNDO_MENU_ITEM_INDEX            = 0;
 
   public static final int REDO_MENU_ITEM_INDEX            = 1;
 
   public static final int RESET_DIAGRAM_MENU_ITEM_INDEX   = 3;
-
-  private Stage primaryStage;
 
   /**
    * Init method called before each test
@@ -47,17 +44,15 @@ class MainWindowMenuBarTest extends AppTestParent {
    */
   @Start
   public void start(Stage primaryStage) {
-    this.primaryStage = primaryStage;
-    super.start(this.primaryStage);
+    super.start(primaryStage);
   }
 
   /**
    * Checks if the menubar contains a "show / hide grid" button
    *
-   * @param robot The injected FxRobot
    */
   @Test
-  void showHideGridAppMenuItemShallBeDisplayed(FxRobot robot) {
+  void showHideGridAppMenuItemShallBeDisplayed() {
     MenuItem showHideGrid = getShowHideGridMenuItem(getToolMenu());
     assertEquals(SHOW_HIDE_GRID_BUTTON_NAME, showHideGrid.getText());
   }
@@ -65,10 +60,9 @@ class MainWindowMenuBarTest extends AppTestParent {
   /**
    * Checks if the menubar contains a "save file" button
    *
-   * @param robot The injected FxRobot
    */
   @Test
-  void saveFileMenuItemShallBeDisplayed(FxRobot robot) {
+  void saveFileMenuItemShallBeDisplayed() {
     MenuItem save = getSaveMenuItem(getFileMenu());
     assertEquals(SAVE_FILE, save.getText());
   }
@@ -76,65 +70,69 @@ class MainWindowMenuBarTest extends AppTestParent {
   /**
    * Checks if the menubar contains a "save file as" button
    *
-   * @param robot The injected FxRobot
    */
   @Test
-  void saveAsMenuItemShallBeDisplayed(FxRobot robot) {
+  void saveAsMenuItemShallBeDisplayed() {
     MenuItem saveAs = getSaveAsMenuItem(getFileMenu());
-    assertEquals(SAVE_FILE_AS_BUTTON_NAME, saveAs.getText());
+    assertEquals(SAVE_FILE_AS, saveAs.getText());
   }
 
   /**
    * Checks if the menubar contains a "load file" button
    *
-   * @param robot The injected FxRobot
    */
   @Test
-  void loadMenuItemShallBeDisplayed(FxRobot robot) {
+  void loadMenuItemShallBeDisplayed() {
     MenuItem load = getLoadMenuItem(getFileMenu());
     assertEquals(LOAD_FILE, load.getText());
   }
 
   /**
-   * Checks if the menubar contains a "undo knot" button
+   * Checks if the menubar contains an "export image" button
    *
-   * @param robot The injected FxRobot
    */
   @Test
-  void undoKnotMenuItemShallBeDisplayed(FxRobot robot) {
+  void exportImageMenuItemShallBeDisplayed() {
+    MenuItem load = getExportImageMenuItem(getFileMenu());
+    assertEquals(EXPORT_IMAGE, load.getText());
+  }
+
+  /**
+   * Checks if the menubar contains a "undo knot" button
+   *
+   */
+  @Test
+  void undoKnotMenuItemShallBeDisplayed() {
     MenuItem undo = getUndoKnotMenuItem(getEditMenu());
-    assertEquals(UNDO_KNOT_BUTTON_NAME, undo.getText());
+    assertEquals(UNDO_KNOT, undo.getText());
   }
 
   /**
    * Checks if the menubar contains a "redo knot" button
    *
-   * @param robot The injected FxRobot
    */
   @Test
-  void redoKnotMenuItemShallBeDisplayed(FxRobot robot) {
+  void redoKnotMenuItemShallBeDisplayed() {
     MenuItem redo = getRedoKnotMenuItem(getEditMenu());
-    assertEquals(REDO_KNOT_BUTTON_NAME, redo.getText());
+    assertEquals(REDO_KNOT, redo.getText());
   }
 
   /**
    * Checks if the menubar contains a "reset diagram" button
    *
-   * @param robot The injected FxRobot
    */
   @Test
-  void resetDiagramMenuItemShallBeDisplayed(FxRobot robot) {
+  void resetDiagramMenuItemShallBeDisplayed() {
     MenuItem reset = getResetDiagramMenuItem(getEditMenu());
-    assertEquals(RESET_DIAGRAM_BUTTON_NAME, reset.getText());
+    assertEquals(RESET_DIAGRAM, reset.getText());
   }
 
   /**
    * Checks if the menubar contains a "quit app" button
    *
-   * @param robot The injected FxRobot
    */
   @Test
-  void quitAppMenuItemShallBeDisplayed(FxRobot robot) {
+  void quitAppMenuItemShallBeDisplayed() {
     MenuItem quit = getQuitMenuItem(getFileMenu());
     assertEquals(QUIT_APP, quit.getText());
   }
@@ -165,6 +163,10 @@ class MainWindowMenuBarTest extends AppTestParent {
 
   private MenuItem getLoadMenuItem(Menu menu) {
     return menu.getItems().get(LOAD_MENU_ITEM_INDEX);
+  }
+
+  private MenuItem getExportImageMenuItem(Menu menu) {
+    return menu.getItems().get(EXPORT_IMAGE_MENU_ITEM_INDEX);
   }
 
   private MenuItem getQuitMenuItem(Menu menu) {

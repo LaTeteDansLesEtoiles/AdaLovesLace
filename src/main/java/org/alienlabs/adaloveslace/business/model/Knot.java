@@ -2,7 +2,9 @@ package org.alienlabs.adaloveslace.business.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
+import javafx.scene.image.ImageView;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -18,22 +20,41 @@ import java.util.UUID;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Knot {
 
+  public static final int DEFAULT_ROTATION  = 0;
+  public static final int DEFAULT_ZOOM      = 1;
+
   // Two coinciding Knots can be different
   private final UUID uuid;
 
   private double x;
   private double y;
+
+  private int rotationAngle;
+
+  private int zoomFactor;
+
   private Pattern pattern;
+
+  private boolean visible;
+
+  @XmlTransient
+  private ImageView imageView;
 
   public Knot() {
     this.uuid = UUID.randomUUID();
+    this.visible = true;
   }
 
-  public Knot(final double x, final double y, final Pattern pattern) {
-    this.uuid = UUID.randomUUID();
-    this.x = x;
-    this.y = y;
-    this.pattern = pattern;
+  public Knot(final double x, final double y, final Pattern pattern, final ImageView imageView) {
+    this.x              = x;
+    this.y              = y;
+    this.pattern        = pattern;
+    this.imageView      = imageView;
+
+    this.uuid           = UUID.randomUUID();
+    this.rotationAngle  = DEFAULT_ROTATION;
+    this.zoomFactor     = DEFAULT_ZOOM;
+    this.visible        = true;
   }
 
   public UUID getUuid() {
@@ -60,24 +81,71 @@ public class Knot {
     this.y = y;
   }
 
+  public int getRotationAngle() {
+    return rotationAngle;
+  }
+
+  public void setRotationAngle(int rotationAngle) {
+    this.rotationAngle = rotationAngle;
+  }
+
+  public int getZoomFactor() {
+    return zoomFactor;
+  }
+
+  public void setZoomFactor(int zoomFactor) {
+    this.zoomFactor = zoomFactor;
+  }
+
   public void setPattern(Pattern pattern) {
     this.pattern = pattern;
   }
 
+  public ImageView getImageView() {
+    return imageView;
+  }
+
+  public void setImageView(ImageView imageView) {
+    this.imageView = imageView;
+  }
+
+  public boolean isVisible() {
+    return visible;
+  }
+
+  public void setVisible(boolean visible) {
+    this.visible = visible;
+  }
+
   public boolean coincide(Knot other) {
-    return this.x == other.x && this.y == other.y && this.pattern.getFilename().equals(other.getPattern().getFilename());
+    return this.x == other.x && this.y == other.y &&
+      this.pattern.getAbsoluteFilename().equals(other.getPattern().getAbsoluteFilename());
   }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof Knot knot)) return false;
+
     return uuid.equals(knot.uuid);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(uuid);
+  }
+
+  @Override
+  public String toString() {
+    return "Knot{" +
+      "uuid=" + uuid +
+      ", x=" + x +
+      ", y=" + y +
+      ", rotationAngle=" + rotationAngle +
+      ", zoomFactor=" + zoomFactor +
+      ", pattern=" + pattern +
+      ", visible=" + visible +
+      '}';
   }
 
 }

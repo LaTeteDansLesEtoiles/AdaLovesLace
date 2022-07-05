@@ -2,53 +2,65 @@ package org.alienlabs.adaloveslace.test;
 
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.image.Image;
+import javafx.scene.Node;
 import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.util.ImageUtil;
+import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
+import org.testfx.robot.Motion;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.alienlabs.adaloveslace.App.TOOLBOX_BUTTON_ID;
+import static java.lang.Thread.sleep;
+import static org.alienlabs.adaloveslace.App.EXPORT_IMAGE_FILE_TYPE;
+import static org.alienlabs.adaloveslace.App.GRID_DOTS_RADIUS;
 import static org.alienlabs.adaloveslace.util.FileUtil.PATH_SEPARATOR;
 
 @ExtendWith(ApplicationExtension.class)
 public class AppTestParent {
-
   public Stage primaryStage;
+  public GeometryWindow geometryWindow;
   public ToolboxWindow toolboxWindow;
   public App app;
 
   // For tests:
-  public static final String CLASSPATH_RESOURCES_PATH_JPG = ".*test" + PATH_SEPARATOR + ".*.jpg";
+  public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = Long.getLong("SLEEP_BETWEEN_ACTIONS_TIME", 750L);
+  public static final double GRID_WIDTH           = 600d;
+  public static final double GRID_HEIGHT          = 420d;
+  public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
+  public static final String TEST_SCREEN_CAPTURE_FILE     = "test_screen_capture" + EXPORT_IMAGE_FILE_TYPE;
 
-  public static final String MANDALA              = "mandala_small";
+  public static final String CLASSPATH_RESOURCES_PATH_JPG = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*test" + PATH_SEPARATOR + ".*.jpg";
+
   public static final String SNOWFLAKE            = "snowflake_small";
-  public static final String MANDALA_BUTTON       = TOOLBOX_BUTTON_ID + "1";
-  public static final String SNOWFLAKE_BUTTON     = TOOLBOX_BUTTON_ID + "2";
 
-  public static final double  GRAY_PIXEL_X        = 78d;
-  public static final long    GRAY_PIXEL_Y        = 82l;
-  public static final double  NOT_WHITE_PIXEL_X   = 67d;
-  public static final long    NOT_WHITE_PIXEL_Y   = 82l;
-  public static final Color   SNOWFLAKE_DOT_COLOR = Color.valueOf("0xcececeff");
+  public static final double SNOWFLAKE_PIXEL_X    = 415d;
+
+  public static final double SNOWFLAKE_PIXEL_Y    = 145d;
+
+  public static final double GRAY_PIXEL_X         = 98d;
+  public static final double GRAY_PIXEL_Y         = 67d;
+  public static final Color  SNOWFLAKE_DOT_COLOR  = Color.valueOf("0x9df6feff");
 
   public Color foundColorOnGrid;
 
   /**
    * Countdown latch
    */
-  public CountDownLatch lock = new CountDownLatch(1);
+  protected CountDownLatch lock = new CountDownLatch(1);
 
   private static final Logger logger = LoggerFactory.getLogger(AppTestParent.class);
 
@@ -62,20 +74,29 @@ public class AppTestParent {
     this.app = new App();
     this.app.setDiagram(new Diagram());
 
+    this.geometryWindow = this.app.showGeometryWindow(this.app);
+    this.app.getGeometryStage().setX(1100d);
+    this.app.getGeometryStage().setY(50d);
+
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
+    this.app.getToolboxStage().setX(1600d);
+    this.app.getToolboxStage().setY(50d);
+    this.app.getToolboxStage().setHeight(600d);
 
     this.primaryStage = primaryStage;
-    this.app.showMainWindow(640d, 480d, 600d, 420d, 5d, this.primaryStage);
+
+    // The grid dots are twice as big as in the production code in order to facilitate tests
+    this.app.showMainWindow(640d, 480d, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS * 2d, this.primaryStage);
   }
 
   // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
   // have access to the UI thread for the copy without "Platform.runLater()"
-  public Color getColor(Canvas canvas, Point2D pointToMoveTo) {
+  protected Color getColor(Point2D pointToMoveTo) {
     lock = new CountDownLatch(1);
-    copyCanvas(canvas, pointToMoveTo);
+    copyCanvas(pointToMoveTo);
 
     try {
-      lock.await(5_000, TimeUnit.MILLISECONDS);
+      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
       logger.error("Interrupted!", e);
     }
@@ -83,17 +104,52 @@ public class AppTestParent {
     return this.foundColorOnGrid;
   }
 
-  private void copyCanvas(Canvas canvas, Point2D pointToMoveTo) {
+  // Click on the grid with the snowflake selected in order to draw a snowflake on the grid
+  protected void drawSnowflake(FxRobot robot) {
+    Point2D snowflakeOnTheGrid = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  // Click on the snowflake in the toolbox to select its pattern
+  protected void selectAndClickOnSnowflake(FxRobot robot) {
+    clickOnButton(robot, toolboxWindow.getSnowflakeButton());
+  }
+
+  private void clickOnButton(FxRobot robot, Node button) {
+    robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
+
+    // No choice to sleep because we want to have time for the action to perform
+    try {
+      sleep(SLEEP_BETWEEN_ACTIONS_TIME);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void copyCanvas(Point2D pointToMoveTo) {
     Platform.runLater(() -> {
-      Image snapshot = canvas.snapshot(null, null);
-      logger.info("Snapshot done!");
+      WritableImage snapshot = new ImageUtil(this.app).buildWritableImageWithTechnicalElements(
+        BUILD_TOOL_OUTPUT_DIRECTORY + TEST_SCREEN_CAPTURE_FILE);
 
       PixelReader pr = snapshot.getPixelReader();
-      this.foundColorOnGrid = pr.getColor(Double.valueOf(pointToMoveTo.getX()).intValue(), Double.valueOf(pointToMoveTo.getY()).intValue());
-      logger.info("# argb: {}", this.foundColorOnGrid);
+      int x = Double.valueOf(pointToMoveTo.getX() - this.primaryStage.getX()).intValue();
+      int y = Double.valueOf(pointToMoveTo.getY() - this.primaryStage.getY()).intValue();
+
+      this.foundColorOnGrid = pr.getColor(x, y);
+      logger.info("# argb: {} at ({}, {}), with stage at ({}, {})", this.foundColorOnGrid, x, y, this.primaryStage.getX(), this.primaryStage.getY());
 
       lock.countDown();
     });
+  }
+
+  protected Point2D newPointOnGrid(double pixelX, double pixelY) {
+    return new Point2D(this.primaryStage.getX() + pixelX,
+      this.primaryStage.getY() + pixelY);
+  }
+
+  protected Point2D newPointOnGridForFirstNonGridNode() {
+    return new Point2D(this.primaryStage.getX() + app.getOptionalDotGrid().getFirstNonGridNode().getBoundsInParent().getCenterX(),
+      this.primaryStage.getY() + app.getOptionalDotGrid().getFirstNonGridNode().getBoundsInParent().getCenterY() + 10d);
   }
 
 }
