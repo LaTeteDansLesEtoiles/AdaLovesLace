@@ -54,7 +54,7 @@ class MainWindowComponentTest extends AppTestParent {
   }
 
   /**
-   * Checks if we are able to draw a snowflake (the second pattern) on the canvas
+   * Checks if we are able to draw a snowflake (the first and only pattern) on the canvas
    *
    * @param robot The injected FxRobot
    */
@@ -64,9 +64,9 @@ class MainWindowComponentTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    // Move mouse and get the color of the pixel under the pointer
 
     // Run
+    // Move mouse and get the color of the pixel under the pointer
     Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
     robot.moveTo(pointToCheck);
 

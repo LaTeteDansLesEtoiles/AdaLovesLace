@@ -37,8 +37,6 @@ import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.Und
 public class ToolboxWindow {
 
   public static final double TOOLBOX_WINDOW_X             = 600d;
-  public static final double TILE_HEIGHT                  = 50d;
-  public static final double TILE_PADDING                 = -40d;
 
   public static final String GET_ALL_PRINTERS             = "   Get all Printers       ";
   public static final String PRINT_DIAGRAM                = "     Print diagram        ";

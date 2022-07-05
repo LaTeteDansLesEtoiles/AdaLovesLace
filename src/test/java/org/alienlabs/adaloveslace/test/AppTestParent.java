@@ -47,13 +47,13 @@ public class AppTestParent {
 
   public static final String SNOWFLAKE            = "snowflake_small";
 
-  public static final double SNOWFLAKE_PIXEL_X    = 405d;
+  public static final double SNOWFLAKE_PIXEL_X    = 415d;
 
   public static final double SNOWFLAKE_PIXEL_Y    = 145d;
 
   public static final double GRAY_PIXEL_X         = 98d;
   public static final double GRAY_PIXEL_Y         = 67d;
-  public static final Color  SNOWFLAKE_DOT_COLOR  = Color.valueOf("0x99f3fbff");
+  public static final Color  SNOWFLAKE_DOT_COLOR  = Color.valueOf("0x9df6feff");
 
   public Color foundColorOnGrid;
 
@@ -81,6 +81,7 @@ public class AppTestParent {
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
     this.app.getToolboxStage().setX(1600d);
     this.app.getToolboxStage().setY(50d);
+    this.app.getToolboxStage().setHeight(600d);
 
     this.primaryStage = primaryStage;
 
@@ -148,7 +149,7 @@ public class AppTestParent {
 
   protected Point2D newPointOnGridForFirstNonGridNode() {
     return new Point2D(this.primaryStage.getX() + app.getOptionalDotGrid().getFirstNonGridNode().getBoundsInParent().getCenterX(),
-      this.primaryStage.getY() + app.getOptionalDotGrid().getFirstNonGridNode().getBoundsInParent().getCenterY());
+      this.primaryStage.getY() + app.getOptionalDotGrid().getFirstNonGridNode().getBoundsInParent().getCenterY() + 10d);
   }
 
 }
