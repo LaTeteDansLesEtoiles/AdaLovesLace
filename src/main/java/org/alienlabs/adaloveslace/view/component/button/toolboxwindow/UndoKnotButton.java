@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 public class UndoKnotButton extends ImageButton {
 
-  public static final String UNDO_KNOT_BUTTON_NAME = "     Undo knot     ";
+  public static final String UNDO_KNOT_BUTTON_NAME = "     Undo knot      ";
 
   private static final Logger logger = LoggerFactory.getLogger(UndoKnotButton.class);
 

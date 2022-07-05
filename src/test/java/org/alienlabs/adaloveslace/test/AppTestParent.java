@@ -25,7 +25,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.sleep;
-import static org.alienlabs.adaloveslace.App.EXPORT_FILE_TYPE;
+import static org.alienlabs.adaloveslace.App.EXPORT_IMAGE_FILE_TYPE;
 import static org.alienlabs.adaloveslace.App.GRID_DOTS_RADIUS;
 import static org.alienlabs.adaloveslace.util.FileUtil.PATH_SEPARATOR;
 
@@ -41,7 +41,7 @@ public class AppTestParent {
   public static final double GRID_WIDTH           = 600d;
   public static final double GRID_HEIGHT          = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
-  public static final String TEST_SCREEN_CAPTURE_FILE     = "test_screen_capture" + EXPORT_FILE_TYPE;
+  public static final String TEST_SCREEN_CAPTURE_FILE     = "test_screen_capture" + EXPORT_IMAGE_FILE_TYPE;
 
   public static final String CLASSPATH_RESOURCES_PATH_JPG = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*test" + PATH_SEPARATOR + ".*.jpg";
 

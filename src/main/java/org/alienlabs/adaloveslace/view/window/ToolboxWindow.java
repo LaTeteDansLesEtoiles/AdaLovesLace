@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.HOME_DIRECTORY_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ExportImageButton.EXPORT_IMAGE_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ExportPdfButton.EXPORT_PDF_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.LoadButton.LOAD_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton.REDO_KNOT_BUTTON_NAME;
@@ -248,9 +249,9 @@ public class ToolboxWindow {
     tooltip2.setText("Please click here secondly in order to print");
     printButton.setTooltip(tooltip2);
 
-    parent.add(getPrintersButton, 0, posY + 5);
-    parent.add(printButton, 1, posY + 5);
-    parent.add(printersTextArea, 0, posY + 6);
+    parent.add(getPrintersButton, 0, posY + 6);
+    parent.add(printButton, 1, posY + 6);
+    parent.add(printersTextArea, 0, posY + 7);
 
     PrintUtil printer = new PrintUtil(app);
     printer.printersButtonOnAction(printersTextArea, getPrintersButton);
@@ -259,20 +260,20 @@ public class ToolboxWindow {
 
   private void buildQuitButton(GridPane buttonsPane, int posY) {
     QuitButton showQuitButton = new QuitButton(QUIT_APP_BUTTON_NAME);
-    buttonsPane.add(showQuitButton, 0, posY + 4);
+    buttonsPane.add(showQuitButton, 0, posY + 5);
   }
 
   private void buildShowHideGridButton(App app, GridPane buttonsPane, int posY) {
-    buttonsPane.add(new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app), 1, posY + 3);
+    buttonsPane.add(new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app), 1, posY + 4);
   }
 
   private void buildEditButtons(App app, GridPane buttonsPane, int posY) {
     this.undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
     this.redoKnotButton      = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
     this.resetDiagramButton  = new ResetDiagramButton  (RESET_DIAGRAM_BUTTON_NAME, app);
-    buttonsPane.add(this.undoKnotButton, 0, posY + 2);
-    buttonsPane.add(this.redoKnotButton, 1, posY + 2);
-    buttonsPane.add(this.resetDiagramButton, 0, posY + 3);
+    buttonsPane.add(this.undoKnotButton, 0, posY + 3);
+    buttonsPane.add(this.redoKnotButton, 1, posY + 3);
+    buttonsPane.add(this.resetDiagramButton, 0, posY + 4);
   }
 
   private void buildFileButtons(App app, GridPane buttonsPane, int posY) {
@@ -280,10 +281,13 @@ public class ToolboxWindow {
     SaveAsButton        saveAsButton        = new SaveAsButton        (app, SAVE_FILE_AS_BUTTON_NAME);
     LoadButton          loadButton          = new LoadButton          (app, LOAD_BUTTON_NAME);
     ExportImageButton   exportImageButton   = new ExportImageButton   (app, EXPORT_IMAGE_BUTTON_NAME);
+    ExportPdfButton     exportPdfButton     = new ExportPdfButton     (app, EXPORT_PDF_BUTTON_NAME);
+
     buttonsPane.add(saveButton, 0, posY);
     buttonsPane.add(saveAsButton, 1, posY);
     buttonsPane.add(loadButton, 0, posY + 1);
-    buttonsPane.add(exportImageButton, 1, posY + 1);
+    buttonsPane.add(exportImageButton, 0, posY + 2);
+    buttonsPane.add(exportPdfButton, 1, posY + 2);
   }
 
   private void showNoHomeDirectoryDialog(final File directory) {

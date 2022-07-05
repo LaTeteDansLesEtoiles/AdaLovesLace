@@ -40,14 +40,14 @@ public class ImageUtil {
     return snapshot;
   }
 
-  private WritableImage buildWritableImage(String pathname) {
+  private WritableImage  buildWritableImage(String pathname) {
     WritableImage wi = new WritableImage(Double.valueOf(app.getPrimaryStage().getX() + GRID_WIDTH).intValue(),
       Double.valueOf(app.getPrimaryStage().getY() + GRID_HEIGHT).intValue());
     WritableImage snapshot = app.getRoot().snapshot(new SnapshotParameters(), wi);
 
     File output = new File(pathname);
     try {
-      ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), EXPORT_FILE_FORMAT, output);
+      ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), EXPORT_IMAGE_FILE_FORMAT, output);
     } catch (IOException e) {
       logger.error("Problem writing root group image file!", e);
     }

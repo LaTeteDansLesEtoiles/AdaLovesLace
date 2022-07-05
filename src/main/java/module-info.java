@@ -1,4 +1,9 @@
 module org.alienlabs.adaloveslace.impl {
+  // iText
+  requires io;
+  requires kernel;
+  requires layout;
+
   requires javafx.controls;
   requires javafx.graphics;
   requires javafx.swing;
