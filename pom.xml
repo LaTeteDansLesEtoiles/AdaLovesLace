@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.alienlabs.adaloveslace</groupId>
   <artifactId>adaloveslace</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <description>A tatting lace patterns creation software</description>
 
   <properties>
@@ -177,6 +177,10 @@
               <generateInstaller>true</generateInstaller>
               <administratorRequired>false</administratorRequired>
               <bundleJre>true</bundleJre>
+              <!--
+                customizedJre = false because of iText (which is not modular yet)
+                See: https://github.com/fvarrui/JavaPackager/issues/126
+              -->
               <customizedJre>false</customizedJre>
               <organizationName>AlienLabs</organizationName>
               <organizationEmail>goupilpierre@gmail.com</organizationEmail>
