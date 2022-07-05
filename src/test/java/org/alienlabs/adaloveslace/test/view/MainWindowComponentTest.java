@@ -67,7 +67,7 @@ class MainWindowComponentTest extends AppTestParent {
     // Move mouse and get the color of the pixel under the pointer
 
     // Run
-    Point2D pointToCheck = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
     robot.moveTo(pointToCheck);
 
     // Verify

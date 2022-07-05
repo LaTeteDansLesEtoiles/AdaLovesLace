@@ -53,7 +53,7 @@ public class AppTestParent {
 
   public static final double GRAY_PIXEL_X         = 98d;
   public static final double GRAY_PIXEL_Y         = 67d;
-  public static final Color  SNOWFLAKE_DOT_COLOR  = Color.valueOf("0x9df6feff");
+  public static final Color  SNOWFLAKE_DOT_COLOR  = Color.valueOf("0x99f3fbff");
 
   public Color foundColorOnGrid;
 
@@ -114,11 +114,6 @@ public class AppTestParent {
     clickOnButton(robot, toolboxWindow.getSnowflakeButton());
   }
 
-  protected Point2D newSpinnerPoint(double x, double y) {
-    return new Point2D(this.app.getGeometryStage().getX() + x,
-      this.app.getGeometryStage().getY() + y);
-  }
-
   private void clickOnButton(FxRobot robot, Node button) {
     robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
 
@@ -149,6 +144,11 @@ public class AppTestParent {
   protected Point2D newPointOnGrid(double pixelX, double pixelY) {
     return new Point2D(this.primaryStage.getX() + pixelX,
       this.primaryStage.getY() + pixelY);
+  }
+
+  protected Point2D newPointOnGridForFirstNonGridNode() {
+    return new Point2D(this.primaryStage.getX() + app.getOptionalDotGrid().getFirstNonGridNode().getBoundsInParent().getCenterX(),
+      this.primaryStage.getY() + app.getOptionalDotGrid().getFirstNonGridNode().getBoundsInParent().getCenterY());
   }
 
 }

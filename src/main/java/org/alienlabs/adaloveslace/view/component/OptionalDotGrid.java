@@ -55,6 +55,7 @@ public class OptionalDotGrid extends Pane {
 
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
   private final Group root;
+  private Node firstNonGridNode;
 
   /**
    * We draw the dots on the grid using a Canvas.
@@ -131,6 +132,10 @@ public class OptionalDotGrid extends Pane {
 
   private void drawKnotWithRotationAndZoom(Knot knot) {
     ImageView iv = rotateKnot(knot);
+    if (this.diagram.getKnots().indexOf(knot) == 0) {
+      this.firstNonGridNode = iv;
+    }
+
     zoomKnot(knot, iv);
 
     double x = knot.getX();
@@ -232,6 +237,10 @@ public class OptionalDotGrid extends Pane {
     }
 
     return currentKnot;
+  }
+
+  public Node getFirstNonGridNode() {
+    return this.firstNonGridNode;
   }
 
   public void setGridNeedsToBeRedrawn(boolean gridNeedsToBeRedrawn) {
