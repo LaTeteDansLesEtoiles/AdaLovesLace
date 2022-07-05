@@ -12,6 +12,7 @@ import org.testfx.framework.junit5.Start;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -42,13 +43,13 @@ class RotationSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     // Verify
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE,
+    assertEquals(DEFAULT_ROTATION,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE,
+    assertEquals(DEFAULT_ROTATION,
       this.geometryWindow.getRotationSpinner1().getValue());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE,
+    assertEquals(DEFAULT_ROTATION,
       this.geometryWindow.getRotationSpinner2().getValue());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE,
+    assertEquals(DEFAULT_ROTATION,
       this.geometryWindow.getRotationSpinner3().getValue());
   }
 
@@ -67,7 +68,7 @@ class RotationSpinnerTest extends AppTestParent {
     lock = new CountDownLatch(1);
 
     Platform.runLater(() -> {
-      this.geometryWindow.getRotationSpinner1().getValueFactory().setValue(ROTATION_SPINNER_DEFAULT_VALUE + ROTATION_SPINNER_INCREMENTS_1);
+      this.geometryWindow.getRotationSpinner1().getValueFactory().setValue(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1);
       lock.countDown();
     });
 
@@ -78,11 +79,11 @@ class RotationSpinnerTest extends AppTestParent {
     }
 
     // Verify
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE + ROTATION_SPINNER_INCREMENTS_1,
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE + ROTATION_SPINNER_INCREMENTS_1,
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner2().getValue());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE + ROTATION_SPINNER_INCREMENTS_1,
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner3().getValue());
   }
 
@@ -101,7 +102,7 @@ class RotationSpinnerTest extends AppTestParent {
     lock = new CountDownLatch(1);
 
     Platform.runLater(() -> {
-      this.geometryWindow.getRotationSpinner1().getValueFactory().setValue(ROTATION_SPINNER_DEFAULT_VALUE - ROTATION_SPINNER_INCREMENTS_1);
+      this.geometryWindow.getRotationSpinner1().getValueFactory().setValue(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1);
       lock.countDown();
     });
 
@@ -112,11 +113,11 @@ class RotationSpinnerTest extends AppTestParent {
     }
 
     // Verify
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE - ROTATION_SPINNER_INCREMENTS_1,
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE - ROTATION_SPINNER_INCREMENTS_1,
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner2().getValue());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE - ROTATION_SPINNER_INCREMENTS_1,
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner3().getValue());
   }
 
@@ -135,7 +136,7 @@ class RotationSpinnerTest extends AppTestParent {
     lock = new CountDownLatch(1);
 
     Platform.runLater(() -> {
-      this.geometryWindow.getRotationSpinner2().getValueFactory().setValue(ROTATION_SPINNER_DEFAULT_VALUE + ROTATION_SPINNER_INCREMENTS_2);
+      this.geometryWindow.getRotationSpinner2().getValueFactory().setValue(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2);
       lock.countDown();
     });
 
@@ -146,11 +147,11 @@ class RotationSpinnerTest extends AppTestParent {
     }
 
     // Verify
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE + ROTATION_SPINNER_INCREMENTS_2,
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE + ROTATION_SPINNER_INCREMENTS_2,
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner1().getValue());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE + ROTATION_SPINNER_INCREMENTS_2,
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner3().getValue());
   }
 
@@ -169,7 +170,7 @@ class RotationSpinnerTest extends AppTestParent {
     lock = new CountDownLatch(1);
 
     Platform.runLater(() -> {
-      this.geometryWindow.getRotationSpinner2().getValueFactory().setValue(ROTATION_SPINNER_DEFAULT_VALUE - ROTATION_SPINNER_INCREMENTS_2);
+      this.geometryWindow.getRotationSpinner2().getValueFactory().setValue(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2);
       lock.countDown();
     });
 
@@ -180,11 +181,11 @@ class RotationSpinnerTest extends AppTestParent {
     }
 
     // Verify
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE - ROTATION_SPINNER_INCREMENTS_2,
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE - ROTATION_SPINNER_INCREMENTS_2,
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner1().getValue());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE - ROTATION_SPINNER_INCREMENTS_2,
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner3().getValue());
   }
 
@@ -203,7 +204,7 @@ class RotationSpinnerTest extends AppTestParent {
     lock = new CountDownLatch(1);
 
     Platform.runLater(() -> {
-      this.geometryWindow.getRotationSpinner3().getValueFactory().setValue(ROTATION_SPINNER_DEFAULT_VALUE + ROTATION_SPINNER_INCREMENTS_3);
+      this.geometryWindow.getRotationSpinner3().getValueFactory().setValue(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3);
       lock.countDown();
     });
 
@@ -214,11 +215,11 @@ class RotationSpinnerTest extends AppTestParent {
     }
 
     // Verify
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE + ROTATION_SPINNER_INCREMENTS_3,
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE + ROTATION_SPINNER_INCREMENTS_3,
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner1().getValue());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE + ROTATION_SPINNER_INCREMENTS_3,
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner2().getValue());
   }
 
@@ -237,7 +238,7 @@ class RotationSpinnerTest extends AppTestParent {
     lock = new CountDownLatch(1);
 
     Platform.runLater(() -> {
-      this.geometryWindow.getRotationSpinner3().getValueFactory().setValue(ROTATION_SPINNER_DEFAULT_VALUE - ROTATION_SPINNER_INCREMENTS_3);
+      this.geometryWindow.getRotationSpinner3().getValueFactory().setValue(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3);
       lock.countDown();
     });
 
@@ -248,11 +249,11 @@ class RotationSpinnerTest extends AppTestParent {
     }
 
     // Verify
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE - ROTATION_SPINNER_INCREMENTS_3,
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE - ROTATION_SPINNER_INCREMENTS_3,
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner1().getValue());
-    assertEquals(ROTATION_SPINNER_DEFAULT_VALUE - ROTATION_SPINNER_INCREMENTS_3,
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner2().getValue());
   }
 

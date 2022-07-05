@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-import static org.alienlabs.adaloveslace.App.EXPORT_FILE_TYPE;
+import static org.alienlabs.adaloveslace.App.EXPORT_IMAGE_FILE_TYPE;
 import static org.alienlabs.adaloveslace.util.Preferences.LACE_FILE_FOLDER_SAVE_PATH;
 import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
@@ -40,9 +40,9 @@ public class ExportImageButton extends ImageButton {
 
     if (file != null) {
       new ImageUtil(app).buildWritableImageWithoutTechnicalElements(
-        file.getAbsolutePath().endsWith(EXPORT_FILE_TYPE) ?
+        file.getAbsolutePath().endsWith(EXPORT_IMAGE_FILE_TYPE) ?
           file.getAbsolutePath() :
-          file.getAbsolutePath() + EXPORT_FILE_TYPE
+          file.getAbsolutePath() + EXPORT_IMAGE_FILE_TYPE
       );
     }
   }

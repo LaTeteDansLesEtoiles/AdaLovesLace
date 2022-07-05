@@ -12,13 +12,11 @@ import org.testfx.framework.junit5.Start;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ZoomSpinnerTest extends AppTestParent {
-
-  private static final double SPINNER_UP_Y    = 18d;
-  private static final double SPINNER_DOWN_Y  = 20d;
 
   private static final Logger logger          = LoggerFactory.getLogger(RotationSpinnerTest.class);
 
@@ -45,13 +43,13 @@ class ZoomSpinnerTest extends AppTestParent {
     drawSnowflake(robot);
 
     // Verify
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE,
+    assertEquals(DEFAULT_ZOOM,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE,
+    assertEquals(DEFAULT_ZOOM,
       this.geometryWindow.getZoomSpinner1().getValue());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE,
+    assertEquals(DEFAULT_ZOOM,
       this.geometryWindow.getZoomSpinner2().getValue());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE,
+    assertEquals(DEFAULT_ZOOM,
       this.geometryWindow.getZoomSpinner3().getValue());
   }
 
@@ -70,7 +68,7 @@ class ZoomSpinnerTest extends AppTestParent {
     lock = new CountDownLatch(1);
 
     Platform.runLater(() -> {
-      this.geometryWindow.getZoomSpinner1().getValueFactory().setValue(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_1);
+      this.geometryWindow.getZoomSpinner1().getValueFactory().setValue(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1);
       lock.countDown();
     });
 
@@ -81,11 +79,11 @@ class ZoomSpinnerTest extends AppTestParent {
     }
 
     // Verify
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_1,
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_1,
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1,
       this.geometryWindow.getZoomSpinner2().getValue());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_1,
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1,
       this.geometryWindow.getZoomSpinner3().getValue());
   }
 
@@ -104,7 +102,7 @@ class ZoomSpinnerTest extends AppTestParent {
     lock = new CountDownLatch(1);
 
     Platform.runLater(() -> {
-      this.geometryWindow.getZoomSpinner1().getValueFactory().setValue(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_1);
+      this.geometryWindow.getZoomSpinner1().getValueFactory().setValue(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1);
       lock.countDown();
     });
 
@@ -115,11 +113,11 @@ class ZoomSpinnerTest extends AppTestParent {
     }
 
     // Verify
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_1,
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_1,
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1,
       this.geometryWindow.getZoomSpinner2().getValue());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_1,
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1,
       this.geometryWindow.getZoomSpinner3().getValue());
   }
 
@@ -138,7 +136,7 @@ class ZoomSpinnerTest extends AppTestParent {
     lock = new CountDownLatch(1);
 
     Platform.runLater(() -> {
-      this.geometryWindow.getZoomSpinner2().getValueFactory().setValue(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_2);
+      this.geometryWindow.getZoomSpinner2().getValueFactory().setValue(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2);
       lock.countDown();
     });
 
@@ -149,11 +147,11 @@ class ZoomSpinnerTest extends AppTestParent {
     }
 
     // Verify
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_2,
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_2,
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2,
       this.geometryWindow.getZoomSpinner1().getValue());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_2,
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2,
       this.geometryWindow.getZoomSpinner3().getValue());
   }
 
@@ -172,7 +170,7 @@ class ZoomSpinnerTest extends AppTestParent {
     lock = new CountDownLatch(1);
 
     Platform.runLater(() -> {
-      this.geometryWindow.getZoomSpinner2().getValueFactory().setValue(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_2);
+      this.geometryWindow.getZoomSpinner2().getValueFactory().setValue(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2);
       lock.countDown();
     });
 
@@ -183,11 +181,11 @@ class ZoomSpinnerTest extends AppTestParent {
     }
 
     // Verify
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_2,
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_2,
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2,
       this.geometryWindow.getZoomSpinner1().getValue());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_2,
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2,
       this.geometryWindow.getZoomSpinner3().getValue());
   }
 
@@ -206,7 +204,7 @@ class ZoomSpinnerTest extends AppTestParent {
     lock = new CountDownLatch(1);
 
     Platform.runLater(() -> {
-      this.geometryWindow.getZoomSpinner3().getValueFactory().setValue(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_3);
+      this.geometryWindow.getZoomSpinner3().getValueFactory().setValue(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3);
       lock.countDown();
     });
 
@@ -217,11 +215,11 @@ class ZoomSpinnerTest extends AppTestParent {
     }
 
     // Verify
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_3,
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_3,
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3,
       this.geometryWindow.getZoomSpinner1().getValue());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE + ZOOM_SPINNER_INCREMENTS_3,
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3,
       this.geometryWindow.getZoomSpinner2().getValue());
   }
 
@@ -240,7 +238,7 @@ class ZoomSpinnerTest extends AppTestParent {
     lock = new CountDownLatch(1);
 
     Platform.runLater(() -> {
-      this.geometryWindow.getZoomSpinner3().getValueFactory().setValue(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_3);
+      this.geometryWindow.getZoomSpinner3().getValueFactory().setValue(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3);
       lock.countDown();
     });
 
@@ -251,11 +249,11 @@ class ZoomSpinnerTest extends AppTestParent {
     }
 
     // Verify
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_3,
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3,
       this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_3,
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3,
       this.geometryWindow.getZoomSpinner1().getValue());
-    assertEquals(ZOOM_SPINNER_DEFAULT_VALUE - ZOOM_SPINNER_INCREMENTS_3,
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3,
       this.geometryWindow.getZoomSpinner2().getValue());
   }
 

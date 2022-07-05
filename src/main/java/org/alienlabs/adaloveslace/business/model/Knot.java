@@ -20,15 +20,18 @@ import java.util.UUID;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Knot {
 
+  public static final int DEFAULT_ROTATION  = 0;
+  public static final int DEFAULT_ZOOM      = 1;
+
   // Two coinciding Knots can be different
   private final UUID uuid;
 
   private double x;
   private double y;
 
-  private double rotationAngle;
+  private int rotationAngle;
 
-  private double zoomFactor;
+  private int zoomFactor;
 
   private Pattern pattern;
 
@@ -49,8 +52,8 @@ public class Knot {
     this.imageView      = imageView;
 
     this.uuid           = UUID.randomUUID();
-    this.rotationAngle  = 0d;
-    this.zoomFactor     = 0d;
+    this.rotationAngle  = DEFAULT_ROTATION;
+    this.zoomFactor     = DEFAULT_ZOOM;
     this.visible        = true;
   }
 
@@ -78,19 +81,19 @@ public class Knot {
     this.y = y;
   }
 
-  public double getRotationAngle() {
+  public int getRotationAngle() {
     return rotationAngle;
   }
 
-  public void setRotationAngle(double rotationAngle) {
+  public void setRotationAngle(int rotationAngle) {
     this.rotationAngle = rotationAngle;
   }
 
-  public double getZoomFactor() {
+  public int getZoomFactor() {
     return zoomFactor;
   }
 
-  public void setZoomFactor(double zoomFactor) {
+  public void setZoomFactor(int zoomFactor) {
     this.zoomFactor = zoomFactor;
   }
 

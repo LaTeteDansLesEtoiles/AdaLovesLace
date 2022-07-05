@@ -55,6 +55,7 @@ public class OptionalDotGrid extends Pane {
 
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
   private final Group root;
+  private Node firstNonGridNode;
 
   /**
    * We draw the dots on the grid using a Canvas.
@@ -95,11 +96,11 @@ public class OptionalDotGrid extends Pane {
 
   @Override
   public void layoutChildren() {
+    drawDiagram();
+
     if (this.gridNeedsToBeRedrawn) {
       drawGrid();
     }
-
-    drawDiagram();
   }
 
   private void drawDiagram() {
@@ -131,6 +132,10 @@ public class OptionalDotGrid extends Pane {
 
   private void drawKnotWithRotationAndZoom(Knot knot) {
     ImageView iv = rotateKnot(knot);
+    if (this.diagram.getKnots().indexOf(knot) == 0) {
+      this.firstNonGridNode = iv;
+    }
+
     zoomKnot(knot, iv);
 
     double x = knot.getX();
@@ -153,6 +158,7 @@ public class OptionalDotGrid extends Pane {
   private ImageView rotateKnot(Knot knot) {
     if (!root.getChildren().contains(knot.getImageView())) {
       root.getChildren().add(knot.getImageView());
+      knot.getImageView().toBack();
     }
 
     knot.getImageView().setOpacity(1.0d);
@@ -195,6 +201,7 @@ public class OptionalDotGrid extends Pane {
         double offsetY = (y % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
         Ellipse ell = new Ellipse(x - this.desiredRadius + offsetY,y - this.desiredRadius,this.desiredRadius,this.desiredRadius); // A dot
         ell.setFill(GRID_COLOR);
+        ell.toFront();
 
         grid.add(ell);
         root.getChildren().add(ell);
@@ -230,6 +237,10 @@ public class OptionalDotGrid extends Pane {
     }
 
     return currentKnot;
+  }
+
+  public Node getFirstNonGridNode() {
+    return this.firstNonGridNode;
   }
 
   public void setGridNeedsToBeRedrawn(boolean gridNeedsToBeRedrawn) {

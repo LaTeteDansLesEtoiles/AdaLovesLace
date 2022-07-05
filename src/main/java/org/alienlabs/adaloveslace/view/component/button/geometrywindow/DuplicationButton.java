@@ -21,7 +21,6 @@ public class DuplicationButton extends ToggleButton {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onSetDuplicationModeAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
-    this.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(BUTTON_TOOLTIP);

@@ -25,7 +25,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.sleep;
-import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.App.EXPORT_IMAGE_FILE_TYPE;
+import static org.alienlabs.adaloveslace.App.GRID_DOTS_RADIUS;
 import static org.alienlabs.adaloveslace.util.FileUtil.PATH_SEPARATOR;
 
 @ExtendWith(ApplicationExtension.class)
@@ -40,14 +41,13 @@ public class AppTestParent {
   public static final double GRID_WIDTH           = 600d;
   public static final double GRID_HEIGHT          = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
-  public static final String TEST_SCREEN_CAPTURE_FILE     = "test_screen_capture" + EXPORT_FILE_TYPE;
+  public static final String TEST_SCREEN_CAPTURE_FILE     = "test_screen_capture" + EXPORT_IMAGE_FILE_TYPE;
 
   public static final String CLASSPATH_RESOURCES_PATH_JPG = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*test" + PATH_SEPARATOR + ".*.jpg";
 
   public static final String SNOWFLAKE            = "snowflake_small";
-  public static final String SNOWFLAKE_BUTTON     = TOOLBOX_BUTTON_ID + "1";
 
-  public static final double SNOWFLAKE_PIXEL_X    = 545d;
+  public static final double SNOWFLAKE_PIXEL_X    = 415d;
 
   public static final double SNOWFLAKE_PIXEL_Y    = 145d;
 
@@ -81,6 +81,7 @@ public class AppTestParent {
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
     this.app.getToolboxStage().setX(1600d);
     this.app.getToolboxStage().setY(50d);
+    this.app.getToolboxStage().setHeight(600d);
 
     this.primaryStage = primaryStage;
 
@@ -114,11 +115,6 @@ public class AppTestParent {
     clickOnButton(robot, toolboxWindow.getSnowflakeButton());
   }
 
-  protected Point2D newSpinnerPoint(double x, double y) {
-    return new Point2D(this.app.getGeometryStage().getX() + x,
-      this.app.getGeometryStage().getY() + y);
-  }
-
   private void clickOnButton(FxRobot robot, Node button) {
     robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
 
@@ -149,6 +145,11 @@ public class AppTestParent {
   protected Point2D newPointOnGrid(double pixelX, double pixelY) {
     return new Point2D(this.primaryStage.getX() + pixelX,
       this.primaryStage.getY() + pixelY);
+  }
+
+  protected Point2D newPointOnGridForFirstNonGridNode() {
+    return new Point2D(this.primaryStage.getX() + app.getOptionalDotGrid().getFirstNonGridNode().getBoundsInParent().getCenterX(),
+      this.primaryStage.getY() + app.getOptionalDotGrid().getFirstNonGridNode().getBoundsInParent().getCenterY() + 10d);
   }
 
 }

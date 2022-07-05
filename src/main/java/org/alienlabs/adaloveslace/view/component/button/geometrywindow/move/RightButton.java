@@ -16,7 +16,6 @@ public class RightButton extends Button {
   public RightButton(App app, GeometryWindow window) {
     this.setOnMouseClicked(event -> onMoveKnotRightAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
-    this.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
   }
 
   public static void onMoveKnotRightAction(App app, GeometryWindow window) {

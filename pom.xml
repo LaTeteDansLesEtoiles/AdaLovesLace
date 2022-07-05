@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.alienlabs.adaloveslace</groupId>
   <artifactId>adaloveslace</artifactId>
-  <version>0.0.7</version>
+  <version>0.1.0</version>
   <description>A tatting lace patterns creation software</description>
 
   <properties>
@@ -13,6 +13,7 @@
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <test-plugins.version>3.0.0-M5</test-plugins.version>
     <javafx.version>17.0.2</javafx.version>
+    <itext.version>7.2.2</itext.version>
     <testfx.version>4.0.16-alpha</testfx.version>
     <logback.version>1.3.0-alpha16</logback.version>
   </properties>
@@ -37,6 +38,30 @@
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-swing</artifactId>
       <version>${javafx.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>kernel</artifactId>
+      <version>${itext.version}</version>
+    </dependency>
+    <!-- always needed -->
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>io</artifactId>
+      <version>${itext.version}</version>
+    </dependency>
+    <!-- always needed -->
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>layout</artifactId>
+      <version>${itext.version}</version>
+    </dependency>
+    <!-- only needed for PDF/A -->
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>pdfa</artifactId>
+      <version>${itext.version}</version>
     </dependency>
 
     <!-- JAXB API v4.0.0 -->
@@ -152,7 +177,7 @@
               <generateInstaller>true</generateInstaller>
               <administratorRequired>false</administratorRequired>
               <bundleJre>true</bundleJre>
-              <customizedJre>true</customizedJre>
+              <customizedJre>false</customizedJre>
               <organizationName>AlienLabs</organizationName>
               <organizationEmail>goupilpierre@gmail.com</organizationEmail>
               <assetsDir>${basedir}/src/main/resources/assets</assetsDir>
@@ -169,7 +194,7 @@
               <vmArgs>
                 <vmArg>--module-path libs</vmArg>
                 <vmArg>-Dsun.java2d.uiScale=2.0</vmArg>
-                <vmArg>--add-modules javafx.base,javafx.controls,javafx.graphics,javafx.swing,org.slf4j</vmArg>
+                <vmArg>--add-modules io,kernel,layout,javafx.base,javafx.controls,javafx.graphics,javafx.swing,org.slf4j</vmArg>
               </vmArgs>
               <additionalResources>
                 <additionalResource>${basedir}/target/classes/org/</additionalResource>

@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Iterator;
 
+import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
+import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
@@ -147,10 +149,12 @@ public class MainWindow {
     return grid;
   }
 
-  public void onMainWindowClicked(final Group root) {
+  public void onMainWindowClicked(final App app, final Group root) {
     root.setOnMouseClicked(event -> {
       String eType = event.getEventType().toString();
-      logger.info("Event type -> {},  current Knot index {}", eType, this.getOptionalDotGrid().getDiagram().getCurrentKnotIndex());
+      logger.info("Event type -> {},  current Knot index {}, current mode: {}", eType,
+        this.getOptionalDotGrid().getDiagram().getCurrentKnotIndex(),
+        this.getOptionalDotGrid().getDiagram().getCurrentMode());
 
       if (eType.equals(MOUSE_CLICKED)) {
         double x          = event.getX();
@@ -160,55 +164,75 @@ public class MainWindow {
         logger.info("Coordinate X     -> {}", x);
         logger.info("Coordinate Y     -> {}, Y - TOP -> {}", y, yMinusTop);
 
-        switch (this.getOptionalDotGrid().getDiagram().getCurrentMode()) {
-          case DRAWING      -> onClickWithDrawMode(this.getOptionalDotGrid().getDiagram(),
-            optionalDotGrid.addKnot(x, y), false);
-          case SELECTION    -> onClickWithSelectionMode(x, y);
-          case DELETION     -> onClickWithDeletionMode(this.getOptionalDotGrid().getDiagram(), x, y) ;
-          case DUPLICATION  -> onClickWithDuplicationMode(this.getOptionalDotGrid().getDiagram(), x, y);
-        }
+        processMouseClick(app, x, y);
       }
     });
   }
 
-  private void onClickWithDrawMode(Diagram diagram, Knot knot, boolean knotSelected) {
-    knot.setZoomFactor(1d);
-    diagram.setCurrentKnot(knot);
-    diagram.setKnotSelected(knotSelected);
+  private void processMouseClick(App app, double x, double y) {
+    switch (this.getOptionalDotGrid().getDiagram().getCurrentMode()) {
+      case DRAWING      -> onClickWithDrawMode(app, this.getOptionalDotGrid().getDiagram(),
+        optionalDotGrid.addKnot(x, y));
+      case SELECTION    -> onClickWithSelectionMode(app, x, y);
+      case DELETION     -> onClickWithDeletionMode(app, this.getOptionalDotGrid().getDiagram(), x, y) ;
+      case DUPLICATION  -> onClickWithDuplicationMode(this.getOptionalDotGrid().getDiagram(), x, y);
+    }
   }
 
-  private void onClickWithSelectionMode(double x, double y) {
+  private void onClickWithDrawMode(App app, Diagram diagram, Knot knot) {
+    diagram.setCurrentKnot(knot);
+    diagram.setKnotSelected(false);
+    app.getOptionalDotGrid().layoutChildren();
+  }
+
+  private void onClickWithSelectionMode(App app, double x, double y) {
     Iterator<Knot> it = optionalDotGrid.getDiagram().getKnots().iterator();
     boolean hasClickedOnAKnot = false;
 
-    while (it.hasNext()) {
-      hasClickedOnAKnot = drawKnot(x, y, hasClickedOnAKnot, it.next());
+    // We iterate on the Knots as long as they are still Knots left to iterate
+    // And we stop at the first clicked Knot
+    while (it.hasNext() && !hasClickedOnAKnot) {
+      Knot knot = it.next();
+      try {
+        hasClickedOnAKnot = new NodeUtil().isClicked(knot, x, y);
+
+        if (hasClickedOnAKnot) {
+          logger.info("Clicked Knot index {}", this.getOptionalDotGrid().getDiagram().getKnots().indexOf(knot));
+
+          // If there is a current knot and we have clicked somewhere else than on a knot,
+          // we shall restore the zoom & rotation spinners values with the values from the knot
+          this.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          app.getGeometryWindow().getRotationSpinnerObject1().restoreRotationSpinnersState(knot);
+          app.getGeometryWindow().getZoomSpinnerObject1().restoreZoomSpinnersState(knot);
+        }
+      } catch (MalformedURLException e) {
+        throw new RuntimeException(e);
+      }
     }
 
     // If there is a current knot and we have clicked somewhere else than on a knot,
     // we shall move the current knot
-    moveKnot(x, y, hasClickedOnAKnot);
-  }
-
-  private void moveKnot(double x, double y, boolean hasClickedOnAKnot) {
-    if (optionalDotGrid.getDiagram().isKnotSelected() && !hasClickedOnAKnot) {
-      Knot toMove = optionalDotGrid.getDiagram().getCurrentKnot();
-      toMove.setX(x);
-      toMove.setY(y);
-      toMove.getImageView().setX(x);
-      toMove.getImageView().setY(y);
-      toMove.getImageView().setOpacity(1.0d);
-
-      optionalDotGrid.layoutChildren();
+    if (!hasClickedOnAKnot) {
+      moveKnot(this.getOptionalDotGrid().getDiagram().getCurrentKnot(), x, y);
     }
+
   }
 
-  private void onClickWithDeletionMode(Diagram diagram, double x, double y) {
+  private void moveKnot(Knot toMove, double x, double y) {
+    toMove.setX(x);
+    toMove.setY(y);
+    toMove.getImageView().setX(x);
+    toMove.getImageView().setY(y);
+    toMove.getImageView().setOpacity(1.0d);
+
+    optionalDotGrid.layoutChildren();
+  }
+
+  private void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
     for (Knot knot : diagram.getKnots()) {
       try {
         if (removeKnotIfClicked(diagram, x, y, knot)) {
-          optionalDotGrid.layoutChildren();
-
+          app.getOptionalDotGrid().layoutChildren();
           return;
         }
       } catch (MalformedURLException e) {
@@ -234,6 +258,8 @@ public class MainWindow {
 
     try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
       Knot newKnot = newKnot(x, y, knot, fis);
+      newKnot.setRotationAngle(knot.getRotationAngle());
+      newKnot.setZoomFactor(knot.getZoomFactor());
       diagram.addKnot(newKnot);
       optionalDotGrid.layoutChildren();
 
@@ -249,8 +275,8 @@ public class MainWindow {
     newKnot.setX(x + NEW_KNOT_GAP);
     newKnot.setY(y + NEW_KNOT_GAP);
     newKnot.setPattern(knot.getPattern());
-    newKnot.setRotationAngle(0d);
-    newKnot.setZoomFactor(1d);
+    newKnot.setRotationAngle(DEFAULT_ROTATION);
+    newKnot.setZoomFactor(DEFAULT_ZOOM);
     newKnot.setVisible(true);
 
     new FileUtil().buildKnotImageView(newKnot, fis);
@@ -259,32 +285,13 @@ public class MainWindow {
 
   private boolean removeKnotIfClicked(Diagram diagram, double x, double y, Knot knot) throws MalformedURLException {
     if (new NodeUtil().isClicked(knot, x, y)) {
-      logger.info("Removing Knot {}", knot);
       knot.setVisible(false);
-
-      if (diagram.getCurrentKnotIndex() >= diagram.getKnots().size()) {
-        // We shall shift left the current Knot index if it is after the end of the Knot list
-        diagram.setCurrentKnotIndex(diagram.getKnots().size());
-      }
+      logger.info("Removing Knot {}, current index = {}", knot, diagram.getCurrentKnotIndex());
 
       return true;
     }
 
     return false;
-  }
-
-  private boolean drawKnot(double x, double y, boolean hasClickedOnAKnot, Knot knot) {
-    try {
-      if (new NodeUtil().isClicked(knot, x, y)) {
-        // We have clicked on a knot, it shall be the current knot
-        logger.info("Knot is clicked: {}", knot.getPattern().getFilename());
-        onClickWithDrawMode(optionalDotGrid.getDiagram(), knot, true);
-        hasClickedOnAKnot = true;
-      }
-    } catch (MalformedURLException e) {
-      logger.error("Error reading pattern image");
-    }
-    return hasClickedOnAKnot;
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

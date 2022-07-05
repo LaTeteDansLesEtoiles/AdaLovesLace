@@ -54,7 +54,7 @@ class MainWindowComponentTest extends AppTestParent {
   }
 
   /**
-   * Checks if we are able to draw a snowflake (the second pattern) on the canvas
+   * Checks if we are able to draw a snowflake (the first and only pattern) on the canvas
    *
    * @param robot The injected FxRobot
    */
@@ -64,10 +64,10 @@ class MainWindowComponentTest extends AppTestParent {
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
 
-    // Move mouse and get the color of the pixel under the pointer
 
     // Run
-    Point2D pointToCheck = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    // Move mouse and get the color of the pixel under the pointer
+    Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
     robot.moveTo(pointToCheck);
 
     // Verify
@@ -80,7 +80,8 @@ class MainWindowComponentTest extends AppTestParent {
     assertFalse(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
 
     // If we choose a point in the snowflake it must be of the right color
-    assertTrue(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid));
+    assertTrue(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid),
+      "Expected color: " + SNOWFLAKE_DOT_COLOR + ", actual color: " + foundColorOnGrid);
   }
 
   /**

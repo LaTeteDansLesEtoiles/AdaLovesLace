@@ -1,6 +1,5 @@
 package org.alienlabs.adaloveslace.view.window;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -25,6 +24,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 
 import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
+import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
 import static org.alienlabs.adaloveslace.view.component.button.ImageButton.ASSETS_DIRECTORY;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.DeletionButton.DELETION_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.DuplicationButton.DUPLICATION_BUTTON_NAME;
@@ -36,16 +37,12 @@ public class GeometryWindow {
 
   public static final double GEOMETRY_WINDOW_X                  = 1100d;
   public static final double GEOMETRY_WINDOW_WIDTH              = 400d;
-  public static final double GEOMETRY_WINDOW_HEIGHT             = 610d;
-  public static final double VERTICAL_SPINNERS_PADDING          = 10d;
-  public static final double VERTICAL_GEOMETRY_BUTTONS_PADDING  = 175d;
-  public static final double VERTICAL_MOVE_KNOTS_BUTTONS_PADDING= 410d;
+  public static final double GEOMETRY_WINDOW_HEIGHT             = 670d;
   public static final double GAP_BETWEEN_BUTTONS                = 10d;
 
   public static final double GEOMETRY_BUTTONS_HEIGHT            = 50d;
   public static final int ROTATION_SPINNER_MIN_VALUE            = -360;
   public static final int ROTATION_SPINNER_MAX_VALUE            = 360;
-  public static final int ROTATION_SPINNER_DEFAULT_VALUE        = 0;
   public static final int ROTATION_SPINNER_INCREMENTS_1         = 1;
   public static final int ROTATION_SPINNER_INCREMENTS_2         = 10;
   public static final int ROTATION_SPINNER_INCREMENTS_3         = 30;
@@ -54,7 +51,6 @@ public class GeometryWindow {
   public static final int ZOOM_SPINNER_MAX_VALUE                = 20;
   public static final double ZOOM_SPINNER_ZOOM_FACTOR           = 9d;
   public static final double ZOOM_SPINNER_MULTIPLY_FACTOR       = 0.1d;
-  public static final int ZOOM_SPINNER_DEFAULT_VALUE            = 1;
   public static final int ZOOM_SPINNER_INCREMENTS_1             = 1;
   public static final int ZOOM_SPINNER_INCREMENTS_2             = 2;
   public static final int ZOOM_SPINNER_INCREMENTS_3             = 3;
@@ -82,16 +78,15 @@ public class GeometryWindow {
   private Spinner<Integer> zoomSpinner3;
 
   private static final Logger logger = LoggerFactory.getLogger(GeometryWindow.class);
+  private RotationSpinner rotationSpinnerObject1;
+  private RotationSpinner rotationSpinnerObject2;
+  private RotationSpinner rotationSpinnerObject3;
+  private ZoomSpinner zoomSpinnerObject1;
+  private ZoomSpinner zoomSpinnerObject2;
+  private ZoomSpinner zoomSpinnerObject3;
 
-  public void createGeometryStage(App app, Stage geometryStage, Pane buttonsPane, Pane moveKnotPane, Pane patternsPane) {
-    buttonsPane.setTranslateY(VERTICAL_GEOMETRY_BUTTONS_PADDING);
-    patternsPane.getChildren().add(buttonsPane);
-
-    moveKnotPane.setTranslateY(VERTICAL_MOVE_KNOTS_BUTTONS_PADDING);
-    patternsPane.getChildren().add(moveKnotPane);
-
-    patternsPane.setTranslateY(VERTICAL_SPINNERS_PADDING);
-    Scene geometryScene = new Scene(patternsPane, GEOMETRY_WINDOW_WIDTH, GEOMETRY_WINDOW_HEIGHT);
+  public void createGeometryStage(App app, Stage geometryStage, Pane parent) {
+    Scene geometryScene = new Scene(parent, GEOMETRY_WINDOW_WIDTH, GEOMETRY_WINDOW_HEIGHT);
     geometryStage.setTitle(GEOMETRY_TITLE);
     geometryStage.setOnCloseRequest(windowEvent -> {
       logger.info("You shall not close the geometry window directly!");
@@ -103,7 +98,7 @@ public class GeometryWindow {
     geometryStage.show();
   }
 
-  public TilePane createGeometryButtons(App app) {
+  public void createGeometryButtons(App app, GridPane parent) {
     TilePane buttonsPane  = new TilePane(Orientation.HORIZONTAL);
     buttonsPane.setAlignment(Pos.BOTTOM_CENTER);
     buttonsPane.setPrefColumns(2);
@@ -128,30 +123,38 @@ public class GeometryWindow {
     getImageView("zoom.png", zoomButton, false);
 
     this.rotationSpinner1 = new Spinner<>(ROTATION_SPINNER_MIN_VALUE, ROTATION_SPINNER_MAX_VALUE,
-      ROTATION_SPINNER_DEFAULT_VALUE, ROTATION_SPINNER_INCREMENTS_1);
+      DEFAULT_ROTATION, ROTATION_SPINNER_INCREMENTS_1);
     this.rotationSpinner2 = new Spinner<>(ROTATION_SPINNER_MIN_VALUE, ROTATION_SPINNER_MAX_VALUE,
-      ROTATION_SPINNER_DEFAULT_VALUE, ROTATION_SPINNER_INCREMENTS_2);
+      DEFAULT_ROTATION, ROTATION_SPINNER_INCREMENTS_2);
     this.rotationSpinner3 = new Spinner<>(ROTATION_SPINNER_MIN_VALUE, ROTATION_SPINNER_MAX_VALUE,
-      ROTATION_SPINNER_DEFAULT_VALUE, ROTATION_SPINNER_INCREMENTS_3);
+      DEFAULT_ROTATION, ROTATION_SPINNER_INCREMENTS_3);
 
-    RotationSpinner rotationSpinner = new RotationSpinner();
-    rotationSpinner.buildRotationSpinner(app, this.rotationSpinner1,
+    rotationSpinnerObject1 = new RotationSpinner();
+    rotationSpinnerObject1.buildRotationSpinner(app, this.rotationSpinner1,
       this.rotationSpinner2.getValueFactory(), this.rotationSpinner3.getValueFactory());
-    rotationSpinner.buildRotationSpinner(app, this.rotationSpinner2,
+
+    rotationSpinnerObject2 = new RotationSpinner();
+    rotationSpinnerObject2.buildRotationSpinner(app, this.rotationSpinner2,
       this.rotationSpinner1.getValueFactory(), this.rotationSpinner3.getValueFactory());
-    rotationSpinner.buildRotationSpinner(app, this.rotationSpinner3,
+
+    rotationSpinnerObject3 = new RotationSpinner();
+    rotationSpinnerObject3.buildRotationSpinner(app, this.rotationSpinner3,
       this.rotationSpinner1.getValueFactory(), this.rotationSpinner2.getValueFactory());
 
-    this.zoomSpinner1 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, ZOOM_SPINNER_DEFAULT_VALUE, ZOOM_SPINNER_INCREMENTS_1);
-    this.zoomSpinner2 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, ZOOM_SPINNER_DEFAULT_VALUE, ZOOM_SPINNER_INCREMENTS_2);
-    this.zoomSpinner3 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, ZOOM_SPINNER_DEFAULT_VALUE, ZOOM_SPINNER_INCREMENTS_3);
+    this.zoomSpinner1 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, DEFAULT_ZOOM, ZOOM_SPINNER_INCREMENTS_1);
+    this.zoomSpinner2 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, DEFAULT_ZOOM, ZOOM_SPINNER_INCREMENTS_2);
+    this.zoomSpinner3 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, DEFAULT_ZOOM, ZOOM_SPINNER_INCREMENTS_3);
 
-    ZoomSpinner zoomSpinner = new ZoomSpinner();
-    zoomSpinner.buildZoomSpinner(app, this.zoomSpinner1, this.zoomSpinner2.getValueFactory(),
+    zoomSpinnerObject1 = new ZoomSpinner();
+    zoomSpinnerObject1.buildZoomSpinner(app, this.zoomSpinner1, this.zoomSpinner2.getValueFactory(),
       this.zoomSpinner3.getValueFactory());
-    zoomSpinner.buildZoomSpinner(app, this.zoomSpinner2, this.zoomSpinner1.getValueFactory(),
+
+    zoomSpinnerObject2 = new ZoomSpinner();
+    zoomSpinnerObject2.buildZoomSpinner(app, this.zoomSpinner2, this.zoomSpinner1.getValueFactory(),
       this.zoomSpinner3.getValueFactory());
-    zoomSpinner.buildZoomSpinner(app, this.zoomSpinner3, this.zoomSpinner1.getValueFactory(),
+
+    zoomSpinnerObject3 = new ZoomSpinner();
+    zoomSpinnerObject3.buildZoomSpinner(app, this.zoomSpinner3, this.zoomSpinner1.getValueFactory(),
       this.zoomSpinner2.getValueFactory());
 
     buttonsPane.getChildren().addAll(this.rotationSpinner1, this.zoomSpinner1,
@@ -161,18 +164,12 @@ public class GeometryWindow {
       this.drawingButton, this.selectionButton,
       this.deletionButton, this.duplicationButton);
 
-    return buttonsPane;
+    parent.add(buttonsPane, 0, 0);
   }
 
 
-  public GridPane createMoveKnotButtons(App app) {
-    GridPane moveKnotPane = new GridPane();
-    moveKnotPane.setAlignment(Pos.BOTTOM_CENTER);
-    //Setting the padding
-    moveKnotPane.setPadding(new Insets(10, 10, 10, 10));
-    //Setting the vertical and horizontal gaps between the columns
-    moveKnotPane.setVgap(GAP_BETWEEN_BUTTONS);
-    moveKnotPane.setHgap(GAP_BETWEEN_BUTTONS);
+  public void createMoveKnotButtons(App app, GridPane parent) {
+    GridPane moveKnotPane = app.newGridPane();
 
     this.upButton = new UpButton(app, this);
     getImageView("up.png", this.upButton, false);
@@ -210,7 +207,7 @@ public class GeometryWindow {
     getImageView("fast.png", this.fastMoveModeButton, false);
     moveKnotPane.add(this.fastMoveModeButton, 1, 1);
 
-    return moveKnotPane;
+    parent.add(moveKnotPane, 0, 2);
   }
 
   private void getImageView(String pathname, ButtonBase button, boolean isSelected) {
@@ -272,6 +269,14 @@ public class GeometryWindow {
 
   public Spinner<Integer> getZoomSpinner3() {
     return zoomSpinner3;
+  }
+
+  public RotationSpinner getRotationSpinnerObject1() {
+    return rotationSpinnerObject1;
+  }
+
+  public ZoomSpinner getZoomSpinnerObject1() {
+    return zoomSpinnerObject1;
   }
 
   public ZoomButton getZoomButton() {

@@ -21,7 +21,6 @@ public class SelectionButton extends ToggleButton {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onSetSelectionModeAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
-    this.setMaxHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(BUTTON_TOOLTIP);

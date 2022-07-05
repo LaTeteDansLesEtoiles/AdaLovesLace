@@ -1,5 +1,11 @@
 package org.alienlabs.adaloveslace.util;
 
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.CompressionConstants;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -256,6 +262,20 @@ public class FileUtil {
     String absolutePath = directory.getAbsolutePath();
     logger.debug("absolute path: {}", absolutePath);
     return new ArrayList<>(getResources(absolutePath, pattern));
+  }
+
+  public void generatePdf(String pdfFilename, String imageFilename) {
+    PageSize pageSize = PageSize.A4.rotate();
+
+    try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(pdfFilename)); Document doc = new Document(pdfDoc,pageSize)){
+      com.itextpdf.layout.element.Image image = new com.itextpdf.layout.element.Image(ImageDataFactory.create(imageFilename));
+      image.getXObject().getPdfObject().setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
+      doc.add(image);
+
+      logger.info("PDF file generated successfully!");
+    } catch (IOException e){
+      logger.error("Error generating PDF document!", e);
+    }
   }
 
   private Collection<String> getResources(final String element, final Pattern pattern) {
