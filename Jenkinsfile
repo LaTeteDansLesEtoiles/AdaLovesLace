@@ -17,14 +17,24 @@ node {
     }
 
     wrap([$class: 'Xvfb']) {
-        stage('automated tests') {
+        stage('unit tests') {
             try {
-                sh "./mvnw test -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=5000"
+                sh "./mvnw test"
             } catch(err) {
                 throw err
             } finally {
                 junit '**/target/surefire-reports/TEST-*.xml'
             }
+        }
+
+        stage('integration & functional tests') {
+          try {
+            sh "./mvnw verify -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=5000"
+          } catch(err) {
+            throw err
+          } finally {
+            junit '**/target/failsafe-reports/TEST-*.xml'
+          }
         }
 
         stage('test coverage') {
