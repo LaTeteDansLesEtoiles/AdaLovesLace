@@ -9,11 +9,11 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.MalformedURLException;
 
+import static org.alienlabs.adaloveslace.App.ASSETS_DIRECTORY;
 import static org.alienlabs.adaloveslace.App.SMALL_ICON_SIZE;
 
 public class ImageButton extends Button {
 
-  public static final String ASSETS_DIRECTORY = "assets/";
   private static final Logger logger = LoggerFactory.getLogger(ImageButton.class);
 
   public ImageButton(String buttonLabel) {

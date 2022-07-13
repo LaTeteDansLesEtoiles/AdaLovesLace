@@ -1,10 +1,10 @@
-package org.alienlabs.adaloveslace.test.view;
+package org.alienlabs.adaloveslace.functionaltest.view;
 
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.alienlabs.adaloveslace.test.AppTestParent;
+import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ResetDiagramButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton;
@@ -22,7 +22,7 @@ import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.api.FxAssert.verifyThat;
 
-class MainWindowComponentTest extends AppTestParent {
+class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
   public static final double  WHITE_PIXEL_X               = 86d;
   public static final long    WHITE_PIXEL_Y               = 75L;
@@ -30,7 +30,7 @@ class MainWindowComponentTest extends AppTestParent {
 
   private Stage primaryStage;
 
-  private static final Logger logger                      = LoggerFactory.getLogger(MainWindowComponentTest.class);
+  private static final Logger logger                      = LoggerFactory.getLogger(MainWindowFunctionalTest.class);
 
   /**
    * Init method called before each test

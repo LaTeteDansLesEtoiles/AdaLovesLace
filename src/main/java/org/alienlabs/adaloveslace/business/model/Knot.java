@@ -21,7 +21,7 @@ import java.util.UUID;
 public class Knot {
 
   public static final int DEFAULT_ROTATION  = 0;
-  public static final int DEFAULT_ZOOM      = 1;
+  public static final int DEFAULT_ZOOM      = 0;
 
   // Two coinciding Knots can be different
   private final UUID uuid;

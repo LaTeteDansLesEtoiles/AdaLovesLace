@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.test;
+package org.alienlabs.adaloveslace.functionaltest;
 
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
@@ -30,7 +30,7 @@ import static org.alienlabs.adaloveslace.App.GRID_DOTS_RADIUS;
 import static org.alienlabs.adaloveslace.util.FileUtil.PATH_SEPARATOR;
 
 @ExtendWith(ApplicationExtension.class)
-public class AppTestParent {
+public class AppFunctionalTestParent {
   public Stage primaryStage;
   public GeometryWindow geometryWindow;
   public ToolboxWindow toolboxWindow;
@@ -62,7 +62,7 @@ public class AppTestParent {
    */
   protected CountDownLatch lock = new CountDownLatch(1);
 
-  private static final Logger logger = LoggerFactory.getLogger(AppTestParent.class);
+  private static final Logger logger = LoggerFactory.getLogger(AppFunctionalTestParent.class);
 
   /**
    * Init method called before each test

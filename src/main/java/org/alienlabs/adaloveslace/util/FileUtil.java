@@ -297,7 +297,7 @@ public class FileUtil {
     try {
       zf = new ZipFile(file);
     } catch(final IOException e) {
-      logger.error("Error reading classpath .jar file!", e);
+      logger.debug("Error reading classpath .jar file!", e);
       return retval;
     }
     final Enumeration<? extends ZipEntry> e = zf.entries();

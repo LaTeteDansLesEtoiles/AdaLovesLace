@@ -1,8 +1,8 @@
-package org.alienlabs.adaloveslace.test.view.component.spinner;
+package org.alienlabs.adaloveslace.functionaltest.view.component.spinner;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import org.alienlabs.adaloveslace.test.AppTestParent;
+import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +16,9 @@ import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ZoomSpinnerTest extends AppTestParent {
+class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
 
-  private static final Logger logger          = LoggerFactory.getLogger(RotationSpinnerTest.class);
+  private static final Logger logger          = LoggerFactory.getLogger(RotationSpinnerFunctionalTest.class);
 
   /**
    * Init method called before each test

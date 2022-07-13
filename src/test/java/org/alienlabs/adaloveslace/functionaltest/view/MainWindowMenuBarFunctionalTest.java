@@ -1,9 +1,9 @@
-package org.alienlabs.adaloveslace.test.view;
+package org.alienlabs.adaloveslace.functionaltest.view;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
-import org.alienlabs.adaloveslace.test.AppTestParent;
+import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.Start;
 
@@ -11,7 +11,7 @@ import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.Sho
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class MainWindowMenuBarTest extends AppTestParent {
+class MainWindowMenuBarFunctionalTest extends AppFunctionalTestParent {
 
   public static final int FILE_MENU_ENTRY_INDEX           = 0;
 

@@ -1,10 +1,10 @@
-package org.alienlabs.adaloveslace.test.view;
+package org.alienlabs.adaloveslace.functionaltest.view;
 
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.alienlabs.adaloveslace.test.AppTestParent;
+import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -17,13 +17,13 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
-import static org.alienlabs.adaloveslace.test.view.MainWindowComponentTest.GRAY_DOTS_COLOR;
+import static org.alienlabs.adaloveslace.functionaltest.view.MainWindowFunctionalTest.GRAY_DOTS_COLOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ToolboxComponentTest extends AppTestParent {
+class ToolboxFunctionalTest extends AppFunctionalTestParent {
 
-  private static final Logger logger = LoggerFactory.getLogger(MainWindowComponentTest.class);
+  private static final Logger logger = LoggerFactory.getLogger(MainWindowFunctionalTest.class);
 
   /**
    * Init method called before each test

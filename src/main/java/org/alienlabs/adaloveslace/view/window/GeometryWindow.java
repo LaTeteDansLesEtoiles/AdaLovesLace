@@ -26,7 +26,6 @@ import java.net.MalformedURLException;
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
 import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
-import static org.alienlabs.adaloveslace.view.component.button.ImageButton.ASSETS_DIRECTORY;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.DeletionButton.DELETION_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.DuplicationButton.DUPLICATION_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.RotationButton.ROTATION_BUTTON_NAME;
@@ -49,8 +48,9 @@ public class GeometryWindow {
 
   public static final int ZOOM_SPINNER_MIN_VALUE                = -20;
   public static final int ZOOM_SPINNER_MAX_VALUE                = 20;
-  public static final double ZOOM_SPINNER_ZOOM_FACTOR           = 9d;
-  public static final double ZOOM_SPINNER_MULTIPLY_FACTOR       = 0.1d;
+  public static final double ZOOM_SPINNER_POSITIVE_ZOOM_MULTIPLY_FACTOR = 0.15d;
+  public static final double ZOOM_SPINNER_NEGATIVE_ZOOM_DIVISION_FACTOR = 0.15d;
+  public static final double ZOOM_SPINNER_NEGATIVE_ZOOM_ADD     = 0.6d;
   public static final int ZOOM_SPINNER_INCREMENTS_1             = 1;
   public static final int ZOOM_SPINNER_INCREMENTS_2             = 2;
   public static final int ZOOM_SPINNER_INCREMENTS_3             = 3;

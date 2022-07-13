@@ -1,7 +1,7 @@
-package org.alienlabs.adaloveslace.test.view;
+package org.alienlabs.adaloveslace.functionaltest.view;
 
 import javafx.stage.Stage;
-import org.alienlabs.adaloveslace.test.AppTestParent;
+import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.Start;
@@ -13,7 +13,7 @@ import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.Res
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton.UNDO_KNOT_BUTTON_NAME;
 
-class ToolboxButtonTest extends AppTestParent {
+class ToolboxButtonFunctionalTest extends AppFunctionalTestParent {
 
   /**
    * Init method called before each test
