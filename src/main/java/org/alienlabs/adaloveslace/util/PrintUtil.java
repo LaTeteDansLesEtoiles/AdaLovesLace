@@ -66,7 +66,7 @@ public class PrintUtil {
    * Print the main window using the Java print dialog
    * @param job the printer job
    */
-  private void print(PrinterJob job)
+  public void print(PrinterJob job)
   {
     ImageUtil iu = new ImageUtil(app);
     iu.hideTechnicalElementsFromRootGroup();

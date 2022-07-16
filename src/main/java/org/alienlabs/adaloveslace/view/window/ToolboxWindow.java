@@ -52,6 +52,7 @@ public class ToolboxWindow {
   private final List<ToggleButton>  allPatterns;
 
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
+  private TextArea printersTextArea;
 
   public ToolboxWindow() {
     this.allPatterns = new ArrayList<>();
@@ -236,7 +237,7 @@ public class ToolboxWindow {
    *
    */
   public void buildPrintButtons(App  app, GridPane parent, int posY) {
-    TextArea printersTextArea   = new TextArea();
+    printersTextArea = new TextArea();
     printersTextArea.setPrefColumnCount(8);
 
     Button getPrintersButton    = new Button(GET_ALL_PRINTERS);
@@ -321,6 +322,10 @@ public class ToolboxWindow {
 
   public ResetDiagramButton getResetDiagramButton() {
     return this.resetDiagramButton;
+  }
+
+  public TextArea getPrintersTextArea() {
+    return printersTextArea;
   }
 
   public List<ToggleButton> getAllPatterns() {

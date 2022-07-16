@@ -1,7 +1,10 @@
 package org.alienlabs.adaloveslace.view.window;
 
+import javafx.collections.ObservableSet;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.print.Printer;
+import javafx.print.PrinterJob;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -14,6 +17,7 @@ import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.NodeUtil;
+import org.alienlabs.adaloveslace.util.PrintUtil;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
 import org.slf4j.Logger;
@@ -24,6 +28,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Iterator;
 
+import static org.alienlabs.adaloveslace.App.GET_PRINTERS_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.App.PRINT_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
 import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
@@ -58,6 +64,7 @@ public class MainWindow {
   public static final KeyCodeCombination SAVE_AS_KEY_COMBINATION = new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN);
 
   private static final Logger logger        = LoggerFactory.getLogger(MainWindow.class);
+  private ObservableSet<Printer> printers;
 
   public MainWindow() {
     menuBar = new MenuBar();
@@ -108,10 +115,44 @@ public class MainWindow {
     showHideGridItem.setOnAction(actionEvent -> ShowHideGridButton.showHideGrid(app));
     showHideGridItem.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
 
+    SeparatorMenuItem separator3 = new SeparatorMenuItem();
+
+    MenuItem getPrintersItem = new MenuItem(GET_PRINTERS_BUTTON_NAME);
+    getPrintersItem.setOnAction(event -> {
+      printers = Printer.getAllPrinters();
+
+      for (Printer printer : printers) {
+        app.getToolboxWindow().getPrintersTextArea().appendText(printer.getName() + "\n");
+      }
+    });
+    getPrintersItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
+
+    MenuItem printItem = new MenuItem(PRINT_BUTTON_NAME);
+    printItem.setOnAction(actionEvent -> {
+      if (!printers.isEmpty()) {
+        logger.info("Printing attempt of diagram");
+
+        Printer printer = printers.iterator().next();
+        logger.info("Printing attempt of diagram with printer {}", printer.getName());
+
+        PrinterJob pJ = PrinterJob.createPrinterJob(printer);
+
+        // Show the print setup dialog
+        boolean proceed = pJ.showPrintDialog(app.getPrimaryStage());
+
+        if (proceed) {
+          new PrintUtil(app).print(pJ);
+        } else {
+          logger.info("Printing diagram aborted by user!");
+        }
+      }
+    });
+    printItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN));
+
 
     fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, exportImageItem, separator1, quitItem);
     editMenu.getItems().addAll(undoKnotItem, redoKnotItem, separator2, resetDiagramItem);
-    toolMenu.getItems().addAll(showHideGridItem);
+    toolMenu.getItems().addAll(showHideGridItem, separator3, getPrintersItem, printItem);
 
     menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu);
     menuBar.setTranslateY(MENU_BAR_Y);
