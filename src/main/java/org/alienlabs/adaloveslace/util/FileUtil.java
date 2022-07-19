@@ -154,7 +154,7 @@ public class FileUtil {
     }
   }
 
-  public void saveFile(App app, File file) {
+  public File saveFile(App app, File file) {
     try {
       JAXBContext context = JAXBContext.newInstance(Diagram.class);
       Marshaller jaxbMarshaller = context.createMarshaller();
@@ -178,6 +178,8 @@ public class FileUtil {
     } catch (JAXBException | IOException e) {
       logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
     }
+
+    return file;
   }
 
   private void writeLaceFile(File file, Marshaller jaxbMarshaller, Diagram toSave, File homeDirectoryResourcesPath) throws JAXBException {

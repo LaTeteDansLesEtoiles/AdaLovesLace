@@ -1,0 +1,76 @@
+package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
+
+import com.google.gson.Gson;
+import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.DiagramDTO;
+import org.alienlabs.adaloveslace.business.model.Language;
+import org.alienlabs.adaloveslace.business.model.SubTechnique;
+import org.alienlabs.adaloveslace.business.model.Technique;
+import org.alienlabs.adaloveslace.util.FileUtil;
+import org.alienlabs.adaloveslace.util.Preferences;
+import org.alienlabs.adaloveslace.view.component.button.ImageButton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
+
+public class ShareButton extends ImageButton {
+
+  public static final String SHARE_BUTTON_NAME         = "         Share         ";
+
+  private static final Logger logger                  = LoggerFactory.getLogger(ShareButton.class);
+
+  public ShareButton(App app, String buttonLabel) {
+    super(buttonLabel);
+    this.setOnMouseClicked(event -> onShareAction(app));
+    buildButtonImage("share.png");
+  }
+
+  public static void onShareAction(App app) {
+    logger.info("Share file");
+
+    Preferences preferences = new Preferences();
+    File laceFilePath = preferences.getPathWithFileValue(SAVED_LACE_FILE);
+    DiagramDTO diagram;
+
+    try {
+    diagram = getDiagram(app, laceFilePath);
+    } catch (IOException e) {
+      throw new IllegalArgumentException(e);
+    }
+
+    Gson gson = new Gson();
+    HttpClient client = HttpClient.newHttpClient();
+
+    HttpRequest request = HttpRequest.newBuilder()
+      .uri(URI.create("http://localhost:18081/api/upload-diagram"))
+      .header("Content-Type", "application/json")
+      .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(diagram)))
+      .build();
+
+    CompletableFuture<HttpResponse<String>> completableFuture =
+      client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    completableFuture
+      .thenApplyAsync(HttpResponse::headers);
+    completableFuture.join();
+  }
+
+  private static DiagramDTO getDiagram(App app, File laceFilePath) throws IOException {
+    return new DiagramDTO().uuid(UUID.randomUUID()).name("test").
+      preview("test.lace").technique(Technique.LACE).subTechnique(SubTechnique.TATTING_LACE).
+      language(Language.FRENCH).diagram(Files.readAllBytes(new FileUtil().saveFile(app, laceFilePath).toPath())).
+      diagramContentType("application/lace").
+      clientId(UUID.fromString("80f9f2d3-327b-4b58-9ec9-53121d75a8f3")).clientSecret(UUID.fromString("df655bfe-b599-4027-aed1-1cf03393c0f4"));
+  }
+
+}

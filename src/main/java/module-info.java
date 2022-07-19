@@ -4,6 +4,8 @@ module org.alienlabs.adaloveslace.impl {
   requires kernel;
   requires layout;
 
+  requires com.google.gson;
+  requires java.net.http;
   requires javafx.controls;
   requires javafx.graphics;
   requires javafx.swing;
@@ -13,7 +15,7 @@ module org.alienlabs.adaloveslace.impl {
   requires static com.github.spotbugs.annotations;
 
   opens org.alienlabs.adaloveslace                  to javafx.graphics, javafx.controls;
-  opens org.alienlabs.adaloveslace.business.model   to jakarta.xml.bind;
+  opens org.alienlabs.adaloveslace.business.model   to com.google.gson, jakarta.xml.bind;
 
   exports org.alienlabs.adaloveslace;
   exports org.alienlabs.adaloveslace.business.model;

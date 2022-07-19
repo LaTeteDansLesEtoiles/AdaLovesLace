@@ -32,6 +32,7 @@ import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.Red
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ResetDiagramButton.RESET_DIAGRAM_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.SaveButton.SAVE_FILE_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShareButton.SHARE_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton.UNDO_KNOT_BUTTON_NAME;
 
@@ -281,12 +282,14 @@ public class ToolboxWindow {
     SaveButton          saveButton          = new SaveButton          (app, SAVE_FILE_BUTTON_NAME);
     SaveAsButton        saveAsButton        = new SaveAsButton        (app, SAVE_FILE_AS_BUTTON_NAME);
     LoadButton          loadButton          = new LoadButton          (app, LOAD_BUTTON_NAME);
+    ShareButton         shareButton         = new ShareButton         (app, SHARE_BUTTON_NAME);
     ExportImageButton   exportImageButton   = new ExportImageButton   (app, EXPORT_IMAGE_BUTTON_NAME);
     ExportPdfButton     exportPdfButton     = new ExportPdfButton     (app, EXPORT_PDF_BUTTON_NAME);
 
     buttonsPane.add(saveButton, 0, posY);
     buttonsPane.add(saveAsButton, 1, posY);
     buttonsPane.add(loadButton, 0, posY + 1);
+    buttonsPane.add(shareButton, 1, posY + 1);
     buttonsPane.add(exportImageButton, 0, posY + 2);
     buttonsPane.add(exportPdfButton, 1, posY + 2);
   }
