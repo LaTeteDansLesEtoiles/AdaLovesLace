@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.ShareUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,15 +19,22 @@ import static javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE;
 
 public class DiagramShareWindow {
 
-  public static final String SHARE_DIAGRAM_WINDOW_TITLE = "Share diagram on Ada Loves Lace community website";
-  public static final String SHARE_DIAGRAM_HEADER_TEXT = "Will you share your diagram?";
-  public static final String SHARE_DIAGRAM_CONTENT_TEXT = "Please fill in information below";
-  public static final String SHARE_BUTTON_TEXT = "Share";
-  public static final String CANCEL_BUTTON_TEXT = "Cancel";
-  public static final String FILENAME_LABEL = "Diagram name: ";
-  public static final String USERNAME_LABEL = "Username: ";
-  public static final String CLIENT_ID_LABEL = "Client ID: ";
-  public static final String CLIENT_SECRET_LABEL = "Client secret: ";
+  public static final double DIAGRAM_SHARE_WINDOW_WIDTH     = 500d;
+
+  public static final String SHARE_DIAGRAM_WINDOW_TITLE     = "Share diagram on Ada Loves Lace community website";
+  public static final String SHARE_DIAGRAM_HEADER_TEXT      = "Will you share your diagram?";
+  public static final String SHARE_DIAGRAM_CONTENT_TEXT     = "Please fill in information below";
+  public static final String SHARE_BUTTON_TEXT              = "Share";
+  public static final String CANCEL_BUTTON_TEXT             = "Cancel";
+  public static final String FILENAME_LABEL                 = "Diagram name: ";
+  public static final String USERNAME_LABEL                 = "Username: ";
+  public static final String CLIENT_ID_LABEL                = "Client ID: ";
+  public static final String CLIENT_SECRET_LABEL            = "Client secret: ";
+
+  public static final String FILENAME_PREFERENCE            = "FILENAME_PREFERENCE";
+  public static final String USERNAME_PREFERENCE            = "USERNAME_PREFERENCE";
+  public static final String CLIENT_ID_PREFERENCE           = "CLIENT_ID_PREFERENCE";
+  public static final String CLIENT_SECRET_PREFERENCE       = "CLIENT_SECRET_PREFERENCE";
 
   private TextField filenameText;
   private TextField userText;
@@ -37,6 +45,7 @@ public class DiagramShareWindow {
 
   public DiagramShareWindow(App app) {
     Alert alert = new Alert(CONFIRMATION);
+    Preferences preferences = new Preferences();
 
     ButtonType shareButton = buildAlertWindow(alert);
     GridPane gridPane = buildGridPane();
@@ -44,7 +53,12 @@ public class DiagramShareWindow {
 
     Optional<ButtonType> result = alert.showAndWait();
 
-    if (result.isPresent() && result.get() == shareButton){
+    if (result.isPresent() && result.get() == shareButton) {
+      preferences.setStringValue(FILENAME_PREFERENCE,       filenameText.getText());
+      preferences.setStringValue(USERNAME_PREFERENCE,       userText.getText());
+      preferences.setStringValue(CLIENT_ID_PREFERENCE,      clientIdText.getText());
+      preferences.setStringValue(CLIENT_SECRET_PREFERENCE,  clientSecretText.getText());
+
       new ShareUtil(app, filenameText.getText(), userText.getText(), clientIdText.getText(), clientSecretText.getText());
     } else {
       logger.info("Sharing cancelled");
@@ -66,22 +80,24 @@ public class DiagramShareWindow {
   }
 
   private GridPane buildGridPane() {
+    Preferences prefs = new Preferences();
     Label filenameLabel = new Label(FILENAME_LABEL);
 
-    filenameText = new TextField("");
+    filenameText = new TextField(prefs.getStringValue(FILENAME_PREFERENCE));
     filenameText.setEditable(true);
 
     GridPane.setVgrow(filenameText, Priority.ALWAYS);
     GridPane.setHgrow(filenameText, Priority.ALWAYS);
 
     GridPane gridPane = new GridPane();
+    gridPane.setPrefWidth(DIAGRAM_SHARE_WINDOW_WIDTH);
     gridPane.setMaxWidth(Double.MAX_VALUE);
     gridPane.add(filenameLabel, 0, 0);
     gridPane.add(filenameText, 1, 0);
 
     Label userLabel = new Label(USERNAME_LABEL);
 
-    userText = new TextField("");
+    userText = new TextField(prefs.getStringValue(USERNAME_PREFERENCE));
     userText.setEditable(true);
 
     GridPane.setVgrow(userText, Priority.ALWAYS);
@@ -92,7 +108,7 @@ public class DiagramShareWindow {
 
     Label clientIdLabel = new Label(CLIENT_ID_LABEL);
 
-    clientIdText = new TextField("");
+    clientIdText = new TextField(prefs.getStringValue(CLIENT_ID_PREFERENCE));
     clientIdText.setEditable(true);
 
     GridPane.setVgrow(clientIdText, Priority.ALWAYS);
@@ -103,7 +119,7 @@ public class DiagramShareWindow {
 
     Label clientSecretLabel = new Label(CLIENT_SECRET_LABEL);
 
-    clientSecretText = new TextField("");
+    clientSecretText = new TextField(prefs.getStringValue(CLIENT_SECRET_PREFERENCE));
     clientSecretText.setEditable(true);
 
     GridPane.setVgrow(clientSecretText, Priority.ALWAYS);

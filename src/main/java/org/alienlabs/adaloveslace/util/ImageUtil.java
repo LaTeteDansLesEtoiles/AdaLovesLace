@@ -50,11 +50,14 @@ public class ImageUtil {
   public DiagramDTO getDiagram(String diagramFilename, String username, String clientId, String clientSecret) throws IOException {
     File laceFilePath = new File(APP_FOLDER_IN_USER_HOME + diagramFilename + LACE_FILE_EXTENSION);
 
-    return new DiagramDTO().uuid(UUID.randomUUID()).name(diagramFilename).
+    DiagramDTO diagramDTO = new DiagramDTO().uuid(UUID.randomUUID()).name(diagramFilename).
       preview(diagramFilename + LACE_FILE_EXTENSION).technique(Technique.LACE).subTechnique(SubTechnique.TATTING_LACE).
       language(Language.FRENCH).diagram(Files.readAllBytes(new FileUtil().saveFile(this.app, laceFilePath).toPath())).
       diagramContentType(LACE_FILE_MIME_TYPE).username(username).
       clientId(UUID.fromString(clientId)).clientSecret(UUID.fromString(clientSecret));
+
+    Files.delete(laceFilePath.toPath());
+    return diagramDTO;
   }
 
   private WritableImage  buildWritableImage(String pathname) {

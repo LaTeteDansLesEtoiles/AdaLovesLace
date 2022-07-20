@@ -39,6 +39,7 @@ import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.Und
 public class ToolboxWindow {
 
   public static final double TOOLBOX_WINDOW_X             = 600d;
+  public static final double TOOLBOX_WINDOW_WIDTH         = 500d;
 
   public static final String GET_ALL_PRINTERS             = "   Get all Printers       ";
   public static final String PRINT_DIAGRAM                = "     Print diagram        ";
@@ -203,7 +204,7 @@ public class ToolboxWindow {
     Scene toolboxScene = new Scene(root);
     toolboxStage.setX(TOOLBOX_WINDOW_X);
     toolboxStage.setY(MAIN_WINDOW_Y);
-    toolboxStage.setWidth(500);
+    toolboxStage.setWidth(TOOLBOX_WINDOW_WIDTH);
     toolboxStage.setHeight(computeWindowHeight(app));
     toolboxStage.setScene(toolboxScene);
     toolboxStage.show();
