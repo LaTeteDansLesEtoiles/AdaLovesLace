@@ -4,14 +4,21 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.DiagramDTO;
+import org.alienlabs.adaloveslace.business.model.Language;
+import org.alienlabs.adaloveslace.business.model.SubTechnique;
+import org.alienlabs.adaloveslace.business.model.Technique;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.UUID;
 
 import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 
 public class ImageUtil {
 
@@ -38,6 +45,16 @@ public class ImageUtil {
     logger.info("Snapshot done!");
 
     return snapshot;
+  }
+
+  public DiagramDTO getDiagram() throws IOException {
+    File laceFilePath = new File(APP_FOLDER_IN_USER_HOME + "my diagram.lace");
+
+    return new DiagramDTO().uuid(UUID.randomUUID()).name("my diagram").
+      preview("my diagram.lace").technique(Technique.LACE).subTechnique(SubTechnique.TATTING_LACE).
+      language(Language.FRENCH).diagram(Files.readAllBytes(new FileUtil().saveFile(this.app, laceFilePath).toPath())).
+      diagramContentType("application/lace").username("user").
+      clientId(UUID.fromString("80f9f2d3-327b-4b58-9ec9-53121d75a8f3")).clientSecret(UUID.fromString("df655bfe-b599-4027-aed1-1cf03393c0f4"));
   }
 
   private WritableImage  buildWritableImage(String pathname) {

@@ -37,6 +37,8 @@ public class FileUtil {
   public static final String JAVA_CLASS_PATH_PROPERTY       = System.getProperty("java.class.path", ".");
   public static final String PATH_SEPARATOR_PROPERTY        = System.getProperty("path.separator");
   public static final String PATH_SEPARATOR                 = File.separator;
+  public static final String APP_FOLDER_IN_USER_HOME        = System.getProperty(USER_HOME) + File.separator +
+                                                              PROJECT_NAME + File.separator;
 
   // For code under test:
   public static final String CLASSPATH_RESOURCES_PATH       = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*.jpg";
@@ -102,8 +104,7 @@ public class FileUtil {
   }
 
   private void deleteXmlFile() throws IOException {
-    File xmlFile = new File(System.getProperty(USER_HOME) + File.separator +
-      PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator +
+    File xmlFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
       XML_FILE_TO_SAVE_IN_LACE_FILE);
 
     if (xmlFile.exists() && xmlFile.canWrite()) {
@@ -113,8 +114,7 @@ public class FileUtil {
 
   private void copyPattern(File file, ZipFile zipFile, ZipEntry entry) {
     try (InputStream initialStream = zipFile.getInputStream(entry)) {
-      File targetFile = new File(System.getProperty(USER_HOME) + File.separator +
-        PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator + entry.getName());
+      File targetFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + entry.getName());
 
       if (!targetFile.exists()) {
         Files.copy(
@@ -142,15 +142,13 @@ public class FileUtil {
 
   private void buildAbsoluteFilenamesForKnots(Diagram diagram) {
     for (Knot k : diagram.getKnots()) {
-      k.getPattern().setAbsoluteFilename(System.getProperty(USER_HOME) + File.separator +
-        PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator + k.getPattern().getFilename());
+      k.getPattern().setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + k.getPattern().getFilename());
     }
   }
 
   private void buildAbsoluteFilenamesForPatterns(Diagram diagram) {
     for (org.alienlabs.adaloveslace.business.model.Pattern p : diagram.getPatterns()) {
-      p.setAbsoluteFilename(System.getProperty(USER_HOME) + File.separator +
-        PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
+      p.setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
     }
   }
 
@@ -162,7 +160,7 @@ public class FileUtil {
 
       // In order not to lose the undo / redo history
       Diagram toSave = buildDiagramToSave(app);
-      File homeDirectoryResourcesPath = new File(System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
+      File homeDirectoryResourcesPath = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME);
 
       if (!file.getName().endsWith(LACE_FILE_EXTENSION)) {
         file = new File(file.getParent() + File.separator + file.getName() + LACE_FILE_EXTENSION);
