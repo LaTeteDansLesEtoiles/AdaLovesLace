@@ -41,13 +41,12 @@ public class ShareButton extends ImageButton {
 
     Gson gson = new Gson();
     HttpClient client = HttpClient.newHttpClient();
+    HttpRequest request = postRequest(diagram, gson);
 
-    HttpRequest request = HttpRequest.newBuilder()
-      .uri(URI.create("http://localhost:18081/api/upload-diagram"))
-      .header("Content-Type", "application/json")
-      .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(diagram)))
-      .build();
+    handleResponse(client, request);
+  }
 
+  private static void handleResponse(HttpClient client, HttpRequest request) {
     CompletableFuture<HttpResponse<String>> completableFuture =
       client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
     completableFuture
@@ -60,6 +59,14 @@ public class ShareButton extends ImageButton {
       logger.error("Error getting response status code!", e);
       throw new RuntimeException("Error getting response status code!", e);
     }
+  }
+
+  private static HttpRequest postRequest(DiagramDTO diagram, Gson gson) {
+    return HttpRequest.newBuilder()
+      .uri(URI.create("http://localhost:18081/api/upload-diagram"))
+      .header("Content-Type", "application/json")
+      .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(diagram)))
+      .build();
   }
 
 }
