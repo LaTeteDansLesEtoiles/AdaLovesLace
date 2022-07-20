@@ -3,26 +3,18 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 import com.google.gson.Gson;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.DiagramDTO;
-import org.alienlabs.adaloveslace.business.model.Language;
-import org.alienlabs.adaloveslace.business.model.SubTechnique;
-import org.alienlabs.adaloveslace.business.model.Technique;
-import org.alienlabs.adaloveslace.util.FileUtil;
-import org.alienlabs.adaloveslace.util.Preferences;
+import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
-import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
+import java.util.concurrent.ExecutionException;
 
 public class ShareButton extends ImageButton {
 
@@ -39,12 +31,10 @@ public class ShareButton extends ImageButton {
   public static void onShareAction(App app) {
     logger.info("Share file");
 
-    Preferences preferences = new Preferences();
-    File laceFilePath = preferences.getPathWithFileValue(SAVED_LACE_FILE);
     DiagramDTO diagram;
 
     try {
-    diagram = getDiagram(app, laceFilePath);
+    diagram = new ImageUtil(app).getDiagram();
     } catch (IOException e) {
       throw new IllegalArgumentException(e);
     }
@@ -63,14 +53,13 @@ public class ShareButton extends ImageButton {
     completableFuture
       .thenApplyAsync(HttpResponse::headers);
     completableFuture.join();
-  }
 
-  private static DiagramDTO getDiagram(App app, File laceFilePath) throws IOException {
-    return new DiagramDTO().uuid(UUID.randomUUID()).name("test").
-      preview("test.lace").technique(Technique.LACE).subTechnique(SubTechnique.TATTING_LACE).
-      language(Language.FRENCH).diagram(Files.readAllBytes(new FileUtil().saveFile(app, laceFilePath).toPath())).
-      diagramContentType("application/lace").
-      clientId(UUID.fromString("80f9f2d3-327b-4b58-9ec9-53121d75a8f3")).clientSecret(UUID.fromString("df655bfe-b599-4027-aed1-1cf03393c0f4"));
+    try {
+      logger.info("Response status code: {}", completableFuture.get().statusCode());
+    } catch (InterruptedException | ExecutionException e) {
+      logger.error("Error getting response status code!", e);
+      throw new RuntimeException("Error getting response status code!", e);
+    }
   }
 
 }
