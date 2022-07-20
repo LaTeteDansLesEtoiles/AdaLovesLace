@@ -47,14 +47,14 @@ public class ImageUtil {
     return snapshot;
   }
 
-  public DiagramDTO getDiagram() throws IOException {
-    File laceFilePath = new File(APP_FOLDER_IN_USER_HOME + "my diagram.lace");
+  public DiagramDTO getDiagram(String diagramFilename, String username, String clientId, String clientSecret) throws IOException {
+    File laceFilePath = new File(APP_FOLDER_IN_USER_HOME + diagramFilename + LACE_FILE_EXTENSION);
 
-    return new DiagramDTO().uuid(UUID.randomUUID()).name("my diagram").
-      preview("my diagram.lace").technique(Technique.LACE).subTechnique(SubTechnique.TATTING_LACE).
+    return new DiagramDTO().uuid(UUID.randomUUID()).name(diagramFilename).
+      preview(diagramFilename + LACE_FILE_EXTENSION).technique(Technique.LACE).subTechnique(SubTechnique.TATTING_LACE).
       language(Language.FRENCH).diagram(Files.readAllBytes(new FileUtil().saveFile(this.app, laceFilePath).toPath())).
-      diagramContentType("application/lace").username("user").
-      clientId(UUID.fromString("80f9f2d3-327b-4b58-9ec9-53121d75a8f3")).clientSecret(UUID.fromString("df655bfe-b599-4027-aed1-1cf03393c0f4"));
+      diagramContentType(LACE_FILE_MIME_TYPE).username(username).
+      clientId(UUID.fromString(clientId)).clientSecret(UUID.fromString(clientSecret));
   }
 
   private WritableImage  buildWritableImage(String pathname) {

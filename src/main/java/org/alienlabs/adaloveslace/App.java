@@ -46,6 +46,9 @@ public class App extends Application {
   public static final String TOOLBOX_TITLE            = "Toolbox";
   public static final String GEOMETRY_TITLE           = "Geometry";
   public static final String LACE_FILE_EXTENSION      = ".lace";
+  public static final String LACE_FILE_MIME_TYPE      = "application/lace";
+  public static final String ADA_LOVES_LACE_WEB       = "http://localhost:18081";
+  public static final String ADA_LOVES_LACE_WEB_SHARE_ENDPOINT       = "/api/upload-diagram";
   public static final String EXPORT_IMAGE_FILE_FORMAT = "png";
   public static final String EXPORT_IMAGE_FILE_TYPE   = ".png";
   public static final String EXPORT_PDF_FILE_TYPE     = ".pdf";
