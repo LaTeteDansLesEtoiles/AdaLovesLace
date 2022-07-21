@@ -31,13 +31,15 @@ public class ImageUtil {
     this.app = app;
   }
 
-  public void buildWritableImageWithoutTechnicalElements(String pathname) {
+  public File buildWritableImageWithoutTechnicalElements(String pathname) {
     this.hideTechnicalElementsFromRootGroup();
 
-    buildWritableImage(pathname);
+    File img = buildImage(pathname);
 
     this.showTechnicalElementsFromRootGroup();
     logger.info("Snapshot done!");
+
+    return img;
   }
 
   public WritableImage buildWritableImageWithTechnicalElements(String pathname) {
@@ -48,15 +50,20 @@ public class ImageUtil {
   }
 
   public DiagramDTO getDiagram(String diagramFilename, String username, String clientId, String clientSecret) throws IOException {
+    UUID uuid         = UUID.randomUUID();
     File laceFilePath = new File(APP_FOLDER_IN_USER_HOME + diagramFilename + LACE_FILE_EXTENSION);
+    File previewFile  = new ImageUtil(app).buildWritableImageWithoutTechnicalElements(
+      APP_FOLDER_IN_USER_HOME + uuid + EXPORT_IMAGE_FILE_TYPE);
 
-    DiagramDTO diagramDTO = new DiagramDTO().uuid(UUID.randomUUID()).name(diagramFilename).
-      preview(diagramFilename + LACE_FILE_EXTENSION).technique(Technique.LACE).subTechnique(SubTechnique.TATTING_LACE).
+    DiagramDTO diagramDTO = new DiagramDTO().uuid(uuid).name(diagramFilename).
+      preview(Files.readAllBytes(previewFile.toPath())).previewContentType(EXPORT_IMAGE_CONTENT_TYPE).
+      technique(Technique.LACE).subTechnique(SubTechnique.TATTING_LACE).
       language(Language.FRENCH).diagram(Files.readAllBytes(new FileUtil().saveFile(this.app, laceFilePath).toPath())).
       diagramContentType(LACE_FILE_MIME_TYPE).username(username).
       clientId(UUID.fromString(clientId)).clientSecret(UUID.fromString(clientSecret));
 
     Files.delete(laceFilePath.toPath());
+    Files.delete(previewFile.toPath());
     return diagramDTO;
   }
 
@@ -72,6 +79,20 @@ public class ImageUtil {
       logger.error("Problem writing root group image file!", e);
     }
     return snapshot;
+  }
+
+  private File  buildImage(String pathname) {
+    WritableImage wi = new WritableImage(Double.valueOf(app.getPrimaryStage().getX() + GRID_WIDTH).intValue(),
+      Double.valueOf(app.getPrimaryStage().getY() + GRID_HEIGHT).intValue());
+    WritableImage snapshot = app.getRoot().snapshot(new SnapshotParameters(), wi);
+
+    File output = new File(pathname);
+    try {
+      ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), EXPORT_IMAGE_FILE_FORMAT, output);
+    } catch (IOException e) {
+      logger.error("Problem writing root group image file!", e);
+    }
+    return output;
   }
 
   public void hideTechnicalElementsFromRootGroup() {

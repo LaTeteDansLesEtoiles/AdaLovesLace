@@ -14,7 +14,9 @@ public class DiagramDTO implements Serializable {
 
   private String name;
 
-  private String preview;
+  private byte[] preview;
+
+  private String previewContentType;
 
   private Technique technique;
 
@@ -58,19 +60,31 @@ public class DiagramDTO implements Serializable {
     this.name = name;
   }
 
-  public String getPreview() {
+  public byte[] getPreview() {
     return this.preview;
   }
 
-  public DiagramDTO preview(String preview) {
+  public DiagramDTO preview(byte[] preview) {
     this.setPreview(preview);
     return this;
   }
 
-  public void setPreview(String preview) {
+  public void setPreview(byte[] preview) {
     this.preview = preview;
   }
 
+  public String getPreviewContentType() {
+    return this.previewContentType;
+  }
+
+  public DiagramDTO previewContentType(String previewContentType) {
+    this.previewContentType = previewContentType;
+    return this;
+  }
+
+  public void setPreviewContentType(String previewContentType) {
+    this.previewContentType = previewContentType;
+  }
   public Technique getTechnique() {
     return this.technique;
   }
@@ -198,11 +212,11 @@ public class DiagramDTO implements Serializable {
     return "Diagram{" +
       "uuid='" + getUuid() + "'" +
       ", name='" + getName() + "'" +
-      ", preview='" + getPreview() + "'" +
       ", technique='" + getTechnique() + "'" +
       ", subTechnique='" + getSubTechnique() + "'" +
       ", language='" + getLanguage() + "'" +
       ", diagramContentType='" + getDiagramContentType() + "'" +
+      ", previewContentType='" + getPreviewContentType() + "'" +
       "}";
   }
 }

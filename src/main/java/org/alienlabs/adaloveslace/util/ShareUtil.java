@@ -21,12 +21,12 @@ public class ShareUtil {
 
   private static final Logger logger = LoggerFactory.getLogger(ShareUtil.class);
 
-  public ShareUtil(App app, String filename, String username, String clientId, String clientSecret) {
+  public ShareUtil(App app, String diagramName, String username, String clientId, String clientSecret) {
     logger.info("Sharing in progress");
     DiagramDTO diagram;
 
     try {
-      diagram = new ImageUtil(app).getDiagram(filename, username, clientId, clientSecret);
+      diagram = new ImageUtil(app).getDiagram(diagramName, username, clientId, clientSecret);
     } catch (IOException e) {
       throw new IllegalArgumentException(e);
     }
