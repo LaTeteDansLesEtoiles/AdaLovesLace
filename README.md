@@ -141,3 +141,9 @@ When creating a branch, if you wish to set tracking information for this branch 
 
 
 --------------------------------------------------------------------------------------------
+
+Include this argument for hidpi displays on Linux (requires Java 9):
+
+-Dglass.gtk.uiScale=200%
+
+    https://wiki.archlinux.org/title/HiDPI#JavaFX
