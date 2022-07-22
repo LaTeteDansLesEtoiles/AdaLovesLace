@@ -156,6 +156,11 @@ public class OptionalDotGrid extends Pane {
     this.allSelectedKnots.clear();
   }
 
+  public void clearSelection(Knot knot) {
+    root.getChildren().remove(knot.getSelection());
+    allSelectedKnots.remove(knot);
+  }
+
   public List<Knot> getAllSelectedKnots() {
     return this.allSelectedKnots;
   }

@@ -277,7 +277,7 @@ public class MainWindow {
   private void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
     for (Knot knot : diagram.getKnots()) {
       try {
-        if (removeKnotIfClicked(diagram, x, y, knot)) {
+        if (removeKnotIfClicked(app, diagram, x, y, knot)) {
           app.getOptionalDotGrid().layoutChildren();
           return;
         }
@@ -316,9 +316,14 @@ public class MainWindow {
     return newKnot;
   }
 
-  private boolean removeKnotIfClicked(Diagram diagram, double x, double y, Knot knot) throws MalformedURLException {
+  private boolean removeKnotIfClicked(App app, Diagram diagram, double x, double y, Knot knot) throws MalformedURLException {
     if (new NodeUtil().isClicked(knot, x, y)) {
       knot.setVisible(false);
+
+      if (knot.getSelection() != null) {
+        app.getOptionalDotGrid().clearSelection(knot);
+      }
+
       logger.info("Removing Knot {}, current index = {}", knot, diagram.getCurrentKnotIndex());
 
       return true;
