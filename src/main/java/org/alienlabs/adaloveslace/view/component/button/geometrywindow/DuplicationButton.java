@@ -41,10 +41,14 @@ public class DuplicationButton extends ToggleButton {
     List<Knot> copiedKnots = new ArrayList<>();
     for (Knot knot : app.getDiagram().getKnots()) {
       if (app.getOptionalDotGrid().getAllSelectedKnots().contains(knot)) {
-        copiedKnots.add(app.getMainWindow().duplicateKnot(knot.getX(), knot.getY(), knot));
+        Knot copiedKnot = app.getMainWindow().duplicateKnot(knot.getX(), knot.getY(), knot);
+        copiedKnots.add(copiedKnot);
+        app.getOptionalDotGrid().circleSelectedKnot(copiedKnot);
       }
     }
 
+    app.getOptionalDotGrid().clearSelections();
+    app.getOptionalDotGrid().getAllSelectedKnots().addAll(copiedKnots);
     copiedKnots.stream().forEach(knot -> app.getOptionalDotGrid().getDiagram().addKnot(knot));
     app.getOptionalDotGrid().layoutChildren();
 
