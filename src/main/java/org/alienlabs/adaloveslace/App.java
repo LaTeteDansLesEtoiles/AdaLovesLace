@@ -28,6 +28,9 @@ import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_BUTTONS;
 
@@ -83,6 +86,8 @@ public class App extends Application {
   private GeometryWindow geometryWindow;
   private ToolboxWindow toolboxWindow;
 
+  private final Map<KeyCode, Boolean> currentlyActiveKeys = new HashMap<>();
+
   @Override
   public void start(Stage primaryStage) {
     this.primaryStage = primaryStage;
@@ -114,6 +119,18 @@ public class App extends Application {
     this.mainWindow.onMainWindowClicked(this, root);
 
     scene = new Scene(root, windowWidth, windowHeight);
+
+    // For multi-selection with "Control" key
+    scene.setOnKeyPressed(event -> {
+      KeyCode codeString = event.getCode();
+      if (!currentlyActiveKeys.containsKey(codeString)) {
+        currentlyActiveKeys.put(codeString, true);
+      }
+    });
+    scene.setOnKeyReleased(event ->
+      currentlyActiveKeys.remove(event.getCode())
+    );
+
     primaryStage.setScene(scene);
     primaryStage.setX(MAIN_WINDOW_X);
     primaryStage.setY(MAIN_WINDOW_Y);
@@ -234,6 +251,10 @@ public class App extends Application {
 
   public Stage getPrimaryStage() {
     return primaryStage;
+  }
+
+  public Map<KeyCode, Boolean> getCurrentlyActiveKeys() {
+    return currentlyActiveKeys;
   }
 
 }

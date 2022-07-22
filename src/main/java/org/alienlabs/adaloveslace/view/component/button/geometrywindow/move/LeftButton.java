@@ -22,7 +22,9 @@ public class LeftButton extends Button {
     Knot currentKnot = app.getOptionalDotGrid().getDiagram().getCurrentKnot();
     logger.debug("Moving left knot {}", currentKnot);
 
-    currentKnot.setX(currentKnot.getX() - FastMoveModeButton.getMoveSpeed());
+    for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
+      knot.setX(knot.getX() - FastMoveModeButton.getMoveSpeed());
+    }
     app.getOptionalDotGrid().layoutChildren();
   }
 

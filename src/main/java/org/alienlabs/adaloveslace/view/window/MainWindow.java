@@ -216,7 +216,6 @@ public class MainWindow {
         optionalDotGrid.addKnot(x, y));
       case SELECTION    -> onClickWithSelectionMode(app, x, y);
       case DELETION     -> onClickWithDeletionMode(app, this.getOptionalDotGrid().getDiagram(), x, y) ;
-      case DUPLICATION  -> onClickWithDuplicationMode(this.getOptionalDotGrid().getDiagram(), x, y);
     }
   }
 
@@ -243,6 +242,13 @@ public class MainWindow {
           // If there is a current knot and we have clicked somewhere else than on a knot,
           // we shall restore the zoom & rotation spinners values with the values from the knot
           this.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+
+          // If the "Control" key is pressed, we are in multi-selection mode
+          if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
+            this.getOptionalDotGrid().clearSelections();
+          }
+          this.getOptionalDotGrid().circleSelectedKnot(knot);
+
           app.getGeometryWindow().getRotationSpinnerObject1().restoreRotationSpinnersState(knot);
           app.getGeometryWindow().getZoomSpinnerObject1().restoreZoomSpinnersState(knot);
         }
@@ -282,33 +288,20 @@ public class MainWindow {
     }
   }
 
-  private void onClickWithDuplicationMode(Diagram diagram, double x, double y) {
-    for (Knot knot : diagram.getKnots()) {
-      try {
-        if ((new NodeUtil().isClicked(knot, x, y)) && (duplicateKnot(diagram, x, y, knot))) {
-          break;
-        }
-      } catch (MalformedURLException e) {
-        throw new RuntimeException(e);
-      }
-    }
-  }
-
-  private boolean duplicateKnot(Diagram diagram, double x, double y, Knot knot) {
+  public Knot duplicateKnot(double x, double y, Knot knot) {
     logger.info("Duplicating Knot {}", knot);
 
     try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
       Knot newKnot = newKnot(x, y, knot, fis);
       newKnot.setRotationAngle(knot.getRotationAngle());
       newKnot.setZoomFactor(knot.getZoomFactor());
-      diagram.addKnot(newKnot);
       optionalDotGrid.layoutChildren();
 
-      return true;
+      return newKnot;
     } catch (IOException e) {
       logger.error("Problem with pattern resource file!", e);
     }
-    return false;
+    return null;
   }
 
   private Knot newKnot(double x, double y, Knot knot, FileInputStream fis) {

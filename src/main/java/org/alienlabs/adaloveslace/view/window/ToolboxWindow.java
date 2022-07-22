@@ -105,6 +105,8 @@ public class ToolboxWindow {
 
     pattern.setCenterX(img.getWidth() / 2);
     pattern.setCenterY(img.getHeight() / 2);
+    pattern.setWidth(img.getWidth());
+    pattern.setHeight(img.getHeight());
 
     ToggleButton button = new PatternButton(app, label, img, pattern);
     button.setId(TOOLBOX_BUTTON + (i + 1));

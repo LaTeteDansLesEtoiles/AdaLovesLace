@@ -3,10 +3,14 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
@@ -27,9 +31,22 @@ public class DuplicationButton extends ToggleButton {
     this.setTooltip(tooltip);
   }
 
-  public static void onSetDuplicationModeAction(App app, GeometryWindow window) {
+  public static void onSetDuplicationModeAction(final App app, final GeometryWindow window) {
     logger.info("Setting duplication mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DUPLICATION);
+
+    // We use a list of copied knots in order not to
+    // concurrently modify the list of knots already present
+    // on the canvas
+    List<Knot> copiedKnots = new ArrayList<>();
+    for (Knot knot : app.getDiagram().getKnots()) {
+      if (app.getOptionalDotGrid().getAllSelectedKnots().contains(knot)) {
+        copiedKnots.add(app.getMainWindow().duplicateKnot(knot.getX(), knot.getY(), knot));
+      }
+    }
+
+    copiedKnots.stream().forEach(knot -> app.getOptionalDotGrid().getDiagram().addKnot(knot));
+    app.getOptionalDotGrid().layoutChildren();
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(false);

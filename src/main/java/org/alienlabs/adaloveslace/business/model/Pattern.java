@@ -32,6 +32,10 @@ public class Pattern {
 
   private double centerY;
 
+  private double width;
+
+  private double height;
+
   public Pattern(String absoluteFilename) {
     this.absoluteFilename = absoluteFilename;
     if (this.absoluteFilename == null) {
@@ -77,10 +81,28 @@ public class Pattern {
     this.centerY = centerY;
   }
 
+  public double getWidth() {
+    return width;
+  }
+
+  public void setWidth(double width) {
+    this.width = width;
+  }
+
+  public double getHeight() {
+    return height;
+  }
+
+  public void setHeight(double height) {
+    this.height = height;
+  }
+
   @Override
   public String toString() {
     return "Pattern{" +
       "absoluteFilename='" + absoluteFilename + '\'' +
+      "width='" + width + '\'' +
+      "height='" + height + '\'' +
       '}';
   }
 

@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
@@ -21,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNullElseGet;
@@ -55,6 +57,10 @@ public class OptionalDotGrid extends Pane {
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
   private final Group root;
   private Node firstNonGridNode;
+
+  private final List<Knot> allSelectedKnots = new ArrayList<>();
+
+  private final List<Node> allSelections = new ArrayList<>();
 
   /**
    * We draw the dots on the grid using a Canvas.
@@ -127,6 +133,40 @@ public class OptionalDotGrid extends Pane {
 
     root.getChildren().clear();
     root.getChildren().addAll(listToRemove);
+  }
+
+  public void circleSelectedKnot(Knot knot) {
+    Line line1 = new Line(knot.getX(), knot.getY(), knot.getX() + knot.getPattern().getWidth(), knot.getY());
+    Line line2 = new Line(knot.getX() + knot.getPattern().getWidth(), knot.getY(), knot.getX() + knot.getPattern().getWidth(), knot.getY() + knot.getPattern().getHeight());
+    Line line3 = new Line(knot.getX() + knot.getPattern().getWidth(), knot.getY() + knot.getPattern().getHeight(), knot.getX(), knot.getY() + knot.getPattern().getHeight());
+    Line line4 = new Line(knot.getX(), knot.getY() + knot.getPattern().getHeight(), knot.getX(), knot.getY());
+
+    line1.setStroke(Color.BLUE);
+    line1.setStrokeWidth(1d);
+    line2.setStroke(Color.BLUE);
+    line2.setStrokeWidth(1d);
+    line3.setStroke(Color.BLUE);
+    line3.setStrokeWidth(1d);
+    line4.setStroke(Color.BLUE);
+    line4.setStrokeWidth(1d);
+
+    root.getChildren().addAll(line1, line2, line3, line4);
+    allSelections.add(line1);
+    allSelections.add(line2);
+    allSelections.add(line3);
+    allSelections.add(line4);
+
+    allSelectedKnots.add(knot);
+  }
+
+  public void clearSelections() {
+    root.getChildren().removeAll(this.allSelections);
+    this.allSelections.clear();
+    this.allSelectedKnots.clear();
+  }
+
+  public List<Knot> getAllSelectedKnots() {
+    return this.allSelectedKnots;
   }
 
   private void drawKnotWithRotationAndZoom(Knot knot) {

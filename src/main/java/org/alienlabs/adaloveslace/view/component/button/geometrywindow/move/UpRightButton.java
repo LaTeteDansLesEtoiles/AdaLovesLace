@@ -22,8 +22,10 @@ public class UpRightButton extends Button {
     Knot currentKnot = app.getOptionalDotGrid().getDiagram().getCurrentKnot();
     logger.debug("Moving up knot {}", currentKnot);
 
-    currentKnot.setX(currentKnot.getX() + FastMoveModeButton.getMoveSpeed());
-    currentKnot.setY(currentKnot.getY() - FastMoveModeButton.getMoveSpeed());
+    for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
+      knot.setX(knot.getX() + FastMoveModeButton.getMoveSpeed());
+      knot.setY(knot.getY() - FastMoveModeButton.getMoveSpeed());
+    }
     app.getOptionalDotGrid().layoutChildren();
   }
 
