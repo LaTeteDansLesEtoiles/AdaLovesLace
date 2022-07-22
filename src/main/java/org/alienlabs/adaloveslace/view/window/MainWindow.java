@@ -245,16 +245,9 @@ public class MainWindow {
 
           // If the "Control" key is pressed, we are in multi-selection mode
           if (app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
-            if (knot.getSelection() == null) {
-              app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().circleSelectedKnot(knot));
-            } else {
-              app.getOptionalDotGrid().clearSelection(knot);
-              knot.setSelection(null);
-            }
+            manageKnotWithMultiSelection(app, knot);
           } else {
-            app.getOptionalDotGrid().clearSelections();
-            knot.setSelection(null);
-            app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().circleSelectedKnot(knot));
+            manageKnotWithSingleSelection(app, knot);
           }
 
           app.getOptionalDotGrid().layoutChildren();
@@ -270,6 +263,21 @@ public class MainWindow {
       moveKnot(this.getOptionalDotGrid().getDiagram().getCurrentKnot(), x, y);
     }
 
+  }
+
+  private void manageKnotWithSingleSelection(App app, Knot knot) {
+    app.getOptionalDotGrid().clearSelections();
+    knot.setSelection(null);
+    app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().circleSelectedKnot(knot));
+  }
+
+  private void manageKnotWithMultiSelection(App app, Knot knot) {
+    if (knot.getSelection() == null) {
+      app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().circleSelectedKnot(knot));
+    } else {
+      app.getOptionalDotGrid().clearSelection(knot);
+      knot.setSelection(null);
+    }
   }
 
   private void moveKnot(Knot toMove, double x, double y) {
