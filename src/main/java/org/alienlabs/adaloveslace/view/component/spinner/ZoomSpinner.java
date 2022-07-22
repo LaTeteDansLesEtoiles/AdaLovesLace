@@ -15,15 +15,26 @@ public class ZoomSpinner {
 
   public void buildZoomSpinner(App app, Spinner<Integer> spinner,
                                SpinnerValueFactory<Integer> spinnerToReflect1,
-                               SpinnerValueFactory<Integer> spinnerToReflect2) {
+                               SpinnerValueFactory<Integer> spinnerToReflect2, int increment) {
     this.valueFactory = spinner.getValueFactory();
     this.valueFactory.valueProperty().addListener(
       (observableValue, oldValue, newValue) -> {
         spinnerToReflect1.setValue(newValue);
         spinnerToReflect2.setValue(newValue);
 
-        app.getOptionalDotGrid().getDiagram().getCurrentKnot()
-          .setZoomFactor(spinner.getValueFactory().getValue());
+        if (app.getOptionalDotGrid().getAllSelectedKnots() != null && !app.getOptionalDotGrid().getAllSelectedKnots().isEmpty()) {
+          for (Knot currentKnot : app.getOptionalDotGrid().getAllSelectedKnots()) {
+            if (newValue - oldValue == increment || newValue - oldValue == -increment) {
+              currentKnot
+                .setZoomFactor(currentKnot.getZoomFactor() + (newValue > oldValue ? increment : -increment));
+              app.getOptionalDotGrid().circleSelectedKnot(currentKnot);
+            }
+          }
+        } else {
+          app.getOptionalDotGrid().getDiagram().getCurrentKnot()
+            .setZoomFactor(valueFactory.getValue());
+        }
+
         app.getOptionalDotGrid().layoutChildren();
       });
 

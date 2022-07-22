@@ -131,15 +131,15 @@ public class GeometryWindow {
 
     rotationSpinnerObject1 = new RotationSpinner();
     rotationSpinnerObject1.buildRotationSpinner(app, this.rotationSpinner1,
-      this.rotationSpinner2.getValueFactory(), this.rotationSpinner3.getValueFactory());
+      this.rotationSpinner2.getValueFactory(), this.rotationSpinner3.getValueFactory(), ROTATION_SPINNER_INCREMENTS_1);
 
     rotationSpinnerObject2 = new RotationSpinner();
     rotationSpinnerObject2.buildRotationSpinner(app, this.rotationSpinner2,
-      this.rotationSpinner1.getValueFactory(), this.rotationSpinner3.getValueFactory());
+      this.rotationSpinner1.getValueFactory(), this.rotationSpinner3.getValueFactory(), ROTATION_SPINNER_INCREMENTS_2);
 
     rotationSpinnerObject3 = new RotationSpinner();
     rotationSpinnerObject3.buildRotationSpinner(app, this.rotationSpinner3,
-      this.rotationSpinner1.getValueFactory(), this.rotationSpinner2.getValueFactory());
+      this.rotationSpinner1.getValueFactory(), this.rotationSpinner2.getValueFactory(), ROTATION_SPINNER_INCREMENTS_3);
 
     this.zoomSpinner1 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, DEFAULT_ZOOM, ZOOM_SPINNER_INCREMENTS_1);
     this.zoomSpinner2 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, DEFAULT_ZOOM, ZOOM_SPINNER_INCREMENTS_2);
@@ -147,15 +147,15 @@ public class GeometryWindow {
 
     zoomSpinnerObject1 = new ZoomSpinner();
     zoomSpinnerObject1.buildZoomSpinner(app, this.zoomSpinner1, this.zoomSpinner2.getValueFactory(),
-      this.zoomSpinner3.getValueFactory());
+      this.zoomSpinner3.getValueFactory(), ZOOM_SPINNER_INCREMENTS_1);
 
     zoomSpinnerObject2 = new ZoomSpinner();
     zoomSpinnerObject2.buildZoomSpinner(app, this.zoomSpinner2, this.zoomSpinner1.getValueFactory(),
-      this.zoomSpinner3.getValueFactory());
+      this.zoomSpinner3.getValueFactory(), ZOOM_SPINNER_INCREMENTS_2);
 
     zoomSpinnerObject3 = new ZoomSpinner();
     zoomSpinnerObject3.buildZoomSpinner(app, this.zoomSpinner3, this.zoomSpinner1.getValueFactory(),
-      this.zoomSpinner2.getValueFactory());
+      this.zoomSpinner2.getValueFactory(), ZOOM_SPINNER_INCREMENTS_3);
 
     buttonsPane.getChildren().addAll(this.rotationSpinner1, this.zoomSpinner1,
       this.rotationSpinner2, this.zoomSpinner2,

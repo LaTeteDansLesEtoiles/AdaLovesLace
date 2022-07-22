@@ -247,10 +247,9 @@ public class MainWindow {
           if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
             this.getOptionalDotGrid().clearSelections();
           }
-          this.getOptionalDotGrid().circleSelectedKnot(knot);
 
-          app.getGeometryWindow().getRotationSpinnerObject1().restoreRotationSpinnersState(knot);
-          app.getGeometryWindow().getZoomSpinnerObject1().restoreZoomSpinnersState(knot);
+          this.getOptionalDotGrid().getAllSelectedKnots().add(this.getOptionalDotGrid().circleSelectedKnot(knot));
+          this.getOptionalDotGrid().layoutChildren();
         }
       } catch (MalformedURLException e) {
         throw new RuntimeException(e);

@@ -10,7 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
@@ -59,8 +59,6 @@ public class OptionalDotGrid extends Pane {
   private Node firstNonGridNode;
 
   private final List<Knot> allSelectedKnots = new ArrayList<>();
-
-  private final List<Node> allSelections = new ArrayList<>();
 
   /**
    * We draw the dots on the grid using a Canvas.
@@ -135,33 +133,26 @@ public class OptionalDotGrid extends Pane {
     root.getChildren().addAll(listToRemove);
   }
 
-  public void circleSelectedKnot(Knot knot) {
-    Line line1 = new Line(knot.getX(), knot.getY(), knot.getX() + knot.getPattern().getWidth(), knot.getY());
-    Line line2 = new Line(knot.getX() + knot.getPattern().getWidth(), knot.getY(), knot.getX() + knot.getPattern().getWidth(), knot.getY() + knot.getPattern().getHeight());
-    Line line3 = new Line(knot.getX() + knot.getPattern().getWidth(), knot.getY() + knot.getPattern().getHeight(), knot.getX(), knot.getY() + knot.getPattern().getHeight());
-    Line line4 = new Line(knot.getX(), knot.getY() + knot.getPattern().getHeight(), knot.getX(), knot.getY());
+  public Knot circleSelectedKnot(Knot knot) {
+    Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
+    rec.setStroke(Color.BLUE);
+    rec.setFill(Color.TRANSPARENT);
+    rec.setScaleX(computeZoomFactor(knot));
+    rec.setScaleY(computeZoomFactor(knot));
+    rec.setRotate(knot.getRotationAngle());
 
-    line1.setStroke(Color.BLUE);
-    line1.setStrokeWidth(1d);
-    line2.setStroke(Color.BLUE);
-    line2.setStrokeWidth(1d);
-    line3.setStroke(Color.BLUE);
-    line3.setStrokeWidth(1d);
-    line4.setStroke(Color.BLUE);
-    line4.setStrokeWidth(1d);
+    if (knot.getSelection() != null) {
+      root.getChildren().remove(knot.getSelection());
+    }
 
-    root.getChildren().addAll(line1, line2, line3, line4);
-    allSelections.add(line1);
-    allSelections.add(line2);
-    allSelections.add(line3);
-    allSelections.add(line4);
+    root.getChildren().add(rec);
+    knot.setSelection(rec);
 
-    allSelectedKnots.add(knot);
+    return knot;
   }
 
   public void clearSelections() {
-    root.getChildren().removeAll(this.allSelections);
-    this.allSelections.clear();
+    allSelectedKnots.stream().forEach(knot -> root.getChildren().remove(knot.getSelection()));
     this.allSelectedKnots.clear();
   }
 
@@ -188,9 +179,7 @@ public class OptionalDotGrid extends Pane {
   // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
   public double zoomKnot(Knot knot, ImageView iv) {
     if (knot.getZoomFactor() != 0) {
-      double zoomFactor = knot.getZoomFactor() > 0 ?
-        (1d + knot.getZoomFactor() * ZOOM_SPINNER_POSITIVE_ZOOM_MULTIPLY_FACTOR) :
-        ZOOM_SPINNER_NEGATIVE_ZOOM_DIVISION_FACTOR / -knot.getZoomFactor() + ZOOM_SPINNER_NEGATIVE_ZOOM_ADD;
+      double zoomFactor = computeZoomFactor(knot);
 
       if (iv != null) {
         iv.setScaleX(zoomFactor);
@@ -208,6 +197,13 @@ public class OptionalDotGrid extends Pane {
 
       return zoomFactor;
     }
+  }
+
+  private double computeZoomFactor(Knot knot) {
+    return knot.getZoomFactor() == 0 ? 1 :
+      (knot.getZoomFactor() > 0 ?
+      (1d + knot.getZoomFactor() * ZOOM_SPINNER_POSITIVE_ZOOM_MULTIPLY_FACTOR) :
+      ZOOM_SPINNER_NEGATIVE_ZOOM_DIVISION_FACTOR / -knot.getZoomFactor() + ZOOM_SPINNER_NEGATIVE_ZOOM_ADD);
   }
 
   // Rotate knot with an angle in degrees

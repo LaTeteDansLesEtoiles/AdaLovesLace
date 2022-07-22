@@ -24,6 +24,7 @@ public class LeftButton extends Button {
 
     for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
       knot.setX(knot.getX() - FastMoveModeButton.getMoveSpeed());
+      app.getOptionalDotGrid().circleSelectedKnot(knot);
     }
     app.getOptionalDotGrid().layoutChildren();
   }

@@ -25,6 +25,7 @@ public class UpLeftButton extends Button {
     for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
       knot.setX(knot.getX() - FastMoveModeButton.getMoveSpeed());
       knot.setY(knot.getY() - FastMoveModeButton.getMoveSpeed());
+      app.getOptionalDotGrid().circleSelectedKnot(knot);
     }
     app.getOptionalDotGrid().layoutChildren();
   }

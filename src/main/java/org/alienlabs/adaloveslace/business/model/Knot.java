@@ -4,6 +4,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 
 import java.util.Objects;
@@ -39,6 +40,9 @@ public class Knot {
 
   @XmlTransient
   private ImageView imageView;
+
+  @XmlTransient
+  private Node selection;
 
   public Knot() {
     this.uuid = UUID.randomUUID();
@@ -107,6 +111,14 @@ public class Knot {
 
   public void setImageView(ImageView imageView) {
     this.imageView = imageView;
+  }
+
+  public Node getSelection() {
+    return selection;
+  }
+
+  public void setSelection(Node selection) {
+    this.selection = selection;
   }
 
   public boolean isVisible() {
