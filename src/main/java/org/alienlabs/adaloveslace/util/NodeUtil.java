@@ -18,7 +18,7 @@ public class NodeUtil {
   }
 
   public boolean isSelected(Knot knot, double mouseX, double mouseY) throws MalformedURLException {
-    if (!knot.isVisible() || knot.getSelection() != null) {
+    if (!knot.isVisible()) {
       return false;
     }
 
