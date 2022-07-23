@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 public class ShareButton extends ImageButton {
 
-  public static final String SHARE_BUTTON_NAME         = "         Share         ";
+  public static final String SHARE_BUTTON_NAME         = "SHARE_BUTTON_NAME";
 
   private static final Logger logger                  = LoggerFactory.getLogger(ShareButton.class);
 

@@ -24,25 +24,16 @@ import java.util.regex.Pattern;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.HOME_DIRECTORY_RESOURCES_PATH;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ExportImageButton.EXPORT_IMAGE_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ExportPdfButton.EXPORT_PDF_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.LoadButton.LOAD_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton.REDO_KNOT_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ResetDiagramButton.RESET_DIAGRAM_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.SaveAsButton.SAVE_FILE_AS_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.SaveButton.SAVE_FILE_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShareButton.SHARE_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton.UNDO_KNOT_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
 public class ToolboxWindow {
 
   public static final double TOOLBOX_WINDOW_X             = 600d;
-  public static final double TOOLBOX_WINDOW_WIDTH         = 500d;
+  public static final double TOOLBOX_WINDOW_WIDTH         = 550d;
 
-  public static final String GET_ALL_PRINTERS             = "   Get all Printers       ";
-  public static final String PRINT_DIAGRAM                = "     Print diagram        ";
   public static final String THE_FOLLOWING_FOLDER_STRING  = "The following folder: '";
 
   private List<String>        classpathResourceFiles;
@@ -221,10 +212,10 @@ public class ToolboxWindow {
 
   private int computeWindowHeight(App app) {
     if (app.getDiagram().getPatterns().isEmpty()) {
-      return 600;
+      return 900;
     } else {
       if (app.getDiagram().getPatterns().size() > 12) {
-        return 600;
+        return 900;
       }
 
       return app.getDiagram().getPatterns().size() * 60;
@@ -245,12 +236,12 @@ public class ToolboxWindow {
     printersTextArea = new TextArea();
     printersTextArea.setPrefColumnCount(8);
 
-    Button getPrintersButton    = new Button(GET_ALL_PRINTERS);
+    Button getPrintersButton    = new Button(resourceBundle.getString(GET_PRINTERS_BUTTON_NAME));
     final Tooltip tooltip       = new Tooltip();
     tooltip.setText("Please click here first before printing");
     getPrintersButton.setTooltip(tooltip);
 
-    Button printButton          = new Button(PRINT_DIAGRAM);
+    Button printButton          = new Button(resourceBundle.getString(PRINT_BUTTON_NAME));
     final Tooltip tooltip2      = new Tooltip();
     tooltip2.setText("Please click here secondly in order to print");
     printButton.setTooltip(tooltip2);
@@ -265,30 +256,30 @@ public class ToolboxWindow {
   }
 
   private void buildQuitButton(GridPane buttonsPane, int posY) {
-    QuitButton showQuitButton = new QuitButton(QUIT_APP_BUTTON_NAME);
+    QuitButton showQuitButton = new QuitButton(resourceBundle.getString(QUIT_APP));
     buttonsPane.add(showQuitButton, 0, posY + 5);
   }
 
   private void buildShowHideGridButton(App app, GridPane buttonsPane, int posY) {
-    buttonsPane.add(new ShowHideGridButton  (SHOW_HIDE_GRID_BUTTON_NAME, app), 1, posY + 4);
+    buttonsPane.add(new ShowHideGridButton  (resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME), app), 1, posY + 4);
   }
 
   private void buildEditButtons(App app, GridPane buttonsPane, int posY) {
-    this.undoKnotButton      = new UndoKnotButton      (UNDO_KNOT_BUTTON_NAME, app);
-    this.redoKnotButton      = new RedoKnotButton      (REDO_KNOT_BUTTON_NAME, app);
-    this.resetDiagramButton  = new ResetDiagramButton  (RESET_DIAGRAM_BUTTON_NAME, app);
+    this.undoKnotButton      = new UndoKnotButton      (resourceBundle.getString(UNDO_KNOT), app);
+    this.redoKnotButton      = new RedoKnotButton      (resourceBundle.getString(REDO_KNOT), app);
+    this.resetDiagramButton  = new ResetDiagramButton  (resourceBundle.getString(RESET_DIAGRAM), app);
     buttonsPane.add(this.undoKnotButton, 0, posY + 3);
     buttonsPane.add(this.redoKnotButton, 1, posY + 3);
     buttonsPane.add(this.resetDiagramButton, 0, posY + 4);
   }
 
   private void buildFileButtons(App app, GridPane buttonsPane, int posY) {
-    SaveButton          saveButton          = new SaveButton          (app, SAVE_FILE_BUTTON_NAME);
-    SaveAsButton        saveAsButton        = new SaveAsButton        (app, SAVE_FILE_AS_BUTTON_NAME);
-    LoadButton          loadButton          = new LoadButton          (app, LOAD_BUTTON_NAME);
-    ShareButton         shareButton         = new ShareButton         (app, SHARE_BUTTON_NAME);
-    ExportImageButton   exportImageButton   = new ExportImageButton   (app, EXPORT_IMAGE_BUTTON_NAME);
-    ExportPdfButton     exportPdfButton     = new ExportPdfButton     (app, EXPORT_PDF_BUTTON_NAME);
+    SaveButton          saveButton          = new SaveButton          (app, resourceBundle.getString(SAVE_FILE));
+    SaveAsButton        saveAsButton        = new SaveAsButton        (app, resourceBundle.getString(SAVE_FILE_AS));
+    LoadButton          loadButton          = new LoadButton          (app, resourceBundle.getString(LOAD_FILE));
+    ShareButton         shareButton         = new ShareButton         (app, resourceBundle.getString(SHARE_BUTTON_NAME));
+    ExportImageButton   exportImageButton   = new ExportImageButton   (app, resourceBundle.getString(EXPORT_IMAGE));
+    ExportPdfButton     exportPdfButton     = new ExportPdfButton     (app, resourceBundle.getString(EXPORT_PDF_BUTTON_NAME));
 
     buttonsPane.add(saveButton, 0, posY);
     buttonsPane.add(saveAsButton, 1, posY);

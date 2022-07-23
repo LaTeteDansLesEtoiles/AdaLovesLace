@@ -34,7 +34,7 @@ import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.Zo
 
 public class GeometryWindow {
 
-  public static final double GEOMETRY_WINDOW_X                  = 1100d;
+  public static final double GEOMETRY_WINDOW_X                  = 1150d;
   public static final double GEOMETRY_WINDOW_WIDTH              = 400d;
   public static final double GEOMETRY_WINDOW_HEIGHT             = 670d;
   public static final double GAP_BETWEEN_BUTTONS                = 10d;

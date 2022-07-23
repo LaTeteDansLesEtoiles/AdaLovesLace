@@ -17,7 +17,7 @@ import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
 public class ExportPdfButton extends ImageButton {
 
-  public static final String EXPORT_PDF_BUTTON_NAME     = "   Export as PDF  ";
+  public static final String EXPORT_PDF_BUTTON_NAME     = "EXPORT_PDF_BUTTON_NAME";
 
   public static final String EXPORT_PDF_DIALOG_TITLE    = "Export a diagram as PDF";
 

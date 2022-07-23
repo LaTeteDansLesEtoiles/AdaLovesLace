@@ -16,7 +16,6 @@ import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
 public class SaveAsButton extends ImageButton {
 
-  public static final String SAVE_FILE_AS_BUTTON_NAME   = "       Save as        ";
   public static final String SAVE_FILE_AS_DIALOG_TITLE  = "Save diagram as";
   public static final String DIAGRAM_FILES              = ".lace files (*.lace)";
   public static final String DIAGRAM_FILE_FILTER        = "*.lace";
