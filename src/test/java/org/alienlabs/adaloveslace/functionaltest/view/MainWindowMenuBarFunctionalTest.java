@@ -7,6 +7,7 @@ import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.Start;
 
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,7 +55,7 @@ class MainWindowMenuBarFunctionalTest extends AppFunctionalTestParent {
   @Test
   void showHideGridAppMenuItemShallBeDisplayed() {
     MenuItem showHideGrid = getShowHideGridMenuItem(getToolMenu());
-    assertEquals(SHOW_HIDE_GRID_BUTTON_NAME, showHideGrid.getText());
+    assertEquals(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME), showHideGrid.getText());
   }
 
   /**
@@ -74,7 +75,7 @@ class MainWindowMenuBarFunctionalTest extends AppFunctionalTestParent {
   @Test
   void saveAsMenuItemShallBeDisplayed() {
     MenuItem saveAs = getSaveAsMenuItem(getFileMenu());
-    assertEquals(SAVE_FILE_AS, saveAs.getText());
+    assertEquals(resourceBundle.getString(SAVE_FILE_AS), saveAs.getText());
   }
 
   /**
@@ -94,7 +95,7 @@ class MainWindowMenuBarFunctionalTest extends AppFunctionalTestParent {
   @Test
   void exportImageMenuItemShallBeDisplayed() {
     MenuItem load = getExportImageMenuItem(getFileMenu());
-    assertEquals(EXPORT_IMAGE, load.getText());
+    assertEquals(resourceBundle.getString(EXPORT_IMAGE), load.getText());
   }
 
   /**
@@ -104,7 +105,7 @@ class MainWindowMenuBarFunctionalTest extends AppFunctionalTestParent {
   @Test
   void undoKnotMenuItemShallBeDisplayed() {
     MenuItem undo = getUndoKnotMenuItem(getEditMenu());
-    assertEquals(UNDO_KNOT, undo.getText());
+    assertEquals(resourceBundle.getString(UNDO_KNOT), undo.getText());
   }
 
   /**
@@ -114,7 +115,7 @@ class MainWindowMenuBarFunctionalTest extends AppFunctionalTestParent {
   @Test
   void redoKnotMenuItemShallBeDisplayed() {
     MenuItem redo = getRedoKnotMenuItem(getEditMenu());
-    assertEquals(REDO_KNOT, redo.getText());
+    assertEquals(resourceBundle.getString(REDO_KNOT), redo.getText());
   }
 
   /**
@@ -124,7 +125,7 @@ class MainWindowMenuBarFunctionalTest extends AppFunctionalTestParent {
   @Test
   void resetDiagramMenuItemShallBeDisplayed() {
     MenuItem reset = getResetDiagramMenuItem(getEditMenu());
-    assertEquals(RESET_DIAGRAM, reset.getText());
+    assertEquals(resourceBundle.getString(RESET_DIAGRAM), reset.getText());
   }
 
   /**

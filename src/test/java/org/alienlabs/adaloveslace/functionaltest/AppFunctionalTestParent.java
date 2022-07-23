@@ -21,6 +21,8 @@ import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.robot.Motion;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -71,7 +73,10 @@ public class AppFunctionalTestParent {
    */
   @Start
   public void start(Stage primaryStage) {
+
     this.app = new App();
+    Locale locale = new Locale("en", "EN");
+    App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
     this.app.setDiagram(new Diagram());
 
     this.geometryWindow = this.app.showGeometryWindow(this.app);
