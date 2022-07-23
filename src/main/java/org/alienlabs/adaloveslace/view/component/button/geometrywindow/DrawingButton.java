@@ -12,7 +12,7 @@ import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUT
 
 public class DrawingButton extends ToggleButton {
 
-  public static final String DRAWING_BUTTON_NAME    = " Draw ";
+  public static final String DRAWING_BUTTON_NAME    = "DRAWING_BUTTON_NAME";
   public static final String BUTTON_TOOLTIP         = "Select this button then click anywhere on the canvas to draw\nthe currently selected knot where you clicked on\n";
 
   private static final Logger logger                = LoggerFactory.getLogger(DrawingButton.class);

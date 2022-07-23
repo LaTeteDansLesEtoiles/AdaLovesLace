@@ -12,7 +12,7 @@ import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUT
 
 public class DeletionButton extends ToggleButton {
 
-  public static final String DELETION_BUTTON_NAME     = "Delete ";
+  public static final String DELETION_BUTTON_NAME     = "DELETION_BUTTON_NAME";
   public static final String BUTTON_TOOLTIP           = "Select this button then click on a\nknot in the canvas to delete it\n";
 
   private static final Logger logger                  = LoggerFactory.getLogger(DeletionButton.class);

@@ -106,22 +106,22 @@ public class GeometryWindow {
     buttonsPane.setPrefColumns(2);
     buttonsPane.setVgap(GAP_BETWEEN_BUTTONS);
 
-    this.deletionButton = new DeletionButton(app, this, DELETION_BUTTON_NAME);
+    this.deletionButton = new DeletionButton(app, this, resourceBundle.getString(DELETION_BUTTON_NAME));
     getImageView("deletion.png", deletionButton, false);
 
-    this.duplicationButton = new DuplicationButton(app, this, DUPLICATION_BUTTON_NAME);
+    this.duplicationButton = new DuplicationButton(app, this, resourceBundle.getString(DUPLICATION_BUTTON_NAME));
     getImageView("duplication.png", duplicationButton, false);
 
-    this.drawingButton = new DrawingButton(app, this, DrawingButton.DRAWING_BUTTON_NAME);
+    this.drawingButton = new DrawingButton(app, this, resourceBundle.getString(DrawingButton.DRAWING_BUTTON_NAME));
     getImageView("drawing.png", drawingButton, true);
 
-    this.selectionButton = new SelectionButton(app, this, SELECTION_BUTTON_NAME);
+    this.selectionButton = new SelectionButton(app, this, resourceBundle.getString(SELECTION_BUTTON_NAME));
     getImageView("selection.png", selectionButton, false);
 
-    this.rotationButton = new RotationButton(app, this, ROTATION_BUTTON_NAME);
+    this.rotationButton = new RotationButton(app, this, resourceBundle.getString(ROTATION_BUTTON_NAME));
     getImageView("rotation.png", rotationButton, false);
 
-    this.zoomButton = new ZoomButton(app, this, ZOOM_BUTTON_NAME);
+    this.zoomButton = new ZoomButton(app, this, resourceBundle.getString(ZOOM_BUTTON_NAME));
     getImageView("zoom.png", zoomButton, false);
 
     this.rotationSpinner1 = new Spinner<>(ROTATION_SPINNER_MIN_VALUE, ROTATION_SPINNER_MAX_VALUE,

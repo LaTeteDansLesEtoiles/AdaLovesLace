@@ -12,7 +12,7 @@ import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUT
 
 public class SelectionButton extends ToggleButton {
 
-  public static final String SELECTION_BUTTON_NAME    = "Select ";
+  public static final String SELECTION_BUTTON_NAME    = "SELECTION_BUTTON_NAME";
   public static final String BUTTON_TOOLTIP           = "Select this button then click on a\nknot in the canvas to select it\n";
 
   private static final Logger logger                  = LoggerFactory.getLogger(SelectionButton.class);
