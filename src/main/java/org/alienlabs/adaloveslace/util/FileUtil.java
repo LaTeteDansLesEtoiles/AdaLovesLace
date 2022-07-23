@@ -69,7 +69,7 @@ public class FileUtil {
       }
 
       if (null != diagram) {
-        buildKnotsImageViews(diagram);
+        buildKnotsImageViews(app, diagram);
       }
       deleteXmlFile();
     } catch (JAXBException | IOException e) {
@@ -82,24 +82,27 @@ public class FileUtil {
     app.getOptionalDotGrid().layoutChildren();
   }
 
-  private void buildKnotsImageViews(Diagram diagram) {
+  private void buildKnotsImageViews(App app, Diagram diagram) {
     for (Knot knot : diagram.getKnots()) {
       try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
-        buildKnotImageView(knot, fis);
+        buildKnotImageView(app, knot, fis);
       } catch (IOException e) {
         logger.error("Problem with pattern resource file!", e);
       }
     }
   }
 
-  public void buildKnotImageView(Knot knot, FileInputStream fis) {
+  public void buildKnotImageView(App app, Knot knot, FileInputStream fis) {
     Image image = new Image(fis);
     ImageView iv = new ImageView(image);
 
     iv.setX(knot.getX());
     iv.setY(knot.getY());
-    iv.setRotate(0d);
-    iv.setOpacity(1.0d);
+
+    iv.setScaleX(app.getOptionalDotGrid().computeZoomFactor(knot));
+    iv.setScaleY(app.getOptionalDotGrid().computeZoomFactor(knot));
+    iv.setRotate(knot.getRotationAngle());
+
     knot.setImageView(iv);
   }
 

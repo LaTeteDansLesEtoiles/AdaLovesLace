@@ -274,13 +274,14 @@ public class MainWindow {
   private void onClickWithSelectionMode(App app, double x, double y) {
     Iterator<Knot> it = optionalDotGrid.getDiagram().getKnots().iterator();
     boolean hasClickedOnAKnot = false;
+    app.getOptionalDotGrid().clearHovered();
 
     // We iterate on the Knots as long as they are still Knots left to iterate
     // And we stop at the first clicked Knot
     while (it.hasNext() && !hasClickedOnAKnot) {
       Knot knot = it.next();
       try {
-        hasClickedOnAKnot = new NodeUtil().isSelected(app, knot, x, y);
+        hasClickedOnAKnot = new NodeUtil().isSelected(knot, x, y);
 
         if (hasClickedOnAKnot) {
           logger.info("Clicked Knot index {}, uuid {}",
@@ -356,11 +357,11 @@ public class MainWindow {
     }
   }
 
-  public Knot duplicateKnot(double x, double y, Knot knot) {
+  public Knot duplicateKnot(App app, double x, double y, Knot knot) {
     logger.info("Duplicating Knot {}", knot);
 
     try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
-      Knot newKnot = newKnot(x, y, knot, fis);
+      Knot newKnot = newKnot(app, x, y, knot, fis);
       newKnot.setRotationAngle(knot.getRotationAngle());
       newKnot.setZoomFactor(knot.getZoomFactor());
       optionalDotGrid.layoutChildren();
@@ -372,7 +373,7 @@ public class MainWindow {
     return null;
   }
 
-  private Knot newKnot(double x, double y, Knot knot, FileInputStream fis) {
+  private Knot newKnot(App app, double x, double y, Knot knot, FileInputStream fis) {
     Knot newKnot = new Knot();
     newKnot.setX(x + NEW_KNOT_GAP);
     newKnot.setY(y + NEW_KNOT_GAP);
@@ -381,12 +382,12 @@ public class MainWindow {
     newKnot.setZoomFactor(DEFAULT_ZOOM);
     newKnot.setVisible(true);
 
-    new FileUtil().buildKnotImageView(newKnot, fis);
+    new FileUtil().buildKnotImageView(app, newKnot, fis);
     return newKnot;
   }
 
   private boolean removeKnotIfClicked(App app, Diagram diagram, double x, double y, Knot knot) throws MalformedURLException {
-    if (new NodeUtil().isSelected(app, knot, x, y)) {
+    if (new NodeUtil().isSelected(knot, x, y)) {
       knot.setVisible(false);
 
       if (knot.getSelection() != null) {

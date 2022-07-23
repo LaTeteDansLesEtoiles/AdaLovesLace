@@ -45,7 +45,7 @@ public class SelectionButton extends ToggleButton {
 
       for (Knot knot : app.getOptionalDotGrid().getDiagram().getKnots()) {
         try {
-          if (new NodeUtil().isSelected(app, knot, mouseEvent.getSceneX(), mouseEvent.getSceneY())) {
+          if (new NodeUtil().isSelected(knot, mouseEvent.getSceneX(), mouseEvent.getSceneY())) {
             logger.debug("Hover over knot: {}", knot);
             app.getOptionalDotGrid().circleHoveredKnot(knot);
 
