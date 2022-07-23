@@ -356,8 +356,8 @@ public class OptionalDotGrid extends Pane {
       Image image = new Image(fis);
       ImageView iv = new ImageView(image);
 
-      double cornerX = centerX - currentPattern.getCenterX();
-      double cornerY = centerY - currentPattern.getCenterY();
+      double cornerX = centerX - currentPattern.getWidth();
+      double cornerY = centerY - currentPattern.getHeight();
       iv.setX(cornerX);
       iv.setY(cornerY);
       iv.setRotate(0d);
