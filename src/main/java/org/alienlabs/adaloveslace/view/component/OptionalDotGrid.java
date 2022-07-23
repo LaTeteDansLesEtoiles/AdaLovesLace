@@ -154,6 +154,23 @@ public class OptionalDotGrid extends Pane {
     return knot;
   }
 
+  public void moveSelection(Knot knot) {
+    if (knot.getSelection() != null) {
+      root.getChildren().remove(knot.getSelection());
+
+      Rectangle rec = (Rectangle) knot.getSelection();
+      rec.setX(knot.getX());
+      rec.setY(knot.getY());
+      rec.setScaleX(computeZoomFactor(knot));
+      rec.setScaleY(computeZoomFactor(knot));
+      rec.setRotate(knot.getRotationAngle());
+      logger.debug("knot zoom: {}, computed zoom factor: {}", knot.getZoomFactor(), computeZoomFactor(knot));
+      logger.debug("Rectangle: [X={}, Y={}, zoomFactor={}]", rec.getX(), rec.getY(), rec.getScaleX());
+
+      root.getChildren().add(rec);
+    }
+  }
+
   public Knot drawGuideLines(final Knot knot) {
     deleteGuideLines(knot);
 
@@ -163,18 +180,6 @@ public class OptionalDotGrid extends Pane {
         new GuideLinesUtil(knot, otherKnot, root);
       }
     }
-
-    // The selection rectangle
-    Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
-    rec.setStroke(Color.BLUE);
-    rec.setFill(Color.TRANSPARENT);
-
-    if (knot.getSelection() != null) {
-      root.getChildren().remove(knot.getSelection());
-    }
-
-    root.getChildren().add(rec);
-    knot.setSelection(rec);
 
     return knot;
   }
