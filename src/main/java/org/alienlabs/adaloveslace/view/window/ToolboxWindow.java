@@ -31,8 +31,9 @@ import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
 public class ToolboxWindow {
 
+  public static final double TOOLBOX_WINDOW_X             = 600d;
   public static final double TOOLBOX_WINDOW_WIDTH         = 550d;
-  public static final double WINDOW_SPACING               = 30d;
+  public static final double WINDOW_SPACING               = 60d;
 
   public static final String THE_FOLLOWING_FOLDER_STRING  = "The following folder: '";
 
@@ -197,7 +198,8 @@ public class ToolboxWindow {
     buildPrintButtons(app, parent, posY);
 
     Scene toolboxScene = new Scene(root);
-    this.toolboxStage.setX(MAIN_WINDOW_X + app.getPrimaryStage().getWidth() + WINDOW_SPACING);
+    toolboxStage.setX(TOOLBOX_WINDOW_X);
+//    this.toolboxStage.setX(app.getPrimaryStage().getX() + app.getPrimaryStage().getWidth() + WINDOW_SPACING);
     this.toolboxStage.setY(MAIN_WINDOW_Y);
     this.toolboxStage.setWidth(TOOLBOX_WINDOW_WIDTH);
     this.toolboxStage.setHeight(computeWindowHeight(app));
