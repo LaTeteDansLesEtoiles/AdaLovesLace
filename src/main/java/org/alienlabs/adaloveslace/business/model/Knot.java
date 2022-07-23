@@ -7,6 +7,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -43,6 +45,8 @@ public class Knot {
 
   @XmlTransient
   private Node selection;
+
+  private List<Node> guideLines = new ArrayList<>();
 
   public Knot() {
     this.uuid = UUID.randomUUID();
@@ -119,6 +123,14 @@ public class Knot {
 
   public void setSelection(Node selection) {
     this.selection = selection;
+  }
+
+  public List<Node> getGuideLines() {
+    return guideLines;
+  }
+
+  public void setGuideLines(List<Node> guideLines) {
+    this.guideLines = guideLines;
   }
 
   public boolean isVisible() {

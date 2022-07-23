@@ -260,7 +260,10 @@ public class MainWindow {
     // If there is a current knot and we have clicked somewhere else than on a knot,
     // we shall move the current knot
     if (!hasClickedOnAKnot) {
-      moveKnot(this.getOptionalDotGrid().getDiagram().getCurrentKnot(), x, y);
+      Knot currentKnot = this.getOptionalDotGrid().getDiagram().getCurrentKnot();
+      app.getOptionalDotGrid().clearSelection(currentKnot);
+      moveKnot(currentKnot, x, y);
+      app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().circleSelectedKnot(currentKnot));
     }
 
   }
