@@ -1,12 +1,9 @@
 package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
 
 public class ResetDiagramButton extends ImageButton {
 
@@ -20,10 +17,7 @@ public class ResetDiagramButton extends ImageButton {
 
   public static void resetDiagram(App app) {
 
-    for (Knot knot : new ArrayList<>(app.getOptionalDotGrid().getAllSelectedKnots())) {
-      app.getOptionalDotGrid().clearSelection(knot);
-    }
-
+    app.getOptionalDotGrid().clearSelections();
     app.getOptionalDotGrid().deleteAllGuideLines();
     app.getOptionalDotGrid().getDiagram().resetDiagram();
     app.getOptionalDotGrid().layoutChildren();

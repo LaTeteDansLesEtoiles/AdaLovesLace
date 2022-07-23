@@ -75,14 +75,13 @@ public class OptionalDotGrid extends Pane {
 
     if (!this.diagram.getPatterns().isEmpty()) {
       this.diagram.setCurrentPattern(this.diagram.getPatterns().get(0));
-
       currentPatternProperty = new SimpleObjectProperty<>(this.diagram.getCurrentPattern());
-      diagramProperty = new SimpleObjectProperty<>(this.diagram);
-      diagramProperty.addListener(observable -> this.setDiagram(diagramProperty.getValue()));
     } else {
       currentPatternProperty = new SimpleObjectProperty<>();
     }
 
+    diagramProperty = new SimpleObjectProperty<>(this.diagram);
+    diagramProperty.addListener(observable -> this.setDiagram(diagramProperty.getValue()));
     currentPatternProperty.addListener(observable -> this.diagram.setCurrentPattern(currentPatternProperty.getValue()));
 
     showHideGridProperty = new SimpleBooleanProperty(this.showHideGrid);

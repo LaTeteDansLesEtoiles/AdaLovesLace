@@ -4,6 +4,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import org.alienlabs.adaloveslace.App;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,14 +82,26 @@ public class Diagram {
     return this.knots;
   }
 
-  public List<Knot> undoLastKnot() {
+  public List<Knot> undoLastKnot(App app) {
     if (currentKnotIndex > 0) {
+
+      if (currentKnotIndex < knots.size()) {
+        app.getOptionalDotGrid().clearSelection(knots.get(this.currentKnotIndex));
+        app.getOptionalDotGrid().deleteGuideLines(knots.get(this.currentKnotIndex));
+      }
+
       this.currentKnotIndex--;
 
       while ((this.currentKnotIndex > 0) && (!knots.get(currentKnotIndex).isVisible())) {
+        app.getOptionalDotGrid().clearSelection(knots.get(this.currentKnotIndex));
+        app.getOptionalDotGrid().deleteGuideLines(knots.get(this.currentKnotIndex));
+
         this.currentKnotIndex--;
       }
     }
+
+    app.getOptionalDotGrid().clearSelection(knots.get(this.currentKnotIndex));
+    app.getOptionalDotGrid().deleteGuideLines(knots.get(this.currentKnotIndex));
 
     return this.knots;
   }

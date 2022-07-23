@@ -106,6 +106,11 @@ public class ImageUtil {
   private void manageTechnicalElementsFromRootGroup(boolean show) {
     this.app.getMainWindow().getMenuBar().setVisible(show);
     this.app.getMainWindow().getFooter().setVisible(show);
+
+    if (!show) {
+      app.getOptionalDotGrid().clearSelections();
+      app.getOptionalDotGrid().deleteAllGuideLines();
+    }
   }
 
 }
