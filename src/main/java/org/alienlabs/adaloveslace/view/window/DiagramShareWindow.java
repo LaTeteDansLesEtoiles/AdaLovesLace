@@ -16,20 +16,21 @@ import java.util.Optional;
 
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 import static javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE;
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 
 public class DiagramShareWindow {
 
-  public static final double DIAGRAM_SHARE_WINDOW_WIDTH     = 500d;
+  public static final double DIAGRAM_SHARE_WINDOW_WIDTH     = 550d;
 
-  public static final String SHARE_DIAGRAM_WINDOW_TITLE     = "Share diagram on Ada Loves Lace community website";
-  public static final String SHARE_DIAGRAM_HEADER_TEXT      = "Will you share your diagram?";
-  public static final String SHARE_DIAGRAM_CONTENT_TEXT     = "Please fill in information below";
-  public static final String SHARE_BUTTON_TEXT              = "Share";
-  public static final String CANCEL_BUTTON_TEXT             = "Cancel";
-  public static final String FILENAME_LABEL                 = "Diagram name: ";
-  public static final String USERNAME_LABEL                 = "Username: ";
-  public static final String CLIENT_ID_LABEL                = "Client ID: ";
-  public static final String CLIENT_SECRET_LABEL            = "Client secret: ";
+  public static final String SHARE_DIAGRAM_WINDOW_TITLE     = "SHARE_DIAGRAM_WINDOW_TITLE";
+  public static final String SHARE_DIAGRAM_HEADER_TEXT      = "SHARE_DIAGRAM_HEADER_TEXT";
+  public static final String SHARE_DIAGRAM_CONTENT_TEXT     = "SHARE_DIAGRAM_CONTENT_TEXT";
+  public static final String SHARE_BUTTON_TEXT              = "SHARE_BUTTON_TEXT";
+  public static final String CANCEL_BUTTON_TEXT             = "CANCEL_BUTTON_TEXT";
+  public static final String FILENAME_LABEL                 = "FILENAME_LABEL";
+  public static final String USERNAME_LABEL                 = "USERNAME_LABEL";
+  public static final String CLIENT_ID_LABEL                = "CLIENT_ID_LABEL";
+  public static final String CLIENT_SECRET_LABEL            = "CLIENT_SECRET_LABEL";
 
   public static final String FILENAME_PREFERENCE            = "FILENAME_PREFERENCE";
   public static final String USERNAME_PREFERENCE            = "USERNAME_PREFERENCE";
@@ -68,12 +69,12 @@ public class DiagramShareWindow {
   }
 
   private ButtonType buildAlertWindow(Alert alert) {
-    alert.setTitle(SHARE_DIAGRAM_WINDOW_TITLE);
-    alert.setHeaderText(SHARE_DIAGRAM_HEADER_TEXT);
-    alert.setContentText(SHARE_DIAGRAM_CONTENT_TEXT);
+    alert.setTitle(resourceBundle.getString(SHARE_DIAGRAM_WINDOW_TITLE));
+    alert.setHeaderText(resourceBundle.getString(SHARE_DIAGRAM_HEADER_TEXT));
+    alert.setContentText(resourceBundle.getString(SHARE_DIAGRAM_CONTENT_TEXT));
 
-    ButtonType shareButton  = new ButtonType(SHARE_BUTTON_TEXT);
-    ButtonType cancelButton = new ButtonType(CANCEL_BUTTON_TEXT, CANCEL_CLOSE);
+    ButtonType shareButton  = new ButtonType(resourceBundle.getString(SHARE_BUTTON_TEXT));
+    ButtonType cancelButton = new ButtonType(resourceBundle.getString(CANCEL_BUTTON_TEXT), CANCEL_CLOSE);
 
     alert.getButtonTypes().setAll(shareButton, cancelButton);
     return shareButton;
@@ -81,7 +82,7 @@ public class DiagramShareWindow {
 
   private GridPane buildGridPane() {
     Preferences prefs = new Preferences();
-    Label filenameLabel = new Label(FILENAME_LABEL);
+    Label filenameLabel = new Label(resourceBundle.getString(FILENAME_LABEL));
 
     filenameText = new TextField(prefs.getStringValue(FILENAME_PREFERENCE));
     filenameText.setEditable(true);
@@ -95,7 +96,7 @@ public class DiagramShareWindow {
     gridPane.add(filenameLabel, 0, 0);
     gridPane.add(filenameText, 1, 0);
 
-    Label userLabel = new Label(USERNAME_LABEL);
+    Label userLabel = new Label(resourceBundle.getString(USERNAME_LABEL));
 
     userText = new TextField(prefs.getStringValue(USERNAME_PREFERENCE));
     userText.setEditable(true);
@@ -106,7 +107,7 @@ public class DiagramShareWindow {
     gridPane.add(userLabel, 0, 1);
     gridPane.add(userText, 1, 1);
 
-    Label clientIdLabel = new Label(CLIENT_ID_LABEL);
+    Label clientIdLabel = new Label(resourceBundle.getString(CLIENT_ID_LABEL));
 
     clientIdText = new TextField(prefs.getStringValue(CLIENT_ID_PREFERENCE));
     clientIdText.setEditable(true);
@@ -117,7 +118,7 @@ public class DiagramShareWindow {
     gridPane.add(clientIdLabel, 0, 2);
     gridPane.add(clientIdText, 1, 2);
 
-    Label clientSecretLabel = new Label(CLIENT_SECRET_LABEL);
+    Label clientSecretLabel = new Label(resourceBundle.getString(CLIENT_SECRET_LABEL));
 
     clientSecretText = new TextField(prefs.getStringValue(CLIENT_SECRET_PREFERENCE));
     clientSecretText.setEditable(true);
