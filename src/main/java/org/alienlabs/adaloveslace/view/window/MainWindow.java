@@ -288,6 +288,8 @@ public class MainWindow {
           // we shall restore the zoom & rotation spinners values with the values from the knot
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
 
+          app.getOptionalDotGrid().deleteAllGuideLines();
+
           // If the "Control" key is pressed, we are in multi-selection mode
           if (app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
             manageKnotWithMultiSelection(app, knot);
@@ -309,6 +311,7 @@ public class MainWindow {
       app.getOptionalDotGrid().clearSelection(currentKnot);
       moveKnot(currentKnot, x, y);
       app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().circleSelectedKnot(currentKnot));
+      app.getOptionalDotGrid().deleteAllGuideLines();
     }
 
   }
@@ -386,6 +389,7 @@ public class MainWindow {
 
       if (knot.getSelection() != null) {
         app.getOptionalDotGrid().clearSelection(knot);
+        app.getOptionalDotGrid().deleteGuideLines(knot);
       }
 
       logger.info("Removing Knot {}, current index = {}", knot, diagram.getCurrentKnotIndex());

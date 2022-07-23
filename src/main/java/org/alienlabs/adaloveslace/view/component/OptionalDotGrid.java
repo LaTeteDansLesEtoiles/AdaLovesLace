@@ -152,8 +152,7 @@ public class OptionalDotGrid extends Pane {
   }
 
   public Knot drawGuideLines(final Knot knot) {
-    root.getChildren().removeAll(knot.getGuideLines());
-    knot.getGuideLines().clear();
+    deleteGuideLines(knot);
 
     // The black, thick lines that we use as guides
     for (Knot otherKnot : getDiagram().getKnots()) {
@@ -177,6 +176,11 @@ public class OptionalDotGrid extends Pane {
     return knot;
   }
 
+  public void deleteGuideLines(final Knot knot) {
+    root.getChildren().removeAll(knot.getGuideLines());
+    knot.getGuideLines().clear();
+  }
+
   public void clearSelections() {
     allSelectedKnots.stream().forEach(knot -> root.getChildren().remove(knot.getSelection()));
     this.allSelectedKnots.clear();
@@ -185,6 +189,12 @@ public class OptionalDotGrid extends Pane {
   public void clearSelection(Knot knot) {
     root.getChildren().remove(knot.getSelection());
     allSelectedKnots.remove(knot);
+  }
+
+  public void deleteAllGuideLines() {
+    for (Knot knot : getDiagram().getKnots()) {
+      deleteGuideLines(knot);
+    }
   }
 
   public List<Knot> getAllSelectedKnots() {
