@@ -49,8 +49,7 @@ public class GeometryWindow {
   public static final int ZOOM_SPINNER_MIN_VALUE                = -20;
   public static final int ZOOM_SPINNER_MAX_VALUE                = 20;
   public static final double ZOOM_SPINNER_POSITIVE_ZOOM_MULTIPLY_FACTOR = 0.15d;
-  public static final double ZOOM_SPINNER_NEGATIVE_ZOOM_DIVISION_FACTOR = 0.15d;
-  public static final double ZOOM_SPINNER_NEGATIVE_ZOOM_ADD     = 0.6d;
+  public static final double ZOOM_SPINNER_NEGATIVE_ZOOM_DIVISION_FACTOR = 1.5d;
   public static final int ZOOM_SPINNER_INCREMENTS_1             = 1;
   public static final int ZOOM_SPINNER_INCREMENTS_2             = 2;
   public static final int ZOOM_SPINNER_INCREMENTS_3             = 3;

@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNullElseGet;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.*;
+import static org.alienlabs.adaloveslace.view.window.GeometryWindow.ZOOM_SPINNER_NEGATIVE_ZOOM_DIVISION_FACTOR;
+import static org.alienlabs.adaloveslace.view.window.GeometryWindow.ZOOM_SPINNER_POSITIVE_ZOOM_MULTIPLY_FACTOR;
 
 /**
  * A grid (= coordinate system) with dots (= used as landmarks for lace).
@@ -247,7 +248,7 @@ public class OptionalDotGrid extends Pane {
     return knot.getZoomFactor() == 0 ? 1 :
       (knot.getZoomFactor() > 0 ?
       (1d + knot.getZoomFactor() * ZOOM_SPINNER_POSITIVE_ZOOM_MULTIPLY_FACTOR) :
-      ZOOM_SPINNER_NEGATIVE_ZOOM_DIVISION_FACTOR / -knot.getZoomFactor() + ZOOM_SPINNER_NEGATIVE_ZOOM_ADD);
+        ZOOM_SPINNER_NEGATIVE_ZOOM_DIVISION_FACTOR / -(knot.getZoomFactor() - 1d));
   }
 
   // Rotate knot with an angle in degrees

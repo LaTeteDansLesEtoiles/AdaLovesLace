@@ -89,8 +89,8 @@ class OptionalDotGridTest {
     double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomKnot(knot, null);
 
     // Verify
-    assertTrue(zoomFactor < 0.8d);
-    assertTrue(zoomFactor > 0.6);
+    assertTrue(zoomFactor < 0.3d);
+    assertTrue(zoomFactor > 0.2);
   }
 
   @Test
@@ -103,8 +103,8 @@ class OptionalDotGridTest {
     double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomKnot(knot, null);
 
     // Verify
-    assertTrue(zoomFactor < 0.7d);
-    assertTrue(zoomFactor > 0.5d);
+    assertTrue(zoomFactor < 0.1d);
+    assertTrue(zoomFactor > 0.01d);
   }
 
 }
