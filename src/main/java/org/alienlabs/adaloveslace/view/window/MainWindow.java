@@ -328,7 +328,8 @@ public class MainWindow {
     if (!hasClickedOnAKnot && this.getOptionalDotGrid().getDiagram().getCurrentKnot() != null) {
       Knot currentKnot = this.getOptionalDotGrid().getDiagram().getCurrentKnot();
       app.getOptionalDotGrid().clearSelection(currentKnot);
-      moveKnot(currentKnot, x, y);
+      moveKnot(currentKnot, x - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getWidth(),
+        y - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getHeight());
       app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().circleSelectedKnot(currentKnot));
       app.getOptionalDotGrid().deleteAllGuideLines();
     }
