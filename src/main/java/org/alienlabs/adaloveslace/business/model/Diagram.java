@@ -87,21 +87,21 @@ public class Diagram {
 
       if (currentKnotIndex < knots.size()) {
         app.getOptionalDotGrid().clearSelection(knots.get(this.currentKnotIndex));
-        app.getOptionalDotGrid().deleteGuideLines(knots.get(this.currentKnotIndex));
+        app.getOptionalDotGrid().clearGuideLines(knots.get(this.currentKnotIndex));
       }
 
       this.currentKnotIndex--;
 
       while ((this.currentKnotIndex > 0) && (!knots.get(currentKnotIndex).isVisible())) {
         app.getOptionalDotGrid().clearSelection(knots.get(this.currentKnotIndex));
-        app.getOptionalDotGrid().deleteGuideLines(knots.get(this.currentKnotIndex));
+        app.getOptionalDotGrid().clearGuideLines(knots.get(this.currentKnotIndex));
 
         this.currentKnotIndex--;
       }
     }
 
     app.getOptionalDotGrid().clearSelection(knots.get(this.currentKnotIndex));
-    app.getOptionalDotGrid().deleteGuideLines(knots.get(this.currentKnotIndex));
+    app.getOptionalDotGrid().clearGuideLines(knots.get(this.currentKnotIndex));
 
     return this.knots;
   }

@@ -32,6 +32,8 @@ public class DrawingButton extends ToggleButton {
     logger.info("Setting draw mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
     app.getOptionalDotGrid().clearSelections();
+    app.getOptionalDotGrid().clearHovered();
+    app.getOptionalDotGrid().clearAllGuideLines();
 
     app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, SelectionButton.getGridHoverListener());
 
