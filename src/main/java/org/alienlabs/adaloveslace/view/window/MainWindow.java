@@ -18,6 +18,7 @@ import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.NodeUtil;
+import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.PrintUtil;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
@@ -165,6 +166,10 @@ public class MainWindow {
       Locale locale = new Locale("fr", "FR");
       App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
 
+      Preferences prefs = new Preferences();
+      prefs.setStringValue(LOCALE_LANGUAGE, "fr");
+      prefs.setStringValue(LOCALE_COUNTRY, "FR");
+
       restartApp(app, primaryStage);
     } );
     frenchItem.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN));
@@ -173,6 +178,10 @@ public class MainWindow {
     englishItem.setOnAction(actionEvent -> {
       Locale locale = new Locale("en", "EN");
       App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
+
+      Preferences prefs = new Preferences();
+      prefs.setStringValue(LOCALE_LANGUAGE, "en");
+      prefs.setStringValue(LOCALE_COUNTRY, "EN");
 
       restartApp(app, primaryStage);
     });

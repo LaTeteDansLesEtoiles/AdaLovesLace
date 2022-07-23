@@ -16,6 +16,7 @@ import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.DownButton;
@@ -74,6 +75,10 @@ public class App extends Application {
   public static final int     SMALL_ICON_SIZE         = 23;
 
   public static final double  GRID_DOTS_RADIUS        = 2.5d;// The dots from the grid are ellipses, this is their radius
+  public static final String LOCALE_LANGUAGE = "LOCALE_LANGUAGE";
+  public static final String LOCALE_COUNTRY = "LOCALE_COUNTRY";
+  public static final String DEFAULT_LOCALE_LANGUAGE = "en";
+  public static final String DEFAULT_LOCALE_COUNTRY = "EN";
 
   public static ResourceBundle resourceBundle;
 
@@ -197,8 +202,19 @@ public class App extends Application {
   }
 
   public static void main(String[] args) {
-    Locale locale = new Locale("fr", "FR");
-    resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
+    Preferences prefs = new Preferences();
+
+    if ((!prefs.getStringValue(LOCALE_LANGUAGE).equals("")) && (!prefs.getStringValue(LOCALE_COUNTRY).equals(""))) {
+      Locale locale = new Locale(prefs.getStringValue(LOCALE_LANGUAGE), prefs.getStringValue(LOCALE_COUNTRY));
+      resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
+    } else {
+      Locale locale = new Locale(DEFAULT_LOCALE_LANGUAGE, DEFAULT_LOCALE_COUNTRY);
+      resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
+
+      prefs.setStringValue(LOCALE_LANGUAGE, DEFAULT_LOCALE_LANGUAGE);
+      prefs.setStringValue(LOCALE_COUNTRY, DEFAULT_LOCALE_COUNTRY);
+    }
+
     launch();
   }
 
