@@ -33,6 +33,7 @@ import static org.alienlabs.adaloveslace.util.FileUtil.PATH_SEPARATOR;
 
 @ExtendWith(ApplicationExtension.class)
 public class AppFunctionalTestParent {
+
   public Stage primaryStage;
   public GeometryWindow geometryWindow;
   public ToolboxWindow toolboxWindow;
@@ -75,18 +76,20 @@ public class AppFunctionalTestParent {
   public void start(Stage primaryStage) {
 
     this.app = new App();
+    this.app.setPrimaryStage(primaryStage);
+
     Locale locale = new Locale("en", "EN");
     App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
     this.app.setDiagram(new Diagram());
-
-    this.geometryWindow = this.app.showGeometryWindow(this.app);
-    this.app.getGeometryStage().setX(1100d);
-    this.app.getGeometryStage().setY(50d);
 
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
     this.app.getToolboxStage().setX(1600d);
     this.app.getToolboxStage().setY(50d);
     this.app.getToolboxStage().setHeight(600d);
+
+    this.geometryWindow = this.app.showGeometryWindow(this.app);
+    this.app.getGeometryStage().setX(1100d);
+    this.app.getGeometryStage().setY(50d);
 
     this.primaryStage = primaryStage;
 

@@ -94,7 +94,7 @@ public class GeometryWindow {
     geometryStage.setOnCloseRequest(windowEvent -> {
       logger.info("You shall not close the geometry window directly!");
     });
-    geometryStage.setX(GEOMETRY_WINDOW_X);
+    geometryStage.setX(app.getToolboxStage().getX() + app.getToolboxStage().getWidth());
     geometryStage.setY(MAIN_WINDOW_Y);
     geometryStage.setScene(geometryScene);
     geometryStage.show();

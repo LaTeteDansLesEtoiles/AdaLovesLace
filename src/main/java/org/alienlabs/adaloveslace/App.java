@@ -66,7 +66,7 @@ public class App extends Application {
   public static final String PRINT_BUTTON_NAME        = "PrintDiagram";
 
   public static final double  MAIN_WINDOW_Y           = 20d;
-  private static final double MAIN_WINDOW_X           = 50d;
+  public static final double MAIN_WINDOW_X           = 50d;
   public static final double  MAIN_WINDOW_WIDTH       = 500d;
   public static final double  MAIN_WINDOW_HEIGHT      = 680d;
   public static final double  GRID_WIDTH              = 650d;
@@ -105,14 +105,14 @@ public class App extends Application {
       this.diagram = new Diagram();
     }
 
-    logger.info("Opening geometry window");
-    showGeometryWindow(this);
+    logger.info("Starting app: opening main window");
+    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage);
 
     logger.info("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
 
-    logger.info("Starting app: opening main window");
-    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage);
+    logger.info("Opening geometry window");
+    showGeometryWindow(this);
   }
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
@@ -276,6 +276,10 @@ public class App extends Application {
 
   public Stage getPrimaryStage() {
     return primaryStage;
+  }
+
+  public void setPrimaryStage(Stage primaryStage) {
+    this.primaryStage = primaryStage;
   }
 
   public Map<KeyCode, Boolean> getCurrentlyActiveKeys() {
