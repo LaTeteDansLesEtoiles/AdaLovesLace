@@ -14,6 +14,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,6 +114,9 @@ public class OptionalDotGrid extends Pane {
 
   private void drawDiagram() {
     // We whall not display the undone knots => delete them from canvas, then draw the grid again
+    clearAllGuideLines();
+    clearHovered();
+    clearSelections();
     deleteKnotsFromCanvas();
 
     // If there are knots on the diagram, we must display them at each window refresh
@@ -138,7 +142,7 @@ public class OptionalDotGrid extends Pane {
     root.getChildren().addAll(listToRemove);
   }
 
-  public Knot circleSelectedKnot(Knot knot) {
+  public Knot drawSelectedKnot(Knot knot) {
     Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
     rec.setStroke(Color.BLUE);
     rec.setStrokeWidth(2d);
@@ -157,7 +161,13 @@ public class OptionalDotGrid extends Pane {
     return knot;
   }
 
-  public Knot circleHoveredKnot(Knot knot) {
+  public void drawHovered(Knot knot) {
+    if (allHoveredKnots.contains(knot)) {
+      allHoveredKnots.remove(knot);
+      drawHoveredKnot(knot);
+    }
+  }
+  public Knot drawHoveredKnot(Knot knot) {
     Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
     rec.setStroke(Color.GRAY);
     rec.setStrokeWidth(2d);
@@ -177,29 +187,12 @@ public class OptionalDotGrid extends Pane {
     return knot;
   }
 
-  public void moveSelection(Knot knot) {
-    if (knot.getSelection() != null) {
-      root.getChildren().remove(knot.getSelection());
-
-      Rectangle rec = (Rectangle) knot.getSelection();
-      rec.setX(knot.getX());
-      rec.setY(knot.getY());
-      rec.setScaleX(computeZoomFactor(knot));
-      rec.setScaleY(computeZoomFactor(knot));
-      rec.setRotate(knot.getRotationAngle());
-      logger.debug("knot zoom: {}, computed zoom factor: {}", knot.getZoomFactor(), computeZoomFactor(knot));
-      logger.debug("Rectangle: [X={}, Y={}, zoomFactor={}]", rec.getX(), rec.getY(), rec.getScaleX());
-
-      root.getChildren().add(rec);
-    }
-  }
-
   public Knot drawGuideLines(final Knot knot) {
     clearGuideLines(knot);
 
     // The black, thick lines that we use as guides
     for (Knot otherKnot : getDiagram().getKnots()) {
-      if (!otherKnot.equals(knot)) {
+      if (!otherKnot.equals(knot) && otherKnot.isVisible()) {
         new GuideLinesUtil(knot, otherKnot, root);
       }
     }
@@ -214,12 +207,10 @@ public class OptionalDotGrid extends Pane {
 
   public void clearSelections() {
     allSelectedKnots.stream().forEach(knot -> root.getChildren().remove(knot.getSelection()));
-    this.allSelectedKnots.clear();
   }
 
   public void clearHovered() {
     allHoveredKnots.stream().forEach(knot -> root.getChildren().remove(knot.getHovered()));
-    this.allHoveredKnots.clear();
   }
 
   public void clearSelection(Knot knot) {
@@ -259,6 +250,15 @@ public class OptionalDotGrid extends Pane {
     iv.setY(y);
 
     knot.setImageView(iv);
+
+    if (diagram.getCurrentMode() == MouseMode.SELECTION && allSelectedKnots.contains(knot)) {
+      drawGuideLines(knot);
+    }
+    if (allSelectedKnots.contains(knot)) {
+      drawHovered(knot);
+      drawSelectedKnot(knot);
+    }
+
     logger.debug("drawing top left corner of knot {} to ({},{})", knot.getPattern().getFilename(), x, y);
   }
 

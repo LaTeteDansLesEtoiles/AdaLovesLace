@@ -25,8 +25,6 @@ public class DownRightButton extends Button {
     for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
       knot.setX(knot.getX() + FastMoveModeButton.getMoveSpeed());
       knot.setY(knot.getY() + FastMoveModeButton.getMoveSpeed());
-      app.getOptionalDotGrid().moveSelection(knot);
-      app.getOptionalDotGrid().drawGuideLines(knot);
     }
     app.getOptionalDotGrid().layoutChildren();
   }

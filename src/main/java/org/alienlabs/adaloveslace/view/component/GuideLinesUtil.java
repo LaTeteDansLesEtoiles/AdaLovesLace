@@ -7,10 +7,10 @@ import org.alienlabs.adaloveslace.business.model.Knot;
 
 public class GuideLinesUtil {
 
-  public static final double MAGNET_SIZE_X = 5d;
-  public static final double MAGNET_SIZE_Y = 3d;
-  public static final double PADDING_HEIGHT = 30d;
-  public static final double PADDING_WIDTH = 30d;
+  public static final double MAGNET_SIZE_X  = 2d;
+  public static final double MAGNET_SIZE_Y  = 2d;
+  public static final double PADDING_HEIGHT = 15d;
+  public static final double PADDING_WIDTH  = 15d;
 
   public GuideLinesUtil(Knot knot, Knot otherKnot, Group root) {
     lineXLeftLeft     (knot, otherKnot, root);

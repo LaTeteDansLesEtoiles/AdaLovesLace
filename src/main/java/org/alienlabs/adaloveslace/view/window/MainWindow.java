@@ -289,7 +289,6 @@ public class MainWindow {
   private void onClickWithSelectionMode(App app, double x, double y) {
     Iterator<Knot> it = optionalDotGrid.getDiagram().getKnots().iterator();
     boolean hasClickedOnAKnot = false;
-    app.getOptionalDotGrid().clearHovered();
 
     // We iterate on the Knots as long as they are still Knots left to iterate
     // And we stop at the first clicked Knot
@@ -306,16 +305,13 @@ public class MainWindow {
           // we shall restore the zoom & rotation spinners values with the values from the knot
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
 
-          app.getOptionalDotGrid().clearAllGuideLines();
-
           // If the "Control" key is pressed, we are in multi-selection mode
-          if (app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
-            manageKnotWithMultiSelection(app, knot);
-          } else {
-            manageKnotWithSingleSelection(app, knot);
+          if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
+            app.getOptionalDotGrid().clearSelections();
+            app.getOptionalDotGrid().getAllSelectedKnots().clear();
           }
 
-          app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().circleSelectedKnot(knot));
+          app.getOptionalDotGrid().getAllSelectedKnots().add(knot);
           app.getOptionalDotGrid().layoutChildren();
         }
       } catch (MalformedURLException e) {
@@ -330,22 +326,10 @@ public class MainWindow {
       app.getOptionalDotGrid().clearSelection(currentKnot);
       moveKnot(currentKnot, x - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getWidth(),
         y - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getHeight());
-      app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().circleSelectedKnot(currentKnot));
+      app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().drawSelectedKnot(currentKnot));
       app.getOptionalDotGrid().clearAllGuideLines();
     }
 
-  }
-
-  private void manageKnotWithSingleSelection(App app, Knot knot) {
-    app.getOptionalDotGrid().clearSelections();
-    knot.setSelection(null);
-  }
-
-  private void manageKnotWithMultiSelection(App app, Knot knot) {
-    if (knot.getSelection() != null) {
-      app.getOptionalDotGrid().clearSelection(knot);
-      knot.setSelection(null);
-    }
   }
 
   private void moveKnot(Knot toMove, double x, double y) {

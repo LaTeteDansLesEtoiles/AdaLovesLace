@@ -110,6 +110,7 @@ public class ImageUtil {
     if (!show) {
       app.getOptionalDotGrid().clearSelections();
       app.getOptionalDotGrid().clearAllGuideLines();
+      app.getOptionalDotGrid().clearHovered();
     }
   }
 

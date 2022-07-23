@@ -16,8 +16,6 @@ public class ResetDiagramButton extends ImageButton {
   }
 
   public static void resetDiagram(App app) {
-    app.getOptionalDotGrid().clearSelections();
-    app.getOptionalDotGrid().clearAllGuideLines();
     app.getOptionalDotGrid().getDiagram().resetDiagram();
     app.getOptionalDotGrid().layoutChildren();
 
