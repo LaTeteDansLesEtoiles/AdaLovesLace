@@ -262,6 +262,21 @@ public class MainWindow {
         optionalDotGrid.addKnot(x, y));
       case SELECTION    -> onClickWithSelectionMode(app, x, y);
       case DELETION     -> onClickWithDeletionMode(app, this.getOptionalDotGrid().getDiagram(), x, y) ;
+      case DUPLICATION  -> onClickWithDuplicationMode(app, this.getOptionalDotGrid().getDiagram(), x, y);
+    default -> throw new IllegalArgumentException("Please provide a valid mode, not: " +
+      this.getOptionalDotGrid().getDiagram().getCurrentMode());
+    }
+  }
+
+  private void onClickWithDuplicationMode(App app, Diagram diagram, double x, double y) {
+    for (Knot knot : diagram.getKnots()) {
+      try {
+        if ((new NodeUtil().isSelected(knot, x, y)) && (duplicateKnot(app, x, y, knot) != null)) {
+          continue;
+        }
+      } catch (MalformedURLException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 
@@ -363,7 +378,7 @@ public class MainWindow {
     try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
       Knot newKnot = newKnot(app, x, y, knot, fis);
       newKnot.setRotationAngle(knot.getRotationAngle());
-      newKnot.setZoomFactor(knot.getZoomFactor());
+      newKnot.setZoomFactor(Double.valueOf(app.getOptionalDotGrid().computeZoomFactor(knot)).intValue());
       optionalDotGrid.layoutChildren();
 
       return newKnot;
