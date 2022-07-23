@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 public class RedoKnotButton extends ImageButton {
 
-  public static final String REDO_KNOT_BUTTON_NAME = "      Redo knot     ";
-
   private static final Logger logger = LoggerFactory.getLogger(RedoKnotButton.class);
 
   public RedoKnotButton(String buttonLabel, App app) {

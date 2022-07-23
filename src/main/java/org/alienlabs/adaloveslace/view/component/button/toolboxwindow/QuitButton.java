@@ -6,8 +6,6 @@ import org.slf4j.LoggerFactory;
 
 public class QuitButton extends ImageButton {
 
-  public static final String QUIT_APP_BUTTON_NAME = "         Quit           ";
-
   private static final Logger logger  = LoggerFactory.getLogger(QuitButton.class);
 
   public QuitButton(String buttonLabel) {
