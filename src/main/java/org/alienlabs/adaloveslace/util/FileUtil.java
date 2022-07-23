@@ -77,6 +77,7 @@ public class FileUtil {
       logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
     }
 
+    app.getToolboxStage().close();
     app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
 
     app.getOptionalDotGrid().getDiagramProperty().set(diagram);

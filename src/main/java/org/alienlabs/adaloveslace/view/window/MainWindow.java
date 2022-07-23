@@ -378,7 +378,7 @@ public class MainWindow {
     try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
       Knot newKnot = newKnot(app, x, y, knot, fis);
       newKnot.setRotationAngle(knot.getRotationAngle());
-      newKnot.setZoomFactor(Double.valueOf(app.getOptionalDotGrid().computeZoomFactor(knot)).intValue());
+      newKnot.setZoomFactor(knot.getZoomFactor());
       optionalDotGrid.layoutChildren();
 
       return newKnot;
