@@ -61,6 +61,8 @@ public class OptionalDotGrid extends Pane {
 
   private final List<Knot> allSelectedKnots = new ArrayList<>();
 
+  private final List<Knot> allHoveredKnots = new ArrayList<>();
+
   /**
    * We draw the dots on the grid using a Canvas.
    *
@@ -139,6 +141,7 @@ public class OptionalDotGrid extends Pane {
   public Knot circleSelectedKnot(Knot knot) {
     Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
     rec.setStroke(Color.BLUE);
+    rec.setStrokeWidth(2d);
     rec.setFill(Color.TRANSPARENT);
     rec.setScaleX(computeZoomFactor(knot));
     rec.setScaleY(computeZoomFactor(knot));
@@ -150,6 +153,26 @@ public class OptionalDotGrid extends Pane {
 
     root.getChildren().add(rec);
     knot.setSelection(rec);
+
+    return knot;
+  }
+
+  public Knot circleHoveredKnot(Knot knot) {
+    Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
+    rec.setStroke(Color.GRAY);
+    rec.setStrokeWidth(2d);
+    rec.setFill(Color.TRANSPARENT);
+    rec.setScaleX(computeZoomFactor(knot));
+    rec.setScaleY(computeZoomFactor(knot));
+    rec.setRotate(knot.getRotationAngle());
+
+    if (knot.getSelection() != null) {
+      root.getChildren().remove(knot.getSelection());
+    }
+
+    root.getChildren().add(rec);
+    allHoveredKnots.add(knot);
+    knot.setHovered(rec);
 
     return knot;
   }
@@ -194,8 +217,16 @@ public class OptionalDotGrid extends Pane {
     this.allSelectedKnots.clear();
   }
 
+  public void clearHovered() {
+    allHoveredKnots.stream().forEach(knot -> root.getChildren().remove(knot.getHovered()));
+    this.allHoveredKnots.clear();
+  }
+
   public void clearSelection(Knot knot) {
-    root.getChildren().remove(knot.getSelection());
+    if (knot.getSelection() != null) {
+      root.getChildren().remove(knot.getSelection());
+    }
+
     allSelectedKnots.remove(knot);
   }
 
@@ -207,6 +238,10 @@ public class OptionalDotGrid extends Pane {
 
   public List<Knot> getAllSelectedKnots() {
     return this.allSelectedKnots;
+  }
+
+  public List<Knot> getAllHoveredKnots() {
+    return this.allHoveredKnots;
   }
 
   private void drawKnotWithRotationAndZoom(Knot knot) {
@@ -248,7 +283,7 @@ public class OptionalDotGrid extends Pane {
     }
   }
 
-  private double computeZoomFactor(Knot knot) {
+  public double computeZoomFactor(Knot knot) {
     return knot.getZoomFactor() == 0 ? 1 :
       (knot.getZoomFactor() > 0 ?
       (1d + knot.getZoomFactor() * ZOOM_SPINNER_POSITIVE_ZOOM_MULTIPLY_FACTOR) :
@@ -346,6 +381,10 @@ public class OptionalDotGrid extends Pane {
 
   public void setGridNeedsToBeRedrawn(boolean gridNeedsToBeRedrawn) {
     this.gridNeedsToBeRedrawn = gridNeedsToBeRedrawn;
+  }
+
+  public Group getRoot() {
+    return root;
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

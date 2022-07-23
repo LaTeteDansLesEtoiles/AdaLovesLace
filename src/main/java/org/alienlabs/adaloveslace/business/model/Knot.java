@@ -47,6 +47,9 @@ public class Knot {
   private Node selection;
 
   @XmlTransient
+  private Node hovered;
+
+  @XmlTransient
   private List<Node> guideLines = new ArrayList<>();
 
   public Knot() {
@@ -124,6 +127,14 @@ public class Knot {
 
   public void setSelection(Node selection) {
     this.selection = selection;
+  }
+
+  public Node getHovered() {
+    return hovered;
+  }
+
+  public void setHovered(Node hovered) {
+    this.hovered = hovered;
   }
 
   public List<Node> getGuideLines() {

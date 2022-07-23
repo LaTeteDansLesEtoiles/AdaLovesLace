@@ -76,6 +76,7 @@ public class MainWindow {
 
   private static final Logger logger        = LoggerFactory.getLogger(MainWindow.class);
   private ObservableSet<Printer> printers;
+  private StackPane grid;
 
   public MainWindow() {
     menuBar = new MenuBar();
@@ -223,7 +224,7 @@ public class MainWindow {
       this.optionalDotGrid = new OptionalDotGrid(width, height, radius, diagram, root);
     }
 
-    StackPane grid = new StackPane(this.optionalDotGrid);
+    grid = new StackPane(this.optionalDotGrid);
 
     if (width != 0d && height != 0d) {
       grid.setPrefWidth(width);
@@ -279,10 +280,11 @@ public class MainWindow {
     while (it.hasNext() && !hasClickedOnAKnot) {
       Knot knot = it.next();
       try {
-        hasClickedOnAKnot = new NodeUtil().isClicked(knot, x, y);
+        hasClickedOnAKnot = new NodeUtil().isSelected(app, knot, x, y);
 
         if (hasClickedOnAKnot) {
-          logger.info("Clicked Knot index {}", app.getOptionalDotGrid().getDiagram().getKnots().indexOf(knot));
+          logger.info("Clicked Knot index {}, uuid {}",
+            app.getOptionalDotGrid().getDiagram().getKnots().indexOf(knot), knot.getUuid());
 
           // If there is a current knot and we have clicked somewhere else than on a knot,
           // we shall restore the zoom & rotation spinners values with the values from the knot
@@ -306,7 +308,7 @@ public class MainWindow {
 
     // If there is a current knot and we have clicked somewhere else than on a knot,
     // we shall move the current knot
-    if (!hasClickedOnAKnot) {
+    if (!hasClickedOnAKnot && this.getOptionalDotGrid().getDiagram().getCurrentKnot() != null) {
       Knot currentKnot = this.getOptionalDotGrid().getDiagram().getCurrentKnot();
       app.getOptionalDotGrid().clearSelection(currentKnot);
       moveKnot(currentKnot, x, y);
@@ -384,7 +386,7 @@ public class MainWindow {
   }
 
   private boolean removeKnotIfClicked(App app, Diagram diagram, double x, double y, Knot knot) throws MalformedURLException {
-    if (new NodeUtil().isClicked(knot, x, y)) {
+    if (new NodeUtil().isSelected(app, knot, x, y)) {
       knot.setVisible(false);
 
       if (knot.getSelection() != null) {
@@ -413,6 +415,10 @@ public class MainWindow {
 
   public TilePane getFooter() {
     return footer;
+  }
+
+  public StackPane getGrid() {
+    return grid;
   }
 
 }
