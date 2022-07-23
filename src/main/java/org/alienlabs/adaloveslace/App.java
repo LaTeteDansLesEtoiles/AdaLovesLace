@@ -29,7 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_BUTTONS;
@@ -41,8 +43,7 @@ public class App extends Application {
 
   public static final String ID                       = "#";
   public static final String TOOLBOX_BUTTON           = "toolbox-btn-";
-  public static final String TOOLBOX_BUTTON_ID        = ID + TOOLBOX_BUTTON;
-  public static final String ADA_LOVES_LACE           = "Ada Loves Lace";
+  public static final String ADA_LOVES_LACE           = "AdaLovesLace";
   public static final String MAIN_WINDOW_TITLE        = ADA_LOVES_LACE;
   public static final String PROJECT_NAME             = "adaloveslace";
   public static final String USER_HOME                = "user.home";
@@ -60,8 +61,8 @@ public class App extends Application {
   public static final String PATTERNS_DIRECTORY_NAME  = "patterns";
   public static final String ERROR                    = "Error!";
   public static final String ASSETS_DIRECTORY         = "assets/";
-  public static final String GET_PRINTERS_BUTTON_NAME = "Get all Printers";
-  public static final String PRINT_BUTTON_NAME        = "Print diagram";
+  public static final String GET_PRINTERS_BUTTON_NAME = "GetPrinters";
+  public static final String PRINT_BUTTON_NAME        = "PrintDiagram";
 
   public static final double  MAIN_WINDOW_Y           = 20d;
   private static final double MAIN_WINDOW_X           = 50d;
@@ -73,6 +74,8 @@ public class App extends Application {
   public static final int     SMALL_ICON_SIZE         = 23;
 
   public static final double  GRID_DOTS_RADIUS        = 2.5d;// The dots from the grid are ellipses, this is their radius
+
+  public static ResourceBundle resourceBundle;
 
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
@@ -134,7 +137,7 @@ public class App extends Application {
     primaryStage.setScene(scene);
     primaryStage.setX(MAIN_WINDOW_X);
     primaryStage.setY(MAIN_WINDOW_Y);
-    primaryStage.setTitle(MAIN_WINDOW_TITLE);
+    primaryStage.setTitle(resourceBundle.getString(MAIN_WINDOW_TITLE));
 
     primaryStage.setOnCloseRequest(windowEvent -> {
       logger.info("You shall close the app by closing this window!");
@@ -190,6 +193,8 @@ public class App extends Application {
   }
 
   public static void main(String[] args) {
+    Locale locale = new Locale("fr", "FR");
+    resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
     launch();
   }
 

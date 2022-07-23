@@ -27,37 +27,46 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Iterator;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
-import static org.alienlabs.adaloveslace.App.GET_PRINTERS_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.App.PRINT_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
 import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
 
-  private static final double FOOTER_X      = 60d;
+  private static final double FOOTER_X      = Double.parseDouble(resourceBundle.getString("FOOTER_X"));
   public static final double MENU_BAR_Y     = -10d;
   public static final double  NEW_KNOT_GAP  = 15d;
+  public static final String LANGUAGE = "Language";
+  public static final String TOOL = "Tool";
+  public static final String EDIT = "Edit";
+  public static final String FILE = "File";
   public final MenuBar menuBar;
   private OptionalDotGrid optionalDotGrid;
   private TilePane footer;
 
   public static final String SAVE_FILE      = "Save";
 
-  public static final String SAVE_FILE_AS   = "Save as";
+  public static final String SAVE_FILE_AS   = "SaveAs";
+
+  public static final String FRENCH         = "Français";
+
+  public static final String ENGLISH        = "English";
 
   public static final String LOAD_FILE      = "Load";
 
-  public static final String EXPORT_IMAGE   = "Export an image";
+  public static final String EXPORT_IMAGE   = "ExportAnImage";
 
   public static final String QUIT_APP       = "Quit";
 
-  public static final String UNDO_KNOT      = "Undo knot";
+  public static final String UNDO_KNOT      = "UndoKnot";
 
-  public static final String REDO_KNOT      = "Redo knot";
+  public static final String REDO_KNOT      = "RedoKnot";
 
-  public static final String RESET_DIAGRAM  = "Reset diagram";
+  public static final String RESET_DIAGRAM  = "ResetDiagram";
 
   public static final String MOUSE_CLICKED  = "MOUSE_CLICKED";
 
@@ -71,53 +80,54 @@ public class MainWindow {
   }
 
   public void createMenuBar(Group root, App app) {
-    Menu fileMenu = new Menu("File");
-    Menu editMenu = new Menu("Edit");
-    Menu toolMenu = new Menu("Tool");
+    Menu fileMenu     = new Menu(resourceBundle.getString(FILE));
+    Menu editMenu     = new Menu(resourceBundle.getString(EDIT));
+    Menu toolMenu     = new Menu(resourceBundle.getString(TOOL));
+    Menu languageMenu = new Menu(resourceBundle.getString(LANGUAGE));
 
-    MenuItem saveItem = new MenuItem(SAVE_FILE);
+    MenuItem saveItem = new MenuItem(resourceBundle.getString(SAVE_FILE));
     saveItem.setOnAction(actionEvent -> SaveButton.onSaveAction(app));
     saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
 
-    MenuItem saveAsItem = new MenuItem(SAVE_FILE_AS);
+    MenuItem saveAsItem = new MenuItem(resourceBundle.getString(SAVE_FILE_AS));
     saveAsItem.setOnAction(actionEvent -> SaveAsButton.onSaveAsAction(app));
     saveAsItem.setAccelerator(SAVE_AS_KEY_COMBINATION);
 
-    MenuItem loadItem = new MenuItem(LOAD_FILE);
+    MenuItem loadItem = new MenuItem(resourceBundle.getString(LOAD_FILE));
     loadItem.setOnAction(actionEvent -> LoadButton.onLoadAction(app));
     loadItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
 
-    MenuItem exportImageItem = new MenuItem(EXPORT_IMAGE);
+    MenuItem exportImageItem = new MenuItem(resourceBundle.getString(EXPORT_IMAGE));
     exportImageItem.setOnAction(actionEvent -> ExportImageButton.onExportAction(app));
     exportImageItem.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN));
 
     SeparatorMenuItem separator1 = new SeparatorMenuItem();
 
-    MenuItem quitItem = new MenuItem(QUIT_APP);
+    MenuItem quitItem = new MenuItem(resourceBundle.getString(QUIT_APP));
     quitItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
     quitItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
 
-    MenuItem undoKnotItem = new MenuItem(UNDO_KNOT);
+    MenuItem undoKnotItem = new MenuItem(resourceBundle.getString(UNDO_KNOT));
     undoKnotItem.setOnAction(actionEvent -> UndoKnotButton.undoKnot(app));
     undoKnotItem.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
 
-    MenuItem redoKnotItem = new MenuItem(REDO_KNOT);
+    MenuItem redoKnotItem = new MenuItem(resourceBundle.getString(REDO_KNOT));
     redoKnotItem.setOnAction(actionEvent -> RedoKnotButton.redoKnot(app));
     redoKnotItem.setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
 
     SeparatorMenuItem separator2 = new SeparatorMenuItem();
 
-    MenuItem resetDiagramItem = new MenuItem(RESET_DIAGRAM);
+    MenuItem resetDiagramItem = new MenuItem(resourceBundle.getString(RESET_DIAGRAM));
     resetDiagramItem.setOnAction(actionEvent -> ResetDiagramButton.resetDiagram(app));
     resetDiagramItem.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
 
-    MenuItem showHideGridItem = new MenuItem(SHOW_HIDE_GRID_BUTTON_NAME);
+    MenuItem showHideGridItem = new MenuItem(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME));
     showHideGridItem.setOnAction(actionEvent -> ShowHideGridButton.showHideGrid(app));
     showHideGridItem.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
 
     SeparatorMenuItem separator3 = new SeparatorMenuItem();
 
-    MenuItem getPrintersItem = new MenuItem(GET_PRINTERS_BUTTON_NAME);
+    MenuItem getPrintersItem = new MenuItem(resourceBundle.getString(GET_PRINTERS_BUTTON_NAME));
     getPrintersItem.setOnAction(event -> {
       printers = Printer.getAllPrinters();
 
@@ -127,7 +137,7 @@ public class MainWindow {
     });
     getPrintersItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
 
-    MenuItem printItem = new MenuItem(PRINT_BUTTON_NAME);
+    MenuItem printItem = new MenuItem(resourceBundle.getString(PRINT_BUTTON_NAME));
     printItem.setOnAction(actionEvent -> {
       if (!printers.isEmpty()) {
         logger.info("Printing attempt of diagram");
@@ -149,22 +159,36 @@ public class MainWindow {
     });
     printItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN));
 
+    MenuItem frenchItem = new MenuItem(FRENCH);
+    frenchItem.setOnAction(actionEvent -> {
+      Locale locale = new Locale("fr", "FR");
+      App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
+    } );
+    frenchItem.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN));
+
+    MenuItem englishItem = new MenuItem(ENGLISH);
+    englishItem.setOnAction(actionEvent -> {
+      Locale locale = new Locale("en", "EN");
+      App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
+    });
+    englishItem.setAccelerator(new KeyCodeCombination(KeyCode.U, KeyCombination.CONTROL_DOWN));
 
     fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, exportImageItem, separator1, quitItem);
     editMenu.getItems().addAll(undoKnotItem, redoKnotItem, separator2, resetDiagramItem);
     toolMenu.getItems().addAll(showHideGridItem, separator3, getPrintersItem, printItem);
+    languageMenu.getItems().addAll(frenchItem, englishItem);
 
-    menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu);
+    menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu, languageMenu);
     menuBar.setTranslateY(MENU_BAR_Y);
     root.getChildren().addAll(menuBar);
   }
 
   public TilePane createFooter(String javafxVersion, String javaVersion) {
     footer = new TilePane(Orientation.VERTICAL);
-    footer.getChildren().addAll(new Label("Ada Loves Lace - A tatting lace patterns creation software"));
-    footer.getChildren().addAll(new Label("© 2022 AlienLabs"));
-    footer.getChildren().addAll(new Label("This is Free Software under GPL license"));
-    footer.getChildren().addAll(new Label("JavaFX " + javafxVersion + ", running on Java " + javaVersion));
+    footer.getChildren().addAll(new Label(resourceBundle.getString("Pitch")));
+    footer.getChildren().addAll(new Label(resourceBundle.getString("Copyright")));
+    footer.getChildren().addAll(new Label(resourceBundle.getString("License")));
+    footer.getChildren().addAll(new Label("JavaFX " + javafxVersion + resourceBundle.getString("RunningWith") + javaVersion));
     footer.setAlignment(Pos.BOTTOM_LEFT);
     footer.setTranslateX(FOOTER_X);
     return footer;

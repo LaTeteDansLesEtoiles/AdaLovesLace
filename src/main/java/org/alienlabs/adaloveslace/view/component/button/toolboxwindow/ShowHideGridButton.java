@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 public class ShowHideGridButton extends ImageButton {
 
-  public static final String SHOW_HIDE_GRID_BUTTON_NAME = "Show / hide grid";
+  public static final String SHOW_HIDE_GRID_BUTTON_NAME = "ShowHideGrid";
 
   private static final Logger logger = LoggerFactory.getLogger(ShowHideGridButton.class);
 

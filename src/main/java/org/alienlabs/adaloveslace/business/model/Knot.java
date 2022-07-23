@@ -46,6 +46,7 @@ public class Knot {
   @XmlTransient
   private Node selection;
 
+  @XmlTransient
   private List<Node> guideLines = new ArrayList<>();
 
   public Knot() {

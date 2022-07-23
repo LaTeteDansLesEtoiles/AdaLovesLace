@@ -87,7 +87,7 @@ public class GeometryWindow {
 
   public void createGeometryStage(App app, Stage geometryStage, Pane parent) {
     Scene geometryScene = new Scene(parent, GEOMETRY_WINDOW_WIDTH, GEOMETRY_WINDOW_HEIGHT);
-    geometryStage.setTitle(GEOMETRY_TITLE);
+    geometryStage.setTitle(resourceBundle.getString(GEOMETRY_TITLE));
     geometryStage.setOnCloseRequest(windowEvent -> {
       logger.info("You shall not close the geometry window directly!");
       windowEvent.consume();
