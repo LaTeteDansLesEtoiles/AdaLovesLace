@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
@@ -79,7 +80,7 @@ public class MainWindow {
     menuBar = new MenuBar();
   }
 
-  public void createMenuBar(Group root, App app) {
+  public void createMenuBar(Group root, App app, Stage primaryStage) {
     Menu fileMenu     = new Menu(resourceBundle.getString(FILE));
     Menu editMenu     = new Menu(resourceBundle.getString(EDIT));
     Menu toolMenu     = new Menu(resourceBundle.getString(TOOL));
@@ -163,6 +164,8 @@ public class MainWindow {
     frenchItem.setOnAction(actionEvent -> {
       Locale locale = new Locale("fr", "FR");
       App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
+
+      restartApp(app, primaryStage);
     } );
     frenchItem.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN));
 
@@ -170,6 +173,8 @@ public class MainWindow {
     englishItem.setOnAction(actionEvent -> {
       Locale locale = new Locale("en", "EN");
       App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
+
+      restartApp(app, primaryStage);
     });
     englishItem.setAccelerator(new KeyCodeCombination(KeyCode.U, KeyCombination.CONTROL_DOWN));
 
@@ -181,6 +186,13 @@ public class MainWindow {
     menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu, languageMenu);
     menuBar.setTranslateY(MENU_BAR_Y);
     root.getChildren().addAll(menuBar);
+  }
+
+  private void restartApp(App app, Stage primaryStage) {
+    app.getGeometryWindow().getGeometryStage().close();
+    app.getToolboxWindow().getToolboxStage().close();
+    app.getPrimaryStage().close();
+    app.start(primaryStage);
   }
 
   public TilePane createFooter(String javafxVersion, String javaVersion) {

@@ -84,13 +84,15 @@ public class GeometryWindow {
   private ZoomSpinner zoomSpinnerObject1;
   private ZoomSpinner zoomSpinnerObject2;
   private ZoomSpinner zoomSpinnerObject3;
+  private Stage geometryStage;
 
   public void createGeometryStage(App app, Stage geometryStage, Pane parent) {
     Scene geometryScene = new Scene(parent, GEOMETRY_WINDOW_WIDTH, GEOMETRY_WINDOW_HEIGHT);
+
+    this.geometryStage = geometryStage;
     geometryStage.setTitle(resourceBundle.getString(GEOMETRY_TITLE));
     geometryStage.setOnCloseRequest(windowEvent -> {
       logger.info("You shall not close the geometry window directly!");
-      windowEvent.consume();
     });
     geometryStage.setX(GEOMETRY_WINDOW_X);
     geometryStage.setY(MAIN_WINDOW_Y);
@@ -281,6 +283,10 @@ public class GeometryWindow {
 
   public ZoomButton getZoomButton() {
     return zoomButton;
+  }
+
+  public Stage getGeometryStage() {
+    return geometryStage;
   }
 
 }

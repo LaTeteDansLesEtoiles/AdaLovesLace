@@ -94,7 +94,11 @@ public class App extends Application {
   @Override
   public void start(Stage primaryStage) {
     this.primaryStage = primaryStage;
-    this.diagram = new Diagram();
+
+    // If we restart the app (for language change)
+    if (this.diagram == null) {
+      this.diagram = new Diagram();
+    }
 
     logger.info("Opening geometry window");
     showGeometryWindow(this);
@@ -144,7 +148,7 @@ public class App extends Application {
       System.exit(0);
     });
 
-    this.mainWindow.createMenuBar(root, this);
+    this.mainWindow.createMenuBar(root, this, primaryStage);
     this.primaryStage = primaryStage;
     primaryStage.show();
   }

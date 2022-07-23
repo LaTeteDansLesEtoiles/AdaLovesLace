@@ -55,6 +55,7 @@ public class ToolboxWindow {
 
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
   private TextArea printersTextArea;
+  private Stage toolboxStage;
 
   public ToolboxWindow() {
     this.allPatterns = new ArrayList<>();
@@ -201,18 +202,19 @@ public class ToolboxWindow {
   }
 
   public void createToolboxStage(Pane root, Stage toolboxStage, GridPane parent, App app, int posY) {
+    this.toolboxStage = toolboxStage;
     buildPrintButtons(app, parent, posY);
 
     Scene toolboxScene = new Scene(root);
-    toolboxStage.setX(TOOLBOX_WINDOW_X);
-    toolboxStage.setY(MAIN_WINDOW_Y);
-    toolboxStage.setWidth(TOOLBOX_WINDOW_WIDTH);
-    toolboxStage.setHeight(computeWindowHeight(app));
-    toolboxStage.setScene(toolboxScene);
-    toolboxStage.show();
+    this.toolboxStage.setX(TOOLBOX_WINDOW_X);
+    this.toolboxStage.setY(MAIN_WINDOW_Y);
+    this.toolboxStage.setWidth(TOOLBOX_WINDOW_WIDTH);
+    this.toolboxStage.setHeight(computeWindowHeight(app));
+    this.toolboxStage.setScene(toolboxScene);
+    this.toolboxStage.show();
 
-    toolboxStage.setTitle(resourceBundle.getString(TOOLBOX_TITLE));
-    toolboxStage.setOnCloseRequest(windowEvent -> {
+    this.toolboxStage.setTitle(resourceBundle.getString(TOOLBOX_TITLE));
+    this.toolboxStage.setOnCloseRequest(windowEvent -> {
       logger.info("You shall not close the toolbox window directly!");
     });
   }
@@ -339,6 +341,10 @@ public class ToolboxWindow {
 
   public ToggleButton getSnowflakeButton() {
     return this.snowflakeButton;
+  }
+
+  public Stage getToolboxStage() {
+    return toolboxStage;
   }
 
 }
