@@ -244,8 +244,8 @@ public class MainWindow {
         this.getOptionalDotGrid().getDiagram().getCurrentMode());
 
       if (eType.equals(MOUSE_CLICKED)) {
-        double x          = event.getX();
-        double y          = event.getY();
+        double x          = event.getScreenX();
+        double y          = event.getScreenY();
         double yMinusTop  = y - OptionalDotGrid.TOP_MARGIN;
 
         logger.info("Coordinate X     -> {}", x);
@@ -315,6 +315,7 @@ public class MainWindow {
             manageKnotWithSingleSelection(app, knot);
           }
 
+          app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().circleSelectedKnot(knot));
           app.getOptionalDotGrid().layoutChildren();
         }
       } catch (MalformedURLException e) {
@@ -337,13 +338,10 @@ public class MainWindow {
   private void manageKnotWithSingleSelection(App app, Knot knot) {
     app.getOptionalDotGrid().clearSelections();
     knot.setSelection(null);
-    app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().circleSelectedKnot(knot));
   }
 
   private void manageKnotWithMultiSelection(App app, Knot knot) {
-    if (knot.getSelection() == null) {
-      app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().circleSelectedKnot(knot));
-    } else {
+    if (knot.getSelection() != null) {
       app.getOptionalDotGrid().clearSelection(knot);
       knot.setSelection(null);
     }

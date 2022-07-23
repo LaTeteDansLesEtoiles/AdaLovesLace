@@ -37,16 +37,17 @@ public class SelectionButton extends ToggleButton {
   public static void onSetSelectionModeAction(App app, GeometryWindow window) {
     logger.info("Setting selection mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
+    final NodeUtil nodeUtil = new NodeUtil();
 
     gridHoverListener = (mouseEvent) -> {
-      logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getSceneX() , mouseEvent.getSceneY());
+      logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getScreenX() , mouseEvent.getScreenY());
 
-      app.getOptionalDotGrid().clearHovered();
 
       for (Knot knot : app.getOptionalDotGrid().getDiagram().getKnots()) {
         try {
-          if (new NodeUtil().isSelected(knot, mouseEvent.getSceneX(), mouseEvent.getSceneY())) {
+          if (nodeUtil.isSelected(knot, mouseEvent.getScreenX(), mouseEvent.getScreenY())) {
             logger.debug("Hover over knot: {}", knot);
+            app.getOptionalDotGrid().clearHovered();
             app.getOptionalDotGrid().circleHoveredKnot(knot);
 
             return;
