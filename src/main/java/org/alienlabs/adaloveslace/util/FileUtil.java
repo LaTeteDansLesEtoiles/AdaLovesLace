@@ -63,6 +63,7 @@ public class FileUtil {
 
         if (XML_FILE_TO_SAVE_IN_LACE_FILE.equals(entry.getName())) {
           diagram = buildDiagram(zipFile, entry);
+          app.setDiagram(diagram);
         } else {
           copyPattern(file, zipFile, entry);
         }
