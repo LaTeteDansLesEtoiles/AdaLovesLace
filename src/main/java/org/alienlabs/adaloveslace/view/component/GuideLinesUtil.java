@@ -17,11 +17,13 @@ public class GuideLinesUtil {
     lineXRightRight   (knot, otherKnot, root);
     lineXLeftRight    (knot, otherKnot, root);
     lineXRightLeft    (knot, otherKnot, root);
+    lineXCenterCenter (knot, otherKnot, root);
 
     lineYTopTop       (knot, otherKnot, root);
     lineYBottomBottom (knot, otherKnot, root);
     lineYTopBottom    (knot, otherKnot, root);
     lineYBottomTop    (knot, otherKnot, root);
+    lineYCenterCenter (knot, otherKnot, root);
   }
 
   private void lineXLeftLeft(Knot knot, Knot otherKnot, Group root) {
@@ -167,6 +169,44 @@ public class GuideLinesUtil {
       } else {
         line = new Line(knot.getX() - knot.getPattern().getWidth() - PADDING_WIDTH, knot.getY() + knot.getPattern().getHeight(),
           otherKnot.getX() + otherKnot.getPattern().getWidth() + PADDING_WIDTH, knot.getY() + knot.getPattern().getHeight());
+      }
+      line.setStroke(Color.BLACK);
+
+      knot.getGuideLines().add(line);
+      root.getChildren().add(line);
+    }
+  }
+
+  private void lineXCenterCenter(Knot knot, Knot otherKnot, Group root) {
+    if (knot.getX() + knot.getPattern().getCenterX()  - MAGNET_SIZE_X <= otherKnot.getX() + otherKnot.getPattern().getCenterX() &&
+      knot.getX() + knot.getPattern().getCenterX() + MAGNET_SIZE_X >= otherKnot.getX() + otherKnot.getPattern().getCenterX()) {
+      Line line;
+
+      if (knot.getY() >= otherKnot.getY()) {
+        line = new Line(knot.getX() + knot.getPattern().getCenterX(), knot.getY() + knot.getPattern().getHeight() + PADDING_HEIGHT,
+          knot.getX() + knot.getPattern().getCenterX(), otherKnot.getY() - PADDING_HEIGHT);
+      } else {
+        line = new Line(knot.getX() + knot.getPattern().getCenterX(), knot.getY() - PADDING_HEIGHT,
+          knot.getX() + knot.getPattern().getCenterX(), otherKnot.getY() + knot.getPattern().getHeight() + PADDING_HEIGHT);
+      }
+      line.setStroke(Color.BLACK);
+
+      knot.getGuideLines().add(line);
+      root.getChildren().add(line);
+    }
+  }
+
+  private void lineYCenterCenter(Knot knot, Knot otherKnot, Group root) {
+    if (knot.getY() + knot.getPattern().getCenterY() - MAGNET_SIZE_Y <= otherKnot.getY() + otherKnot.getPattern().getCenterY() &&
+      knot.getY() + knot.getPattern().getCenterY() + MAGNET_SIZE_Y >= otherKnot.getY() + otherKnot.getPattern().getCenterY()) {
+      Line line;
+
+      if (knot.getX() >= otherKnot.getX()) {
+        line = new Line(knot.getX() + knot.getPattern().getWidth() + PADDING_WIDTH, knot.getY() + knot.getPattern().getCenterY(),
+          otherKnot.getX() - PADDING_WIDTH, knot.getY() + knot.getPattern().getCenterY());
+      } else {
+        line = new Line(otherKnot.getX() + otherKnot.getPattern().getWidth() + PADDING_WIDTH, knot.getY() + knot.getPattern().getCenterY(),
+          knot.getX() - PADDING_WIDTH, knot.getY() + knot.getPattern().getCenterY());
       }
       line.setStroke(Color.BLACK);
 
