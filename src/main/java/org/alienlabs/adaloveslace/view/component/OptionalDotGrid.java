@@ -434,7 +434,7 @@ public class OptionalDotGrid extends Pane {
   /** Use JavaFX property
    * @see OptionalDotGrid#getDiagramProperty()
    * */
-  private void setDiagram(Diagram diagram) {
+  public void setDiagram(Diagram diagram) {
     this.diagram = diagram;
   }
 

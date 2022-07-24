@@ -21,10 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -72,16 +69,18 @@ public class FileUtil {
       if (null != diagram) {
         buildKnotsImageViews(app, diagram);
       }
-      deleteXmlFile();
     } catch (JAXBException | IOException e) {
       logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
     }
 
+    app.getOptionalDotGrid().getDiagramProperty().set(diagram);
+    app.getOptionalDotGrid().setDiagram(diagram);
+    app.getPrimaryStage().close();
+    app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
+      app.getPrimaryStage());
+    app.initializeKeyboardShorcuts();
     app.getToolboxStage().close();
     app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
-
-    app.getOptionalDotGrid().getDiagramProperty().set(diagram);
-    app.getOptionalDotGrid().layoutChildren();
   }
 
   private void buildKnotsImageViews(App app, Diagram diagram) {
@@ -203,7 +202,7 @@ public class FileUtil {
   }
 
   private void writePatternsToLaceFile(Diagram toSave, ZipOutputStream zipOut) throws IOException {
-    for (org.alienlabs.adaloveslace.business.model.Pattern pattern : toSave.getPatterns()) {
+    for (org.alienlabs.adaloveslace.business.model.Pattern pattern : new HashSet<>(toSave.getPatterns())) {
       File fileToZip = new File(pattern.getAbsoluteFilename());
       zipOut.putNextEntry(new ZipEntry(pattern.getFilename()));
       Files.copy(fileToZip.toPath(), zipOut);

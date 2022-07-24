@@ -52,7 +52,10 @@ public class CreatePatternButton extends ImageButton {
     app.getGeometryWindow().getDuplicationButton().setSelected(false);
 
     app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, app.getMainWindow().getMouseEventEventHandler());
-    app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, SelectionButton.getGridHoverListener());
+
+    if (SelectionButton.getGridHoverListener() != null) {
+      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, SelectionButton.getGridHoverListener());
+    }
 
     mousePressedListener = mouseEvent -> {
       logger.info("Create Pattern => MouseEvent pressed: X= {}, Y= {}", mouseEvent.getX() , mouseEvent.getY());

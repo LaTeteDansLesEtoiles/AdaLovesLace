@@ -7,6 +7,7 @@ import jakarta.xml.bind.annotation.XmlType;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * An image, or at least the one represented by a Pattern filename, which can be put at will on a Canvas and chosen
@@ -104,6 +105,19 @@ public class Pattern {
       "width='" + width + '\'' +
       "height='" + height + '\'' +
       '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Pattern)) return false;
+    Pattern pattern = (Pattern) o;
+    return Objects.equals(filename, pattern.filename);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(filename);
   }
 
 }
