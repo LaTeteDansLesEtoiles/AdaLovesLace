@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.util;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.DiagramDTO;
@@ -22,6 +23,7 @@ import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 
 public class ImageUtil {
 
+  public static final String NEW_PATTERN = "pattern";
   private final App app;
 
   private static final Logger logger = LoggerFactory.getLogger(ImageUtil.class);
@@ -91,6 +93,41 @@ public class ImageUtil {
       ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), EXPORT_IMAGE_FILE_FORMAT, output);
     } catch (IOException e) {
       logger.error("Problem writing root group image file!", e);
+    }
+    return output;
+  }
+
+  public File buildImage(double x, double y, double width, double height) {
+    boolean gridNeedsShowing = false;
+
+    if (app.getOptionalDotGrid().isShowHideGrid()) {
+      app.getOptionalDotGrid().setShowHideGrid(false);
+      app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+      app.getOptionalDotGrid().layoutChildren();
+      gridNeedsShowing = true;
+    }
+
+    WritableImage image = app.getPrimaryStage().getScene().snapshot(null);
+    PixelReader pixelReader = image.getPixelReader();
+
+    WritableImage wi = new WritableImage(pixelReader,
+      Double.valueOf(x).intValue(),
+      Double.valueOf(y).intValue(),
+      Double.valueOf(width).intValue(), Double.valueOf(height).intValue());
+
+    File output = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
+      NEW_PATTERN + UUID.randomUUID().toString().substring(0, 8) + EXPORT_IMAGE_FILE_TYPE);
+
+    try {
+      ImageIO.write(SwingFXUtils.fromFXImage(wi, null), EXPORT_IMAGE_FILE_FORMAT, output);
+    } catch (IOException e) {
+      logger.error("Problem writing new pattern image file!", e);
+    }
+
+    if (gridNeedsShowing) {
+      app.getOptionalDotGrid().setShowHideGrid(true);
+      app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+      app.getOptionalDotGrid().layoutChildren();
     }
     return output;
   }

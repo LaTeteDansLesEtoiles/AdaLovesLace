@@ -16,6 +16,7 @@ import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
@@ -187,6 +188,7 @@ public class App extends Application {
     geometryWindow.createGeometryStage(app, geometryStage, parent);
 
     initializeKeyboardShorcuts();
+    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
     return geometryWindow;
   }
 

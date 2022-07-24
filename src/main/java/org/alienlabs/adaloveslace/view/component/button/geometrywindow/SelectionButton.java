@@ -39,7 +39,7 @@ public class SelectionButton extends ToggleButton {
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
     final NodeUtil nodeUtil = new NodeUtil();
 
-    gridHoverListener = (mouseEvent) -> {
+    gridHoverListener = mouseEvent -> {
       logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getScreenX() , mouseEvent.getScreenY());
 
       for (Knot knot : app.getOptionalDotGrid().getDiagram().getKnots()) {

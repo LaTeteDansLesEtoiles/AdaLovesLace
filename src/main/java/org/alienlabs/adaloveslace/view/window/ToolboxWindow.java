@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.HOME_DIRECTORY_RESOURCES_PATH;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.CreatePatternButton.CREATE_PATTERN_BUTTON;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ExportPdfButton.EXPORT_PDF_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShareButton.SHARE_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
@@ -48,6 +49,7 @@ public class ToolboxWindow {
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
   private TextArea printersTextArea;
   private Stage toolboxStage;
+  private CreatePatternButton createPatternButton;
 
   public ToolboxWindow() {
     this.allPatterns = new ArrayList<>();
@@ -248,9 +250,9 @@ public class ToolboxWindow {
     tooltip2.setText("Please click here secondly in order to print");
     printButton.setTooltip(tooltip2);
 
-    parent.add(getPrintersButton, 0, posY + 6);
-    parent.add(printButton, 1, posY + 6);
-    parent.add(printersTextArea, 0, posY + 7);
+    parent.add(getPrintersButton,   0, posY + 7);
+    parent.add(printButton,         1, posY + 7);
+    parent.add(printersTextArea,    0, posY + 8);
 
     PrintUtil printer = new PrintUtil(app);
     printer.printersButtonOnAction(printersTextArea, getPrintersButton);
@@ -259,20 +261,22 @@ public class ToolboxWindow {
 
   private void buildQuitButton(GridPane buttonsPane, int posY) {
     QuitButton showQuitButton = new QuitButton(resourceBundle.getString(QUIT_APP));
-    buttonsPane.add(showQuitButton, 0, posY + 5);
+    buttonsPane.add(showQuitButton, 0, posY + 6);
   }
 
   private void buildShowHideGridButton(App app, GridPane buttonsPane, int posY) {
-    buttonsPane.add(new ShowHideGridButton  (resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME), app), 1, posY + 4);
+    buttonsPane.add(new ShowHideGridButton  (resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME), app), 1, posY + 5);
   }
 
   private void buildEditButtons(App app, GridPane buttonsPane, int posY) {
-    this.undoKnotButton      = new UndoKnotButton      (resourceBundle.getString(UNDO_KNOT), app);
-    this.redoKnotButton      = new RedoKnotButton      (resourceBundle.getString(REDO_KNOT), app);
-    this.resetDiagramButton  = new ResetDiagramButton  (resourceBundle.getString(RESET_DIAGRAM), app);
-    buttonsPane.add(this.undoKnotButton, 0, posY + 3);
-    buttonsPane.add(this.redoKnotButton, 1, posY + 3);
-    buttonsPane.add(this.resetDiagramButton, 0, posY + 4);
+    this.undoKnotButton           = new UndoKnotButton      (resourceBundle.getString(UNDO_KNOT), app);
+    this.redoKnotButton           = new RedoKnotButton      (resourceBundle.getString(REDO_KNOT), app);
+    this.createPatternButton      = new CreatePatternButton (resourceBundle.getString(CREATE_PATTERN_BUTTON), app);
+    this.resetDiagramButton       = new ResetDiagramButton  (resourceBundle.getString(RESET_DIAGRAM), app);
+    buttonsPane.add(this.undoKnotButton,      0, posY + 3);
+    buttonsPane.add(this.redoKnotButton,      1, posY + 3);
+    buttonsPane.add(this.createPatternButton, 0, posY + 4);
+    buttonsPane.add(this.resetDiagramButton,  0, posY + 5);
   }
 
   private void buildFileButtons(App app, GridPane buttonsPane, int posY) {

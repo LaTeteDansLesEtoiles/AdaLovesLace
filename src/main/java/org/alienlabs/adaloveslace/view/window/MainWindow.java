@@ -1,6 +1,7 @@
 package org.alienlabs.adaloveslace.view.window;
 
 import javafx.collections.ObservableSet;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.print.Printer;
@@ -10,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
@@ -77,6 +79,7 @@ public class MainWindow {
   private static final Logger logger        = LoggerFactory.getLogger(MainWindow.class);
   private ObservableSet<Printer> printers;
   private StackPane grid;
+  private EventHandler<MouseEvent> mouseEventEventHandler;
 
   public MainWindow() {
     menuBar = new MenuBar();
@@ -237,32 +240,37 @@ public class MainWindow {
   }
 
   public void onMainWindowClicked(final App app, final Group root) {
-    root.setOnMouseClicked(event -> {
+    mouseEventEventHandler = event -> {
       String eType = event.getEventType().toString();
       logger.info("Event type -> {},  current Knot index {}, current mode: {}", eType,
         this.getOptionalDotGrid().getDiagram().getCurrentKnotIndex(),
         this.getOptionalDotGrid().getDiagram().getCurrentMode());
 
       if (eType.equals(MOUSE_CLICKED)) {
-        double x          = event.getScreenX();
-        double y          = event.getScreenY();
+        double x          = event.getX();
+        double y          = event.getY();
+        double screenX    = event.getScreenX();
+        double screenY    = event.getScreenY();
         double yMinusTop  = y - OptionalDotGrid.TOP_MARGIN;
 
         logger.info("Coordinate X     -> {}", x);
         logger.info("Coordinate Y     -> {}, Y - TOP -> {}", y, yMinusTop);
 
-        processMouseClick(app, x, y);
+        processMouseClick(app, x, y, screenX, screenY);
       }
-    });
+    };
+
+    root.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventEventHandler);
   }
 
-  private void processMouseClick(App app, double x, double y) {
+  private void processMouseClick(App app, double x, double y, double screenX, double screenY) {
     switch (this.getOptionalDotGrid().getDiagram().getCurrentMode()) {
       case DRAWING      -> onClickWithDrawMode(app, this.getOptionalDotGrid().getDiagram(),
         optionalDotGrid.addKnot(x, y));
-      case SELECTION    -> onClickWithSelectionMode(app, x, y);
+      case SELECTION    -> onClickWithSelectionMode(app, screenX, screenY);
       case DELETION     -> onClickWithDeletionMode(app, this.getOptionalDotGrid().getDiagram(), x, y) ;
       case DUPLICATION  -> onClickWithDuplicationMode(app, this.getOptionalDotGrid().getDiagram(), x, y);
+      case CREATE_PATTERN -> {} // This is managed in CreatePatternButton
     default -> throw new IllegalArgumentException("Please provide a valid mode, not: " +
       this.getOptionalDotGrid().getDiagram().getCurrentMode());
     }
@@ -294,6 +302,8 @@ public class MainWindow {
     // And we stop at the first clicked Knot
     while (it.hasNext() && !hasClickedOnAKnot) {
       Knot knot = it.next();
+      Knot clickedKnot;
+
       try {
         hasClickedOnAKnot = (app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) && (new NodeUtil().isMouseOverKnot(knot, x, y));
 
@@ -340,6 +350,7 @@ public class MainWindow {
     // If there is a current knot and we have clicked somewhere else than on a knot,
     // we shall move the current knot
     if (!hasClickedOnAKnot && this.getOptionalDotGrid().getDiagram().getCurrentKnot() != null) {
+      logger.info("Shall move knot");
       Knot currentKnot = this.getOptionalDotGrid().getDiagram().getCurrentKnot();
       app.getOptionalDotGrid().clearSelection(currentKnot);
       moveKnot(currentKnot, x - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getWidth(),
@@ -436,6 +447,10 @@ public class MainWindow {
 
   public StackPane getGrid() {
     return grid;
+  }
+
+  public EventHandler<MouseEvent> getMouseEventEventHandler() {
+    return mouseEventEventHandler;
   }
 
 }

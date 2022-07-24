@@ -35,7 +35,9 @@ public class DrawingButton extends ToggleButton {
     app.getOptionalDotGrid().clearHovered();
     app.getOptionalDotGrid().clearAllGuideLines();
 
-    app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, SelectionButton.getGridHoverListener());
+    if (SelectionButton.getGridHoverListener() != null) {
+      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, SelectionButton.getGridHoverListener());
+    }
 
     window.getDrawingButton()     .setSelected(true);
     window.getSelectionButton()   .setSelected(false);

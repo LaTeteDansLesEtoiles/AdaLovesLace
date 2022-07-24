@@ -374,27 +374,24 @@ public class OptionalDotGrid extends Pane {
     }
   }
 
-  public Knot addKnot(double centerX, double centerY) {
+  public Knot addKnot(double x, double y) {
     Pattern currentPattern = this.diagram.getCurrentPattern();
-    logger.debug("Current pattern  -> {}", currentPattern);
+    logger.info("Current pattern  -> {}", currentPattern);
     Knot currentKnot = null;
 
     try (FileInputStream fis = new FileInputStream(currentPattern.getAbsoluteFilename())) {
       Image image = new Image(fis);
       ImageView iv = new ImageView(image);
 
-      double cornerX = centerX - currentPattern.getWidth();
-      double cornerY = centerY - currentPattern.getHeight();
-      iv.setX(cornerX);
-      iv.setY(cornerY);
+      iv.setX(x);
+      iv.setY(y);
       iv.setRotate(0d);
       iv.setOpacity(1.0d);
 
-      logger.debug("Top left corner of the knot {} is ({},{})", currentPattern.getFilename(), cornerX, cornerY);
-      logger.debug("Center of the knot {} is ({},{})", currentPattern.getFilename(), centerX, centerY);
+      logger.debug("Top left corner of the knot {} is ({},{})", currentPattern.getFilename(), x, y);
 
       root.getChildren().add(iv);
-      currentKnot = new Knot(cornerX, cornerY, currentPattern, iv);
+      currentKnot = new Knot(x, y, currentPattern, iv);
       this.diagram.addKnot(currentKnot);
       layoutChildren();
     } catch (IOException e) {
@@ -446,6 +443,14 @@ public class OptionalDotGrid extends Pane {
     justification = "A JavaFX property is meant to be modified from the outside")
   public SimpleBooleanProperty isShowHideGridProperty() {
     return this.showHideGridProperty;
+  }
+
+  public boolean isShowHideGrid() {
+    return showHideGrid;
+  }
+
+  public void setShowHideGrid(boolean showHideGrid) {
+    this.showHideGrid = showHideGrid;
   }
 
 }
