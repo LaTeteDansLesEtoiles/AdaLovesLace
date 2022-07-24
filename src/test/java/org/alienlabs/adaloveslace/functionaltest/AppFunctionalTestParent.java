@@ -81,6 +81,10 @@ public class AppFunctionalTestParent {
     Locale locale = new Locale("en", "EN");
     App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
     this.app.setDiagram(new Diagram());
+    this.primaryStage = primaryStage;
+
+    // The grid dots are twice as big as in the production code in order to facilitate tests
+    this.app.showMainWindow(640d, 480d, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS * 2d, this.primaryStage);
 
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
     this.app.getToolboxStage().setX(1600d);
@@ -90,11 +94,6 @@ public class AppFunctionalTestParent {
     this.geometryWindow = this.app.showGeometryWindow(this.app);
     this.app.getGeometryStage().setX(1100d);
     this.app.getGeometryStage().setY(50d);
-
-    this.primaryStage = primaryStage;
-
-    // The grid dots are twice as big as in the production code in order to facilitate tests
-    this.app.showMainWindow(640d, 480d, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS * 2d, this.primaryStage);
   }
 
   // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
