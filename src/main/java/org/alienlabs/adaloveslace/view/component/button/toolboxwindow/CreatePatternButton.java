@@ -64,6 +64,7 @@ public class CreatePatternButton extends ImageButton {
 
     if (mouseClicks == 2) {
       removeRectangle(app);
+      mouseClicks = 0;
       new CreatePatternWindow(app, rectangle, new ImageUtil(app).buildImage(rectangleX, rectangleY + OptionalDotGrid.TOP_MARGIN, rectangleWidth, rectangleHeight));
     }
 
@@ -113,6 +114,10 @@ public class CreatePatternButton extends ImageButton {
     rec.setStroke(Color.YELLOW);
     rec.setStrokeWidth(2d);
     rec.setFill(Color.TRANSPARENT);
+
+    rec.addEventHandler(MouseEvent.MOUSE_MOVED, mouseMovedListener);
+    rec.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseClickedListener);
+
     return rec;
   }
 

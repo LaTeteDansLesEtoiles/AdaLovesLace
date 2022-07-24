@@ -42,14 +42,14 @@ public class CreatePatternWindow {
     this.previewFile = previewFile;
     Alert alert = new Alert(CONFIRMATION);
 
-    ButtonType shareButton = buildAlertWindow(alert);
+    ButtonType createPatternButton = buildAlertWindow(alert);
     GridPane gridPane = buildGridPane();
     alert.getDialogPane().setContent(gridPane);
 
     app.getRoot().getChildren().add(rectangle);
     Optional<ButtonType> result = alert.showAndWait();
 
-    if (result.isPresent() && result.get() == shareButton) {
+    if (result.isPresent() && result.get() == createPatternButton) {
       logger.info("Accepted pattern creation");
 
       app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, CreatePatternButton.getMouseMovedListener());
