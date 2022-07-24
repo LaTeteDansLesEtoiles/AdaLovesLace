@@ -44,17 +44,21 @@ public class SelectionButton extends ToggleButton {
 
       for (Knot knot : app.getOptionalDotGrid().getDiagram().getKnots()) {
         try {
-          if (knot.isVisible() && nodeUtil.isMouseOverKnot(knot, mouseEvent.getScreenX(), mouseEvent.getScreenY()) &&
-            !app.getOptionalDotGrid().getAllSelectedKnots().contains(knot) && // If a knot is already selected, don't hover over it
-            !app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) { // If a knot is already hovered over, don't hover over it again
-            logger.debug("Hover over not already selected nor hovered over knot: {}", knot);
+          // If a knot is already selected, we must still hover over it because we may want to unselect it afterwards
+          // But if it's already hovered over, we shall not hover it again
+          boolean isMouseOverKnot = nodeUtil.isMouseOverKnot(knot, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+
+          if (knot.isVisible() && isMouseOverKnot) {
+            logger.debug("Hover over not already hovered over knot: {}", knot);
 
             // We can have only one hovered over knot at once
-            app.getOptionalDotGrid().clearHovered();
-            app.getOptionalDotGrid().getAllHoveredKnots().clear();
             app.getOptionalDotGrid().drawHoveredKnot(knot);
+            app.getOptionalDotGrid().drawSelectedKnot(knot);
+          } else if(knot.isVisible() && !isMouseOverKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
+            app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
+            app.getOptionalDotGrid().drawSelectedKnot(knot);
 
-            return;
+            app.getOptionalDotGrid().layoutChildren();
           }
         } catch (MalformedURLException e) {
           logger.error("Error in mouse hover event!", e);

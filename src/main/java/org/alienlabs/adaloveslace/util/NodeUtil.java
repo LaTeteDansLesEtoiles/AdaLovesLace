@@ -25,6 +25,9 @@ public class NodeUtil {
 
     // Get coordinates of the img relative to screen (as mouse coordinates are relative to screen, too)
     Bounds boundsInScreen = img.localToScreen(img.getBoundsInLocal());
+    if (boundsInScreen == null) {
+      return false;
+    }
     logger.debug("nodeCoord X= {}, Y={}", boundsInScreen.getMinX(), boundsInScreen.getMinY());
 
     return (boundsInScreen.getMinX() <= mouseX) && (boundsInScreen.getMaxX() >= mouseX) &&
