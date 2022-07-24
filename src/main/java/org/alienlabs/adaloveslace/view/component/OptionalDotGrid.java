@@ -251,7 +251,8 @@ public class OptionalDotGrid extends Pane {
 
     knot.setImageView(iv);
 
-    if (diagram.getCurrentMode() == MouseMode.SELECTION && allSelectedKnots.contains(knot)) {
+    if (((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DUPLICATION))
+      && (allSelectedKnots.contains(knot))) {
       drawGuideLines(knot);
     }
     if (allSelectedKnots.contains(knot)) {
