@@ -41,13 +41,20 @@ public class SelectionButton extends ToggleButton {
 
     gridHoverListener = (mouseEvent) -> {
       logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getScreenX() , mouseEvent.getScreenY());
-      app.getOptionalDotGrid().clearHovered();
 
       for (Knot knot : app.getOptionalDotGrid().getDiagram().getKnots()) {
         try {
-          if (nodeUtil.isSelected(knot, mouseEvent.getScreenX(), mouseEvent.getScreenY())) {
-            logger.debug("Hover over knot: {}", knot);
+          if (knot.isVisible() && nodeUtil.isMouseOverKnot(knot, mouseEvent.getScreenX(), mouseEvent.getScreenY()) &&
+            !app.getOptionalDotGrid().getAllSelectedKnots().contains(knot) && // If a knot is already selected, don't hover over it
+            !app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) { // If a knot is already hovered over, don't hover over it again
+            logger.debug("Hover over not already selected nor hovered over knot: {}", knot);
+
+            // We can have only one hovered over knot at once
+            app.getOptionalDotGrid().clearHovered();
+            app.getOptionalDotGrid().getAllHoveredKnots().clear();
             app.getOptionalDotGrid().drawHoveredKnot(knot);
+
+            return;
           }
         } catch (MalformedURLException e) {
           logger.error("Error in mouse hover event!", e);

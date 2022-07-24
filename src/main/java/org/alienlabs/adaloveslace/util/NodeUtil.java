@@ -1,7 +1,6 @@
 package org.alienlabs.adaloveslace.util;
 
 import javafx.geometry.Bounds;
-import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.slf4j.Logger;
@@ -17,7 +16,7 @@ public class NodeUtil {
     // Nothing to do here, that's just to avoid an all-static class
   }
 
-  public boolean isSelected(Knot knot, double mouseX, double mouseY) throws MalformedURLException {
+  public boolean isMouseOverKnot(Knot knot, double mouseX, double mouseY) throws MalformedURLException {
     if (!knot.isVisible()) {
       return false;
     }
@@ -30,11 +29,6 @@ public class NodeUtil {
 
     return (boundsInScreen.getMinX() <= mouseX) && (boundsInScreen.getMaxX() >= mouseX) &&
       (boundsInScreen.getMinY() <= mouseY) && (boundsInScreen.getMaxY() >= mouseY);
-  }
-
-  public boolean isSelected(Node node, double mouseX, double mouseY) {
-    return (node.getLayoutX() <= mouseX) && (node.getLayoutX() + node.getBoundsInLocal().getWidth() >= mouseX) &&
-      (node.getLayoutY() <= mouseY) && (node.getLayoutY() + node.getBoundsInLocal().getHeight() >= mouseY);
   }
 
 }

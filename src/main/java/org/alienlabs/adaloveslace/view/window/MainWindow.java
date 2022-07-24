@@ -271,7 +271,7 @@ public class MainWindow {
   private void onClickWithDuplicationMode(App app, Diagram diagram, double x, double y) {
     for (Knot knot : diagram.getKnots()) {
       try {
-        if ((new NodeUtil().isSelected(knot, x, y)) && (duplicateKnot(app, x, y, knot) != null)) {
+        if ((new NodeUtil().isMouseOverKnot(knot, x, y)) && (duplicateKnot(app, x, y, knot) != null)) {
           continue;
         }
       } catch (MalformedURLException e) {
@@ -295,7 +295,7 @@ public class MainWindow {
     while (it.hasNext() && !hasClickedOnAKnot) {
       Knot knot = it.next();
       try {
-        hasClickedOnAKnot = new NodeUtil().isSelected(knot, x, y);
+        hasClickedOnAKnot = (app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) && (new NodeUtil().isMouseOverKnot(knot, x, y));
 
         if (hasClickedOnAKnot) {
           logger.info("Clicked Knot index {}, uuid {}",
@@ -385,7 +385,7 @@ public class MainWindow {
   }
 
   private boolean removeKnotIfClicked(App app, Diagram diagram, double x, double y, Knot knot) throws MalformedURLException {
-    if (new NodeUtil().isSelected(knot, x, y)) {
+    if (new NodeUtil().isMouseOverKnot(knot, x, y)) {
       knot.setVisible(false);
 
       if (knot.getSelection() != null) {
