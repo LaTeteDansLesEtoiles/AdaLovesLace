@@ -8,11 +8,10 @@ import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton;
+import org.alienlabs.adaloveslace.view.window.CreatePatternWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.alienlabs.adaloveslace.App.*;
-import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class CreatePatternButton extends ImageButton {
@@ -63,6 +62,7 @@ public class CreatePatternButton extends ImageButton {
       rectangleX = mouseEvent.getX();
       rectangleY = mouseEvent.getY();
     };
+
     mouseReleasedListener = mouseEvent -> {
       logger.info("Create Pattern => MouseEvent released: X= {}, Y= {}", mouseEvent.getX(), mouseEvent.getY());
       mouseEvent.consume();
@@ -71,20 +71,19 @@ public class CreatePatternButton extends ImageButton {
       rectangleWidth  = mouseEvent.getX() - rectangleX;
       rectangleHeight = mouseEvent.getY() - rectangleY;
 
-      new ImageUtil(app).buildImage(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
-
-      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_PRESSED,     mousePressedListener);
-      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_RELEASED,    mouseReleasedListener);
-      app.getPrimaryStage().close();
-      app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
-        app.getPrimaryStage());
-      app.getToolboxStage().close();
-      app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
-      app.getGeometryStage().close();
-      app.showGeometryWindow(app);
+      new CreatePatternWindow(app, new ImageUtil(app).buildImage(rectangleX, rectangleY, rectangleWidth, rectangleHeight));
     };
+
     app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_PRESSED,   mousePressedListener);
     app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_RELEASED,  mouseReleasedListener);
+  }
+
+  public static EventHandler<MouseEvent> getMousePressedListener() {
+    return mousePressedListener;
+  }
+
+  public static EventHandler<MouseEvent> getMouseReleasedListener() {
+    return mouseReleasedListener;
   }
 
 }
