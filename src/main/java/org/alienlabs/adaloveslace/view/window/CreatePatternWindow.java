@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.CreatePatternButton;
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ public class CreatePatternWindow {
   private static final Logger logger = LoggerFactory.getLogger(CreatePatternWindow.class);
   private final File previewFile;
 
-  public CreatePatternWindow(App app, File previewFile) {
+  public CreatePatternWindow(App app, Rectangle rectangle, File previewFile) {
     this.previewFile = previewFile;
     Alert alert = new Alert(CONFIRMATION);
 
@@ -45,13 +46,14 @@ public class CreatePatternWindow {
     GridPane gridPane = buildGridPane();
     alert.getDialogPane().setContent(gridPane);
 
+    app.getRoot().getChildren().add(rectangle);
     Optional<ButtonType> result = alert.showAndWait();
 
     if (result.isPresent() && result.get() == shareButton) {
       logger.info("Accepted pattern creation");
 
-      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_PRESSED, CreatePatternButton.getMousePressedListener());
-      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_RELEASED,CreatePatternButton.getMouseReleasedListener());
+      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, CreatePatternButton.getMouseMovedListener());
+      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_CLICKED, CreatePatternButton.getMouseClickedListener());
       app.getPrimaryStage().close();
       app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
         app.getPrimaryStage());
