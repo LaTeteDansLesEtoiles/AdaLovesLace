@@ -40,6 +40,10 @@ public class Knot {
 
   private boolean visible;
 
+  private boolean flippedVertically;
+
+  private boolean flippedHorizontally;
+
   @XmlTransient
   private ImageView imageView;
 
@@ -53,20 +57,24 @@ public class Knot {
   private List<Node> guideLines = new ArrayList<>();
 
   public Knot() {
-    this.uuid = UUID.randomUUID();
-    this.visible = true;
+    this.uuid                 = UUID.randomUUID();
+    this.visible              = true;
+    this.flippedVertically    = false;
+    this.flippedHorizontally  = false;
   }
 
   public Knot(final double x, final double y, final Pattern pattern, final ImageView imageView) {
-    this.x              = x;
-    this.y              = y;
-    this.pattern        = pattern;
-    this.imageView      = imageView;
+    this.x                    = x;
+    this.y                    = y;
+    this.pattern              = pattern;
+    this.imageView            = imageView;
 
-    this.uuid           = UUID.randomUUID();
-    this.rotationAngle  = DEFAULT_ROTATION;
-    this.zoomFactor     = DEFAULT_ZOOM;
-    this.visible        = true;
+    this.uuid                 = UUID.randomUUID();
+    this.rotationAngle        = DEFAULT_ROTATION;
+    this.zoomFactor           = DEFAULT_ZOOM;
+    this.visible              = true;
+    this.flippedVertically    = false;
+    this.flippedHorizontally  = false;
   }
 
   public UUID getUuid() {
@@ -153,6 +161,22 @@ public class Knot {
     this.visible = visible;
   }
 
+  public boolean isFlippedVertically() {
+    return flippedVertically;
+  }
+
+  public void setFlippedVertically(boolean flippedVertically) {
+    this.flippedVertically = flippedVertically;
+  }
+
+  public boolean isFlippedHorizontally() {
+    return flippedHorizontally;
+  }
+
+  public void setFlippedHorizontally(boolean flippedHorizontally) {
+    this.flippedHorizontally = flippedHorizontally;
+  }
+
   public boolean coincide(Knot other) {
     return this.x == other.x && this.y == other.y &&
       this.pattern.getAbsoluteFilename().equals(other.getPattern().getAbsoluteFilename());
@@ -181,6 +205,8 @@ public class Knot {
       ", zoomFactor=" + zoomFactor +
       ", pattern=" + pattern +
       ", visible=" + visible +
+      ", flippedVertically=" + flippedVertically +
+      ", flippedHorizontally=" + flippedHorizontally +
       '}';
   }
 

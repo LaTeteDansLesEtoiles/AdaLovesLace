@@ -1,6 +1,7 @@
 package org.alienlabs.adaloveslace.functionaltest.view.component.spinner;
 
 import javafx.application.Platform;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.junit.jupiter.api.Test;
@@ -43,8 +44,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawSnowflake(robot);
 
     // Verify
-    assertEquals(DEFAULT_ROTATION,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
+    assertEquals(DEFAULT_ROTATION, getAngle());
     assertEquals(DEFAULT_ROTATION,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION,
@@ -79,8 +79,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     }
 
     // Verify
-    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1, getAngle());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner2().getValue());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1,
@@ -113,8 +112,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     }
 
     // Verify
-    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1, getAngle());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner2().getValue());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1,
@@ -147,8 +145,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     }
 
     // Verify
-    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2, getAngle());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2,
@@ -181,8 +178,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     }
 
     // Verify
-    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2, getAngle());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2,
@@ -215,8 +211,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     }
 
     // Verify
-    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3, getAngle());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3,
@@ -249,12 +244,15 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     }
 
     // Verify
-    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getRotate());
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3, getAngle());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner2().getValue());
+  }
+
+  private double getAngle() {
+    return ((Rotate) (this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getTransforms().stream().filter(transform -> transform instanceof Rotate).findFirst().get())).getAngle();
   }
 
 }

@@ -47,8 +47,10 @@ public class AppFunctionalTestParent {
   public static final String TEST_SCREEN_CAPTURE_FILE     = "test_screen_capture" + EXPORT_IMAGE_FILE_TYPE;
 
   public static final String CLASSPATH_RESOURCES_PATH_JPG = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*test" + PATH_SEPARATOR + ".*.jpg";
+  public static final String CLASSPATH_RESOURCES_PATH     = "org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + "test" + PATH_SEPARATOR;
 
   public static final String SNOWFLAKE            = "snowflake_small";
+  public static final String SNOWFLAKE_IMAGE      = "snowflake_small.jpg";
 
   public static final double SNOWFLAKE_PIXEL_X    = 415d;
 

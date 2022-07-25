@@ -391,6 +391,8 @@ public class MainWindow {
       Knot newKnot = newKnot(app, x, y, knot, fis);
       newKnot.setRotationAngle(knot.getRotationAngle());
       newKnot.setZoomFactor(knot.getZoomFactor());
+      newKnot.setFlippedVertically(knot.isFlippedVertically());
+      newKnot.setFlippedHorizontally(knot.isFlippedHorizontally());
       optionalDotGrid.layoutChildren();
 
       return newKnot;

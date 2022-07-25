@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.view.component;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -12,6 +13,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
@@ -263,11 +266,12 @@ public class OptionalDotGrid extends Pane {
 
   private void drawKnotWithRotationAndZoom(Knot knot) {
     ImageView iv = rotateKnot(knot);
+
     if (this.diagram.getKnots().indexOf(knot) == 0) {
       this.firstNonGridNode = iv;
     }
 
-    zoomKnot(knot, iv);
+    zoomAndFlipKnot(knot, iv);
 
     double x = knot.getX();
     double y = knot.getY();
@@ -290,7 +294,14 @@ public class OptionalDotGrid extends Pane {
   }
 
   // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
-  public double zoomKnot(Knot knot, ImageView iv) {
+  public double zoomAndFlipKnot(Knot knot, ImageView iv) {
+    flip(knot.isFlippedVertically(), Rotate.Y_AXIS, knot);
+    flip(knot.isFlippedHorizontally(), Rotate.X_AXIS, knot);
+
+    return zoom(knot, iv);
+  }
+
+  private double zoom(Knot knot, ImageView iv) {
     if (knot.getZoomFactor() != 0) {
       double zoomFactor = computeZoomFactor(knot);
 
@@ -308,7 +319,26 @@ public class OptionalDotGrid extends Pane {
         iv.setScaleY(zoomFactor);
       }
 
-      return zoomFactor;
+      return 1d;
+    }
+  }
+  private void flip(boolean flip, Point3D yAxis, Knot knot) {
+    if (flip) {
+      Rotate rot = new Rotate(180d, yAxis);
+      rot.setPivotX(knot.getImageView().getX() + knot.getPattern().getWidth() / 2d);
+      rot.setPivotY(knot.getImageView().getY() + knot.getPattern().getHeight() / 2d);
+      knot.getImageView().getTransforms().add(rot);
+
+      Translate translate = new Translate(0d, 0d, knot.getPattern().getWidth() / 2.0);
+      knot.getImageView().getTransforms().add(translate);
+    } else {
+      Rotate rot = new Rotate(0, yAxis);
+      rot.setPivotX(knot.getImageView().getX() + knot.getPattern().getWidth() / 2d);
+      rot.setPivotY(knot.getImageView().getY() + knot.getPattern().getHeight() / 2d);
+      knot.getImageView().getTransforms().add(rot);
+
+      Translate translate = new Translate(0d, 0d, knot.getPattern().getWidth() / 2.0);
+      knot.getImageView().getTransforms().add(translate);
     }
   }
 
@@ -327,7 +357,13 @@ public class OptionalDotGrid extends Pane {
     }
 
     knot.getImageView().setOpacity(1.0d);
-    knot.getImageView().setRotate(knot.getRotationAngle());
+    knot.getImageView().getTransforms().clear();
+
+    Rotate rot = new Rotate(knot.getRotationAngle(), Rotate.Z_AXIS);
+    rot.setPivotX(knot.getImageView().getX() + knot.getPattern().getWidth() / 2d);
+    rot.setPivotY(knot.getImageView().getY() + knot.getPattern().getHeight() / 2d);
+
+    knot.getImageView().getTransforms().add(rot);
     logger.debug("rotating knot {} at angle {}", knot.getPattern().getFilename(), knot.getRotationAngle());
 
     return knot.getImageView();

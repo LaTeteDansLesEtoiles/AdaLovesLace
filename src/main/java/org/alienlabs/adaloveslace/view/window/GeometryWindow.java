@@ -28,8 +28,10 @@ import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
 import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.DeletionButton.DELETION_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.DuplicationButton.DUPLICATION_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.HorizontalFlippingButton.HORIZONTAL_FLIPPING_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.RotationButton.ROTATION_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton.SELECTION_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.VerticalFlippingButton.VERTICAL_FLIPPING_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.ZoomButton.ZOOM_BUTTON_NAME;
 
 public class GeometryWindow {
@@ -67,6 +69,8 @@ public class GeometryWindow {
   private SelectionButton selectionButton;
   private DeletionButton deletionButton;
   private DuplicationButton duplicationButton;
+  private VerticalFlippingButton verticalFlippingButton;
+  private HorizontalFlippingButton horizontalFlippingButton;
   private RotationButton rotationButton;
   private ZoomButton zoomButton;
   private Spinner<Integer> rotationSpinner1;
@@ -94,7 +98,6 @@ public class GeometryWindow {
       logger.info("You shall not close the geometry window directly!");
     });
     geometryStage.setX(GEOMETRY_WINDOW_X);
-//    geometryStage.setX(app.getToolboxStage().getX() + app.getToolboxStage().getWidth());
     geometryStage.setY(MAIN_WINDOW_Y);
     geometryStage.setScene(geometryScene);
     geometryStage.show();
@@ -111,6 +114,12 @@ public class GeometryWindow {
 
     this.duplicationButton = new DuplicationButton(app, this, resourceBundle.getString(DUPLICATION_BUTTON_NAME));
     getImageView("duplication.png", duplicationButton, false);
+
+    this.verticalFlippingButton = new VerticalFlippingButton(app, this, resourceBundle.getString(VERTICAL_FLIPPING_BUTTON_NAME));
+    getImageView("flip_vertically.png", verticalFlippingButton, false);
+
+    this.horizontalFlippingButton = new HorizontalFlippingButton(app, this, resourceBundle.getString(HORIZONTAL_FLIPPING_BUTTON_NAME));
+    getImageView("flip_horizontally.png", horizontalFlippingButton, false);
 
     this.drawingButton = new DrawingButton(app, this, resourceBundle.getString(DrawingButton.DRAWING_BUTTON_NAME));
     getImageView("drawing.png", drawingButton, true);
@@ -164,7 +173,8 @@ public class GeometryWindow {
       this.rotationSpinner3, this.zoomSpinner3,
       this.rotationButton, this.zoomButton,
       this.drawingButton, this.selectionButton,
-      this.deletionButton, this.duplicationButton);
+      this.deletionButton, this.duplicationButton,
+      this.verticalFlippingButton, this.horizontalFlippingButton);
 
     parent.add(buttonsPane, 0, 0);
   }
