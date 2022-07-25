@@ -92,11 +92,11 @@ public class Diagram {
 
       this.currentKnotIndex--;
 
-      while ((this.currentKnotIndex > 0) && (!knots.get(currentKnotIndex).isVisible())) {
+      if ((this.currentKnotIndex > 0) && (!knots.get(currentKnotIndex).isVisible())) {
         app.getOptionalDotGrid().clearSelection(knots.get(this.currentKnotIndex));
         app.getOptionalDotGrid().clearGuideLines(knots.get(this.currentKnotIndex));
 
-        this.currentKnotIndex--;
+        knots.get(currentKnotIndex).setVisible(true);
       }
     }
 
@@ -110,8 +110,8 @@ public class Diagram {
     if (currentKnotIndex < this.knots.size()) {
       this.currentKnotIndex++;
 
-      while ((this.currentKnotIndex < knots.size()) && (!knots.get(currentKnotIndex).isVisible())) {
-        this.currentKnotIndex++;
+      if ((this.currentKnotIndex < knots.size()) && (!knots.get(currentKnotIndex).isVisible())) {
+        knots.get(currentKnotIndex).setVisible(true);
       }
     }
 

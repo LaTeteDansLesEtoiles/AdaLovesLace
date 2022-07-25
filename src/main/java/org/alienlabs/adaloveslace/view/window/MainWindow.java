@@ -48,6 +48,10 @@ public class MainWindow {
   public static final String TOOL = "Tool";
   public static final String EDIT = "Edit";
   public static final String FILE = "File";
+
+  private static App app;
+  public static EventHandler<MouseEvent> gridHoverListener;
+
   public final MenuBar menuBar;
   private OptionalDotGrid optionalDotGrid;
   private TilePane footer;
@@ -86,6 +90,7 @@ public class MainWindow {
   }
 
   public void createMenuBar(Group root, App app, Stage primaryStage) {
+    MainWindow.app = app;
     Menu fileMenu     = new Menu(resourceBundle.getString(FILE));
     Menu editMenu     = new Menu(resourceBundle.getString(EDIT));
     Menu toolMenu     = new Menu(resourceBundle.getString(TOOL));
@@ -372,9 +377,9 @@ public class MainWindow {
 
   private void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
     for (Knot knot : diagram.getKnots()) {
+
       try {
         if (removeKnotIfClicked(app, diagram, x, y, knot)) {
-          app.getOptionalDotGrid().layoutChildren();
           return;
         }
       } catch (MalformedURLException e) {
@@ -415,8 +420,13 @@ public class MainWindow {
   }
 
   private boolean removeKnotIfClicked(App app, Diagram diagram, double x, double y, Knot knot) throws MalformedURLException {
-    if (new NodeUtil().isMouseOverKnot(knot, x, y)) {
+    if (app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
       knot.setVisible(false);
+      app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
+
+      if (app.getOptionalDotGrid().getDiagram().getCurrentKnotIndex() == app.getOptionalDotGrid().getDiagram().getKnots().indexOf(knot)) {
+        app.getOptionalDotGrid().getDiagram().setCurrentKnotIndex(app.getOptionalDotGrid().getDiagram().getCurrentKnotIndex() - 1);
+      }
 
       if (knot.getSelection() != null) {
         app.getOptionalDotGrid().clearSelection(knot);
@@ -424,7 +434,7 @@ public class MainWindow {
       }
 
       logger.info("Removing Knot {}, current index = {}", knot, diagram.getCurrentKnotIndex());
-
+      app.getOptionalDotGrid().layoutChildren();
       return true;
     }
 
@@ -454,4 +464,35 @@ public class MainWindow {
     return mouseEventEventHandler;
   }
 
+  public static EventHandler<MouseEvent> getGridHoverListener() {
+    gridHoverListener = mouseEvent -> {
+      logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getScreenX() , mouseEvent.getScreenY());
+
+      for (Knot knot : app.getOptionalDotGrid().getDiagram().getKnots()) {
+        try {
+          // If a knot is already selected, we must still hover over it because we may want to unselect it afterwards
+          // But if it's already hovered over, we shall not hover it again
+          boolean isMouseOverKnot = new NodeUtil().isMouseOverKnot(knot, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+
+          if (knot.isVisible() && isMouseOverKnot) {
+            logger.debug("Hover over not already hovered over knot: {}", knot);
+
+            // We can have only one hovered over knot at once
+            app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
+            app.getOptionalDotGrid().drawHoveredKnot(knot);
+            app.getOptionalDotGrid().drawSelectedKnot(knot);
+          } else if(knot.isVisible() && !isMouseOverKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
+            app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
+            app.getOptionalDotGrid().drawSelectedKnot(knot);
+
+            app.getOptionalDotGrid().layoutChildren();
+          }
+        } catch (MalformedURLException e) {
+          logger.error("Error in mouse hover event!", e);
+        }
+      }
+    };
+
+    return gridHoverListener;
+  }
 }

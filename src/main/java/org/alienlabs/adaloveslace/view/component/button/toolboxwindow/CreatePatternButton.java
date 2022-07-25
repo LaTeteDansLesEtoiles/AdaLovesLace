@@ -10,8 +10,8 @@ import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
-import org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton;
 import org.alienlabs.adaloveslace.view.window.CreatePatternWindow;
+import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +63,8 @@ public class CreatePatternButton extends ImageButton {
 
     app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, app.getMainWindow().getMouseEventEventHandler());
 
-    if (SelectionButton.getGridHoverListener() != null) {
-      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, SelectionButton.getGridHoverListener());
+    if (MainWindow.getGridHoverListener() != null) {
+      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, MainWindow.getGridHoverListener());
     }
 
     if (mouseClicks == 2) {

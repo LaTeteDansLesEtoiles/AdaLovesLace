@@ -2,9 +2,11 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
+import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +21,7 @@ public class DeletionButton extends ToggleButton {
 
   public DeletionButton(App app, GeometryWindow window, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onSetSelectionModeAction(app, window));
+    this.setOnMouseClicked(event -> onSetDeletionModeAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
@@ -27,9 +29,16 @@ public class DeletionButton extends ToggleButton {
     this.setTooltip(tooltip);
   }
 
-  public static void onSetSelectionModeAction(App app, GeometryWindow window) {
+  public static void onSetDeletionModeAction(App app, GeometryWindow window) {
     logger.info("Setting deletion mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DELETION);
+
+    app.getOptionalDotGrid().clearSelections();
+    app.getOptionalDotGrid().clearHovered();
+    app.getOptionalDotGrid().clearAllGuideLines();
+    app.getOptionalDotGrid().getAllSelectedKnots().clear();
+
+    app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_MOVED, MainWindow.getGridHoverListener());
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(false);

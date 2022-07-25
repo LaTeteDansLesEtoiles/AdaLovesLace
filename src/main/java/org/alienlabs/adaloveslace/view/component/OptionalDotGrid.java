@@ -281,12 +281,14 @@ public class OptionalDotGrid extends Pane {
 
     knot.setImageView(iv);
 
-    if (((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DUPLICATION))
+    if (((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DUPLICATION) || (diagram.getCurrentMode() == MouseMode.DELETION))
       && (allSelectedKnots.contains(knot))) {
       drawGuideLines(knot);
     }
-    if (allSelectedKnots.contains(knot)) {
+    if ((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DUPLICATION) || (diagram.getCurrentMode() == MouseMode.DELETION)) {
       drawHovered(knot);
+    }
+    if (allSelectedKnots.contains(knot)) {
       drawSelectedKnot(knot);
     }
 
