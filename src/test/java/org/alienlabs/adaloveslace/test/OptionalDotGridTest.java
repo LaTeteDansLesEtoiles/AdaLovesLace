@@ -122,7 +122,7 @@ class OptionalDotGridTest {
 
     pattern.setAbsoluteFilename(CLASSPATH_RESOURCES_PATH + SNOWFLAKE_IMAGE);
 
-    try (FileInputStream fis = new FileInputStream(new FileUtil().getResources(OptionalDotGridTest.class, java.util.regex.Pattern.compile(CLASSPATH_RESOURCES_PATH_JPG)).get(0))) {
+    try (FileInputStream fis = new FileInputStream(new FileUtil().getResources(this, java.util.regex.Pattern.compile(CLASSPATH_RESOURCES_PATH_JPG)).get(0))) {
       Image image = new Image(fis);
       imageView = new ImageView(image);
     } catch (FileNotFoundException e) {
