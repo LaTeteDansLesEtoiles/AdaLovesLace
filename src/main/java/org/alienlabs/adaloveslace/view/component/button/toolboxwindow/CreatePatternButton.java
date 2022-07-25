@@ -56,6 +56,11 @@ public class CreatePatternButton extends ImageButton {
     app.getGeometryWindow().getDeletionButton().setSelected(false);
     app.getGeometryWindow().getDuplicationButton().setSelected(false);
 
+    app.getOptionalDotGrid().clearSelections();
+    app.getOptionalDotGrid().clearHovered();
+    app.getOptionalDotGrid().clearAllGuideLines();
+    app.getOptionalDotGrid().getAllSelectedKnots().clear();
+
     app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, app.getMainWindow().getMouseEventEventHandler());
 
     if (SelectionButton.getGridHoverListener() != null) {
