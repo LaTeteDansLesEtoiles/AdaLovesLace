@@ -108,7 +108,6 @@ public class App extends Application {
     }
 
     logger.info("Starting app: opening main window");
-    primaryStage.initStyle(StageStyle.TRANSPARENT);
     showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage);
 
     logger.info("Opening toolbox window");
