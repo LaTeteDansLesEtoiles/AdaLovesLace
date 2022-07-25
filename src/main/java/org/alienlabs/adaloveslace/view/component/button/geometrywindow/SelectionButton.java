@@ -5,8 +5,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
-import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class SelectionButton extends ToggleButton {
     logger.info("Setting selection mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
 
-    app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_MOVED, MainWindow.getGridHoverListener());
+    app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(true);

@@ -7,11 +7,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.alienlabs.adaloveslace.view.window.CreatePatternWindow;
-import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,10 +61,10 @@ public class CreatePatternButton extends ImageButton {
     app.getOptionalDotGrid().clearAllGuideLines();
     app.getOptionalDotGrid().getAllSelectedKnots().clear();
 
-    app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, app.getMainWindow().getMouseEventEventHandler());
+    app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
 
-    if (MainWindow.getGridHoverListener() != null) {
-      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, MainWindow.getGridHoverListener());
+    if (Events.getGridHoverEventHandler(app) != null) {
+      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
     }
 
     if (mouseClicks == 2) {

@@ -1,7 +1,6 @@
 package org.alienlabs.adaloveslace.view.window;
 
 import javafx.collections.ObservableSet;
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.print.Printer;
@@ -18,10 +17,7 @@ import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.util.FileUtil;
-import org.alienlabs.adaloveslace.util.NodeUtil;
-import org.alienlabs.adaloveslace.util.Preferences;
-import org.alienlabs.adaloveslace.util.PrintUtil;
+import org.alienlabs.adaloveslace.util.*;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
 import org.slf4j.Logger;
@@ -48,9 +44,6 @@ public class MainWindow {
   public static final String TOOL = "Tool";
   public static final String EDIT = "Edit";
   public static final String FILE = "File";
-
-  private static App app;
-  public static EventHandler<MouseEvent> gridHoverListener;
 
   public final MenuBar menuBar;
   private OptionalDotGrid optionalDotGrid;
@@ -80,17 +73,16 @@ public class MainWindow {
 
   public static final KeyCodeCombination SAVE_AS_KEY_COMBINATION = new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN);
 
-  private static final Logger logger        = LoggerFactory.getLogger(MainWindow.class);
   private ObservableSet<Printer> printers;
   private StackPane grid;
-  private EventHandler<MouseEvent> mouseEventEventHandler;
+
+  private static final Logger logger        = LoggerFactory.getLogger(MainWindow.class);
 
   public MainWindow() {
     menuBar = new MenuBar();
   }
 
   public void createMenuBar(Group root, App app, Stage primaryStage) {
-    MainWindow.app = app;
     Menu fileMenu     = new Menu(resourceBundle.getString(FILE));
     Menu editMenu     = new Menu(resourceBundle.getString(EDIT));
     Menu toolMenu     = new Menu(resourceBundle.getString(TOOL));
@@ -245,43 +237,10 @@ public class MainWindow {
   }
 
   public void onMainWindowClicked(final App app, final Group root) {
-    mouseEventEventHandler = event -> {
-      String eType = event.getEventType().toString();
-      logger.info("Event type -> {},  current Knot index {}, current mode: {}", eType,
-        this.getOptionalDotGrid().getDiagram().getCurrentKnotIndex(),
-        this.getOptionalDotGrid().getDiagram().getCurrentMode());
-
-      if (eType.equals(MOUSE_CLICKED)) {
-        double x          = event.getX();
-        double y          = event.getY();
-        double screenX    = event.getScreenX();
-        double screenY    = event.getScreenY();
-        double yMinusTop  = y - OptionalDotGrid.TOP_MARGIN;
-
-        logger.info("Coordinate X     -> {}", x);
-        logger.info("Coordinate Y     -> {}, Y - TOP -> {}", y, yMinusTop);
-
-        processMouseClick(app, x, y, screenX, screenY);
-      }
-    };
-
-    root.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventEventHandler);
+    root.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
   }
 
-  private void processMouseClick(App app, double x, double y, double screenX, double screenY) {
-    switch (this.getOptionalDotGrid().getDiagram().getCurrentMode()) {
-      case DRAWING      -> onClickWithDrawMode(app, this.getOptionalDotGrid().getDiagram(),
-        optionalDotGrid.addKnot(x, y));
-      case SELECTION    -> onClickWithSelectionMode(app, screenX, screenY);
-      case DELETION     -> onClickWithDeletionMode(app, this.getOptionalDotGrid().getDiagram(), x, y) ;
-      case DUPLICATION  -> onClickWithDuplicationMode(app, this.getOptionalDotGrid().getDiagram(), x, y);
-      case CREATE_PATTERN -> {} // This is managed in CreatePatternButton
-    default -> throw new IllegalArgumentException("Please provide a valid mode, not: " +
-      this.getOptionalDotGrid().getDiagram().getCurrentMode());
-    }
-  }
-
-  private void onClickWithDuplicationMode(App app, Diagram diagram, double x, double y) {
+  public void onClickWithDuplicationMode(App app, Diagram diagram, double x, double y) {
     for (Knot knot : diagram.getKnots()) {
       try {
         if ((new NodeUtil().isMouseOverKnot(knot, x, y)) && (duplicateKnot(app, x, y, knot) != null)) {
@@ -293,13 +252,13 @@ public class MainWindow {
     }
   }
 
-  private void onClickWithDrawMode(App app, Diagram diagram, Knot knot) {
+  public void onClickWithDrawMode(App app, Diagram diagram, Knot knot) {
     diagram.setCurrentKnot(knot);
     diagram.setKnotSelected(false);
     app.getOptionalDotGrid().layoutChildren();
   }
 
-  private void onClickWithSelectionMode(App app, double x, double y) {
+  public void onClickWithSelectionMode(App app, double x, double y) {
     Iterator<Knot> it = optionalDotGrid.getDiagram().getKnots().iterator();
     boolean hasClickedOnAKnot = false;
 
@@ -375,7 +334,7 @@ public class MainWindow {
     optionalDotGrid.layoutChildren();
   }
 
-  private void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
+  public void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
     for (Knot knot : diagram.getKnots()) {
 
       try {
@@ -460,39 +419,4 @@ public class MainWindow {
     return grid;
   }
 
-  public EventHandler<MouseEvent> getMouseEventEventHandler() {
-    return mouseEventEventHandler;
-  }
-
-  public static EventHandler<MouseEvent> getGridHoverListener() {
-    gridHoverListener = mouseEvent -> {
-      logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getScreenX() , mouseEvent.getScreenY());
-
-      for (Knot knot : app.getOptionalDotGrid().getDiagram().getKnots()) {
-        try {
-          // If a knot is already selected, we must still hover over it because we may want to unselect it afterwards
-          // But if it's already hovered over, we shall not hover it again
-          boolean isMouseOverKnot = new NodeUtil().isMouseOverKnot(knot, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-
-          if (knot.isVisible() && isMouseOverKnot) {
-            logger.debug("Hover over not already hovered over knot: {}", knot);
-
-            // We can have only one hovered over knot at once
-            app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
-            app.getOptionalDotGrid().drawHoveredKnot(knot);
-            app.getOptionalDotGrid().drawSelectedKnot(knot);
-          } else if(knot.isVisible() && !isMouseOverKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
-            app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
-            app.getOptionalDotGrid().drawSelectedKnot(knot);
-
-            app.getOptionalDotGrid().layoutChildren();
-          }
-        } catch (MalformedURLException e) {
-          logger.error("Error in mouse hover event!", e);
-        }
-      }
-    };
-
-    return gridHoverListener;
-  }
 }

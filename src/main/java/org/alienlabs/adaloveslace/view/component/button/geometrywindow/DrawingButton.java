@@ -5,8 +5,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
-import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +37,8 @@ public class DrawingButton extends ToggleButton {
     app.getOptionalDotGrid().clearAllGuideLines();
     app.getOptionalDotGrid().getAllSelectedKnots().clear();
 
-    if (MainWindow.getGridHoverListener() != null) {
-      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, MainWindow.getGridHoverListener());
+    if (Events.getGridHoverEventHandler(app) != null) {
+      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
     }
 
     window.getDrawingButton()     .setSelected(true);
