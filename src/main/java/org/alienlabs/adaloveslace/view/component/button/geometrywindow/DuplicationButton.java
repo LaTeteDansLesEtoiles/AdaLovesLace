@@ -5,7 +5,6 @@ import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
-import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +57,7 @@ public class DuplicationButton extends ToggleButton {
       app.getOptionalDotGrid().getRoot().getChildren().add(knot.getImageView());
     });
 
-    app.getDiagram().getAllSteps().add(new Step(copiedKnots, app.getOptionalDotGrid().getAllSelectedKnots()));
+    app.getDiagram().addStep(copiedKnots, app.getOptionalDotGrid().getAllSelectedKnots());
     app.getOptionalDotGrid().layoutChildren();
 
     window.getDrawingButton()     .setSelected(false);
