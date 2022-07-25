@@ -13,6 +13,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.business.model.Diagram;
@@ -107,6 +108,7 @@ public class App extends Application {
     }
 
     logger.info("Starting app: opening main window");
+    primaryStage.initStyle(StageStyle.TRANSPARENT);
     showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage);
 
     logger.info("Opening toolbox window");
@@ -132,6 +134,7 @@ public class App extends Application {
     this.mainWindow.onMainWindowClicked(this, root);
 
     scene = new Scene(root, windowWidth, windowHeight);
+    scene.setFill(Color.TRANSPARENT);
 
     // For multi-selection with "Control" key
     scene.setOnKeyPressed(event -> {

@@ -356,7 +356,6 @@ public class OptionalDotGrid extends Pane {
       knot.getImageView().toBack();
     }
 
-    knot.getImageView().setOpacity(1.0d);
     knot.getImageView().getTransforms().clear();
 
     Rotate rot = new Rotate(knot.getRotationAngle(), Rotate.Z_AXIS);
@@ -422,7 +421,6 @@ public class OptionalDotGrid extends Pane {
       iv.setX(x);
       iv.setY(y);
       iv.setRotate(0d);
-      iv.setOpacity(1.0d);
 
       logger.debug("Top left corner of the knot {} is ({},{})", currentPattern.getFilename(), x, y);
 

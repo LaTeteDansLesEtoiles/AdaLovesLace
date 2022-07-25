@@ -42,8 +42,8 @@ public class DuplicationButton extends ToggleButton {
     for (Knot knot : app.getDiagram().getKnots()) {
       if (app.getOptionalDotGrid().getAllSelectedKnots().contains(knot)) {
         Knot copiedKnot = app.getMainWindow().duplicateKnot(app, knot.getX(), knot.getY(), knot);
+        knot.getImageView().toBack();
         copiedKnots.add(copiedKnot);
-        app.getOptionalDotGrid().drawSelectedKnot(copiedKnot);
       }
     }
 
@@ -52,7 +52,10 @@ public class DuplicationButton extends ToggleButton {
     app.getOptionalDotGrid().clearAllGuideLines();
     app.getOptionalDotGrid().getAllSelectedKnots().clear();
     app.getOptionalDotGrid().getAllSelectedKnots().addAll(copiedKnots);
-    copiedKnots.stream().forEach(knot -> app.getOptionalDotGrid().getDiagram().addKnot(knot));
+    copiedKnots.stream().forEach(knot -> {
+      app.getOptionalDotGrid().getDiagram().addKnot(knot);
+      knot.getImageView().toFront();
+    });
     app.getOptionalDotGrid().layoutChildren();
 
     window.getDrawingButton()     .setSelected(false);

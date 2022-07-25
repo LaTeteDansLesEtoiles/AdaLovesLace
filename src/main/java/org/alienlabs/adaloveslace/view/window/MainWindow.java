@@ -366,7 +366,6 @@ public class MainWindow {
     toMove.setY(y);
     toMove.getImageView().setX(x);
     toMove.getImageView().setY(y);
-    toMove.getImageView().setOpacity(1.0d);
 
     optionalDotGrid.layoutChildren();
   }
