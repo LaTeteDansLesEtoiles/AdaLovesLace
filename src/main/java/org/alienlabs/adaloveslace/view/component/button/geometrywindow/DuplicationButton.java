@@ -5,6 +5,7 @@ import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +40,11 @@ public class DuplicationButton extends ToggleButton {
     // concurrently modify the list of knots already present
     // on the canvas
     List<Knot> copiedKnots = new ArrayList<>();
-    for (Knot knot : app.getDiagram().getKnots()) {
-      if (app.getOptionalDotGrid().getAllSelectedKnots().contains(knot)) {
-        Knot copiedKnot = app.getMainWindow().duplicateKnot(app, knot.getX(), knot.getY(), knot);
-        knot.getImageView().toBack();
-        copiedKnots.add(copiedKnot);
-      }
+
+    for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
+      Knot copiedKnot = app.getMainWindow().duplicateKnot(app, knot.getX(), knot.getY(), knot);
+      knot.getImageView().toBack();
+      copiedKnots.add(copiedKnot);
     }
 
     app.getOptionalDotGrid().clearSelections();
@@ -53,9 +53,12 @@ public class DuplicationButton extends ToggleButton {
     app.getOptionalDotGrid().getAllSelectedKnots().clear();
     app.getOptionalDotGrid().getAllSelectedKnots().addAll(copiedKnots);
     copiedKnots.stream().forEach(knot -> {
-      app.getOptionalDotGrid().getDiagram().addKnot(knot);
+      app.getOptionalDotGrid().getAllVisibleKnots().add(knot);
       knot.getImageView().toFront();
+      app.getOptionalDotGrid().getRoot().getChildren().add(knot.getImageView());
     });
+
+    app.getDiagram().getAllSteps().add(new Step(copiedKnots, app.getOptionalDotGrid().getAllSelectedKnots()));
     app.getOptionalDotGrid().layoutChildren();
 
     window.getDrawingButton()     .setSelected(false);

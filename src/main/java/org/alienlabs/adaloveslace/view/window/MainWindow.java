@@ -240,18 +240,6 @@ public class MainWindow {
     root.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
   }
 
-  public void onClickWithDuplicationMode(App app, Diagram diagram, double x, double y) {
-    for (Knot knot : diagram.getKnots()) {
-      try {
-        if ((new NodeUtil().isMouseOverKnot(knot, x, y)) && (duplicateKnot(app, x, y, knot) != null)) {
-          continue;
-        }
-      } catch (MalformedURLException e) {
-        throw new RuntimeException(e);
-      }
-    }
-  }
-
   public void onClickWithDrawMode(App app, Diagram diagram, Knot knot) {
     diagram.setCurrentKnot(knot);
     diagram.setKnotSelected(false);
@@ -259,7 +247,7 @@ public class MainWindow {
   }
 
   public void onClickWithSelectionMode(App app, double x, double y) {
-    Iterator<Knot> it = optionalDotGrid.getDiagram().getKnots().iterator();
+    Iterator<Knot> it = optionalDotGrid.getAllVisibleKnots().iterator();
     boolean hasClickedOnAKnot = false;
 
     // We iterate on the Knots as long as they are still Knots left to iterate
@@ -301,7 +289,7 @@ public class MainWindow {
             app.getOptionalDotGrid().getAllSelectedKnots().clear();
             app.getOptionalDotGrid().getAllSelectedKnots().add(knot);
           } else {
-            app.getOptionalDotGrid().getAllSelectedKnots().remove(knot);
+            app.getOptionalDotGrid().getAllSelectedKnots().add(knot);
           }
 
           app.getOptionalDotGrid().layoutChildren();
@@ -319,7 +307,7 @@ public class MainWindow {
       app.getOptionalDotGrid().clearSelection(currentKnot);
       moveKnot(currentKnot, x - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getWidth(),
         y - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getHeight());
-      app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().drawSelectedKnot(currentKnot));
+      app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().drawSelectedKnot(this.getOptionalDotGrid().getDiagram().getCurrentStep(), currentKnot));
       app.getOptionalDotGrid().clearAllGuideLines();
     }
 
@@ -356,7 +344,6 @@ public class MainWindow {
       newKnot.setZoomFactor(knot.getZoomFactor());
       newKnot.setFlippedVertically(knot.isFlippedVertically());
       newKnot.setFlippedHorizontally(knot.isFlippedHorizontally());
-      optionalDotGrid.layoutChildren();
 
       return newKnot;
     } catch (IOException e) {
@@ -383,16 +370,12 @@ public class MainWindow {
       knot.setVisible(false);
       app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
 
-      if (app.getOptionalDotGrid().getDiagram().getCurrentKnotIndex() == app.getOptionalDotGrid().getDiagram().getKnots().indexOf(knot)) {
-        app.getOptionalDotGrid().getDiagram().setCurrentKnotIndex(app.getOptionalDotGrid().getDiagram().getCurrentKnotIndex() - 1);
-      }
-
       if (knot.getSelection() != null) {
         app.getOptionalDotGrid().clearSelection(knot);
         app.getOptionalDotGrid().clearGuideLines(knot);
       }
 
-      logger.info("Removing Knot {}, current index = {}", knot, diagram.getCurrentKnotIndex());
+      logger.info("Removing Knot {}, current index = {}", knot, diagram.getCurrentStepIndex());
       app.getOptionalDotGrid().layoutChildren();
       return true;
     }

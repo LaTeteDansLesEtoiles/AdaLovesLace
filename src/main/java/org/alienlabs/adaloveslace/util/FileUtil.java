@@ -139,7 +139,7 @@ public class FileUtil {
     buildAbsoluteFilenamesForPatterns(diagram);
     buildAbsoluteFilenamesForKnots(diagram);
 
-    diagram.setCurrentKnotIndex(diagram.getKnots().size());
+    diagram.setCurrentStepIndex(diagram.getKnots().size());
     diagram.setCurrentPattern(diagram.getPatterns().get(0));
     return diagram;
   }
@@ -211,7 +211,7 @@ public class FileUtil {
 
   private Diagram buildDiagramToSave(App app) {
     Diagram toSave = new Diagram(app.getOptionalDotGrid().getDiagram());
-    toSave.setKnots(toSave.getKnots().subList(0, toSave.getCurrentKnotIndex()));
+    toSave.setKnots(toSave.getKnots().subList(0, toSave.getCurrentStepIndex()));
 
     return toSave;
   }
