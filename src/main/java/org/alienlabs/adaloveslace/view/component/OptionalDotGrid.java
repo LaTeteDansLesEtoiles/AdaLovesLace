@@ -164,17 +164,19 @@ public class OptionalDotGrid extends Pane {
       root.getChildren().remove(knot.getSelection());
     }
 
-    if (getAllSelectedKnots().contains(knot)) {
-      Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
-      rec.setStroke(Color.BLUE);
-      rec.setStrokeWidth(2d);
-      rec.setFill(Color.TRANSPARENT);
-      rec.setScaleX(computeZoomFactor(knot));
-      rec.setScaleY(computeZoomFactor(knot));
-      rec.setRotate(knot.getRotationAngle());
+    if ((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION)) {
+      if (getAllSelectedKnots().contains(knot)) {
+        Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
+        rec.setStroke(Color.BLUE);
+        rec.setStrokeWidth(2d);
+        rec.setFill(Color.TRANSPARENT);
+        rec.setScaleX(computeZoomFactor(knot));
+        rec.setScaleY(computeZoomFactor(knot));
+        rec.setRotate(knot.getRotationAngle());
 
-      root.getChildren().add(rec);
-      knot.setSelection(rec);
+        root.getChildren().add(rec);
+        knot.setSelection(rec);
+      }
     }
     return knot;
   }
@@ -228,7 +230,7 @@ public class OptionalDotGrid extends Pane {
     clearGuideLines(knot);
 
     // The black, thick lines that we use as guides
-    for (Knot otherKnot : step.getSelectedKnots()) {
+    for (Knot otherKnot : getAllVisibleKnots()) {
       if (!otherKnot.equals(knot) && otherKnot.isVisible()) {
         new GuideLinesUtil(knot, otherKnot, root);
       }
@@ -315,16 +317,14 @@ public class OptionalDotGrid extends Pane {
 
     knot.setImageView(iv);
 
-    if (((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DUPLICATION) || (diagram.getCurrentMode() == MouseMode.DELETION))
-      && (allSelectedKnots.contains(knot))) {
+    if (((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION) || (diagram.getCurrentMode() == MouseMode.MOVE))) {
       drawGuideLines(step, knot);
     }
-    if ((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DUPLICATION) || (diagram.getCurrentMode() == MouseMode.DELETION)) {
+    if ((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION)) {
       drawHovered(knot);
     }
-    if (allSelectedKnots.contains(knot)) {
-      drawSelectedKnot(knot);
-    }
+
+    drawSelectedKnot(knot);
 
     logger.debug("drawing top left corner of knot {} to ({},{})", knot.getPattern().getFilename(), x, y);
   }

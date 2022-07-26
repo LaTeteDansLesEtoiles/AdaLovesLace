@@ -50,8 +50,6 @@ public class HorizontalFlippingButton extends ImageButton {
       Knot copy = new NodeUtil().copyKnot(knot);
       copy.setFlippedHorizontally(!knot.isFlippedHorizontally());
       knots.add(copy);
-      app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, knot);
-      app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, copy);
     }
 
     app.getOptionalDotGrid().getAllSelectedKnots().clear();
