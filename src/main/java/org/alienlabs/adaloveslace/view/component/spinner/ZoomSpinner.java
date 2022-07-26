@@ -27,7 +27,7 @@ public class ZoomSpinner {
             if (newValue - oldValue == increment || newValue - oldValue == -increment) {
               currentKnot
                 .setZoomFactor(currentKnot.getZoomFactor() + (newValue > oldValue ? increment : -increment));
-              app.getOptionalDotGrid().drawSelectedKnot(app.getOptionalDotGrid().getDiagram().getCurrentStep(), currentKnot);
+              app.getOptionalDotGrid().drawSelectedKnot(currentKnot);
             }
           }
         } else {

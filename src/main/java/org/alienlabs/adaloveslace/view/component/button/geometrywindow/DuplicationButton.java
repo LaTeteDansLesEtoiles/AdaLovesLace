@@ -47,7 +47,6 @@ public class DuplicationButton extends ToggleButton {
     }
 
     app.getOptionalDotGrid().clearSelections();
-    app.getOptionalDotGrid().getAllSelectedKnots().clear();
     app.getOptionalDotGrid().clearAllGuideLines();
     app.getOptionalDotGrid().getAllSelectedKnots().clear();
     app.getOptionalDotGrid().getAllSelectedKnots().addAll(copiedKnots);

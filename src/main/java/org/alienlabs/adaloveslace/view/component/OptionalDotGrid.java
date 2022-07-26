@@ -145,9 +145,9 @@ public class OptionalDotGrid extends Pane {
     logger.debug("removed? {}", root.getChildren().removeAll(nodeListToRemove));
   }
 
-  public Knot drawSelectedKnot(Step step, Knot knot) {
+  public Knot drawSelectedKnot(Knot knot) {
     // If selected and not hovered: blue
-    if (getAllVisibleKnots().contains(knot) && !allHoveredKnots.contains(knot)) {
+    if (getAllSelectedKnots().contains(knot) && !allHoveredKnots.contains(knot)) {
       Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
       rec.setStroke(Color.BLUE);
       rec.setStrokeWidth(2d);
@@ -178,6 +178,15 @@ public class OptionalDotGrid extends Pane {
     }
   }
   public Knot drawHoveredKnot(Knot knot) {
+    for (Knot k : this.getAllHoveredKnots()) {
+      if (k.getSelection() != null) {
+        root.getChildren().remove(k.getSelection());
+      }
+      if (k.getHovered() != null) {
+        root.getChildren().remove(k.getHovered());
+      }
+    }
+
     Rectangle rec;
 
     // If selected & hovered: red
@@ -200,18 +209,9 @@ public class OptionalDotGrid extends Pane {
       rec.setRotate(knot.getRotationAngle());
     }
 
-    for (Knot k : this.getAllHoveredKnots()) {
-      if (k.getSelection() != null) {
-        root.getChildren().remove(k.getSelection());
-      }
-      if (k.getHovered() != null) {
-        root.getChildren().remove(k.getHovered());
-      }
-    }
-
-    root.getChildren().add(rec);
     allHoveredKnots.add(knot);
     knot.setHovered(rec);
+    root.getChildren().add(rec);
 
     return knot;
   }
@@ -300,7 +300,7 @@ public class OptionalDotGrid extends Pane {
       drawHovered(knot);
     }
     if (allSelectedKnots.contains(knot)) {
-      drawSelectedKnot(step, knot);
+      drawSelectedKnot(knot);
     }
 
     logger.debug("drawing top left corner of knot {} to ({},{})", knot.getPattern().getFilename(), x, y);
