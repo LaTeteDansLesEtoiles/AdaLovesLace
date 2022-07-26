@@ -18,7 +18,7 @@ public class RedoKnotButton extends ImageButton {
   public static void redoKnot(App app) {
     app.getOptionalDotGrid().getDiagram().redoLastStep(app);
     app.getOptionalDotGrid().layoutChildren();
-    logger.info("Event redo knot: {}", app);
+    logger.info("Redo knot event");
   }
 
 }
