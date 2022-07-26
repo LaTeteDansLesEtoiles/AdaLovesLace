@@ -91,9 +91,25 @@ public class Diagram {
     return this.knots;
   }
 
-  public List<Knot> addKnotWithoutStep(App app, final Knot knot) {
-    this.knots.add(knot);
-    return this.knots;
+  public List<Knot> addKnotWithStep(final App app, final List<Knot> knots) {
+    List<Knot> knotsToAdd = new ArrayList<>(this.getCurrentStep().getDisplayedKnots());
+    knotsToAdd.addAll(knots);
+
+    this.getAllSteps().add(new Step(knotsToAdd, app.getOptionalDotGrid().getAllSelectedKnots()));
+    this.currentStepIndex = this.getAllSteps().size() - 1;
+
+    return knotsToAdd;
+  }
+
+  public List<Knot> addKnotWithStepFiltering(final App app, final List<Knot> knotsToInclude, final List<Knot> knotsToFilterOut) {
+    List<Knot> knotsToAdd = new ArrayList<>(this.getCurrentStep().getDisplayedKnots());
+    knotsToAdd.addAll(knotsToInclude);
+    knotsToAdd.removeAll(knotsToFilterOut);
+
+    this.getAllSteps().add(new Step(knotsToAdd, app.getOptionalDotGrid().getAllSelectedKnots()));
+    this.currentStepIndex = this.getAllSteps().size() - 1;
+
+    return knotsToAdd;
   }
 
   public void undoLastStep(App app) {
@@ -104,9 +120,7 @@ public class Diagram {
         app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView())); // Delete nodes from step before
 
       this.currentStepIndex--;
-      getCurrentStep().getDisplayedKnots().stream().forEach(knot ->
-        app.getOptionalDotGrid().getRoot().getChildren().add(knot.getImageView())); // Display nodes from new state
-
+      app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
       logger.info("Undo step, new step={}", currentStepIndex);
     }
   }

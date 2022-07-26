@@ -8,6 +8,9 @@ import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class VerticalFlippingButton extends ImageButton {
@@ -32,13 +35,15 @@ public class VerticalFlippingButton extends ImageButton {
   public static void onFlipVerticallyAction(final App app, final GeometryWindow window) {
     logger.info("Flipping vertically");
 
-    app.getDiagram().addStep(app);
+    List<Knot> knots = new ArrayList<>();
 
     for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
-      knot.setFlippedVertically(!knot.isFlippedVertically());
+      Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), knot.getImageView());
+      copy.setFlippedVertically(!knot.isFlippedVertically());
+      knots.add(copy);
     }
 
-    app.getDiagram().addStep(app);
+    app.getDiagram().addKnotWithStepFiltering(app, knots, app.getOptionalDotGrid().getAllSelectedKnots());
     app.getOptionalDotGrid().layoutChildren();
   }
 
