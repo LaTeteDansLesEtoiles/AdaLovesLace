@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.business.model.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,11 +85,21 @@ public class FileUtil {
   }
 
   private void buildKnotsImageViews(App app, Diagram diagram) {
-    for (Knot knot : diagram.getKnots()) {
-      try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
-        buildKnotImageView(app, knot, fis);
-      } catch (IOException e) {
-        logger.error("Problem with pattern resource file!", e);
+    for (Step step : diagram.getAllSteps()) {
+      for (Knot knot : step.getDisplayedKnots()) {
+        try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
+          buildKnotImageView(app, knot, fis);
+        } catch (IOException e) {
+          logger.error("Problem with pattern resource file!", e);
+        }
+      }
+
+      for (Knot knot : step.getSelectedKnots()) {
+        try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
+          buildKnotImageView(app, knot, fis);
+        } catch (IOException e) {
+          logger.error("Problem with pattern resource file!", e);
+        }
       }
     }
   }
@@ -139,7 +150,6 @@ public class FileUtil {
     buildAbsoluteFilenamesForPatterns(diagram);
     buildAbsoluteFilenamesForKnots(diagram);
 
-    diagram.setCurrentStepIndex(diagram.getKnots().size());
     diagram.setCurrentPattern(diagram.getPatterns().get(0));
     return diagram;
   }
@@ -210,10 +220,7 @@ public class FileUtil {
   }
 
   private Diagram buildDiagramToSave(App app) {
-    Diagram toSave = new Diagram(app.getOptionalDotGrid().getDiagram());
-    toSave.setKnots(toSave.getKnots().subList(0, toSave.getCurrentStepIndex()));
-
-    return toSave;
+    return new Diagram(app.getOptionalDotGrid().getDiagram());
   }
 
   /**

@@ -118,7 +118,7 @@ public class OptionalDotGrid extends Pane {
     deleteKnotsFromCanvas();
 
     // If there are knots on the diagram, we must display them at each window refresh
-    if (!this.diagram.getAllSteps().isEmpty()) {
+    if (!this.diagram.getAllSteps().isEmpty() && this.diagram.getCurrentStepIndex() >= 0) {
         for (Knot knot : this.diagram.getCurrentStep().getDisplayedKnots()) {
           if (knot.isVisible()) {
             drawKnotWithRotationAndZoom(this.diagram.getCurrentStep(), knot);
@@ -291,6 +291,8 @@ public class OptionalDotGrid extends Pane {
     return this.allSelectedKnots;
   }
 
+
+
   public List<Knot> getAllHoveredKnots() {
     return this.allHoveredKnots;
   }
@@ -462,7 +464,7 @@ public class OptionalDotGrid extends Pane {
       List<Knot> displayed = new ArrayList<>();
       displayed.add(currentKnot);
 
-      this.diagram.addStep(displayed, this.getAllSelectedKnots());
+      this.diagram.addStep(app, displayed, this.getAllSelectedKnots());
       this.diagram.getKnots().add(currentKnot);
       layoutChildren();
     } catch (IOException e) {

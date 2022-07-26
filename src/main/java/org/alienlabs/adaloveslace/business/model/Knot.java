@@ -23,7 +23,9 @@ import java.util.UUID;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Knot {
 
+  @XmlTransient
   public static final int DEFAULT_ROTATION  = 0;
+  @XmlTransient
   public static final int DEFAULT_ZOOM      = 0;
 
   // Two coinciding Knots can be different

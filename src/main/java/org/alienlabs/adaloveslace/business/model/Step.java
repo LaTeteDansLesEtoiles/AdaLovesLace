@@ -19,8 +19,14 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Step {
 
-  private List<Knot> displayedKnots   = new ArrayList<>();
-  private List<Knot> selectedKnots    = new ArrayList<>();
+  private List<Knot> displayedKnots;
+
+  private List<Knot> selectedKnots;
+
+  public Step() {
+    this.displayedKnots = new ArrayList<>();
+    this.selectedKnots = new ArrayList<>();
+  }
 
   public Step(List<Knot> displayedKnots, List<Knot> selectedKnots) {
     this.displayedKnots = displayedKnots;
@@ -33,6 +39,14 @@ public class Step {
 
   public List<Knot> getSelectedKnots() {
     return selectedKnots;
+  }
+
+  public void setDisplayedKnots(List<Knot> displayedKnots) {
+    this.displayedKnots = displayedKnots;
+  }
+
+  public void setSelectedKnots(List<Knot> selectedKnots) {
+    this.selectedKnots = selectedKnots;
   }
 
 }

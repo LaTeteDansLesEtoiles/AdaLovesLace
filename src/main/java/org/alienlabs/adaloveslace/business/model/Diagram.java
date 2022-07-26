@@ -23,11 +23,12 @@ import java.util.List;
 public class Diagram {
 
   private final List<Pattern> patterns;
+
   private List<Knot>          knots;
 
-  private int currentStepIndex = 0;
+  private int currentStepIndex;
 
-  private List<Step> allSteps = new ArrayList<>();
+  private List<Step> allSteps;
 
   @XmlTransient
   private Pattern currentPattern;
@@ -47,12 +48,15 @@ public class Diagram {
   public Diagram() {
     this.patterns     = new ArrayList<>();
     this.knots        = new ArrayList<>();
+    this.allSteps     = new ArrayList<>();
     this.currentMode  = MouseMode.DRAWING;
+    this.currentStepIndex = 0;
   }
 
   public Diagram(final Diagram diagram) {
     this.patterns         = new ArrayList<>(diagram.getPatterns());
     this.knots            = new ArrayList<>(diagram.getKnots());
+    this.allSteps         = new ArrayList<>(diagram.getAllSteps());
     this.currentStepIndex = diagram.getCurrentStepIndex();
     this.currentMode      = diagram.getCurrentMode();
     this.currentKnot      = diagram.getCurrentKnot();
@@ -103,11 +107,15 @@ public class Diagram {
 
       this.currentStepIndex--;
 
-      if (this.currentStepIndex == 0) {
+      if (this.currentStepIndex > -1) {
         this.knots.clear();
         this.knots.addAll(getCurrentStep().getDisplayedKnots());
         app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
+      } else {
+        this.knots.clear();
+        app.getOptionalDotGrid().deleteKnotsFromCanvas(); // We are at the very beginning: a blank page
       }
+
 
       logger.info("Undo step, new step={}", currentStepIndex);
     }
@@ -185,16 +193,22 @@ public class Diagram {
     this.currentStepIndex = currentStepIndex;
   }
 
-  public void addStep(List<Knot> displayedKnots, List<Knot> selectedKnots) {
+  public void addStep(App app, List<Knot> displayedKnots, List<Knot> selectedKnots) {
     logger.info("Adding step, current step={}", currentStepIndex);
+    List<Knot> displayed = new ArrayList<>(app.getOptionalDotGrid().getAllVisibleKnots());
+    displayed.addAll(displayedKnots);
+
+    List<Knot> selected = new ArrayList<>(app.getOptionalDotGrid().getAllSelectedKnots());
+    selected.addAll(selectedKnots);
 
     if (this.allSteps.isEmpty()) {
-      this.allSteps.add(new Step(displayedKnots, selectedKnots));
+      this.allSteps.add(new Step(displayed, selected));
     } else if (currentStepIndex < this.allSteps.size() - 1) {
-      this.allSteps.subList(0, currentStepIndex).add(new Step(displayedKnots, selectedKnots));
+      this.allSteps = this.allSteps.subList(0, currentStepIndex);
+      this.allSteps.add(new Step(displayed, selected));
       currentStepIndex++;
     } else if (currentStepIndex == this.allSteps.size() - 1) {
-      this.allSteps.add(new Step(displayedKnots, selectedKnots));
+      this.allSteps.add(new Step(displayed, selected));
       currentStepIndex++;
     }
 
@@ -207,6 +221,10 @@ public class Diagram {
 
   public List<Step> getAllSteps() {
     return allSteps;
+  }
+
+  public void setAllSteps(List<Step> allSteps) {
+    this.allSteps = allSteps;
   }
 
 }
