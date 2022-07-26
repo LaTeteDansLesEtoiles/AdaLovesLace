@@ -116,9 +116,9 @@ public class OptionalDotGrid extends Pane {
 
     // If there are knots on the diagram, we must display them at each window refresh
     if (!this.diagram.getAllSteps().isEmpty() && this.diagram.getCurrentStepIndex() >= 0) {
-        for (Knot knot : this.diagram.getCurrentStep().getDisplayedKnots()) {
+        for (Knot knot : this.getAllVisibleKnots()) {
           if (knot.isVisible()) {
-            drawKnotWithRotationAndZoom(this.diagram.getCurrentStep(), knot);
+            drawKnot(this.diagram.getCurrentStep(), knot);
           }
       }
     }
@@ -229,13 +229,14 @@ public class OptionalDotGrid extends Pane {
   public Knot drawGuideLines(final Step step, final Knot knot) {
     clearGuideLines(knot);
 
-    // The black, thick lines that we use as guides
-    for (Knot otherKnot : getAllVisibleKnots()) {
-      if (!otherKnot.equals(knot) && otherKnot.isVisible()) {
-        new GuideLinesUtil(knot, otherKnot, root);
+    if (((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION) || (diagram.getCurrentMode() == MouseMode.MOVE))) {
+      // The black, thick lines that we use as guides
+      for (Knot otherKnot : getAllVisibleKnots()) {
+        if (!otherKnot.equals(knot) && otherKnot.isVisible()) {
+          new GuideLinesUtil(knot, otherKnot, root);
+        }
       }
     }
-
     return knot;
   }
 
@@ -300,7 +301,7 @@ public class OptionalDotGrid extends Pane {
     return this.allHoveredKnots;
   }
 
-  private void drawKnotWithRotationAndZoom(Step step, Knot knot) {
+  private void drawKnot(Step step, Knot knot) {
     ImageView iv = rotateKnot(knot);
 
     if (step.getDisplayedKnots().indexOf(knot) == 0) {
@@ -317,9 +318,8 @@ public class OptionalDotGrid extends Pane {
 
     knot.setImageView(iv);
 
-    if (((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION) || (diagram.getCurrentMode() == MouseMode.MOVE))) {
-      drawGuideLines(step, knot);
-    }
+    drawGuideLines(step, knot);
+
     if ((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION)) {
       drawHovered(knot);
     }
