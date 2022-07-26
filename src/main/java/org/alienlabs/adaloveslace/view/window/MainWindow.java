@@ -275,6 +275,7 @@ public class MainWindow {
         }
 
         app.getOptionalDotGrid().getAllSelectedKnots().add(knot);
+        app.getOptionalDotGrid().drawSelectedKnotAtClick(knot);
       } else if (hasClickedOnAKnot) {
         logger.info("Clicked Knot index {}, uuid {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getKnots().indexOf(knot), knot.getUuid());
@@ -289,7 +290,7 @@ public class MainWindow {
           app.getOptionalDotGrid().getAllSelectedKnots().clear();
           app.getOptionalDotGrid().getAllSelectedKnots().add(knot);
         } else {
-          app.getOptionalDotGrid().getAllSelectedKnots().remove(knot);
+          app.getOptionalDotGrid().clearSelection(knot);
         }
       }
     }
@@ -304,9 +305,9 @@ public class MainWindow {
         y - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getHeight());
       app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().drawSelectedKnot(currentKnot));
       app.getOptionalDotGrid().clearAllGuideLines();
-    }
 
-    app.getOptionalDotGrid().layoutChildren();
+      app.getOptionalDotGrid().layoutChildren();
+    }
   }
 
   private void moveKnot(Knot toMove, double x, double y) {

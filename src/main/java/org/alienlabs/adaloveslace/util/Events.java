@@ -73,12 +73,14 @@ public class Events {
           // We can have only one hovered over knot at once
           app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
           app.getOptionalDotGrid().drawHoveredKnot(knot);
-        } else if(knot.isVisible() && !isMouseOverKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
+        } else if(knot.isVisible() && !isMouseOverKnot && app.getOptionalDotGrid().getAllSelectedKnots().contains(knot)) {
           logger.debug("Don't hover over already hovered over knot: {}", knot);
-          app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
+          app.getOptionalDotGrid().clearHovered(knot);
           app.getOptionalDotGrid().drawSelectedKnot(knot);
-
-          app.getOptionalDotGrid().layoutChildren();
+        } else if (knot.isVisible() && !isMouseOverKnot) {
+          app.getOptionalDotGrid().clearHovered(knot);
+          app.getOptionalDotGrid().clearSelection(knot);
+          app.getOptionalDotGrid().drawSelectedKnot(knot);
         }
       } catch (MalformedURLException e) {
         logger.error("Error in mouse hover event!", e);
