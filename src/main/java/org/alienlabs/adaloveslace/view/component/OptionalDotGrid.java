@@ -164,7 +164,7 @@ public class OptionalDotGrid extends Pane {
       root.getChildren().remove(knot.getSelection());
     }
 
-    if ((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION)) {
+    if ((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION) || (diagram.getCurrentMode() == MouseMode.MOVE)) {
       if (getAllSelectedKnots().contains(knot)) {
         Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
         rec.setStroke(Color.BLUE);
@@ -232,7 +232,8 @@ public class OptionalDotGrid extends Pane {
     if (((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION) || (diagram.getCurrentMode() == MouseMode.MOVE))) {
       // The black, thick lines that we use as guides
       for (Knot otherKnot : getAllVisibleKnots()) {
-        if (!otherKnot.equals(knot) && otherKnot.isVisible()) {
+        if (!otherKnot.equals(knot) && otherKnot.isVisible() && getAllSelectedKnots().contains(knot)) {
+          getDiagram().deleteNodesFromCurrentStep(root, knot);
           new GuideLinesUtil(knot, otherKnot, root);
         }
       }

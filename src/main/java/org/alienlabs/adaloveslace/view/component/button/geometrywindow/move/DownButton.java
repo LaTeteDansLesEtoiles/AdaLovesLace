@@ -33,10 +33,6 @@ public class DownButton extends Button {
     Set<Knot> knots = new TreeSet<>();
 
     for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
-      app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, knot);
-      knot.setSelection(null);
-      knot.setHovered(null);
-      knot.setGuideLines(null);
       knot.setY(knot.getY() + FastMoveModeButton.getMoveSpeed());
       knots.add(knot);
       logger.debug("Moving down knot {}", knot);

@@ -4,6 +4,9 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import javafx.scene.Group;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,11 +147,20 @@ public class Diagram {
     });
   }
 
-
   public void deleteNodesFromCurrentStep(App app, Knot knot) {
     app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
     app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
-    app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getGuideLines());
+    app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
+    knot.getGuideLines().clear();
+  }
+
+  public void deleteNodesFromCurrentStep(Group root, Knot knot) {
+    root.getChildren().remove(knot.getSelection());
+    root.getChildren().remove(knot.getHovered());
+    root.getChildren().removeAll(knot.getGuideLines());
+    knot.getGuideLines().clear();
+
+    root.getChildren().removeAll(root.getChildren().stream().filter(node -> (node instanceof Line || node instanceof Rectangle)).toList());
   }
 
   // We don't lose the undo / redo history
