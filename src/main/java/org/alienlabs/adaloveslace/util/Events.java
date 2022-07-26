@@ -45,8 +45,7 @@ public class Events {
 
   private static void processMouseClick(double x, double y, double screenX, double screenY) {
     switch (app.getOptionalDotGrid().getDiagram().getCurrentMode()) {
-      case DRAWING          -> app.getMainWindow().onClickWithDrawMode(app, app.getOptionalDotGrid().getDiagram(),
-        app.getOptionalDotGrid().addKnot(app, x, y));
+      case DRAWING          -> app.getOptionalDotGrid().addKnot(app, x, y);
       case SELECTION        -> app.getMainWindow().onClickWithSelectionMode(app, screenX, screenY);
       case DELETION         -> app.getMainWindow().onClickWithDeletionMode(app, app.getOptionalDotGrid().getDiagram(), x, y) ;
       case DUPLICATION      -> {}

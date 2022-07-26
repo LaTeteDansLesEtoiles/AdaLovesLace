@@ -32,10 +32,13 @@ public class VerticalFlippingButton extends ImageButton {
   public static void onFlipVerticallyAction(final App app, final GeometryWindow window) {
     logger.info("Flipping vertically");
 
+    app.getDiagram().addStep(app);
+
     for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
       knot.setFlippedVertically(!knot.isFlippedVertically());
     }
 
+    app.getDiagram().addStep(app);
     app.getOptionalDotGrid().layoutChildren();
   }
 

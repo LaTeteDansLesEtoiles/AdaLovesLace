@@ -136,13 +136,13 @@ public class OptionalDotGrid extends Pane {
     ArrayList<Node> nodeListToRemove    = new ArrayList<>();
     ArrayList<Knot> knotListToRemove    = new ArrayList<>();
 
-    for (Knot knot : this.getDiagram().getKnots()) {
+    for (Knot knot : this.getDiagram().getCurrentStep().getDisplayedKnots()) {
       nodeListToRemove.add(knot.getImageView());
       knotListToRemove.add(knot);
     }
 
     diagram.getKnots().removeAll(knotListToRemove);
-    logger.debug("removed? {}", root.getChildren().removeAll(nodeListToRemove));
+    logger.info("removed? {}", root.getChildren().removeAll(nodeListToRemove));
   }
 
   // When first selected: red because it is selected & hovered over
@@ -241,6 +241,10 @@ public class OptionalDotGrid extends Pane {
   }
 
   public List<Knot> getAllVisibleKnots() {
+    return diagram.getCurrentStep().getDisplayedKnots();
+  }
+
+  public List<Knot> getAllVisibleKnotsFromAllSteps() {
     List<Knot> allVisibleKnots = new ArrayList<>();
 
     for (int i = 0; i < getDiagram().getAllSteps().size(); i++) {
@@ -461,12 +465,8 @@ public class OptionalDotGrid extends Pane {
 
       root.getChildren().add(iv);
       currentKnot = new Knot(x, y, currentPattern, iv);
-      List<Knot> displayed = new ArrayList<>();
-      displayed.add(currentKnot);
 
-      this.diagram.addStep(app, displayed, this.getAllSelectedKnots());
-      this.diagram.getKnots().add(currentKnot);
-      layoutChildren();
+      this.diagram.addKnotWithStep(app, currentKnot);
     } catch (IOException e) {
       logger.error("Problem with pattern resource file!", e);
     }

@@ -240,12 +240,6 @@ public class MainWindow {
     root.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
   }
 
-  public void onClickWithDrawMode(App app, Diagram diagram, Knot knot) {
-    diagram.setCurrentKnot(knot);
-    diagram.setKnotSelected(false);
-    app.getOptionalDotGrid().layoutChildren();
-  }
-
   public void onClickWithSelectionMode(App app, double x, double y) {
     Iterator<Knot> it = optionalDotGrid.getAllVisibleKnots().iterator();
     boolean hasClickedOnAKnot = false;
