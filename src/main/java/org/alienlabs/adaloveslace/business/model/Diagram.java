@@ -8,8 +8,7 @@ import org.alienlabs.adaloveslace.App;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * What is drawn on a Canvas: the Diagram is the desired, final business object consisting of Knots drawn with Patterns.
@@ -81,32 +80,32 @@ public class Diagram {
     return this.patterns;
   }
 
-  public List<Knot> addKnotWithStep(App app, final Knot knot) {
-    List<Knot> knots = new ArrayList<>(this.getCurrentStep().getDisplayedKnots());
+  public Set<Knot> addKnotWithStep(App app, final Knot knot) {
+    Set<Knot> knots = new TreeSet<>(this.getCurrentStep().getDisplayedKnots());
     knots.add(knot);
 
-    this.getAllSteps().add(new Step(knots, app.getOptionalDotGrid().getAllSelectedKnots()));
+    this.getAllSteps().add(new Step(knots.stream().toList(), app.getOptionalDotGrid().getAllSelectedKnots().stream().toList()));
     this.currentStepIndex = this.getAllSteps().size() - 1;
 
-    return this.knots;
+    return knots;
   }
 
-  public List<Knot> addKnotWithStep(final App app, final List<Knot> knots) {
-    List<Knot> knotsToAdd = new ArrayList<>(this.getCurrentStep().getDisplayedKnots());
+  public Set<Knot> addKnotWithStep(final App app, final List<Knot> knots) {
+    Set<Knot> knotsToAdd = new TreeSet<>();
     knotsToAdd.addAll(knots);
 
-    this.getAllSteps().add(new Step(knotsToAdd, app.getOptionalDotGrid().getAllSelectedKnots()));
+    this.getAllSteps().add(new Step(knotsToAdd.stream().toList(), app.getOptionalDotGrid().getAllSelectedKnots().stream().toList()));
     this.currentStepIndex = this.getAllSteps().size() - 1;
 
     return knotsToAdd;
   }
 
-  public List<Knot> addKnotWithStepFiltering(final App app, final List<Knot> knotsToInclude, final List<Knot> knotsToFilterOut) {
+  public List<Knot> addKnotWithStepFiltering(final App app, final Collection<Knot> knotsToInclude, final Set<Knot> knotsToFilterOut) {
     List<Knot> knotsToAdd = new ArrayList<>(this.getCurrentStep().getDisplayedKnots());
-    knotsToAdd.addAll(knotsToInclude);
     knotsToAdd.removeAll(knotsToFilterOut);
+    knotsToAdd.addAll(knotsToInclude);
 
-    this.getAllSteps().add(new Step(knotsToAdd, app.getOptionalDotGrid().getAllSelectedKnots()));
+    this.getAllSteps().add(new Step(knotsToAdd, app.getOptionalDotGrid().getAllSelectedKnots().stream().toList()));
     this.currentStepIndex = this.getAllSteps().size() - 1;
 
     return knotsToAdd;
@@ -143,6 +142,13 @@ public class Diagram {
       app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
       app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getGuideLines());
     });
+  }
+
+
+  public void deleteNodesFromCurrentStep(App app, Knot knot) {
+    app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
+    app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
+    app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getGuideLines());
   }
 
   // We don't lose the undo / redo history
@@ -191,7 +197,7 @@ public class Diagram {
     this.currentStepIndex = currentStepIndex;
   }
 
-  public void addStep(App app, List<Knot> displayedKnots, List<Knot> selectedKnots) {
+  public void addStep(App app, Set<Knot> displayedKnots, Set<Knot> selectedKnots) {
     logger.info("Adding step, current step={}", currentStepIndex);
     List<Knot> displayed = new ArrayList<>(app.getOptionalDotGrid().getAllVisibleKnots());
     displayed.addAll(displayedKnots);
@@ -222,9 +228,9 @@ public class Diagram {
 
     if (currentStepIndex < this.allSteps.size() - 1) {
       this.allSteps = this.allSteps.subList(0, currentStepIndex);
-      this.allSteps.add(new Step(app.getOptionalDotGrid().getAllVisibleKnots(), app.getOptionalDotGrid().getAllSelectedKnots()));
+      this.allSteps.add(new Step(app.getOptionalDotGrid().getAllVisibleKnots(), app.getOptionalDotGrid().getAllSelectedKnots().stream().toList()));
     } else {
-      this.allSteps.add(new Step(app.getOptionalDotGrid().getAllVisibleKnots(), app.getOptionalDotGrid().getAllSelectedKnots()));
+      this.allSteps.add(new Step(app.getOptionalDotGrid().getAllVisibleKnots(), app.getOptionalDotGrid().getAllSelectedKnots().stream().toList()));
     }
 
     currentStepIndex++;

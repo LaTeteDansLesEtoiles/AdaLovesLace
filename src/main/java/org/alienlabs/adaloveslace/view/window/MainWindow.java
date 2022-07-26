@@ -26,9 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
@@ -314,10 +312,10 @@ public class MainWindow {
   }
 
   public void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
-    for (Knot knot : diagram.getKnots()) {
+    for (Knot knot : app.getOptionalDotGrid().getAllHoveredKnots()) {
 
       try {
-        if (removeKnotIfClicked(app, diagram, x, y, knot)) {
+        if (removeKnotIfClicked(app, diagram, knot)) {
           return;
         }
       } catch (MalformedURLException e) {
@@ -356,18 +354,18 @@ public class MainWindow {
     return newKnot;
   }
 
-  private boolean removeKnotIfClicked(App app, Diagram diagram, double x, double y, Knot knot) throws MalformedURLException {
+  private boolean removeKnotIfClicked(App app, Diagram diagram, Knot knot) throws MalformedURLException {
     if (app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
-      knot.setVisible(false);
-      app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
 
-      if (knot.getSelection() != null) {
-        app.getOptionalDotGrid().clearSelection(knot);
-        app.getOptionalDotGrid().clearGuideLines(knot);
-      }
+      Set<Knot> knotsToFilterOut = new TreeSet<>();
+      knotsToFilterOut.add(knot);
+
+      Set<Knot> knotsToInclude = new TreeSet<>();
+
+      app.getDiagram().addKnotWithStepFiltering(app, knotsToInclude, knotsToFilterOut);
+      app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, knot);
 
       logger.info("Removing Knot {}, current index = {}", knot, diagram.getCurrentStepIndex());
-      app.getOptionalDotGrid().layoutChildren();
       return true;
     }
 

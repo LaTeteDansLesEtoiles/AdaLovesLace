@@ -9,8 +9,8 @@ import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
@@ -38,7 +38,7 @@ public class DuplicationButton extends ToggleButton {
     // We use a list of copied knots in order not to
     // concurrently modify the list of knots already present
     // on the canvas
-    List<Knot> copiedKnots = new ArrayList<>();
+    Set<Knot> copiedKnots = new TreeSet<>();
 
     for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
       Knot copiedKnot = app.getMainWindow().duplicateKnot(app, knot.getX(), knot.getY(), knot);

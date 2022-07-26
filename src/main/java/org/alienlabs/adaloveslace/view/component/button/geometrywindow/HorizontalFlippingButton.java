@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
@@ -36,16 +39,26 @@ public class HorizontalFlippingButton extends ImageButton {
   public static void onFlipHorizontallyAction(final App app, final GeometryWindow window) {
     logger.info("Flipping horizontally");
 
-    List<Knot> knots = new ArrayList<>();
+    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MIRROR);
+
+    List<Knot> allElements = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    allElements.removeAll(app.getOptionalDotGrid().getAllSelectedKnots());
+
+    Set<Knot> knots = new TreeSet<>();
 
     for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
       Knot copy = new NodeUtil().copyKnot(knot);
       copy.setFlippedHorizontally(!knot.isFlippedHorizontally());
       knots.add(copy);
+      app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, knot);
+      app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, copy);
     }
 
-    app.getDiagram().addKnotWithStepFiltering(app, knots, app.getOptionalDotGrid().getAllSelectedKnots());
+    app.getOptionalDotGrid().getAllSelectedKnots().clear();
+    app.getOptionalDotGrid().getAllSelectedKnots().addAll(app.getDiagram().addKnotWithStep(app, knots.stream().toList()));
     app.getOptionalDotGrid().layoutChildren();
+
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().addAll(allElements);
   }
 
 }

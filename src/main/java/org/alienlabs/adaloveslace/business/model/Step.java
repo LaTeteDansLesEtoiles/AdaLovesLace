@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace.business.model;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import org.alienlabs.adaloveslace.util.NodeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +30,10 @@ public class Step {
   }
 
   public Step(List<Knot> displayedKnots, List<Knot> selectedKnots) {
-    this.displayedKnots = displayedKnots;
-    this.selectedKnots  = selectedKnots;
+    this.displayedKnots = new ArrayList<>(displayedKnots.stream().map(knot ->
+      new NodeUtil().copyKnot(knot)).toList());
+    this.selectedKnots  = new ArrayList<>(selectedKnots.stream().map(knot -> new
+      NodeUtil().copyKnot(knot)).toList());
   }
 
   public List<Knot> getDisplayedKnots() {

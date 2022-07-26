@@ -22,10 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Objects.requireNonNullElseGet;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.ZOOM_SPINNER_NEGATIVE_ZOOM_DIVISION_FACTOR;
@@ -61,9 +58,9 @@ public class OptionalDotGrid extends Pane {
   private final Group root;
   private Node firstNonGridNode;
 
-  private final List<Knot> allSelectedKnots = new ArrayList<>();
+  private final Set<Knot> allSelectedKnots = new TreeSet<>();
 
-  private final List<Knot> allHoveredKnots = new ArrayList<>();
+  private final Set<Knot> allHoveredKnots = new TreeSet<>();
 
   /**
    * We draw the dots on the grid using a Canvas.
@@ -291,13 +288,13 @@ public class OptionalDotGrid extends Pane {
     }
   }
 
-  public List<Knot> getAllSelectedKnots() {
+  public Set<Knot> getAllSelectedKnots() {
     return this.allSelectedKnots;
   }
 
 
 
-  public List<Knot> getAllHoveredKnots() {
+  public Set<Knot> getAllHoveredKnots() {
     return this.allHoveredKnots;
   }
 

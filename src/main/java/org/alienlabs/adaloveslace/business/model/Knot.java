@@ -21,7 +21,7 @@ import java.util.UUID;
   */
 @XmlType(name = "Knot")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Knot {
+public class Knot implements Comparable<Knot> {
 
   @XmlTransient
   public static final int DEFAULT_ROTATION  = 0;
@@ -212,4 +212,8 @@ public class Knot {
       '}';
   }
 
+  @Override
+  public int compareTo(Knot knot) {
+    return pattern.getAbsoluteFilename().compareTo(knot.getPattern().getAbsoluteFilename());
+  }
 }
