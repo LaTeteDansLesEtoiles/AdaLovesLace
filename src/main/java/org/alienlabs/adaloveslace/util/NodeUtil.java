@@ -34,4 +34,15 @@ public class NodeUtil {
       (boundsInScreen.getMinY() <= mouseY) && (boundsInScreen.getMaxY() >= mouseY);
   }
 
+  public Knot copyKnot(Knot knot) {
+    Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), knot.getImageView());
+    copy.setRotationAngle(knot.getRotationAngle());
+    copy.setZoomFactor(knot.getZoomFactor());
+    copy.setVisible(knot.isVisible());
+    copy.setFlippedVertically(knot.isFlippedVertically());
+    copy.setFlippedHorizontally(knot.isFlippedHorizontally());
+
+    return copy;
+  }
+
 }

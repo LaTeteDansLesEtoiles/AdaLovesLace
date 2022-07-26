@@ -116,8 +116,7 @@ public class Diagram {
     logger.info("Undo step, current step={}", currentStepIndex);
 
     if (this.currentStepIndex > 0) {
-      getCurrentStep().getDisplayedKnots().stream().forEach(knot ->
-        app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView())); // Delete nodes from step before
+      deleteNodesFromCurrentStep(app);
 
       this.currentStepIndex--;
       app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
@@ -129,29 +128,27 @@ public class Diagram {
     logger.info("Redo step, current step={}", currentStepIndex);
 
     if (currentStepIndex < this.getAllSteps().size() -1) {
+      deleteNodesFromCurrentStep(app);
       this.currentStepIndex++;
-
       app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
 
       logger.info("Redo step, new step={}", currentStepIndex);
     }
   }
 
+  private void deleteNodesFromCurrentStep(App app) {
+    getCurrentStep().getDisplayedKnots().stream().forEach(knot -> {
+      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView()); // Delete nodes from step before
+      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
+      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
+      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getGuideLines());
+    });
+  }
+
   // We don't lose the undo / redo history
   public List<Knot> resetDiagram() {
     this.currentStepIndex = 0;
     return this.knots;
-  }
-
-  public List<Knot> clearKnots() {
-    this.knots.clear();
-    this.currentStepIndex = 0;
-    return this.knots;
-  }
-
-  public List<Pattern> clearPatterns() {
-    this.patterns.clear();
-    return this.patterns;
   }
 
   public Pattern getCurrentPattern() {

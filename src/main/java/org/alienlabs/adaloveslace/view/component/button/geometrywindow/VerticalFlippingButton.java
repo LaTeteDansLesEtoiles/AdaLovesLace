@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ public class VerticalFlippingButton extends ImageButton {
     List<Knot> knots = new ArrayList<>();
 
     for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
-      Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), knot.getImageView());
+      Knot copy = new NodeUtil().copyKnot(knot);
       copy.setFlippedVertically(!knot.isFlippedVertically());
       knots.add(copy);
     }

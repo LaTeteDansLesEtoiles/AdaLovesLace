@@ -142,7 +142,7 @@ public class OptionalDotGrid extends Pane {
     }
 
     diagram.getKnots().removeAll(knotListToRemove);
-    logger.info("removed? {}", root.getChildren().removeAll(nodeListToRemove));
+    logger.debug("removed? {}", root.getChildren().removeAll(nodeListToRemove));
   }
 
   // When first selected: red because it is selected & hovered over
