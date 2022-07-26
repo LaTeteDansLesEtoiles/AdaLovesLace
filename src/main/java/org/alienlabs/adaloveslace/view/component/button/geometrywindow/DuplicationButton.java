@@ -9,6 +9,8 @@ import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -35,6 +37,9 @@ public class DuplicationButton extends ToggleButton {
     logger.info("Setting duplication mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DUPLICATION);
 
+    List<Knot> allElements = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    allElements.removeAll(app.getOptionalDotGrid().getAllSelectedKnots());
+
     // We use a list of copied knots in order not to
     // concurrently modify the list of knots already present
     // on the canvas
@@ -44,20 +49,16 @@ public class DuplicationButton extends ToggleButton {
       Knot copiedKnot = app.getMainWindow().duplicateKnot(app, knot.getX(), knot.getY(), knot);
       knot.getImageView().toBack();
       copiedKnots.add(copiedKnot);
+      allElements.add(knot);
+      app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, knot);
+      app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, copiedKnot);
     }
 
-    app.getOptionalDotGrid().clearSelections();
-    app.getOptionalDotGrid().clearAllGuideLines();
     app.getOptionalDotGrid().getAllSelectedKnots().clear();
-    app.getOptionalDotGrid().getAllSelectedKnots().addAll(copiedKnots);
-    copiedKnots.stream().forEach(knot -> {
-      app.getOptionalDotGrid().getAllVisibleKnots().add(knot);
-      knot.getImageView().toFront();
-      app.getOptionalDotGrid().getRoot().getChildren().add(knot.getImageView());
-    });
-
-    app.getDiagram().addStep(app, copiedKnots, app.getOptionalDotGrid().getAllSelectedKnots());
+    app.getOptionalDotGrid().getAllSelectedKnots().addAll(app.getDiagram().addKnotWithStep(app, copiedKnots.stream().toList()));
     app.getOptionalDotGrid().layoutChildren();
+
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().addAll(allElements);
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(false);
