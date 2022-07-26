@@ -390,7 +390,6 @@ public class OptionalDotGrid extends Pane {
   private ImageView rotateKnot(Knot knot) {
     if (!root.getChildren().contains(knot.getImageView())) {
       root.getChildren().add(knot.getImageView());
-      knot.getImageView().toBack();
     }
 
     knot.getImageView().getTransforms().clear();

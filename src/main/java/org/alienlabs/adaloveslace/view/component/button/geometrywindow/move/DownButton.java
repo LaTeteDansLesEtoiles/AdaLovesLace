@@ -42,7 +42,6 @@ public class DownButton extends Button {
     app.getOptionalDotGrid().getAllSelectedKnots().addAll(app.getDiagram().addKnotWithStep(app, knots.stream().toList()));
     app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().addAll(allElements);
     app.getOptionalDotGrid().layoutChildren();
-
   }
 
 }

@@ -34,31 +34,23 @@ public class DuplicationButton extends ToggleButton {
   }
 
   public static void onSetDuplicationModeAction(final App app, final GeometryWindow window) {
-    logger.info("Setting duplication mode");
+    logger.info("Duplicating");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DUPLICATION);
 
-    List<Knot> allElements = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-    allElements.removeAll(app.getOptionalDotGrid().getAllSelectedKnots());
-
-    // We use a list of copied knots in order not to
-    // concurrently modify the list of knots already present
-    // on the canvas
-    Set<Knot> copiedKnots = new TreeSet<>();
+    List<Knot> allElements = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    Set<Knot> knots = new TreeSet<>();
 
     for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
       Knot copiedKnot = app.getMainWindow().duplicateKnot(app, knot.getX(), knot.getY(), knot);
-      knot.getImageView().toBack();
-      copiedKnots.add(copiedKnot);
-      allElements.add(knot);
-      app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, knot);
-      app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, copiedKnot);
+      knots.add(copiedKnot);
     }
 
     app.getOptionalDotGrid().getAllSelectedKnots().clear();
-    app.getOptionalDotGrid().getAllSelectedKnots().addAll(app.getDiagram().addKnotWithStep(app, copiedKnots.stream().toList()));
+    app.getOptionalDotGrid().getAllSelectedKnots().addAll(app.getDiagram().addKnotWithStep(app, knots.stream().toList()));
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().addAll(allElements);
+    app.getOptionalDotGrid().getAllVisibleKnots().addAll(allElements);
     app.getOptionalDotGrid().layoutChildren();
 
-    app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().addAll(allElements);
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(false);
