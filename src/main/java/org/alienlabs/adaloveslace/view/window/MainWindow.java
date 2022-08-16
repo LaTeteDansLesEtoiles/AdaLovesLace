@@ -266,7 +266,7 @@ public class MainWindow {
           app.getOptionalDotGrid().getAllSelectedKnots().clear();
         }
 
-        app.getOptionalDotGrid().getAllSelectedKnots().add(knot);
+        app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().add(knot);
         app.getOptionalDotGrid().drawSelectedKnotAtClick(knot);
       } else if (hasClickedOnAKnot) {
         logger.info("Clicked Knot index {}, uuid {} in order to unselect it",
@@ -279,8 +279,8 @@ public class MainWindow {
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
           app.getOptionalDotGrid().clearSelections();
-          app.getOptionalDotGrid().getAllSelectedKnots().clear();
-          app.getOptionalDotGrid().getAllSelectedKnots().add(knot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().add(knot);
         } else {
           app.getOptionalDotGrid().clearSelection(knot);
         }

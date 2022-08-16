@@ -63,7 +63,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     // Init
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
-
+    selectSnowflake(robot);
 
     // Run
     // Move mouse and get the color of the pixel under the pointer

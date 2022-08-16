@@ -8,11 +8,6 @@ import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class UpRightButton extends Button {
@@ -27,21 +22,15 @@ public class UpRightButton extends Button {
   public static void onMoveKnotUpRightAction(App app, GeometryWindow window) {
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MOVE);
 
-    List<Knot> allElements = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-    allElements.removeAll(app.getOptionalDotGrid().getAllSelectedKnots());
-
-    Set<Knot> knots = new TreeSet<>();
-
-    for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
+    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
       knot.setX(knot.getX() + FastMoveModeButton.getMoveSpeed());
       knot.setY(knot.getY() - FastMoveModeButton.getMoveSpeed());
-      knots.add(knot);
       logger.debug("Moving up right knot {}", knot);
     }
 
-    app.getOptionalDotGrid().getAllSelectedKnots().clear();
-    app.getOptionalDotGrid().getAllSelectedKnots().addAll(app.getDiagram().addKnotWithStep(app, knots.stream().toList()));
-    app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().addAll(allElements);
+    app.getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
+      app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+
     app.getOptionalDotGrid().layoutChildren();
   }
 

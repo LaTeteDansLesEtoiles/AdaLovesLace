@@ -116,7 +116,7 @@ public class OptionalDotGrid extends Pane {
 
     // If there are knots on the diagram, we must display them at each window refresh
     if (!this.diagram.getAllSteps().isEmpty() && this.diagram.getCurrentStepIndex() >= 0) {
-        for (Knot knot : this.getAllVisibleKnots()) {
+        for (Knot knot : this.diagram.getCurrentStep().getDisplayedKnots()) {
           if (knot.isVisible()) {
             drawKnot(this.diagram.getCurrentStep(), knot);
           }
@@ -164,8 +164,9 @@ public class OptionalDotGrid extends Pane {
       root.getChildren().remove(knot.getSelection());
     }
 
-    if ((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION) || (diagram.getCurrentMode() == MouseMode.MOVE)) {
-      if (getAllSelectedKnots().contains(knot)) {
+    if ((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION) ||
+      (diagram.getCurrentMode() == MouseMode.MOVE) || (diagram.getCurrentMode() == MouseMode.DUPLICATION)) {
+      if (this.diagram.getCurrentStep().getSelectedKnots().contains(knot)) {
         Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
         rec.setStroke(Color.BLUE);
         rec.setStrokeWidth(2d);
@@ -462,8 +463,9 @@ public class OptionalDotGrid extends Pane {
 
       root.getChildren().add(iv);
       currentKnot = new Knot(x, y, currentPattern, iv);
+      diagram.setCurrentKnot(currentKnot);
 
-      this.diagram.addKnotWithStep(app, currentKnot);
+      this.diagram.addKnotsWithStep(app, currentKnot);
     } catch (IOException e) {
       logger.error("Problem with pattern resource file!", e);
     }

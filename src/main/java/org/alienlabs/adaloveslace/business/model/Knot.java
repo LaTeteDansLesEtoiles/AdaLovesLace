@@ -214,6 +214,6 @@ public class Knot implements Comparable<Knot> {
 
   @Override
   public int compareTo(Knot knot) {
-    return pattern.getAbsoluteFilename().compareTo(knot.getPattern().getAbsoluteFilename());
+    return uuid.compareTo(knot.getUuid());
   }
 }

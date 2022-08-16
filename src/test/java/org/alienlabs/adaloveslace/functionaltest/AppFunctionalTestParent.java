@@ -119,6 +119,13 @@ public class AppFunctionalTestParent {
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
+  // Click on the grid where the snowflake is in order to select it
+  protected void selectSnowflake(FxRobot robot) {
+    robot.clickOn(geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+    Point2D snowflakeOnTheGrid = newPointOnGrid(SNOWFLAKE_PIXEL_X + 10d, SNOWFLAKE_PIXEL_Y + 10d);
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
   // Click on the snowflake in the toolbox to select its pattern
   protected void selectAndClickOnSnowflake(FxRobot robot) {
     clickOnButton(robot, toolboxWindow.getSnowflakeButton());

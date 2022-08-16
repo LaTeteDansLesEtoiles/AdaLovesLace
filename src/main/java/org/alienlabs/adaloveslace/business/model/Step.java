@@ -34,6 +34,15 @@ public class Step {
       new NodeUtil().copyKnot(knot)).toList());
     this.selectedKnots  = new ArrayList<>(selectedKnots.stream().map(knot -> new
       NodeUtil().copyKnot(knot)).toList());
+    this.displayedKnots.addAll(this.selectedKnots);
+  }
+
+  public static Step of(List<Knot> displayedKnots, List<Knot> selectedKnots) {
+    Step step = new Step();
+    step.getDisplayedKnots().addAll(displayedKnots);
+    step.getSelectedKnots().addAll(selectedKnots);
+
+    return step;
   }
 
   public List<Knot> getDisplayedKnots() {

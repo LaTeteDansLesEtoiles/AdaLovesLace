@@ -83,7 +83,7 @@ public class Diagram {
     return this.patterns;
   }
 
-  public Set<Knot> addKnotWithStep(App app, final Knot knot) {
+  public Set<Knot> addKnotsWithStep(App app, final Knot knot) {
     Set<Knot> knots = new TreeSet<>(this.getCurrentStep().getDisplayedKnots());
     knots.add(knot);
 
@@ -93,14 +93,38 @@ public class Diagram {
     return knots;
   }
 
-  public Set<Knot> addKnotWithStep(final App app, final List<Knot> knots) {
-    Set<Knot> knotsToAdd = new TreeSet<>();
-    knotsToAdd.addAll(knots);
-
-    this.getAllSteps().add(new Step(knotsToAdd.stream().toList(), app.getOptionalDotGrid().getAllSelectedKnots().stream().toList()));
+  public Step addKnotsWithStep(final List<Knot> displayedKnots, final List<Knot> selectedKnots) {
+    Step step = new Step(displayedKnots, selectedKnots);
+    step.getDisplayedKnots().addAll(selectedKnots);
+    this.getAllSteps().add(step);
     this.currentStepIndex = this.getAllSteps().size() - 1;
 
-    return knotsToAdd;
+    return step;
+  }
+
+  public Step addKnotsToStep(final List<Knot> displayedKnots, final List<Knot> selectedKnots) {
+    Step step = Step.of(displayedKnots, selectedKnots);
+    step.getDisplayedKnots().addAll(selectedKnots);
+    this.getAllSteps().add(step);
+    this.currentStepIndex = this.getAllSteps().size() - 1;
+
+    return step;
+  }
+
+  public List<Knot> addKnotsToStep(final App app, final List<Knot> knots) {
+    Step step = Step.of(knots, app.getOptionalDotGrid().getAllSelectedKnots().stream().toList());
+    this.getAllSteps().add(step);
+    this.currentStepIndex = this.getAllSteps().size() - 1;
+
+    return step.getDisplayedKnots();
+  }
+
+  public List<Knot> addCopyOfKnotsWithStep(final App app, final List<Knot> knots) {
+    Step step = new Step(knots, app.getOptionalDotGrid().getAllSelectedKnots().stream().toList());
+    this.getAllSteps().add(step);
+    this.currentStepIndex = this.getAllSteps().size() - 1;
+
+    return step.getDisplayedKnots();
   }
 
   public List<Knot> addKnotWithStepFiltering(final App app, final Collection<Knot> knotsToInclude, final Set<Knot> knotsToFilterOut) {
@@ -117,7 +141,7 @@ public class Diagram {
   public void undoLastStep(App app) {
     logger.info("Undo step, current step={}", currentStepIndex);
 
-    if (this.currentStepIndex > 0) {
+    if (this.currentStepIndex >= 0) {
       deleteNodesFromCurrentStep(app);
 
       this.currentStepIndex--;
@@ -165,7 +189,7 @@ public class Diagram {
 
   // We don't lose the undo / redo history
   public List<Knot> resetDiagram() {
-    this.currentStepIndex = 0;
+    this.getCurrentStep().getDisplayedKnots().clear();
     return this.knots;
   }
 
@@ -250,7 +274,7 @@ public class Diagram {
   }
 
   public Step getCurrentStep() {
-    if (allSteps.isEmpty()) {
+    if (allSteps.isEmpty() || currentStepIndex == -1) {
       return new Step();
     }
     return allSteps.get(currentStepIndex);

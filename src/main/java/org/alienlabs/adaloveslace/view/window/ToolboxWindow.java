@@ -98,6 +98,10 @@ public class ToolboxWindow {
 
     Image img = new Image(fis);
 
+    if (diagram.getCurrentPattern() == null) {
+      diagram.setCurrentPattern(pattern);
+    }
+
     pattern.setCenterX(img.getWidth() / 2);
     pattern.setCenterY(img.getHeight() / 2);
     pattern.setWidth(img.getWidth());
@@ -201,7 +205,6 @@ public class ToolboxWindow {
 
     Scene toolboxScene = new Scene(root);
     toolboxStage.setX(TOOLBOX_WINDOW_X);
-//    this.toolboxStage.setX(app.getPrimaryStage().getX() + app.getPrimaryStage().getWidth() + WINDOW_SPACING);
     this.toolboxStage.setY(MAIN_WINDOW_Y);
     this.toolboxStage.setWidth(TOOLBOX_WINDOW_WIDTH);
     this.toolboxStage.setHeight(computeWindowHeight(app));

@@ -22,14 +22,19 @@ public class ZoomSpinner {
         spinnerToReflect1.setValue(newValue);
         spinnerToReflect2.setValue(newValue);
 
-        if (app.getOptionalDotGrid().getAllSelectedKnots() != null && !app.getOptionalDotGrid().getAllSelectedKnots().isEmpty()) {
-          for (Knot currentKnot : app.getOptionalDotGrid().getAllSelectedKnots()) {
+        if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots() != null && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().isEmpty()) {
+          for (Knot currentKnot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
             if (newValue - oldValue == increment || newValue - oldValue == -increment) {
               currentKnot
                 .setZoomFactor(currentKnot.getZoomFactor() + (newValue > oldValue ? increment : -increment));
-              app.getOptionalDotGrid().drawSelectedKnot(currentKnot);
+
             }
           }
+
+          app.getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
+            app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+
+          app.getOptionalDotGrid().layoutChildren();
         } else {
           app.getOptionalDotGrid().getDiagram().getCurrentKnot()
             .setZoomFactor(valueFactory.getValue());

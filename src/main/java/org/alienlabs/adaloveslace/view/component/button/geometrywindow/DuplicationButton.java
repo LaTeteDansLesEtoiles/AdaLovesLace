@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
@@ -37,20 +35,18 @@ public class DuplicationButton extends ToggleButton {
     logger.info("Duplicating");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DUPLICATION);
 
-    List<Knot> allElements = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-    Set<Knot> knots = new TreeSet<>();
+    List<Knot> copiedKnots = new ArrayList<>();
 
-    for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
+    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
       Knot copiedKnot = app.getMainWindow().duplicateKnot(app, knot.getX(), knot.getY(), knot);
-      knots.add(copiedKnot);
+      copiedKnots.add(copiedKnot);
     }
 
-    app.getOptionalDotGrid().getAllSelectedKnots().clear();
-    app.getOptionalDotGrid().getAllSelectedKnots().addAll(app.getDiagram().addKnotWithStep(app, knots.stream().toList()));
-    app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().addAll(allElements);
-    app.getOptionalDotGrid().getAllVisibleKnots().addAll(allElements);
-    app.getOptionalDotGrid().layoutChildren();
 
+    app.getOptionalDotGrid().getAllSelectedKnots().clear();
+    app.getOptionalDotGrid().getAllSelectedKnots().addAll(copiedKnots);
+    app.getDiagram().addKnotsToStep(app.getOptionalDotGrid().getAllVisibleKnots(), copiedKnots);
+    app.getOptionalDotGrid().layoutChildren();
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(false);

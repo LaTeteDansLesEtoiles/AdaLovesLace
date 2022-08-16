@@ -63,6 +63,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Init
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
+    selectSnowflake(robot);
 
     // Run
     lock = new CountDownLatch(1);
@@ -96,6 +97,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Init
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
+    selectSnowflake(robot);
 
     // Run
     lock = new CountDownLatch(1);
@@ -129,6 +131,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Init
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
+    selectSnowflake(robot);
 
     // Run
     lock = new CountDownLatch(1);
@@ -162,6 +165,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Init
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
+    selectSnowflake(robot);
 
     // Run
     lock = new CountDownLatch(1);
@@ -195,6 +199,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Init
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
+    selectSnowflake(robot);
 
     // Run
     lock = new CountDownLatch(1);
@@ -228,6 +233,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Init
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
+    selectSnowflake(robot);
 
     // Run
     lock = new CountDownLatch(1);
@@ -252,7 +258,9 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   }
 
   private double getAngle() {
-    return ((Rotate) (this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getTransforms().stream().filter(transform -> transform instanceof Rotate).findFirst().get())).getAngle();
+    return ((Rotate) (this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().
+      get(0).getImageView().getTransforms().stream().filter(transform -> transform instanceof Rotate).findFirst()
+      .orElse(new Rotate(geometryWindow.getRotationSpinner1().getValue())))).getAngle();
   }
 
 }
