@@ -261,6 +261,9 @@ public class MainWindow {
       if (hasClickedOnACertainKnot && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
         logger.info("Clicked Knot {} in order to select it", knot.getPattern().getFilename());
 
+        app.getDiagram().addKnotsToStep(
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(), app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+
         // If there is a current knot and we have clicked somewhere else than on a knot,
         // we shall restore the zoom & rotation spinners values with the values from the knot
         app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
@@ -284,6 +287,9 @@ public class MainWindow {
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot), knot.getPattern().getFilename());
         logger.info("Clicked Knot selected {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot), knot.getPattern().getFilename());
+
+        app.getDiagram().addKnotsToStep(
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(), app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
         // If there is a current knot and we have clicked somewhere else than on a knot,
         // we shall restore the zoom & rotation spinners values with the values from the knot
@@ -317,11 +323,18 @@ public class MainWindow {
     // we shall move the current knot
     if (!hasClickedOnAKnot && this.getOptionalDotGrid().getDiagram().getCurrentKnot() != null) {
       logger.info("Shall move knot");
+
       Knot currentKnot = this.getOptionalDotGrid().getDiagram().getCurrentKnot();
       app.getOptionalDotGrid().clearSelection(currentKnot);
       moveKnot(currentKnot, x - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getWidth(),
         y - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getHeight());
-      app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().add(app.getOptionalDotGrid().drawSelectedKnot(currentKnot));
+
+      Set<Knot> addedSelected = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
+      addedSelected.add(app.getOptionalDotGrid().drawHoveredOverKnot(currentKnot));
+
+      app.getDiagram().addKnotsToStep(
+        app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(), addedSelected);
+
       app.getOptionalDotGrid().clearAllGuideLines();
     }
 

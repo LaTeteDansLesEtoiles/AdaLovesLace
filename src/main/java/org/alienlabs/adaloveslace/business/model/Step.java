@@ -52,12 +52,4 @@ public class Step {
     return selectedKnots;
   }
 
-  public void setDisplayedKnots(Set<Knot> displayedKnots) {
-    this.displayedKnots = displayedKnots;
-  }
-
-  public void setSelectedKnots(Set<Knot> selectedKnots) {
-    this.selectedKnots = selectedKnots;
-  }
-
 }

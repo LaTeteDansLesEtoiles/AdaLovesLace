@@ -191,6 +191,10 @@ public class Diagram {
     root.getChildren().removeAll(root.getChildren().stream().filter(node -> (node instanceof Line || node instanceof Rectangle)).toList());
   }
 
+  public void deleteNodesFromCurrentStep(Group root) {
+    root.getChildren().removeAll(root.getChildren().stream().filter(node -> (node instanceof Line || node instanceof Rectangle)).toList());
+  }
+
   // We don't lose the undo / redo history
   public void resetDiagram(App app) {
     app.getRoot().getChildren().removeAll(this.getCurrentStep().getDisplayedKnots().stream().
