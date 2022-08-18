@@ -117,14 +117,6 @@ public class Diagram {
     return step.getDisplayedKnots();
   }
 
-  public Set<Knot> addCopyOfKnotsWithStep(final App app, final Set<Knot> knots) {
-    Step step = new Step(knots, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-    this.getAllSteps().add(step);
-    this.currentStepIndex = this.getAllSteps().size() - 1;
-
-    return step.getDisplayedKnots();
-  }
-
   public Set<Knot> addKnotWithStepFiltering(final App app, final Set<Knot> knotsToInclude, final Set<Knot> knotsToFilterOut) {
     Set<Knot> knotsToAdd = new HashSet<>(this.getCurrentStep().getDisplayedKnots());
     knotsToAdd.removeAll(knotsToFilterOut);

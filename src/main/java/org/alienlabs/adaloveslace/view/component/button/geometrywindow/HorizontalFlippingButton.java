@@ -10,8 +10,6 @@ import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -38,13 +36,13 @@ public class HorizontalFlippingButton extends ImageButton {
 
   public static void onFlipHorizontallyAction(final App app, final GeometryWindow window) {
     logger.info("Flipping horizontally");
-
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MIRROR);
 
-    List<Knot> allElements = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-    allElements.removeAll(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-
     Set<Knot> knots = new TreeSet<>();
+
+    app.getDiagram().addKnotsToStep(
+      app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
+      app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
       Knot copy = new NodeUtil().copyKnot(knot);
@@ -53,10 +51,9 @@ public class HorizontalFlippingButton extends ImageButton {
     }
 
     app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
-    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().addAll(app.getDiagram().addKnotsToStep(app, knots));
-    app.getOptionalDotGrid().layoutChildren();
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().addAll(knots);
 
-    app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().addAll(allElements);
+    app.getOptionalDotGrid().layoutChildren();
   }
 
 }

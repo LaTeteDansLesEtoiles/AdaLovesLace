@@ -225,7 +225,10 @@ public class OptionalDotGrid extends Pane {
   public Knot drawGuideLines(final Step step, final Knot knot) {
     clearGuideLines(knot);
 
-    if (((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION) || (diagram.getCurrentMode() == MouseMode.MOVE))) {
+    if ((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION)
+      || (diagram.getCurrentMode() == MouseMode.MOVE)|| (diagram.getCurrentMode() == MouseMode.DRAWING)
+      || (diagram.getCurrentMode() == MouseMode.DUPLICATION)) {
+
       // The black, thick lines that we use as guides
       for (Knot otherKnot : step.getDisplayedKnots()) {
         if (!otherKnot.equals(knot) && otherKnot.isVisible() && step.getSelectedKnots().contains(knot)) {
