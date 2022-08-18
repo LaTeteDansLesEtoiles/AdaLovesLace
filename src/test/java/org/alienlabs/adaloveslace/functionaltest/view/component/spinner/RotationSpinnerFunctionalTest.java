@@ -259,7 +259,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
 
   private double getAngle() {
     return ((Rotate) (this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().
-      get(0).getImageView().getTransforms().stream().filter(transform -> transform instanceof Rotate).findFirst()
+      stream().findFirst().get().getImageView().getTransforms().stream().filter(transform -> transform instanceof Rotate).findFirst()
       .orElse(new Rotate(geometryWindow.getRotationSpinner1().getValue())))).getAngle();
   }
 

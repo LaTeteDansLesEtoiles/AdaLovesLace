@@ -24,7 +24,7 @@ public class NodeUtil {
     ImageView img = knot.getImageView();
 
     // Get coordinates of the img relative to screen (as mouse coordinates are relative to screen, too)
-    Bounds boundsInScreen = img.localToScreen(img.getBoundsInLocal());
+    Bounds boundsInScreen = img.localToScreen(img.getBoundsInParent());
     if (boundsInScreen == null) {
       return false;
     }
@@ -36,6 +36,17 @@ public class NodeUtil {
 
   public Knot copyKnot(Knot knot) {
     Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), knot.getImageView());
+    copy.setRotationAngle(knot.getRotationAngle());
+    copy.setZoomFactor(knot.getZoomFactor());
+    copy.setVisible(knot.isVisible());
+    copy.setFlippedVertically(knot.isFlippedVertically());
+    copy.setFlippedHorizontally(knot.isFlippedHorizontally());
+
+    return copy;
+  }
+
+  public Knot copyKnotCloningImageView(Knot knot) {
+    Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), new ImageView(knot.getImageView().getImage()));
     copy.setRotationAngle(knot.getRotationAngle());
     copy.setZoomFactor(knot.getZoomFactor());
     copy.setVisible(knot.isVisible());

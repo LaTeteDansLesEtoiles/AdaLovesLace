@@ -59,7 +59,7 @@ public class CreatePatternButton extends ImageButton {
     app.getOptionalDotGrid().clearSelections();
     app.getOptionalDotGrid().clearHovered();
     app.getOptionalDotGrid().clearAllGuideLines();
-    app.getOptionalDotGrid().getAllSelectedKnots().clear();
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
 
     app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
 

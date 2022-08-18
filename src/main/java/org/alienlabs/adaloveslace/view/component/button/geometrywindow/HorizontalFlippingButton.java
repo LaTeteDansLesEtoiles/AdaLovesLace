@@ -42,18 +42,18 @@ public class HorizontalFlippingButton extends ImageButton {
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MIRROR);
 
     List<Knot> allElements = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-    allElements.removeAll(app.getOptionalDotGrid().getAllSelectedKnots());
+    allElements.removeAll(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
     Set<Knot> knots = new TreeSet<>();
 
-    for (Knot knot : app.getOptionalDotGrid().getAllSelectedKnots()) {
+    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
       Knot copy = new NodeUtil().copyKnot(knot);
       copy.setFlippedHorizontally(!knot.isFlippedHorizontally());
       knots.add(copy);
     }
 
-    app.getOptionalDotGrid().getAllSelectedKnots().clear();
-    app.getOptionalDotGrid().getAllSelectedKnots().addAll(app.getDiagram().addKnotsToStep(app, knots.stream().toList()));
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().addAll(app.getDiagram().addKnotsToStep(app, knots));
     app.getOptionalDotGrid().layoutChildren();
 
     app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().addAll(allElements);

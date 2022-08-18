@@ -200,15 +200,10 @@ public class Knot implements Comparable<Knot> {
   @Override
   public String toString() {
     return "Knot{" +
-      "uuid=" + uuid +
       ", x=" + x +
       ", y=" + y +
-      ", rotationAngle=" + rotationAngle +
-      ", zoomFactor=" + zoomFactor +
-      ", pattern=" + pattern +
+      ", pattern=" + pattern.getFilename() +
       ", visible=" + visible +
-      ", flippedVertically=" + flippedVertically +
-      ", flippedHorizontally=" + flippedHorizontally +
       '}';
   }
 

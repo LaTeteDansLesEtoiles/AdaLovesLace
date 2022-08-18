@@ -4,9 +4,13 @@ import javafx.scene.control.Button;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
@@ -21,14 +25,18 @@ public class UpButton extends Button {
 
   public static void onMoveKnotUpAction(App app, GeometryWindow window) {
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MOVE);
+    Set<Knot> selectedKnots = new HashSet<>();
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
-      knot.setY(knot.getY() - FastMoveModeButton.getMoveSpeed());
+      Knot copiedKnot = new NodeUtil().copyKnot(knot);
+      copiedKnot.setY(knot.getY() - FastMoveModeButton.getMoveSpeed());
+      selectedKnots.add(copiedKnot);
+
       logger.debug("Moving up knot {}", knot);
     }
 
-    app.getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
-      app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    app.getDiagram().addKnotsToStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
+      selectedKnots);
 
     app.getOptionalDotGrid().layoutChildren();
   }

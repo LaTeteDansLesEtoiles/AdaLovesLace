@@ -35,7 +35,7 @@ public class DrawingButton extends ToggleButton {
     app.getOptionalDotGrid().clearSelections();
     app.getOptionalDotGrid().clearHovered();
     app.getOptionalDotGrid().clearAllGuideLines();
-    app.getOptionalDotGrid().getAllSelectedKnots().clear();
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
 
     if (Events.getGridHoverEventHandler(app) != null) {
       app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));

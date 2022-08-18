@@ -16,7 +16,7 @@ public class ResetDiagramButton extends ImageButton {
   }
 
   public static void resetDiagram(App app) {
-    app.getOptionalDotGrid().getDiagram().resetDiagram();
+    app.getOptionalDotGrid().getDiagram().resetDiagram(app);
     app.getOptionalDotGrid().layoutChildren();
 
     logger.info("Event reset diagram: {}", app);

@@ -17,20 +17,19 @@ import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.util.*;
+import org.alienlabs.adaloveslace.util.Events;
+import org.alienlabs.adaloveslace.util.NodeUtil;
+import org.alienlabs.adaloveslace.util.Preferences;
+import org.alienlabs.adaloveslace.util.PrintUtil;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.*;
-import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
-import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
@@ -241,6 +240,8 @@ public class MainWindow {
   public void onClickWithSelectionMode(App app, double x, double y) {
     Iterator<Knot> it = optionalDotGrid.getAllVisibleKnots().iterator();
     boolean hasClickedOnAKnot = false;
+    boolean hasClickedOnACertainKnot = false;
+    app.getOptionalDotGrid().clearHovered();
 
     // We iterate on the Knots as long as they are still Knots left to iterate
     // And we stop at the first clicked Knot
@@ -248,13 +249,17 @@ public class MainWindow {
       Knot knot = it.next();
 
       try {
-        hasClickedOnAKnot = new NodeUtil().isMouseOverKnot(knot, x, y);
+        hasClickedOnACertainKnot = new NodeUtil().isMouseOverKnot(knot, x, y);
+
+        if (hasClickedOnACertainKnot && !hasClickedOnAKnot) {
+          hasClickedOnAKnot = true;
+        }
       } catch (MalformedURLException e) {
         logger.error("Error during click on select!", e);
       }
 
-      if (hasClickedOnAKnot && !app.getOptionalDotGrid().getAllSelectedKnots().contains(knot)) {
-        logger.info("Clicked Knot uuid {} in order to select it", knot.getUuid());
+      if (hasClickedOnACertainKnot && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
+        logger.info("Clicked Knot {} in order to select it", knot.getPattern().getFilename());
 
         // If there is a current knot and we have clicked somewhere else than on a knot,
         // we shall restore the zoom & rotation spinners values with the values from the knot
@@ -263,27 +268,48 @@ public class MainWindow {
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
           app.getOptionalDotGrid().clearSelections();
-          app.getOptionalDotGrid().getAllSelectedKnots().clear();
-        }
-
-        app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().add(knot);
-        app.getOptionalDotGrid().drawSelectedKnotAtClick(knot);
-      } else if (hasClickedOnAKnot) {
-        logger.info("Clicked Knot index {}, uuid {} in order to unselect it",
-          app.getOptionalDotGrid().getDiagram().getKnots().indexOf(knot), knot.getUuid());
-
-        // If there is a current knot and we have clicked somewhere else than on a knot,
-        // we shall restore the zoom & rotation spinners values with the values from the knot
-        app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
-
-        // If the "Control" key is pressed, we are in multi-selection mode
-        if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
-          app.getOptionalDotGrid().clearSelections();
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
+          app.getOptionalDotGrid().getAllHoveredKnots().clear();
+          app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().remove(knot);
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().add(knot);
         } else {
-          app.getOptionalDotGrid().clearSelection(knot);
+          app.getOptionalDotGrid().clearSelections();
+          app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().remove(knot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().add(knot);
         }
+
+      } else if (hasClickedOnACertainKnot) {
+        logger.info("Clicked Knot displayed {}, pattern {} in order to unselect it",
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot), knot.getPattern().getFilename());
+        logger.info("Clicked Knot selected {}, pattern {} in order to unselect it",
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot), knot.getPattern().getFilename());
+
+        // If there is a current knot and we have clicked somewhere else than on a knot,
+        // we shall restore the zoom & rotation spinners values with the values from the knot
+        app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+
+        // If the "Control" key is pressed, we are in multi-selection mode
+        if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
+          app.getOptionalDotGrid().clearSelections();
+          app.getOptionalDotGrid().getAllHoveredKnots().clear();
+          app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().add(knot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().remove(knot);
+        } else {
+          /*if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size() == 1) {
+            app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
+            app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();;
+            app.getOptionalDotGrid().layoutChildren();
+          } else {*/
+            app.getOptionalDotGrid().clearSelections();
+            app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
+            app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().remove(knot);
+            app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().add(knot);
+          /*}*/
+        }
+
       }
     }
 
@@ -295,11 +321,11 @@ public class MainWindow {
       app.getOptionalDotGrid().clearSelection(currentKnot);
       moveKnot(currentKnot, x - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getWidth(),
         y - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getHeight());
-      app.getOptionalDotGrid().getAllSelectedKnots().add(app.getOptionalDotGrid().drawSelectedKnot(currentKnot));
+      app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().add(app.getOptionalDotGrid().drawSelectedKnot(currentKnot));
       app.getOptionalDotGrid().clearAllGuideLines();
-
-      app.getOptionalDotGrid().layoutChildren();
     }
+
+    app.getOptionalDotGrid().layoutChildren();
   }
 
   private void moveKnot(Knot toMove, double x, double y) {
@@ -322,36 +348,6 @@ public class MainWindow {
         throw new RuntimeException(e);
       }
     }
-  }
-
-  public Knot duplicateKnot(App app, double x, double y, Knot knot) {
-    logger.info("Duplicating Knot {}", knot);
-
-    try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
-      Knot newKnot = newKnot(app, x, y, knot, fis);
-      newKnot.setRotationAngle(knot.getRotationAngle());
-      newKnot.setZoomFactor(knot.getZoomFactor());
-      newKnot.setFlippedVertically(knot.isFlippedVertically());
-      newKnot.setFlippedHorizontally(knot.isFlippedHorizontally());
-
-      return newKnot;
-    } catch (IOException e) {
-      logger.error("Problem with pattern resource file!", e);
-    }
-    return null;
-  }
-
-  private Knot newKnot(App app, double x, double y, Knot knot, FileInputStream fis) {
-    Knot newKnot = new Knot();
-    newKnot.setX(x + NEW_KNOT_GAP);
-    newKnot.setY(y + NEW_KNOT_GAP);
-    newKnot.setPattern(knot.getPattern());
-    newKnot.setRotationAngle(DEFAULT_ROTATION);
-    newKnot.setZoomFactor(DEFAULT_ZOOM);
-    newKnot.setVisible(true);
-
-    new FileUtil().buildKnotImageView(app, newKnot, fis);
-    return newKnot;
   }
 
   private boolean removeKnotIfClicked(App app, Diagram diagram, Knot knot) throws MalformedURLException {

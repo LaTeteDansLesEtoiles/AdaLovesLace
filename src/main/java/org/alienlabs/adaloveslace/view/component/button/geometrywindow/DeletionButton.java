@@ -36,7 +36,7 @@ public class DeletionButton extends ToggleButton {
     app.getOptionalDotGrid().clearSelections();
     app.getOptionalDotGrid().clearHovered();
     app.getOptionalDotGrid().clearAllGuideLines();
-    app.getOptionalDotGrid().getAllSelectedKnots().clear();
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
 
     app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
 

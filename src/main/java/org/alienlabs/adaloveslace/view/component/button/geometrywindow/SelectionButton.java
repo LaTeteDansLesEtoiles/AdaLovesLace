@@ -32,6 +32,7 @@ public class SelectionButton extends ToggleButton {
   public static void onSetSelectionModeAction(App app, GeometryWindow window) {
     logger.info("Setting selection mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
 
     app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
 

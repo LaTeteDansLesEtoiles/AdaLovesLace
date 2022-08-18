@@ -5,14 +5,16 @@ import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.NEW_KNOT_GAP;
 
 public class DuplicationButton extends ToggleButton {
 
@@ -35,17 +37,21 @@ public class DuplicationButton extends ToggleButton {
     logger.info("Duplicating");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DUPLICATION);
 
-    List<Knot> copiedKnots = new ArrayList<>();
+    Set<Knot> copiedKnots = new HashSet<>();
+    Set<Knot> newDisplayedKnots = new HashSet<>();
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
-      Knot copiedKnot = app.getMainWindow().duplicateKnot(app, knot.getX(), knot.getY(), knot);
+      Knot copiedKnot = new NodeUtil().copyKnotCloningImageView(knot);
+      copiedKnot.setX(knot.getX() + NEW_KNOT_GAP);
+      copiedKnot.setY(knot.getY() + NEW_KNOT_GAP);
+
       copiedKnots.add(copiedKnot);
     }
 
+    newDisplayedKnots.addAll(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    newDisplayedKnots.addAll(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
 
-    app.getOptionalDotGrid().getAllSelectedKnots().clear();
-    app.getOptionalDotGrid().getAllSelectedKnots().addAll(copiedKnots);
-    app.getDiagram().addKnotsToStep(app.getOptionalDotGrid().getAllVisibleKnots(), copiedKnots);
+    app.getDiagram().addKnotsToStep(newDisplayedKnots, copiedKnots);
     app.getOptionalDotGrid().layoutChildren();
 
     window.getDrawingButton()     .setSelected(false);

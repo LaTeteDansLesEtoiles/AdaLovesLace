@@ -87,52 +87,50 @@ public class Diagram {
     Set<Knot> knots = new TreeSet<>(this.getCurrentStep().getDisplayedKnots());
     knots.add(knot);
 
-    this.getAllSteps().add(new Step(knots.stream().toList(), app.getOptionalDotGrid().getAllSelectedKnots().stream().toList()));
+    this.getAllSteps().add(new Step(knots, this.getCurrentStep().getSelectedKnots()));
     this.currentStepIndex = this.getAllSteps().size() - 1;
 
     return knots;
   }
 
-  public Step addKnotsWithStep(final List<Knot> displayedKnots, final List<Knot> selectedKnots) {
+  public Step addKnotsWithStep(final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
     Step step = new Step(displayedKnots, selectedKnots);
-    step.getDisplayedKnots().addAll(selectedKnots);
     this.getAllSteps().add(step);
     this.currentStepIndex = this.getAllSteps().size() - 1;
 
     return step;
   }
 
-  public Step addKnotsToStep(final List<Knot> displayedKnots, final List<Knot> selectedKnots) {
+  public Step addKnotsToStep(final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
     Step step = Step.of(displayedKnots, selectedKnots);
-    step.getDisplayedKnots().addAll(selectedKnots);
     this.getAllSteps().add(step);
     this.currentStepIndex = this.getAllSteps().size() - 1;
 
     return step;
   }
 
-  public List<Knot> addKnotsToStep(final App app, final List<Knot> knots) {
-    Step step = Step.of(knots, app.getOptionalDotGrid().getAllSelectedKnots().stream().toList());
+  public Set<Knot> addKnotsToStep(final App app, final Set<Knot> knots) {
+    Step step = Step.of(knots, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
     this.getAllSteps().add(step);
     this.currentStepIndex = this.getAllSteps().size() - 1;
 
     return step.getDisplayedKnots();
   }
 
-  public List<Knot> addCopyOfKnotsWithStep(final App app, final List<Knot> knots) {
-    Step step = new Step(knots, app.getOptionalDotGrid().getAllSelectedKnots().stream().toList());
+  public Set<Knot> addCopyOfKnotsWithStep(final App app, final Set<Knot> knots) {
+    Step step = new Step(knots, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
     this.getAllSteps().add(step);
     this.currentStepIndex = this.getAllSteps().size() - 1;
 
     return step.getDisplayedKnots();
   }
 
-  public List<Knot> addKnotWithStepFiltering(final App app, final Collection<Knot> knotsToInclude, final Set<Knot> knotsToFilterOut) {
-    List<Knot> knotsToAdd = new ArrayList<>(this.getCurrentStep().getDisplayedKnots());
+  public Set<Knot> addKnotWithStepFiltering(final App app, final Set<Knot> knotsToInclude, final Set<Knot> knotsToFilterOut) {
+    Set<Knot> knotsToAdd = new HashSet<>(this.getCurrentStep().getDisplayedKnots());
     knotsToAdd.removeAll(knotsToFilterOut);
     knotsToAdd.addAll(knotsToInclude);
 
-    this.getAllSteps().add(new Step(knotsToAdd, app.getOptionalDotGrid().getAllSelectedKnots().stream().toList()));
+    this.getAllSteps().add(new Step(knotsToAdd, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()));
     this.currentStepIndex = this.getAllSteps().size() - 1;
 
     return knotsToAdd;
@@ -169,6 +167,12 @@ public class Diagram {
       app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
       app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getGuideLines());
     });
+    getCurrentStep().getSelectedKnots().stream().forEach(knot -> {
+      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView()); // Delete nodes from step before
+      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
+      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
+      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getGuideLines());
+    });
   }
 
   public void deleteNodesFromCurrentStep(App app, Knot knot) {
@@ -188,9 +192,12 @@ public class Diagram {
   }
 
   // We don't lose the undo / redo history
-  public List<Knot> resetDiagram() {
-    this.getCurrentStep().getDisplayedKnots().clear();
-    return this.knots;
+  public void resetDiagram(App app) {
+    app.getRoot().getChildren().removeAll(this.getCurrentStep().getDisplayedKnots().stream().
+      map(knot -> knot.getImageView()).toList());
+    app.getOptionalDotGrid().clearSelections();
+    this.getAllSteps().clear();
+    this.currentStepIndex = -1;
   }
 
   public Pattern getCurrentPattern() {
@@ -235,10 +242,10 @@ public class Diagram {
 
   public void addStep(App app, Set<Knot> displayedKnots, Set<Knot> selectedKnots) {
     logger.info("Adding step, current step={}", currentStepIndex);
-    List<Knot> displayed = new ArrayList<>(app.getOptionalDotGrid().getAllVisibleKnots());
+    Set<Knot> displayed = new HashSet<>(app.getOptionalDotGrid().getAllVisibleKnots());
     displayed.addAll(displayedKnots);
 
-    List<Knot> selected = new ArrayList<>(app.getOptionalDotGrid().getAllSelectedKnots());
+    Set<Knot> selected = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
     selected.addAll(selectedKnots);
     boolean increment = true;
 
@@ -264,9 +271,9 @@ public class Diagram {
 
     if (currentStepIndex < this.allSteps.size() - 1) {
       this.allSteps = this.allSteps.subList(0, currentStepIndex);
-      this.allSteps.add(new Step(app.getOptionalDotGrid().getAllVisibleKnots(), app.getOptionalDotGrid().getAllSelectedKnots().stream().toList()));
+      this.allSteps.add(new Step(app.getOptionalDotGrid().getAllVisibleKnots(), app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()));
     } else {
-      this.allSteps.add(new Step(app.getOptionalDotGrid().getAllVisibleKnots(), app.getOptionalDotGrid().getAllSelectedKnots().stream().toList()));
+      this.allSteps.add(new Step(app.getOptionalDotGrid().getAllVisibleKnots(), app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()));
     }
 
     currentStepIndex++;
