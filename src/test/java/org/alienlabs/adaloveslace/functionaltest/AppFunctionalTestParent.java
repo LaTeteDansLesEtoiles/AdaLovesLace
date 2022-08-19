@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace.functionaltest;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
@@ -164,8 +165,9 @@ public class AppFunctionalTestParent {
   }
 
   protected Point2D newPointOnGridForFirstNonGridNode() {
-    return new Point2D(this.primaryStage.getX() + app.getOptionalDotGrid().getFirstNonGridNode().getBoundsInParent().getCenterX(),
-      this.primaryStage.getY() + app.getOptionalDotGrid().getFirstNonGridNode().getBoundsInParent().getCenterY() + 10d);
+    ImageView imageView = app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().iterator().next().getImageView();
+    return new Point2D(this.primaryStage.getX() + imageView.getBoundsInParent().getCenterX(),
+      this.primaryStage.getY() + imageView.getBoundsInParent().getCenterY() + 10d);
   }
 
 }

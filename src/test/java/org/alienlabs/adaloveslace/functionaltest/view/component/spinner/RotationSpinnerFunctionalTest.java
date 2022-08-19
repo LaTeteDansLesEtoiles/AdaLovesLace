@@ -44,6 +44,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawSnowflake(robot);
 
     // Verify
+    selectSnowflake(robot);
     assertEquals(DEFAULT_ROTATION, getAngle());
     assertEquals(DEFAULT_ROTATION,
       this.geometryWindow.getRotationSpinner1().getValue());
@@ -63,7 +64,6 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Init
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
-    selectSnowflake(robot);
 
     // Run
     lock = new CountDownLatch(1);
@@ -80,6 +80,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     }
 
     // Verify
+    selectSnowflake(robot);
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1, getAngle());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner2().getValue());
@@ -97,7 +98,6 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Init
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
-    selectSnowflake(robot);
 
     // Run
     lock = new CountDownLatch(1);
@@ -114,6 +114,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     }
 
     // Verify
+    selectSnowflake(robot);
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1, getAngle());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner2().getValue());
@@ -131,7 +132,6 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Init
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
-    selectSnowflake(robot);
 
     // Run
     lock = new CountDownLatch(1);
@@ -148,6 +148,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     }
 
     // Verify
+    selectSnowflake(robot);
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2, getAngle());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner1().getValue());
@@ -165,7 +166,6 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Init
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
-    selectSnowflake(robot);
 
     // Run
     lock = new CountDownLatch(1);
@@ -182,6 +182,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     }
 
     // Verify
+    selectSnowflake(robot);
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2, getAngle());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner1().getValue());
@@ -199,7 +200,6 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Init
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
-    selectSnowflake(robot);
 
     // Run
     lock = new CountDownLatch(1);
@@ -216,6 +216,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     }
 
     // Verify
+    selectSnowflake(robot);
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3, getAngle());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner1().getValue());
@@ -233,7 +234,6 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Init
     selectAndClickOnSnowflake(robot);
     drawSnowflake(robot);
-    selectSnowflake(robot);
 
     // Run
     lock = new CountDownLatch(1);
@@ -249,7 +249,9 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
       logger.error("Interrupted!", e);
     }
 
+
     // Verify
+    selectSnowflake(robot);
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3, getAngle());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner1().getValue());
@@ -258,7 +260,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   }
 
   private double getAngle() {
-    return ((Rotate) (this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().
+    return ((Rotate) (this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
       stream().findFirst().get().getImageView().getTransforms().stream().filter(transform -> transform instanceof Rotate).findFirst()
       .orElse(new Rotate(geometryWindow.getRotationSpinner1().getValue())))).getAngle();
   }

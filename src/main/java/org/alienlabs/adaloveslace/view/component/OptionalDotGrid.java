@@ -57,8 +57,6 @@ public class OptionalDotGrid extends Pane {
 
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
   private final Group root;
-  private Node firstNonGridNode;
-
   private final Set<Knot> allSelectedKnots = new TreeSet<>();
 
   private final Set<Knot> allHoveredKnots = new TreeSet<>();
@@ -306,11 +304,6 @@ public class OptionalDotGrid extends Pane {
 
   private void drawDisplayedKnot(Step step, Knot knot) {
     ImageView iv = rotateKnot(knot);
-
-    if (step.getDisplayedKnots().isEmpty()) {
-      this.firstNonGridNode = iv;
-    }
-
     zoomAndFlipKnot(knot, iv);
 
     double x = knot.getX();
@@ -480,10 +473,6 @@ public class OptionalDotGrid extends Pane {
     }
 
     return currentKnot;
-  }
-
-  public Node getFirstNonGridNode() {
-    return this.firstNonGridNode;
   }
 
   public void setGridNeedsToBeRedrawn(boolean gridNeedsToBeRedrawn) {
