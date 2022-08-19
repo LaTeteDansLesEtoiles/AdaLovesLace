@@ -111,17 +111,13 @@ public class ToolboxWindow {
     button.setId(TOOLBOX_BUTTON + (i + 1));
     this.allPatterns.add(button);
 
-    if (pattern.getFilename().equals("snowflake_small.jpg")) {
+    if (i == 0) {
       this.snowflakeButton = button;
       button.setStyle("-fx-border-color: blue;");
-    }
-
-    if (i == 0) {
       diagram.setCurrentPattern(pattern);
     }
 
     diagram.addPattern(pattern);
-
     return button;
   }
 

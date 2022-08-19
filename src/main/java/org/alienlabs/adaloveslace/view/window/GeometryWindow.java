@@ -244,7 +244,7 @@ public class GeometryWindow {
   }
 
   public SelectionButton getSelectionButton() {
-    return selectionButton;
+    return this.selectionButton;
   }
 
   public DeletionButton getDeletionButton() {

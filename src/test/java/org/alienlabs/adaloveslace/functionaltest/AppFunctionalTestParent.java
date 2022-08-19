@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static java.lang.Thread.sleep;
 import static org.alienlabs.adaloveslace.App.EXPORT_IMAGE_FILE_TYPE;
 import static org.alienlabs.adaloveslace.App.GRID_DOTS_RADIUS;
 import static org.alienlabs.adaloveslace.util.FileUtil.PATH_SEPARATOR;
@@ -41,8 +40,7 @@ public class AppFunctionalTestParent {
   public App app;
 
   // For tests:
-  public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = Long.getLong("SLEEP_BETWEEN_ACTIONS_TIME", 5_000L);
-  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME", 4_000L);
+  public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = Long.getLong("SLEEP_BETWEEN_ACTIONS_TIME", 750L);
   public static final double GRID_WIDTH                   = 600d;
   public static final double GRID_HEIGHT                  = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
@@ -51,8 +49,8 @@ public class AppFunctionalTestParent {
   public static final String CLASSPATH_RESOURCES_PATH_JPG = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*test" + PATH_SEPARATOR + ".*.jpg";
   public static final String CLASSPATH_RESOURCES_PATH     = "org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + "test" + PATH_SEPARATOR;
 
-  public static final String SNOWFLAKE            = "snowflake_small";
-  public static final String SNOWFLAKE_IMAGE      = "snowflake_small.jpg";
+  public static final String SNOWFLAKE                    = "snowflake_small";
+  public static final String SNOWFLAKE_IMAGE              = "snowflake_small.jpg";
 
   public static final double SNOWFLAKE_PIXEL_X    = 415d;
 
@@ -91,12 +89,12 @@ public class AppFunctionalTestParent {
     this.app.showMainWindow(640d, 480d, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS * 2d, this.primaryStage);
 
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
-    this.app.getToolboxStage().setX(1600d);
+    this.app.getToolboxStage().setX(1150d);
     this.app.getToolboxStage().setY(50d);
     this.app.getToolboxStage().setHeight(600d);
 
     this.geometryWindow = this.app.showGeometryWindow(this.app);
-    this.app.getGeometryStage().setX(1100d);
+    this.app.getGeometryStage().setX(720d);
     this.app.getGeometryStage().setY(50d);
   }
 
@@ -127,11 +125,6 @@ public class AppFunctionalTestParent {
     Point2D snowflakeOnTheGrid = newPointOnGrid(SNOWFLAKE_PIXEL_X + 20d, SNOWFLAKE_PIXEL_Y + 20d);
 
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
-    try {
-      Thread.sleep(SLEEP_TIME);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
   }
 
   // Click on the snowflake in the toolbox to select its pattern
@@ -141,13 +134,6 @@ public class AppFunctionalTestParent {
 
   private void clickOnButton(FxRobot robot, Node button) {
     robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
-
-    // No choice to sleep because we want to have time for the action to perform
-    try {
-      sleep(SLEEP_BETWEEN_ACTIONS_TIME);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   private void copyCanvas(Point2D pointToMoveTo) {
