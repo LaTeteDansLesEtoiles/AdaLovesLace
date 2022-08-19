@@ -41,7 +41,7 @@ public class AppFunctionalTestParent {
   public App app;
 
   // For tests:
-  public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = Long.getLong("SLEEP_BETWEEN_ACTIONS_TIME", 750L);
+  public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = Long.getLong("SLEEP_BETWEEN_ACTIONS_TIME", 2_000L);
   public static final double GRID_WIDTH           = 600d;
   public static final double GRID_HEIGHT          = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
