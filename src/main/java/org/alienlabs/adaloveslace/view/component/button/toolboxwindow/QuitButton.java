@@ -1,5 +1,6 @@
 package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
+import javafx.application.Platform;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +15,9 @@ public class QuitButton extends ImageButton {
     buildButtonImage("quit.png");
   }
 
-  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
-    value = "DM_EXIT",
-    justification = "We shall exit when we have to, since we are not in a lib")
   public static void onQuitAction() {
     logger.info("Exiting app");
-    System.exit(0);
+    Platform.exit();
   }
 
 }

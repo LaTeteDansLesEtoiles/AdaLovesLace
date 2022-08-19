@@ -153,7 +153,7 @@ public class App extends Application {
 
     primaryStage.setOnCloseRequest(windowEvent -> {
       logger.info("You shall close the app by closing this window!");
-      System.exit(0);
+      Platform.exit();
     });
 
     this.mainWindow.createMenuBar(root, this, primaryStage);
