@@ -264,8 +264,6 @@ public class MainWindow {
         app.getDiagram().addKnotsToStep(
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(), app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
-        // If there is a current knot and we have clicked somewhere else than on a knot,
-        // we shall restore the zoom & rotation spinners values with the values from the knot
         app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
 
         // If the "Control" key is pressed, we are in multi-selection mode
@@ -292,12 +290,9 @@ public class MainWindow {
         logger.info("Clicked Knot selected {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot), knot.getPattern().getFilename());
 
+        app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
         app.getDiagram().addKnotsToStep(
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(), app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-
-        // If there is a current knot and we have clicked somewhere else than on a knot,
-        // we shall restore the zoom & rotation spinners values with the values from the knot
-        app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
