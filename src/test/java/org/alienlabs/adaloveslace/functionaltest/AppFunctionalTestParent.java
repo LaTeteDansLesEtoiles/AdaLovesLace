@@ -42,8 +42,9 @@ public class AppFunctionalTestParent {
 
   // For tests:
   public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = Long.getLong("SLEEP_BETWEEN_ACTIONS_TIME", 1_000L);
-  public static final double GRID_WIDTH           = 600d;
-  public static final double GRID_HEIGHT          = 420d;
+  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME", 1_000L);
+  public static final double GRID_WIDTH                   = 600d;
+  public static final double GRID_HEIGHT                  = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
   public static final String TEST_SCREEN_CAPTURE_FILE     = "test_screen_capture" + EXPORT_IMAGE_FILE_TYPE;
 
@@ -126,6 +127,13 @@ public class AppFunctionalTestParent {
 
     Platform.runLater(() -> {
       robot.clickOn(geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+
+      try {
+        Thread.sleep(SLEEP_TIME);
+      } catch (InterruptedException e) {
+        logger.error("Interrupted!", e);
+      }
+
       lock.countDown();
     });
 
