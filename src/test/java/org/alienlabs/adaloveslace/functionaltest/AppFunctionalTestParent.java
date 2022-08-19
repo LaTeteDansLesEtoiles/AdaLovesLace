@@ -41,8 +41,8 @@ public class AppFunctionalTestParent {
   public App app;
 
   // For tests:
-  public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = Long.getLong("SLEEP_BETWEEN_ACTIONS_TIME", 1_000L);
-  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME", 1_000L);
+  public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = Long.getLong("SLEEP_BETWEEN_ACTIONS_TIME", 5_000L);
+  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME", 4_000L);
   public static final double GRID_WIDTH                   = 600d;
   public static final double GRID_HEIGHT                  = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
@@ -123,28 +123,15 @@ public class AppFunctionalTestParent {
 
   // Click on the grid where the snowflake is in order to select it
   protected void selectSnowflake(FxRobot robot) {
-    lock = new CountDownLatch(1);
+    robot.clickOn(geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+    Point2D snowflakeOnTheGrid = newPointOnGrid(SNOWFLAKE_PIXEL_X + 20d, SNOWFLAKE_PIXEL_Y + 20d);
 
-    Platform.runLater(() -> {
-      robot.clickOn(geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
-
-      try {
-        Thread.sleep(SLEEP_TIME);
-      } catch (InterruptedException e) {
-        logger.error("Interrupted!", e);
-      }
-
-      lock.countDown();
-    });
-
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
     try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
+      Thread.sleep(SLEEP_TIME);
     } catch (InterruptedException e) {
       logger.error("Interrupted!", e);
     }
-
-    Point2D snowflakeOnTheGrid = newPointOnGrid(SNOWFLAKE_PIXEL_X + 10d, SNOWFLAKE_PIXEL_Y + 10d);
-    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   // Click on the snowflake in the toolbox to select its pattern
