@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Something drawn on a Canvas, like with a brush (which is a lace Pattern), at certain x & y coordinates.
+ * Something drawn on a Canvas, like with a brush (which is a lace Pattern), at given x & y coordinates.
  *
  * @see Pattern
  * @see javafx.scene.canvas.Canvas

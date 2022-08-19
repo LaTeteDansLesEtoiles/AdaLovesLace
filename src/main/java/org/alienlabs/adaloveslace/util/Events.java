@@ -67,23 +67,23 @@ public class Events {
       try {
         // If a knot is already selected, we must still hover over it because we may want to unselect it afterwards
         // But if it's already hovered over, we shall not hover it again
-        boolean isMouseOverKnot = new NodeUtil().isMouseOverKnot(knot, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+        boolean isMouseOverAGivenKnot = new NodeUtil().isMouseOverKnot(knot, mouseEvent.getScreenX(), mouseEvent.getScreenY());
 
-        if (knot.isVisible() && isMouseOverKnot && !app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
+        if (knot.isVisible() && isMouseOverAGivenKnot && !app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
           logger.debug("Hover over not already an hovered over knot: {}", knot);
 
           // We can have only one hovered over knot at once
           app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
-        } else if(knot.isVisible() && isMouseOverKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
+        } else if(knot.isVisible() && isMouseOverAGivenKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
           logger.debug("Hover over an already hovered over knot: {}", knot);
-          app.getOptionalDotGrid().drawHoveredOrSelectedKnot(knot);
-        } else if(!isMouseOverKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
+          app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(knot);
+        } else if(!isMouseOverAGivenKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
           logger.debug("Don't hover over knot: {}", knot);
           app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
-          app.getOptionalDotGrid().drawHoveredOrSelectedKnot(knot);
+          app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(knot);
         }
 
-        app.getOptionalDotGrid().drawHoveredOrSelectedKnot(knot);
+        app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(knot);
       } catch (MalformedURLException e) {
         logger.error("Error in mouse hover event!", e);
       }

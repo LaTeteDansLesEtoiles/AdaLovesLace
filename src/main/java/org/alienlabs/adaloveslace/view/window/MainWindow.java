@@ -240,7 +240,7 @@ public class MainWindow {
   public void onClickWithSelectionMode(App app, double x, double y) {
     Iterator<Knot> it = optionalDotGrid.getAllVisibleKnots().iterator();
     boolean hasClickedOnAKnot = false;
-    boolean hasClickedOnACertainKnot = false;
+    boolean hasClickedOnAGivenKnot = false;
     app.getOptionalDotGrid().clearHovered();
 
     // We iterate on the Knots as long as they are still Knots left to iterate
@@ -249,16 +249,16 @@ public class MainWindow {
       Knot knot = it.next();
 
       try {
-        hasClickedOnACertainKnot = new NodeUtil().isMouseOverKnot(knot, x, y);
+        hasClickedOnAGivenKnot = new NodeUtil().isMouseOverKnot(knot, x, y);
 
-        if (hasClickedOnACertainKnot && !hasClickedOnAKnot) {
+        if (hasClickedOnAGivenKnot && !hasClickedOnAKnot) {
           hasClickedOnAKnot = true;
         }
       } catch (MalformedURLException e) {
         logger.error("Error during click on select!", e);
       }
 
-      if (hasClickedOnACertainKnot && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
+      if (hasClickedOnAGivenKnot && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
         logger.info("Clicked Knot {} in order to select it", knot.getPattern().getFilename());
 
         app.getDiagram().addKnotsToStep(
@@ -282,7 +282,9 @@ public class MainWindow {
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().add(knot);
         }
 
-      } else if (hasClickedOnACertainKnot) {
+        app.getOptionalDotGrid().getDiagram().drawHoveredOverOrSelectedKnots(app, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+        break;
+      } else if (hasClickedOnAGivenKnot) {
         logger.info("Clicked Knot displayed {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot), knot.getPattern().getFilename());
         logger.info("Clicked Knot selected {}, pattern {} in order to unselect it",
@@ -304,18 +306,14 @@ public class MainWindow {
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().add(knot);
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().remove(knot);
         } else {
-          /*if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size() == 1) {
-            app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
-            app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();;
-            app.getOptionalDotGrid().layoutChildren();
-          } else {*/
-            app.getOptionalDotGrid().clearSelections();
-            app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
-            app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().remove(knot);
-            app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().add(knot);
-          /*}*/
+          app.getOptionalDotGrid().clearSelections();
+          app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().remove(knot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().add(knot);
         }
 
+        app.getOptionalDotGrid().getDiagram().drawHoveredOverOrSelectedKnots(app, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+        break;
       }
     }
 

@@ -12,7 +12,7 @@ import java.util.Objects;
  * An image, or at least the one represented by a Pattern filename, which can be put at will on a Canvas and chosen
  * in the ToolboxWindow.
  * <p>
- * Initially, the Patterns are loaded from a certain package of the classpath, according to the expression:
+ * Initially, the Patterns are loaded from a given package of the classpath, according to the expression:
  *
  * @see org.alienlabs.adaloveslace.util.FileUtil#CLASSPATH_RESOURCES_PATH
  * <p>

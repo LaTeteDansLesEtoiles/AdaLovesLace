@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * What is drawn on a Canvas at a scertain time: we can move back and forward the Step list in order to undo / redo
+ * What is drawn on a Canvas at any given time: we can move back and forward the Step list in order to undo / redo
  * the user's actions.
  *
  * @see Diagram
@@ -50,6 +50,13 @@ public class Step {
 
   public Set<Knot> getSelectedKnots() {
     return selectedKnots;
+  }
+
+  public Set<Knot> getAllVisibleKnots() {
+    Set<Knot> all = new HashSet<>(selectedKnots);
+    all.addAll(displayedKnots);
+
+    return all;
   }
 
 }

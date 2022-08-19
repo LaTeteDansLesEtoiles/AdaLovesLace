@@ -236,44 +236,11 @@ public class Diagram {
     this.currentStepIndex = currentStepIndex;
   }
 
-  public void addStep(App app, Set<Knot> displayedKnots, Set<Knot> selectedKnots) {
-    logger.info("Adding step, current step={}", currentStepIndex);
-    Set<Knot> displayed = new HashSet<>(app.getOptionalDotGrid().getAllVisibleKnots());
-    displayed.addAll(displayedKnots);
+  public void drawHoveredOverOrSelectedKnots(final App app, final Set<Knot> knots) {
+    knots.stream().forEach(knot -> app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(knot));
 
-    Set<Knot> selected = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-    selected.addAll(selectedKnots);
-    boolean increment = true;
-
-    if (this.allSteps.isEmpty()) {
-      increment = false;
-    }
-
-    if (currentStepIndex < this.allSteps.size() - 1) {
-      this.allSteps = this.allSteps.subList(0, currentStepIndex);
-      this.allSteps.add(new Step(displayed, selected));
-    } else {
-      this.allSteps.add(new Step(displayed, selected));
-    }
-
-    if (increment) {
-      currentStepIndex++;
-    }
-    logger.info("Adding step, new step={}", currentStepIndex);
-  }
-
-  public void addStep(App app) {
-    logger.info("Adding step, current step={}", currentStepIndex);
-
-    if (currentStepIndex < this.allSteps.size() - 1) {
-      this.allSteps = this.allSteps.subList(0, currentStepIndex);
-      this.allSteps.add(new Step(app.getOptionalDotGrid().getAllVisibleKnots(), app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()));
-    } else {
-      this.allSteps.add(new Step(app.getOptionalDotGrid().getAllVisibleKnots(), app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()));
-    }
-
-    currentStepIndex++;
-    logger.info("Added step, new step={}", currentStepIndex);
+    knots.stream().forEach(knot ->
+      app.getOptionalDotGrid().drawGuideLines(app.getDiagram().getCurrentStep(), knot));
   }
 
   public Step getCurrentStep() {
