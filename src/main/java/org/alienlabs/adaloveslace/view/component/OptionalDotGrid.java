@@ -131,7 +131,7 @@ public class OptionalDotGrid extends Pane {
         for (Knot knot : this.diagram.getCurrentStep().getSelectedKnots()) {
           if (knot.isVisible()) {
             drawSelectedKnot(this.diagram.getCurrentStep(), knot);
-            drawHoveredOverOrSelectedKnot(knot);
+            drawHoveredOverOrSelectedKnot(false, knot);
           }
         }
       }
@@ -175,52 +175,61 @@ public class OptionalDotGrid extends Pane {
     return knot;
   }
 
-  public void drawHoveredOverOrSelectedKnot(Knot knot) {
+  public void drawHoveredOverOrSelectedKnot(boolean toUnselect, Knot... knots) {
     Platform.runLater(() -> {
-      Rectangle rec;
+      for (int i = 0; i < knots.length; i++) {
+        Rectangle rec;
+        Knot knot = knots[i];
 
-      // If selected & hovered: red
-      if (getDiagram().getCurrentStep().getSelectedKnots().contains(knot) && allHoveredKnots.contains(knot)) {
-        rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
-        rec.setStroke(Color.RED);
-        rec.setStrokeWidth(2d);
-        rec.setFill(Color.TRANSPARENT);
-        rec.setScaleX(computeZoomFactor(knot));
-        rec.setScaleY(computeZoomFactor(knot));
-        rec.setRotate(knot.getRotationAngle());
+        // If selected & hovered: red
+        if (!toUnselect && getDiagram().getCurrentStep().getSelectedKnots().contains(knot) && allHoveredKnots.contains(knot)) {
+          rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
+          rec.setStroke(Color.RED);
+          rec.setStrokeWidth(2d);
+          rec.setFill(Color.TRANSPARENT);
+          rec.setScaleX(computeZoomFactor(knot));
+          rec.setScaleY(computeZoomFactor(knot));
+          rec.setRotate(knot.getRotationAngle());
 
-        knot.setHovered(rec);
-        knot.setSelection(rec);
-        allSelectedKnots.add(knot);
+          knot.setHovered(rec);
+          knot.setSelection(rec);
+          allSelectedKnots.add(knot);
 
-        root.getChildren().add(rec);
-      } else if (allHoveredKnots.contains(knot)) {
-        // If hovered & not selected: gray
-        rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
-        rec.setStroke(Color.GRAY);
-        rec.setStrokeWidth(2d);
-        rec.setFill(Color.TRANSPARENT);
-        rec.setScaleX(computeZoomFactor(knot));
-        rec.setScaleY(computeZoomFactor(knot));
-        rec.setRotate(knot.getRotationAngle());
+          root.getChildren().add(rec);
+        } else if (!toUnselect && allHoveredKnots.contains(knot)) {
+          // If hovered & not selected: gray
+          rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
+          rec.setStroke(Color.GRAY);
+          rec.setStrokeWidth(2d);
+          rec.setFill(Color.TRANSPARENT);
+          rec.setScaleX(computeZoomFactor(knot));
+          rec.setScaleY(computeZoomFactor(knot));
+          rec.setRotate(knot.getRotationAngle());
 
-        knot.setHovered(rec);
+          knot.setHovered(rec);
 
-        root.getChildren().add(rec);
-      } else if (getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
-        // If not hovered & selected: blue
-        rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
-        rec.setStroke(Color.BLUE);
-        rec.setStrokeWidth(2d);
-        rec.setFill(Color.TRANSPARENT);
-        rec.setScaleX(computeZoomFactor(knot));
-        rec.setScaleY(computeZoomFactor(knot));
-        rec.setRotate(knot.getRotationAngle());
+          root.getChildren().add(rec);
+        } else if (!toUnselect && getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
+          // If not hovered & selected: blue
+          rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
+          rec.setStroke(Color.BLUE);
+          rec.setStrokeWidth(2d);
+          rec.setFill(Color.TRANSPARENT);
+          rec.setScaleX(computeZoomFactor(knot));
+          rec.setScaleY(computeZoomFactor(knot));
+          rec.setRotate(knot.getRotationAngle());
 
-        knot.setSelection(rec);
-        allSelectedKnots.add(knot);
+          knot.setSelection(rec);
+          allSelectedKnots.add(knot);
 
-        root.getChildren().add(rec);
+          root.getChildren().add(rec);
+        } else if (toUnselect) {
+          logger.info("Removing from selection {}", root.getChildren().remove(knot.getSelection()));
+          logger.info("Removing from hovered {}", root.getChildren().remove(knot.getHovered()));
+          knot.setSelection(null);
+          knot.setHovered(null);
+          allSelectedKnots.remove(knot);
+        }
       }
     });
   }

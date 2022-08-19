@@ -245,7 +245,7 @@ public class MainWindow {
 
     // We iterate on the Knots as long as they are still Knots left to iterate
     // And we stop at the first clicked Knot
-    while (it.hasNext() && !hasClickedOnAKnot) {
+    while (it.hasNext()) {
       Knot knot = it.next();
 
       try {
@@ -258,7 +258,7 @@ public class MainWindow {
         logger.error("Error during click on select!", e);
       }
 
-      if (hasClickedOnAGivenKnot && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
+      if (hasClickedOnAGivenKnot && (knot.getSelection() == null || knot.getHovered() == null)) {
         logger.info("Clicked Knot {} in order to select it", knot.getPattern().getFilename());
 
         app.getDiagram().addKnotsToStep(
@@ -274,6 +274,7 @@ public class MainWindow {
           app.getOptionalDotGrid().getAllHoveredKnots().clear();
           app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().remove(knot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().add(knot);
         } else {
           app.getOptionalDotGrid().clearSelections();
@@ -282,8 +283,9 @@ public class MainWindow {
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().add(knot);
         }
 
-        app.getOptionalDotGrid().getDiagram().drawHoveredOverOrSelectedKnots(app, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-        break;
+        Knot[] knots = new Knot[app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size()];
+        app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(false,
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().toArray(knots));
       } else if (hasClickedOnAGivenKnot) {
         logger.info("Clicked Knot displayed {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot), knot.getPattern().getFilename());
@@ -305,15 +307,16 @@ public class MainWindow {
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().add(knot);
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().remove(knot);
+          Knot[] knots = new Knot[app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size()];
+          app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(false,
+            app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().toArray(knots));
         } else {
-          app.getOptionalDotGrid().clearSelections();
           app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().remove(knot);
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().add(knot);
+          app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(true, knot);
+          break;
         }
-
-        app.getOptionalDotGrid().getDiagram().drawHoveredOverOrSelectedKnots(app, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-        break;
       }
     }
 

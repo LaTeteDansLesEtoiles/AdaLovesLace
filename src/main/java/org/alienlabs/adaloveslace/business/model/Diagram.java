@@ -174,15 +174,6 @@ public class Diagram {
     knot.getGuideLines().clear();
   }
 
-  public void deleteNodesFromCurrentStep(Group root, Knot knot) {
-    root.getChildren().remove(knot.getSelection());
-    root.getChildren().remove(knot.getHovered());
-    root.getChildren().removeAll(knot.getGuideLines());
-    knot.getGuideLines().clear();
-
-    root.getChildren().removeAll(root.getChildren().stream().filter(node -> (node instanceof Line || node instanceof Rectangle)).toList());
-  }
-
   public void deleteNodesFromCurrentStep(Group root) {
     root.getChildren().removeAll(root.getChildren().stream().filter(node -> (node instanceof Line || node instanceof Rectangle)).toList());
   }
@@ -234,13 +225,6 @@ public class Diagram {
 
   public void setCurrentStepIndex(int currentStepIndex) {
     this.currentStepIndex = currentStepIndex;
-  }
-
-  public void drawHoveredOverOrSelectedKnots(final App app, final Set<Knot> knots) {
-    knots.stream().forEach(knot -> app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(knot));
-
-    knots.stream().forEach(knot ->
-      app.getOptionalDotGrid().drawGuideLines(app.getDiagram().getCurrentStep(), knot));
   }
 
   public Step getCurrentStep() {
