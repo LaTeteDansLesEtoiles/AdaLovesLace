@@ -68,6 +68,7 @@ public class Events {
         // If a knot is already selected, we must still hover over it because we may want to unselect it afterwards
         // But if it's already hovered over, we shall not hover it again
         boolean isMouseOverAGivenKnot = new NodeUtil().isMouseOverKnot(knot, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+        app.getDiagram().setCurrentKnot(knot);
 
         if (knot.isVisible() && isMouseOverAGivenKnot && !app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
           logger.debug("Hover over not already an hovered over knot: {}", knot);
