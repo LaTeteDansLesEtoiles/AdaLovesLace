@@ -11,13 +11,12 @@ import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUT
 public class ZoomSpinner {
 
   public static final String BUTTON_TOOLTIP = "Use these fields to zoom in or out\nthe currently selected knot\n";
-  private SpinnerValueFactory<Integer> valueFactory;
 
   public void buildZoomSpinner(App app, Spinner<Integer> spinner,
                                SpinnerValueFactory<Integer> spinnerToReflect1,
                                SpinnerValueFactory<Integer> spinnerToReflect2, int increment) {
-    this.valueFactory = spinner.getValueFactory();
-    this.valueFactory.valueProperty().addListener(
+    SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
+    valueFactory.valueProperty().addListener(
       (observableValue, oldValue, newValue) -> {
         spinnerToReflect1.setValue(newValue);
         spinnerToReflect2.setValue(newValue);
@@ -27,17 +26,11 @@ public class ZoomSpinner {
             if (newValue - oldValue == increment || newValue - oldValue == -increment) {
               currentKnot
                 .setZoomFactor(currentKnot.getZoomFactor() + (newValue > oldValue ? increment : -increment));
-
             }
           }
 
           app.getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
             app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-
-          app.getOptionalDotGrid().layoutChildren();
-        } else {
-          app.getOptionalDotGrid().getDiagram().getCurrentKnot()
-            .setZoomFactor(valueFactory.getValue());
         }
 
         app.getOptionalDotGrid().layoutChildren();
@@ -49,10 +42,6 @@ public class ZoomSpinner {
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(BUTTON_TOOLTIP);
     spinner.setTooltip(tooltip);
-  }
-
-  public void restoreZoomSpinnersState(final Knot knot) {
-    this.valueFactory.valueProperty().setValue(knot.getZoomFactor());
   }
 
 }

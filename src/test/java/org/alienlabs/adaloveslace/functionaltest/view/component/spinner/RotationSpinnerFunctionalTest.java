@@ -1,6 +1,5 @@
 package org.alienlabs.adaloveslace.functionaltest.view.component.spinner;
 
-import javafx.application.Platform;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
@@ -9,9 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.*;
@@ -38,14 +34,15 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_default_value(FxRobot robot) {
     // Init
-    selectAndClickOnSnowflake(robot);
+    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
 
     // Run
-    drawSnowflake(robot);
+    synchronizeTask(() -> drawSnowflake(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
+    synchronizeTask(() -> selectSnowflake(robot));
 
     // Verify
-    selectSnowflake(robot);
-    assertEquals(DEFAULT_ROTATION, getSnowFlakeRotationAngle());
+    assertEquals(DEFAULT_ROTATION, getSnowFlakeRotationAngle(DEFAULT_ROTATION));
     assertEquals(DEFAULT_ROTATION,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION,
@@ -62,26 +59,15 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_new_first_value_up(FxRobot robot) {
     // Init
-    selectAndClickOnSnowflake(robot);
-    drawSnowflake(robot);
+    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
+    synchronizeTask(() -> drawSnowflake(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
+    synchronizeTask(() -> selectSnowflake(robot));
 
     // Run
-    lock = new CountDownLatch(1);
-
-    Platform.runLater(() -> {
-      this.geometryWindow.getRotationSpinner1().getValueFactory().setValue(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1);
-      lock.countDown();
-    });
-
-    try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
-
+    synchronizeTask(() -> this.geometryWindow.getRotationSpinner1().getValueFactory().setValue(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1));
     // Verify
-    selectSnowflake(robot);
-    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle());
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1));
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner2().getValue());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1,
@@ -96,26 +82,16 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_new_first_value_down(FxRobot robot) {
     // Init
-    selectAndClickOnSnowflake(robot);
-    drawSnowflake(robot);
+    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
+    synchronizeTask(() -> drawSnowflake(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
+    synchronizeTask(() -> selectSnowflake(robot));
 
     // Run
-    lock = new CountDownLatch(1);
+    synchronizeTask(() -> this.geometryWindow.getRotationSpinner1().getValueFactory().setValue(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1));
 
-    Platform.runLater(() -> {
-      this.geometryWindow.getRotationSpinner1().getValueFactory().setValue(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1);
-      lock.countDown();
-    });
-
-    try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
-
-    // Verify
-    selectSnowflake(robot);
-    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle());
+    // VerifyDEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1));
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner2().getValue());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1,
@@ -130,26 +106,16 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_new_second_value_up(FxRobot robot) {
     // Init
-    selectAndClickOnSnowflake(robot);
-    drawSnowflake(robot);
+    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
+    synchronizeTask(() -> drawSnowflake(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
+    synchronizeTask(() -> selectSnowflake(robot));
 
     // Run
-    lock = new CountDownLatch(1);
-
-    Platform.runLater(() -> {
-      this.geometryWindow.getRotationSpinner2().getValueFactory().setValue(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2);
-      lock.countDown();
-    });
-
-    try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
+    synchronizeTask(() -> this.geometryWindow.getRotationSpinner2().getValueFactory().setValue(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2));
 
     // Verify
-    selectSnowflake(robot);
-    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle());
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2));
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2,
@@ -164,26 +130,17 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_new_second_value_down(FxRobot robot) {
     // Init
-    selectAndClickOnSnowflake(robot);
-    drawSnowflake(robot);
+    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
+    synchronizeTask(() -> drawSnowflake(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
+    synchronizeTask(() -> selectSnowflake(robot));
 
     // Run
-    lock = new CountDownLatch(1);
-
-    Platform.runLater(() -> {
-      this.geometryWindow.getRotationSpinner2().getValueFactory().setValue(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2);
-      lock.countDown();
-    });
-
-    try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
+    synchronizeTask(() ->
+      this.geometryWindow.getRotationSpinner2().getValueFactory().setValue(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2));
 
     // Verify
-    selectSnowflake(robot);
-    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle());
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2));
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2,
@@ -198,26 +155,17 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_new_third_value_up(FxRobot robot) {
     // Init
-    selectAndClickOnSnowflake(robot);
-    drawSnowflake(robot);
+    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
+    synchronizeTask(() -> drawSnowflake(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
+    synchronizeTask(() -> selectSnowflake(robot));
 
     // Run
-    lock = new CountDownLatch(1);
-
-    Platform.runLater(() -> {
-      this.geometryWindow.getRotationSpinner3().getValueFactory().setValue(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3);
-      lock.countDown();
-    });
-
-    try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
+    synchronizeTask(() ->
+      this.geometryWindow.getRotationSpinner3().getValueFactory().setValue(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3));
 
     // Verify
-    selectSnowflake(robot);
-    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle());
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3));
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3,
@@ -232,37 +180,27 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_new_third_value_down(FxRobot robot) {
     // Init
-    selectAndClickOnSnowflake(robot);
-    drawSnowflake(robot);
+    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
+    synchronizeTask(() -> drawSnowflake(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
+    synchronizeTask(() -> selectSnowflake(robot));
 
     // Run
-    lock = new CountDownLatch(1);
-
-    Platform.runLater(() -> {
-      this.geometryWindow.getRotationSpinner3().getValueFactory().setValue(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3);
-      lock.countDown();
-    });
-
-    try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
-
+    synchronizeTask(() ->
+      this.geometryWindow.getRotationSpinner3().getValueFactory().setValue(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3));
 
     // Verify
-    selectSnowflake(robot);
-    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle());
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3));
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner2().getValue());
   }
 
-  private double getSnowFlakeRotationAngle() {
+  private double getSnowFlakeRotationAngle(int expected) {
     return ((Rotate) (this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-      stream().findFirst().get().getImageView().getTransforms().stream().filter(transform -> transform instanceof Rotate).findFirst()
-      .orElse(new Rotate(geometryWindow.getRotationSpinner1().getValue())))).getAngle();
+      stream().findFirst().get().getImageView().getTransforms().stream().filter(transform -> transform instanceof Rotate && ((int)((Rotate)transform).getAngle()) == expected).findFirst()
+      .get())).getAngle();
   }
 
 }

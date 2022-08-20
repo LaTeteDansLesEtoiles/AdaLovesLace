@@ -1,6 +1,5 @@
 package org.alienlabs.adaloveslace.functionaltest.view;
 
-import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -14,9 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,7 +57,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testDrawSnowflake(FxRobot robot) {
     // Init
-    selectAndClickOnSnowflake(robot);
+    selectAndClickOnSnowflakeButton(robot);
     drawSnowflake(robot);
 
     // Run
@@ -134,7 +130,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testUndoSnowflake(FxRobot robot) {
     // Init
-    selectAndClickOnSnowflake(robot);
+    selectAndClickOnSnowflakeButton(robot);
     drawSnowflake(robot);
 
     Point2D snowflakePoint = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
@@ -144,8 +140,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
     // Run: issue an "Undo knot" command
-    lock = new CountDownLatch(1);
-    selectAndClickUndoKnot();
+    synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
     // Verify
     // Move mouse and get the color of the pixel under the pointer
@@ -164,7 +159,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testRedoSnowflake(FxRobot robot) {
     // Init
-    selectAndClickOnSnowflake(robot);
+    selectAndClickOnSnowflakeButton(robot);
     drawSnowflake(robot);
 
     Point2D snowflakePoint = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
@@ -174,12 +169,10 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     Color foundColorOnGridBeforeRedo = getColor(snowflakePoint);
 
     // Issue an "Undo knot" command
-    lock = new CountDownLatch(1);
-    selectAndClickUndoKnot();
+    synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
     // Run: Issue a "Redo knot" command
-    lock = new CountDownLatch(1);
-    selectAndClickRedoKnot();
+    synchronizeTask(() -> RedoKnotButton.redoKnot(app));
 
     // Verify
     // Move mouse and get the color of the pixel under the pointer
@@ -198,7 +191,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testResetSnowflake(FxRobot robot) {
     // Init
-    selectAndClickOnSnowflake(robot);
+    selectAndClickOnSnowflakeButton(robot);
     drawSnowflake(robot);
 
     // Move mouse and get the color of the pixel under the pointer
@@ -208,8 +201,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     Color foundColorOnGridBeforeReset = getColor(pointToCheck);
 
     // Run: issue a "Reset diagram" command
-    lock = new CountDownLatch(1);
-    selectAndClickResetDiagramButton();
+    synchronizeTask(() -> ResetDiagramButton.resetDiagram(app));
 
     // Verify
     // Move mouse and get the color of the pixel under the pointer
@@ -219,48 +211,6 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
     assertNotEquals(foundColorOnGridAfterReset, foundColorOnGridBeforeReset,
       "The color before and after 'reset diagram' must not be the same!");
-  }
-
-  // Click on the 'undo knot' in the toolbox
-  private void selectAndClickUndoKnot() {
-    Platform.runLater(() -> {
-      UndoKnotButton.undoKnot(app);
-      lock.countDown();
-    });
-
-    try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
-  }
-
-  // Click on the 'redo knot' in the toolbox
-  private void selectAndClickRedoKnot() {
-    Platform.runLater(() -> {
-      RedoKnotButton.redoKnot(app);
-      lock.countDown();
-    });
-
-    try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
-  }
-
-  // Click on the 'reset diagram' in the toolbox
-  private void selectAndClickResetDiagramButton() {
-    Platform.runLater(() -> {
-      ResetDiagramButton.resetDiagram(app);
-      lock.countDown();
-    });
-
-    try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
   }
 
   private String getMainWindowTitle() {

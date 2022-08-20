@@ -1,6 +1,5 @@
 package org.alienlabs.adaloveslace.functionaltest.view;
 
-import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -12,9 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
 import static org.alienlabs.adaloveslace.functionaltest.view.MainWindowFunctionalTest.GRAY_DOTS_COLOR;
@@ -59,8 +55,7 @@ class ToolboxFunctionalTest extends AppFunctionalTestParent {
     assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
 
     // Run
-    lock = new CountDownLatch(1);
-    switchGrid();
+    synchronizeTask(() -> ShowHideGridButton.showHideGrid(app));
 
     // Move mouse and get the color of the pixel under the pointer
     pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
@@ -86,8 +81,7 @@ class ToolboxFunctionalTest extends AppFunctionalTestParent {
     assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
 
     // Run
-    lock = new CountDownLatch(1);
-    switchGrid();
+    synchronizeTask(() -> ShowHideGridButton.showHideGrid(app));
 
     // Move mouse and get the color of the pixel under the pointer
     pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
@@ -99,8 +93,7 @@ class ToolboxFunctionalTest extends AppFunctionalTestParent {
 
     // Run
     // Show the dot grid again
-    lock = new CountDownLatch(1);
-    switchGrid();
+    synchronizeTask(() -> ShowHideGridButton.showHideGrid(app));
 
     pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
     robot.moveTo(pointToCheck);
@@ -108,22 +101,6 @@ class ToolboxFunctionalTest extends AppFunctionalTestParent {
 
     // All we can say is that if we click on the grid, then the pixel is gray
     assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
-  }
-
-  // Click on "show / hide dot grid" button in the toolbox
-  private void switchGrid() {
-    Platform.runLater(() -> {
-      ShowHideGridButton.showHideGrid(app);
-      lock.countDown();
-    });
-
-    // No choice to sleep because the grid show / hide is asynchronous in tests (because of the image of the grid
-    // that we produce, see: AppTestParent#copyCanvas()
-    try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
   }
 
 }
