@@ -25,7 +25,7 @@ public class ZoomSpinner {
           for (Knot currentKnot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
             if (newValue - oldValue == increment || newValue - oldValue == -increment) {
               currentKnot
-                .setZoomFactor(currentKnot.getZoomFactor() + (newValue > oldValue ? increment : -increment));
+                .setZoomFactor(newValue);
             }
           }
 

@@ -25,7 +25,7 @@ public class RotationSpinner {
         for (Knot currentKnot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
           if (newValue - oldValue == increment || newValue - oldValue == -increment) {
             currentKnot
-              .setRotationAngle(currentKnot.getRotationAngle() + (newValue > oldValue ? increment : -increment));
+              .setRotationAngle(newValue);
           }
         }
 
