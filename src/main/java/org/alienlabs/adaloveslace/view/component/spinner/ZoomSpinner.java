@@ -14,7 +14,7 @@ public class ZoomSpinner {
 
   public void buildZoomSpinner(App app, Spinner<Integer> spinner,
                                SpinnerValueFactory<Integer> spinnerToReflect1,
-                               SpinnerValueFactory<Integer> spinnerToReflect2, int increment) {
+                               SpinnerValueFactory<Integer> spinnerToReflect2) {
     SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
     valueFactory.valueProperty().addListener(
       (observableValue, oldValue, newValue) -> {
@@ -23,10 +23,7 @@ public class ZoomSpinner {
 
         if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots() != null && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().isEmpty()) {
           for (Knot currentKnot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
-            if (newValue - oldValue == increment || newValue - oldValue == -increment) {
-              currentKnot
-                .setZoomFactor(newValue);
-            }
+            currentKnot.setZoomFactor(newValue);
           }
 
           app.getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),

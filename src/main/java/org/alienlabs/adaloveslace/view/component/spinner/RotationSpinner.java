@@ -15,7 +15,7 @@ public class RotationSpinner {
 
   public void buildRotationSpinner(App app, Spinner<Integer> spinner,
                                    SpinnerValueFactory<Integer> spinnerToReflect1,
-                                   SpinnerValueFactory<Integer> spinnerToReflect2, int increment) {
+                                   SpinnerValueFactory<Integer> spinnerToReflect2) {
     SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
     ChangeListener<Integer> valueChangeListener = (observableValue, oldValue, newValue) -> {
       spinnerToReflect1.setValue(newValue);
@@ -23,10 +23,7 @@ public class RotationSpinner {
 
       if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots() != null && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().isEmpty()) {
         for (Knot currentKnot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
-          if (newValue - oldValue == increment || newValue - oldValue == -increment) {
-            currentKnot
-              .setRotationAngle(newValue);
-          }
+          currentKnot.setRotationAngle(newValue);
         }
 
         app.getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
