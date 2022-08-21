@@ -29,7 +29,7 @@ node {
 
         stage('integration & functional tests') {
           try {
-            sh "./mvnw verify -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=15000 -DSLEEP_TIME=15000"
+            sh "./mvnw verify -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=15000 -DSLEEP_TIME=5000"
           } catch(err) {
             throw err
           } finally {
