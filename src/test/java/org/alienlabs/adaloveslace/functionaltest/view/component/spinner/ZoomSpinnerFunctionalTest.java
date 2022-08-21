@@ -41,7 +41,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> selectSnowflake(robot));
 
     // Verify
-    assertEquals(app.getOptionalDotGrid().computeZoomFactor(DEFAULT_ZOOM), getSnowFlakeComputedZoomFactor());
+    assertIncrementWasReflected(DEFAULT_ZOOM, getSnowFlakeComputedZoomFactor());
   }
 
   /**
@@ -61,7 +61,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
 
     // Verify
-    assertEquals(app.getOptionalDotGrid().computeZoomFactor(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1), getSnowFlakeComputedZoomFactor());
+    assertIncrementWasReflected(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1, computeZoomFactorOfSelectedKnot());
   }
 
   /**
@@ -81,7 +81,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner1()));
 
     // Verify
-    assertEquals(app.getOptionalDotGrid().computeZoomFactor(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1), getSnowFlakeComputedZoomFactor());
+    assertIncrementWasReflected(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1, getSnowFlakeComputedZoomFactor());
   }
 
   /**
@@ -101,7 +101,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
 
     // Verify
-    assertEquals(app.getOptionalDotGrid().computeZoomFactor(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2), getSnowFlakeComputedZoomFactor());
+    assertIncrementWasReflected(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2, getSnowFlakeComputedZoomFactor());
   }
 
   /**
@@ -121,7 +121,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner2()));
 
     // Verify
-    assertEquals(app.getOptionalDotGrid().computeZoomFactor(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2), getSnowFlakeComputedZoomFactor());
+    assertDecrementWasReflected(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2, getSnowFlakeComputedZoomFactor());
   }
 
   /**
@@ -141,7 +141,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner3()));
 
     // Verify
-    assertEquals(app.getOptionalDotGrid().computeZoomFactor(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3), getSnowFlakeComputedZoomFactor());
+    assertIncrementWasReflected(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3, getSnowFlakeComputedZoomFactor());
   }
 
   /**
@@ -161,7 +161,24 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner3()));
 
     // Verify
-    assertEquals(app.getOptionalDotGrid().computeZoomFactor(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3), getSnowFlakeComputedZoomFactor());
+    assertDecrementWasReflected(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3, getSnowFlakeComputedZoomFactor());
+  }
+
+  private void assertIncrementWasReflected(int increment, double actual) {
+    assertEquals(computeNewZoomFactor(increment), actual);
+  }
+
+  private void assertDecrementWasReflected(int decrement, double actual) {
+    assertEquals(computeNewZoomFactor(decrement), actual);
+  }
+
+  private double computeZoomFactorOfSelectedKnot() {
+    return app.getOptionalDotGrid().computeZoomFactor(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
+      stream().findFirst().get());
+  }
+
+  private double computeNewZoomFactor(int DEFAULT_ZOOM) {
+    return app.getOptionalDotGrid().computeZoomFactor(DEFAULT_ZOOM);
   }
 
   private double getSnowFlakeComputedZoomFactor() {
