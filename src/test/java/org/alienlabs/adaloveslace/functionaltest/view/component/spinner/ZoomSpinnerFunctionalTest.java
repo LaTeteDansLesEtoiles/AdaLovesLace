@@ -33,15 +33,10 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_zoom_default_value(FxRobot robot) {
     // Init
-    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
-
-    // Run
-    synchronizeTask(() -> drawSnowflake(robot));
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectSnowflake(robot));
+    drawAndSelectSnowFlake(robot);
 
     // Verify
-    assertIncrementWasReflected(DEFAULT_ZOOM, getSnowFlakeComputedZoomFactor());
+    assertZoomFactorsEqual(DEFAULT_ZOOM, getSnowFlakeComputedZoomFactor());
   }
 
   /**
@@ -52,16 +47,13 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_zoom_new_first_value_up(FxRobot robot) {
     // Init
-    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
-    synchronizeTask(() -> drawSnowflake(robot));
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectSnowflake(robot));
+    drawAndSelectSnowFlake(robot);
 
     // Run
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
 
     // Verify
-    assertIncrementWasReflected(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1, computeZoomFactorOfSelectedKnot());
+    assertZoomFactorsEqual(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1, computeZoomFactorOfFirstSelectedKnot());
   }
 
   /**
@@ -72,16 +64,13 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_zoom_new_first_value_down(FxRobot robot) {
     // Init
-    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
-    synchronizeTask(() -> drawSnowflake(robot));
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectSnowflake(robot));
+    drawAndSelectSnowFlake(robot);
 
     // Run
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner1()));
 
     // Verify
-    assertIncrementWasReflected(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1, getSnowFlakeComputedZoomFactor());
+    assertZoomFactorsEqual(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1, getSnowFlakeComputedZoomFactor());
   }
 
   /**
@@ -92,16 +81,13 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_zoom_new_second_value_up(FxRobot robot) {
     // Init
-    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
-    synchronizeTask(() -> drawSnowflake(robot));
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectSnowflake(robot));
+    drawAndSelectSnowFlake(robot);
 
     // Run
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
 
     // Verify
-    assertIncrementWasReflected(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2, getSnowFlakeComputedZoomFactor());
+    assertZoomFactorsEqual(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2, getSnowFlakeComputedZoomFactor());
   }
 
   /**
@@ -112,16 +98,13 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_zoom_new_second_value_down(FxRobot robot) {
     // Init
-    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
-    synchronizeTask(() -> drawSnowflake(robot));
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectSnowflake(robot));
+    drawAndSelectSnowFlake(robot);
 
     // Run
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner2()));
 
     // Verify
-    assertDecrementWasReflected(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2, getSnowFlakeComputedZoomFactor());
+    assertZoomFactorsEqual(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2, getSnowFlakeComputedZoomFactor());
   }
 
   /**
@@ -132,16 +115,13 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_zoom_new_third_value_up(FxRobot robot) {
     // Init
-    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
-    synchronizeTask(() -> drawSnowflake(robot));
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectSnowflake(robot));
+    drawAndSelectSnowFlake(robot);
 
     // Run
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner3()));
 
     // Verify
-    assertIncrementWasReflected(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3, getSnowFlakeComputedZoomFactor());
+    assertZoomFactorsEqual(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3, getSnowFlakeComputedZoomFactor());
   }
 
   /**
@@ -152,33 +132,33 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_zoom_new_third_value_down(FxRobot robot) {
     // Init
-    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
-    synchronizeTask(() -> drawSnowflake(robot));
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectSnowflake(robot));
+    drawAndSelectSnowFlake(robot);
 
     // Run
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner3()));
 
     // Verify
-    assertDecrementWasReflected(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3, getSnowFlakeComputedZoomFactor());
+    assertZoomFactorsEqual(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3, getSnowFlakeComputedZoomFactor());
   }
 
-  private void assertIncrementWasReflected(int increment, double actual) {
-    assertEquals(computeNewZoomFactor(increment), actual);
+  private void drawAndSelectSnowFlake(FxRobot robot) {
+    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
+    synchronizeTask(() -> drawSnowflake(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
+    synchronizeTask(() -> selectSnowflake(robot));
   }
 
-  private void assertDecrementWasReflected(int decrement, double actual) {
-    assertEquals(computeNewZoomFactor(decrement), actual);
+  private double incrementOrDecrementZoomFactor(int incrementOrDecrement) {
+    return app.getOptionalDotGrid().computeZoomFactor(incrementOrDecrement);
   }
 
-  private double computeZoomFactorOfSelectedKnot() {
+  private void assertZoomFactorsEqual(int DEFAULT_ZOOM, double SnowFlakeComputedZoomFactor) {
+    assertEquals(incrementOrDecrementZoomFactor(DEFAULT_ZOOM), SnowFlakeComputedZoomFactor);
+  }
+
+  private double computeZoomFactorOfFirstSelectedKnot() {
     return app.getOptionalDotGrid().computeZoomFactor(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
       stream().findFirst().get());
-  }
-
-  private double computeNewZoomFactor(int DEFAULT_ZOOM) {
-    return app.getOptionalDotGrid().computeZoomFactor(DEFAULT_ZOOM);
   }
 
   private double getSnowFlakeComputedZoomFactor() {
