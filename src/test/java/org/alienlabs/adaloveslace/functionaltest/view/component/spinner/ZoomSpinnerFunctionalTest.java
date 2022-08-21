@@ -41,10 +41,10 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> selectSnowflake(robot));
 
     // Verify
-    assertEquals(DEFAULT_ZOOM, getSnowFlakeZoomFactor());
     assertEquals(DEFAULT_ZOOM, this.geometryWindow.getZoomSpinner1().getValue());
     assertEquals(DEFAULT_ZOOM, this.geometryWindow.getZoomSpinner2().getValue());
     assertEquals(DEFAULT_ZOOM, this.geometryWindow.getZoomSpinner3().getValue());
+    assertEquals(DEFAULT_ZOOM, Double.valueOf(getSnowFlakeZoomFactor()).intValue());
   }
 
   /**
@@ -64,9 +64,10 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> this.geometryWindow.getZoomSpinner1().getValueFactory().setValue(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1));
 
     // Verify
-    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1, getSnowFlakeZoomFactor());
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1, this.geometryWindow.getZoomSpinner1().getValue());
     assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1, this.geometryWindow.getZoomSpinner2().getValue());
     assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1, this.geometryWindow.getZoomSpinner3().getValue());
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1, getSnowFlakeZoomFactor());
   }
 
   /**
@@ -86,9 +87,10 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> this.geometryWindow.getZoomSpinner1().getValueFactory().setValue(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1));
 
     // Verify
-    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1, getSnowFlakeZoomFactor());
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1, this.geometryWindow.getZoomSpinner1().getValue());
     assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1, this.geometryWindow.getZoomSpinner2().getValue());
     assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1, this.geometryWindow.getZoomSpinner3().getValue());
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1, getSnowFlakeZoomFactor());
   }
 
   /**
@@ -108,9 +110,10 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> this.geometryWindow.getZoomSpinner2().getValueFactory().setValue(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2));
 
     // Verify
-    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2, getSnowFlakeZoomFactor());
     assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2, this.geometryWindow.getZoomSpinner1().getValue());
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2, this.geometryWindow.getZoomSpinner2().getValue());
     assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2, this.geometryWindow.getZoomSpinner3().getValue());
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2, Double.valueOf(getSnowFlakeZoomFactor()).intValue());
   }
 
   /**
@@ -130,9 +133,10 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> this.geometryWindow.getZoomSpinner2().getValueFactory().setValue(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2));
 
     // Verify
-    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2, getSnowFlakeZoomFactor());
     assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2, this.geometryWindow.getZoomSpinner1().getValue());
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2, this.geometryWindow.getZoomSpinner2().getValue());
     assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2, this.geometryWindow.getZoomSpinner3().getValue());
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2, getSnowFlakeZoomFactor());
   }
 
   /**
@@ -152,9 +156,10 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> this.geometryWindow.getZoomSpinner3().getValueFactory().setValue(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3));
 
     // Verify
-    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3, getSnowFlakeZoomFactor());
     assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3, this.geometryWindow.getZoomSpinner1().getValue());
     assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3, this.geometryWindow.getZoomSpinner2().getValue());
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3, this.geometryWindow.getZoomSpinner3().getValue());
+    assertEquals(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3, getSnowFlakeZoomFactor());
   }
 
   /**
@@ -174,9 +179,10 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> this.geometryWindow.getZoomSpinner3().getValueFactory().setValue(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3));
 
     // Verify
-    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3, getSnowFlakeZoomFactor());
     assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3, this.geometryWindow.getZoomSpinner1().getValue());
     assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3, this.geometryWindow.getZoomSpinner2().getValue());
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3, this.geometryWindow.getZoomSpinner3().getValue());
+    assertEquals(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3, getSnowFlakeZoomFactor());
   }
 
   private double getSnowFlakeZoomFactor() {
