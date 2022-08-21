@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace.functionaltest;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.control.Spinner;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
@@ -110,6 +111,14 @@ public class AppFunctionalTestParent {
   // Click on the grid where the snowflake is in order to select it
   protected void clickSelectButton(FxRobot robot) {
     robot.clickOn(geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  protected void incrementSpinner(Spinner<Integer> spinner) {
+    spinner.increment();
+  }
+
+  protected void decrementSpinner(Spinner<Integer> spinner) {
+    spinner.decrement();
   }
 
   protected void selectSnowflake(FxRobot robot) {
