@@ -99,7 +99,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_zoom_new_second_value_up(FxRobot robot) {
     // Init
-    synchronizeTask(() -> synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot)));
+    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
     synchronizeTask(() -> drawSnowflake(robot));
     synchronizeTask(() -> clickSelectButton(robot));
     synchronizeTask(() -> selectSnowflake(robot));
