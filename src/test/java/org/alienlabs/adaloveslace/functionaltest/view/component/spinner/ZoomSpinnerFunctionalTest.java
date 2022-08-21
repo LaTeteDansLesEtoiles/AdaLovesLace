@@ -141,13 +141,6 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     assertZoomFactorsEqual(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3, getSnowFlakeComputedZoomFactor());
   }
 
-  private void drawAndSelectSnowFlake(FxRobot robot) {
-    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
-    synchronizeTask(() -> drawSnowflake(robot));
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectSnowflake(robot));
-  }
-
   private double incrementOrDecrementZoomFactor(int incrementOrDecrement) {
     return app.getOptionalDotGrid().computeZoomFactor(incrementOrDecrement);
   }

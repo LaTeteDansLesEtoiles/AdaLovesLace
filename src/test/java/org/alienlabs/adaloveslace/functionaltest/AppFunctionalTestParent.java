@@ -9,6 +9,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
@@ -181,5 +182,19 @@ public class AppFunctionalTestParent {
     return new Point2D(this.primaryStage.getX() + imageView.getBoundsInParent().getCenterX(),
       this.primaryStage.getY() + imageView.getBoundsInParent().getCenterY() + 10d);
   }
+
+  protected double getSnowFlakeRotationAngle() {
+    return ((Rotate) (this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
+      stream().findFirst().get().getImageView().getTransforms().stream().filter(transform -> transform instanceof Rotate).findFirst()
+      .get())).getAngle();
+  }
+
+  protected void drawAndSelectSnowFlake(FxRobot robot) {
+    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
+    synchronizeTask(() -> drawSnowflake(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
+    synchronizeTask(() -> selectSnowflake(robot));
+  }
+
 
 }
