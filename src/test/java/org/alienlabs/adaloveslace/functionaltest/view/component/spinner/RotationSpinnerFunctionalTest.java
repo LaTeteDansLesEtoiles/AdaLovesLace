@@ -1,6 +1,5 @@
 package org.alienlabs.adaloveslace.functionaltest.view.component.spinner;
 
-import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.junit.jupiter.api.Test;
@@ -42,13 +41,13 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> selectSnowflake(robot));
 
     // Verify
-    assertEquals(DEFAULT_ROTATION, getSnowFlakeRotationAngle(DEFAULT_ROTATION));
     assertEquals(DEFAULT_ROTATION,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION,
       this.geometryWindow.getRotationSpinner2().getValue());
     assertEquals(DEFAULT_ROTATION,
       this.geometryWindow.getRotationSpinner3().getValue());
+    assertEquals(DEFAULT_ROTATION, getSnowFlakeRotationAngle());
   }
 
   /**
@@ -67,11 +66,13 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Run
     synchronizeTask(() -> this.geometryWindow.getRotationSpinner1().getValueFactory().setValue(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1));
     // Verify
-    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1));
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1,
+      this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner2().getValue());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner3().getValue());
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle());
   }
 
   /**
@@ -91,11 +92,13 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> this.geometryWindow.getRotationSpinner1().getValueFactory().setValue(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1));
 
     // VerifyDEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1
-    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1));
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1,
+      this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner2().getValue());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1,
       this.geometryWindow.getRotationSpinner3().getValue());
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle());
   }
 
   /**
@@ -115,11 +118,13 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> this.geometryWindow.getRotationSpinner2().getValueFactory().setValue(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2));
 
     // Verify
-    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2));
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2,
+      this.geometryWindow.getRotationSpinner2().getValue());
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner3().getValue());
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle());
   }
 
   /**
@@ -140,11 +145,13 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
       this.geometryWindow.getRotationSpinner2().getValueFactory().setValue(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2));
 
     // Verify
-    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2));
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2,
+      this.geometryWindow.getRotationSpinner2().getValue());
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2,
       this.geometryWindow.getRotationSpinner3().getValue());
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle());
   }
 
   /**
@@ -165,11 +172,13 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
       this.geometryWindow.getRotationSpinner3().getValueFactory().setValue(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3));
 
     // Verify
-    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3));
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner2().getValue());
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3,
+      this.geometryWindow.getRotationSpinner3().getValue());
+    assertEquals(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle());
   }
 
   /**
@@ -190,17 +199,17 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
       this.geometryWindow.getRotationSpinner3().getValueFactory().setValue(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3));
 
     // Verify
-    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3));
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner1().getValue());
     assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3,
       this.geometryWindow.getRotationSpinner2().getValue());
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3,
+      this.geometryWindow.getRotationSpinner3().getValue());
+    assertEquals(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle());
   }
 
-  private double getSnowFlakeRotationAngle(int expected) {
-    return ((Rotate) (this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-      stream().findFirst().get().getImageView().getTransforms().stream().filter(transform -> transform instanceof Rotate && ((int)((Rotate)transform).getAngle()) == expected).findFirst()
-      .get())).getAngle();
+  private double getSnowFlakeRotationAngle() {
+    return this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getRotationAngle();
   }
 
 }

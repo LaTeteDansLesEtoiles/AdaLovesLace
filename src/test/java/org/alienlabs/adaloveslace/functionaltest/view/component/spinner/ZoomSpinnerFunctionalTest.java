@@ -186,8 +186,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   }
 
   private double getSnowFlakeZoomFactor() {
-    return this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-      stream().findFirst().get().getZoomFactor();
+    return super.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getZoomFactor();
   }
 
 }
