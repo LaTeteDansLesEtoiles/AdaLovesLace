@@ -224,10 +224,10 @@ public class AppFunctionalTestParent {
   }
 
   protected void drawAndSelectSnowFlake(FxRobot robot) {
-    selectAndClickOnSnowflakeButton(robot);
-    drawSnowflake(robot);
-    clickSelectButton(robot);
-    selectSnowflake(robot);
+    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
+    synchronizeTask(() -> drawSnowflake(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
+    synchronizeTask(() -> selectSnowflake(robot));
   }
 
 

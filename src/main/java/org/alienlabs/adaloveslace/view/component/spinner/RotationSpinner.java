@@ -17,6 +17,7 @@ public class RotationSpinner {
                                    SpinnerValueFactory<Integer> spinnerToReflect1,
                                    SpinnerValueFactory<Integer> spinnerToReflect2) {
     SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
+
     ChangeListener<Integer> valueChangeListener = (observableValue, oldValue, newValue) -> {
       spinnerToReflect1.setValue(newValue);
       spinnerToReflect2.setValue(newValue);
@@ -32,6 +33,7 @@ public class RotationSpinner {
 
       app.getOptionalDotGrid().layoutChildren();
     };
+
     valueFactory.valueProperty().addListener(valueChangeListener);
 
     spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);

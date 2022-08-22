@@ -29,7 +29,7 @@ node {
 
         stage('integration & functional tests') {
           try {
-            sh "./mvnw verify -Dtestfx.launch.timeout=20000 -Dtestfx.setup.timeout=20000 -DSLEEP_BETWEEN_ACTIONS_TIME=15000 -DSLEEP_TIME=7500"          } catch(err) {
+            sh "./mvnw verify -Dtestfx.launch.timeout=20000 -Dtestfx.setup.timeout=20000 -DSLEEP_BETWEEN_ACTIONS_TIME=15000 -DSLEEP_TIME=5000"          } catch(err) {
             throw err
           } finally {
             junit '**/target/failsafe-reports/TEST-*.xml'
