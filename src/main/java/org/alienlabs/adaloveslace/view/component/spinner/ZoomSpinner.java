@@ -20,6 +20,7 @@ public class ZoomSpinner {
 
     ChangeListener<Integer> valueChangeListener = (observableValue, oldValue, newValue) -> {
       valueFactory.setValue(newValue);
+      spinner.commitValue();
       spinnerToReflect1.setValue(newValue);
       spinnerToReflect2.setValue(newValue);
 

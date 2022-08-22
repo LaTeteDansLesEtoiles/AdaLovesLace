@@ -291,7 +291,7 @@ public class OptionalDotGrid extends Pane {
 
   private void drawDisplayedKnot(Knot knot) {
     ImageView iv = rotateKnot(knot);
-    zoomAndFlipKnot(knot, iv);
+    zoomAndFlipKnot(knot);
 
     double x = knot.getX();
     double y = knot.getY();
@@ -306,7 +306,7 @@ public class OptionalDotGrid extends Pane {
 
   private void drawSelectedKnot(Step step, Knot knot) {
     ImageView iv = rotateKnot(knot);
-    zoomAndFlipKnot(knot, iv);
+    zoomAndFlipKnot(knot);
 
     double x = knot.getX();
     double y = knot.getY();
@@ -321,20 +321,20 @@ public class OptionalDotGrid extends Pane {
   }
 
   // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
-  public double zoomAndFlipKnot(Knot knot, ImageView iv) {
+  public double zoomAndFlipKnot(Knot knot) {
     flip(knot.isFlippedVertically(), Rotate.Y_AXIS, knot);
     flip(knot.isFlippedHorizontally(), Rotate.X_AXIS, knot);
 
-    return zoom(knot, iv);
+    return zoom(knot);
   }
 
-  private double zoom(Knot knot, ImageView iv) {
+  private double zoom(Knot knot) {
     if (knot.getZoomFactor() != 0) {
       double zoomFactor = computeZoomFactor(knot);
 
-      if (iv != null) {
-        iv.setScaleX(zoomFactor);
-        iv.setScaleY(zoomFactor);
+      if (knot.getImageView() != null) {
+        knot.getImageView().setScaleX(zoomFactor);
+        knot.getImageView().setScaleY(zoomFactor);
       }
 
       logger.info("zoomed knot {} at factor {}", knot.getPattern().getFilename(), knot.getZoomFactor());
@@ -343,9 +343,9 @@ public class OptionalDotGrid extends Pane {
     } else {
       double zoomFactor = 1d;
 
-      if (iv != null) {
-        iv.setScaleX(zoomFactor);
-        iv.setScaleY(zoomFactor);
+      if (knot.getImageView() != null) {
+        knot.getImageView().setScaleX(zoomFactor);
+        knot.getImageView().setScaleY(zoomFactor);
       }
 
       logger.info("zoomed knot {} at factor {}", knot.getPattern().getFilename(), knot.getZoomFactor());
