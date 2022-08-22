@@ -19,6 +19,7 @@ public class RotationSpinner {
     SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
 
     ChangeListener<Integer> valueChangeListener = (observableValue, oldValue, newValue) -> {
+      valueFactory.setValue(newValue);
       spinnerToReflect1.setValue(newValue);
       spinnerToReflect2.setValue(newValue);
 

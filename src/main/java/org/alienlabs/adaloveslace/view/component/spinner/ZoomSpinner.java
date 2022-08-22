@@ -19,20 +19,21 @@ public class ZoomSpinner {
     SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
 
     ChangeListener<Integer> valueChangeListener = (observableValue, oldValue, newValue) -> {
-        spinnerToReflect1.setValue(newValue);
-        spinnerToReflect2.setValue(newValue);
+      valueFactory.setValue(newValue);
+      spinnerToReflect1.setValue(newValue);
+      spinnerToReflect2.setValue(newValue);
 
-        if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots() != null && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().isEmpty()) {
-          for (Knot currentKnot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
-            currentKnot.setZoomFactor(newValue);
-          }
-
-          app.getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
-            app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+      if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots() != null && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().isEmpty()) {
+        for (Knot currentKnot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
+          currentKnot.setZoomFactor(newValue);
         }
 
-        app.getOptionalDotGrid().layoutChildren();
-      };
+        app.getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+      }
+
+      app.getOptionalDotGrid().layoutChildren();
+    };
 
     valueFactory.valueProperty().addListener(valueChangeListener);
 
