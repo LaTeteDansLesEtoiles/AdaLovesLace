@@ -10,6 +10,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
@@ -255,8 +256,9 @@ public class AppFunctionalTestParent {
   }
 
   protected double getSnowFlakeZoomFactor() {
-    return this.app.getOptionalDotGrid().computeZoomFactor(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-      stream().findFirst().get());
+    return ((Scale) (this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
+      stream().findFirst().get().getImageView().getTransforms().stream().filter(transform -> transform instanceof Scale).findFirst()
+      .get())).getX();
   }
 
   protected void drawAndSelectSnowFlake(FxRobot robot) {

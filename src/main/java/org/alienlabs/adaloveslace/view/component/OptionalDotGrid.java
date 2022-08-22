@@ -15,6 +15,7 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.*;
@@ -329,29 +330,19 @@ public class OptionalDotGrid extends Pane {
   }
 
   private double zoom(Knot knot) {
-    if (knot.getZoomFactor() != 0) {
-      double zoomFactor = computeZoomFactor(knot);
+    double zoomFactor = computeZoomFactor(knot);
 
-      if (knot.getImageView() != null) {
-        knot.getImageView().setScaleX(zoomFactor);
-        knot.getImageView().setScaleY(zoomFactor);
-      }
+    if (knot.getImageView() != null) {
+      Scale scale = new Scale(zoomFactor, zoomFactor);
+      scale.setPivotX(knot.getImageView().getX() + knot.getPattern().getWidth() / 2d);
+      scale.setPivotY(knot.getImageView().getY() + knot.getPattern().getHeight() / 2d);
 
-      logger.info("zoomed knot {} at factor {}", knot.getPattern().getFilename(), knot.getZoomFactor());
-
-      return zoomFactor;
-    } else {
-      double zoomFactor = 1d;
-
-      if (knot.getImageView() != null) {
-        knot.getImageView().setScaleX(zoomFactor);
-        knot.getImageView().setScaleY(zoomFactor);
-      }
-
-      logger.info("zoomed knot {} at factor {}", knot.getPattern().getFilename(), knot.getZoomFactor());
-
-      return 1d;
+      knot.getImageView().getTransforms().add(scale);
     }
+
+    logger.info("zoomed knot {} at factor {}", knot.getPattern().getFilename(), zoomFactor);
+
+    return zoomFactor;
   }
   private void flip(boolean flip, Point3D axis, Knot knot) {
     if (flip) {
