@@ -237,6 +237,8 @@
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
           </additionalClasspathElements>
+          <forkCount>1</forkCount>
+          <useSystemClassLoader>true</useSystemClassLoader>
           <excludes>
             <exclude>**/*FunctionalTest</exclude>
           </excludes>
@@ -255,6 +257,8 @@
           </execution>
         </executions>
         <configuration>
+          <forkCount>1</forkCount>
+          <useSystemClassLoader>true</useSystemClassLoader>
           <includes>
             <include>**/*FunctionalTest</include>
           </includes>
