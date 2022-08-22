@@ -190,7 +190,8 @@ public class AppFunctionalTestParent {
   }
 
   protected double getSnowFlakeZoomFactor() {
-    return this.app.getOptionalDotGrid().getDiagram().getCurrentKnot().getImageView().getScaleX();
+    return this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
+      stream().findFirst().get().getImageView().getScaleX();
   }
 
   protected void drawAndSelectSnowFlake(FxRobot robot) {

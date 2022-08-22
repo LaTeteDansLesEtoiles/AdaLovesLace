@@ -28,9 +28,10 @@ public class ZoomSpinner {
 
           app.getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
             app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+
+          app.getOptionalDotGrid().layoutChildren();
         }
 
-        app.getOptionalDotGrid().layoutChildren();
       });
 
     spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
