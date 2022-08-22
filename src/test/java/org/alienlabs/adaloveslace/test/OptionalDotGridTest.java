@@ -23,16 +23,16 @@ class OptionalDotGridTest {
 
   @ParameterizedTest(name = "Check optional dot grid #{index} - Fixed value zoom")
   @CsvSource({"1,0", "1.7,7", "3,20", "1.3,3", "1.0,0", "1.1,1", "0.95,-1", "1.2,2", "0.9,-2", "1.3,3", "0.85,-3"})
-  void zoom_knot_factor(String expectedZoomFactor, String actualZoomFactor) {
+  void zoom_knot_factor(String expectedZoomFactor, String settedZoomFactor) {
     // Given
     Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
-    knot.setZoomFactor(Integer.parseInt(actualZoomFactor));
+    knot.setZoomFactor(Integer.parseInt(settedZoomFactor));
 
     // When
-    double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
+    double actualZoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
 
     // Then
-    assertEquals(Double.valueOf(expectedZoomFactor), zoomFactor);
+    assertEquals(Double.valueOf(expectedZoomFactor), actualZoomFactor);
   }
 
   @ParameterizedTest(name = "Check optional dot grid #{index} - Zoom in known range")
