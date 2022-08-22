@@ -29,8 +29,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static java.util.Objects.requireNonNullElseGet;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.ZOOM_SPINNER_NEGATIVE_ZOOM_DIVISION_FACTOR;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.ZOOM_SPINNER_POSITIVE_ZOOM_MULTIPLY_FACTOR;
 
 /**
  * A grid (= coordinate system) with dots (= used as landmarks for lace).
@@ -380,9 +378,9 @@ public class OptionalDotGrid extends Pane {
       return 1;
     } else {
       if (factor > 0) {
-        return 1d + factor * ZOOM_SPINNER_POSITIVE_ZOOM_MULTIPLY_FACTOR;
+        return (10d + factor) / 10d;
       }
-      return ZOOM_SPINNER_NEGATIVE_ZOOM_DIVISION_FACTOR / -(factor - 1d);
+      return (20d + factor) / 20d;
     }
   }
 

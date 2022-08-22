@@ -22,7 +22,7 @@ class OptionalDotGridTest {
   private ImageView imageView;
 
   @ParameterizedTest(name = "Check optional dot grid #{index} - Fixed zoom")
-  @CsvSource({"1,0", "2.05,7", "4,20"})
+  @CsvSource({"1,0", "1.7,7", "3,20"})
   void zoom_knot_factor(String expectedZoomFactor, String actualZoomFactor) {
     // Given
     Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
@@ -36,7 +36,7 @@ class OptionalDotGridTest {
   }
 
   @ParameterizedTest(name = "Check optional dot grid #{index} - Zoom in known range")
-  @CsvSource({"1, 1, 1.5", "-1, 0.6, 1", "-5, 0.2, 0.3", "-15, 0.01, 0.1"})
+  @CsvSource({"1, 1, 1.5", "-1, 0.6, 1", "-5, 0.7, 0.8", "-15, 0.2, 0.3"})
   void zoom_knot_with_zoom_factor(String initialZoomFactor, String minZoomFactor, String maxZoomFactor) {
     // Given
     Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
