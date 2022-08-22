@@ -76,7 +76,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // When
     synchronizeTask(() ->  decrementSpinner(this.geometryWindow.getRotationSpinner1()));
 
-    // ThenDEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1
+    // Then
     synchronizeAssertTask(() -> assertRotationAnglesEqual(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle()));
   }
 
