@@ -156,13 +156,8 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
         stream().findFirst().get()));
   }
 
-  private double incrementOrDecrementZoomFactor(int incrementOrDecrement, Knot knot) {
-    app.getOptionalDotGrid().computeZoomFactor(incrementOrDecrement);
-    return app.getOptionalDotGrid().computeZoomFactor(knot);
-  }
-
-  private void assertZoomFactorsEqual(int DEFAULT_ZOOM, Knot knot) {
-    assertEquals(app.getOptionalDotGrid().computeZoomFactor(DEFAULT_ZOOM), incrementOrDecrementZoomFactor(DEFAULT_ZOOM, knot));
+  private void assertZoomFactorsEqual(int expectedZoom, Knot knot) {
+    assertEquals(app.getOptionalDotGrid().computeZoomFactor(expectedZoom), app.getOptionalDotGrid().computeZoomFactor(knot));
   }
 
 }
