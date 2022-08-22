@@ -255,15 +255,15 @@ public class AppFunctionalTestParent {
   }
 
   protected double getSnowFlakeZoomFactor() {
-    return this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-      stream().findFirst().get().getImageView().getScaleX();
+    return this.app.getOptionalDotGrid().computeZoomFactor(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
+      stream().findFirst().get());
   }
 
   protected void drawAndSelectSnowFlake(FxRobot robot) {
-    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
-    synchronizeTask(() -> drawSnowflake(robot));
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectSnowflake(robot));
+    /*synchronizeTask(() -> */selectAndClickOnSnowflakeButton(robot);
+    /*synchronizeTask(() -> */drawSnowflake(robot);
+    /*synchronizeTask(() -> */clickSelectButton(robot);
+    /*synchronizeTask(() -> */selectSnowflake(robot);
   }
 
 
