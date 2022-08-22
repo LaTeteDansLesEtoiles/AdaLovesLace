@@ -165,21 +165,38 @@ public class AppFunctionalTestParent {
   }
 
   public void synchronizeTaskAndAssert(Runnable spinnerRunnable, Runnable assertRunnable) {
-    final CountDownLatch lock  = new CountDownLatch(1);
-    Platform.runLater(() -> {
-      spinnerRunnable.run();
-      lock.countDown();
-    });
-
-    // We block the JavaFX application thread to let the spinnerRunnable work
-    sleepMainThread();
+    final CountDownLatch spinnerLock  = new CountDownLatch(1);
+    final CountDownLatch assertLock  = new CountDownLatch(1);
 
     try {
+      Platform.runLater(() -> {
+        // We let the spinnerRunnable work
+        spinnerRunnable.run();
+
+        // We block the JavaFX application thread to let the spinnerRunnable work
+        sleepMainThread();
+
+        Platform.runLater(() -> {
+          try {
+            spinnerLock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
+          } catch (InterruptedException e) {
+            logger.error("Interrupted spinner lock!", e);
+          }
+          // We let the assert work
+          assertRunnable.run();
+          assertLock.countDown();
+        });
+
+        spinnerLock.countDown();
+      });
+
+      // We block the JavaFX application thread to let the runnables work
+      sleepMainThread();
+
       // And when the spinnerRunnable has returned we can continue
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-      assertRunnable.run();
+      assertLock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
+      logger.error("Interrupted assert lock!", e);
     }
   }
 
