@@ -129,8 +129,16 @@ public class AppFunctionalTestParent {
     spinner.increment();
   }
 
+  protected void incrementSpinner(Spinner<Integer> spinner, int nbSteps) {
+    spinner.increment(nbSteps);
+  }
+
   protected void decrementSpinner(Spinner<Integer> spinner) {
     spinner.decrement();
+  }
+
+  protected void decrementSpinner(Spinner<Integer> spinner, int nbSteps) {
+    spinner.decrement(nbSteps);
   }
 
   protected void selectSnowflake(FxRobot robot) {
