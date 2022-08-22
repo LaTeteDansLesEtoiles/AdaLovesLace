@@ -275,6 +275,7 @@ public class AppFunctionalTestParent {
 
   protected void drawAndSelectSnowFlake(FxRobot robot) {
     selectAndClickOnSnowflakeButton(robot);
+    setSpinnerValue(this.geometryWindow.getZoomSpinner1(), 0);
     drawSnowflake(robot);
     clickSelectButton(robot);
     selectSnowflake(robot);
