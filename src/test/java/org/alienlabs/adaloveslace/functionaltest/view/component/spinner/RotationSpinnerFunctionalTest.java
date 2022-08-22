@@ -39,7 +39,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_default_value(FxRobot robot) {
     // Given
-    drawAndSelectSnowFlake(robot);
+    initDrawAndSelectSnowFlake(robot);
 
     // Then
     assertRotationAnglesEqual(DEFAULT_ROTATION, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
@@ -54,7 +54,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_new_first_value_up(FxRobot robot) {
     // Given
-    drawAndSelectSnowFlake(robot);
+    initDrawAndSelectSnowFlake(robot);
 
     // When
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
@@ -71,7 +71,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_new_first_value_down(FxRobot robot) {
     // Given
-    drawAndSelectSnowFlake(robot);
+    initDrawAndSelectSnowFlake(robot);
 
     // When
     synchronizeTask(() ->  decrementSpinner(this.geometryWindow.getRotationSpinner1()));
@@ -88,7 +88,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_new_second_value_up(FxRobot robot) {
     // Given
-    drawAndSelectSnowFlake(robot);
+    initDrawAndSelectSnowFlake(robot);
 
     // When
    synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
@@ -105,7 +105,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_new_second_value_down(FxRobot robot) {
     // Given
-    drawAndSelectSnowFlake(robot);
+    initDrawAndSelectSnowFlake(robot);
 
     // When
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getRotationSpinner2()));
@@ -122,7 +122,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_new_third_value_up(FxRobot robot) {
     // Given
-    drawAndSelectSnowFlake(robot);
+    initDrawAndSelectSnowFlake(robot);
 
     // When
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner3()));
@@ -139,7 +139,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_contain_rotation_new_third_value_down(FxRobot robot) {
     // Given
-    drawAndSelectSnowFlake(robot);
+    initDrawAndSelectSnowFlake(robot);
 
     // When
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getRotationSpinner3()));

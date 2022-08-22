@@ -129,16 +129,8 @@ public class AppFunctionalTestParent {
     spinner.increment();
   }
 
-  protected void incrementSpinner(Spinner<Integer> spinner, int nbSteps) {
-    spinner.increment(nbSteps);
-  }
-
   protected void decrementSpinner(Spinner<Integer> spinner) {
     spinner.decrement();
-  }
-
-  protected void decrementSpinner(Spinner<Integer> spinner, int nbSteps) {
-    spinner.decrement(nbSteps);
   }
 
   protected void setSpinnerValue(Spinner<Integer> spinner, int value) {
@@ -174,42 +166,6 @@ public class AppFunctionalTestParent {
       lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
       logger.error("Interrupted!", e);
-    }
-  }
-
-  public void synchronizeTaskAndAssert(Runnable spinnerRunnable, Runnable assertRunnable) {
-    final CountDownLatch spinnerLock  = new CountDownLatch(1);
-    final CountDownLatch assertLock  = new CountDownLatch(1);
-
-    try {
-      Platform.runLater(() -> {
-        // We let the spinnerRunnable work
-        spinnerRunnable.run();
-
-        // We block the JavaFX application thread to let the spinnerRunnable work
-        sleepMainThread();
-
-        Platform.runLater(() -> {
-          try {
-            spinnerLock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-          } catch (InterruptedException e) {
-            logger.error("Interrupted spinner lock!", e);
-          }
-          // We let the assert work
-          assertRunnable.run();
-          assertLock.countDown();
-        });
-
-        spinnerLock.countDown();
-      });
-
-      // We block the JavaFX application thread to let the runnables work
-      sleepMainThread();
-
-      // And when the spinnerRunnable has returned we can continue
-      assertLock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted assert lock!", e);
     }
   }
 
@@ -273,9 +229,16 @@ public class AppFunctionalTestParent {
       .get())).getX();
   }
 
-  protected void drawAndSelectSnowFlake(FxRobot robot) {
-    selectAndClickOnSnowflakeButton(robot);
+  protected void initDrawAndSelectSnowFlake(FxRobot robot) {
+    setSpinnerValue(this.geometryWindow.getRotationSpinner1(), 0);
+    setSpinnerValue(this.geometryWindow.getRotationSpinner2(), 0);
+    setSpinnerValue(this.geometryWindow.getRotationSpinner3(), 0);
+
     setSpinnerValue(this.geometryWindow.getZoomSpinner1(), 0);
+    setSpinnerValue(this.geometryWindow.getZoomSpinner2(), 0);
+    setSpinnerValue(this.geometryWindow.getZoomSpinner3(), 0);
+
+    selectAndClickOnSnowflakeButton(robot);
     drawSnowflake(robot);
     clickSelectButton(robot);
     selectSnowflake(robot);
