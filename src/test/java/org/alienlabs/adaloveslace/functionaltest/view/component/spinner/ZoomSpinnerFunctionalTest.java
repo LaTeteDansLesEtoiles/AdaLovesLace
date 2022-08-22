@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 
-import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
@@ -36,7 +34,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM));
+    assertZoomFactorsEqual(1d); // Spinner contains 0
   }
 
   /**
@@ -53,7 +51,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1));
+    assertZoomFactorsEqual(1.1); // Spinner contains 1
   }
 
   /**
@@ -70,7 +68,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner1()));
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1));
+    assertZoomFactorsEqual(0.95d); // Spinner contains -1
   }
 
   /**
@@ -87,7 +85,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2));
+    assertZoomFactorsEqual(1.2d); // Spinner contains 2
   }
 
   /**
@@ -104,7 +102,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner2()));
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2));
+    assertZoomFactorsEqual(0.9d); // Spinner contains -2
   }
 
   /**
@@ -121,7 +119,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner3()));
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3));
+    assertZoomFactorsEqual(1.3); // Spinner contains 3
   }
 
   /**
@@ -138,11 +136,11 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner3()));
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3));
+    assertZoomFactorsEqual(0.85); // Spinner contains -3
   }
 
-  private void assertZoomFactorsEqual(int expectedZoom) {
-    assertEquals(app.getOptionalDotGrid().computeZoomFactor(expectedZoom), getSnowFlakeZoomFactor());
+  private void assertZoomFactorsEqual(double expectedZoom) {
+    assertEquals(expectedZoom, getSnowFlakeZoomFactor());
   }
 
 }
