@@ -7,10 +7,10 @@ import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent.*;
@@ -21,100 +21,33 @@ class OptionalDotGridTest {
 
   private ImageView imageView;
 
-  @Test
-  void zoom_knot_factor_0() {
+  @ParameterizedTest(name = "Check optional dot grid #{index} - Fixed zoom")
+  @CsvSource({"1,0", "2.05,7", "4,20"})
+  void zoom_knot_factor(String expectedZoomFactor, String actualZoomFactor) {
     // Given
     Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
-    knot.setZoomFactor(0);
+    knot.setZoomFactor(Integer.parseInt(actualZoomFactor));
 
     // When
     double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
 
     // Then
-    assertEquals(1d, zoomFactor);
+    assertEquals(Double.valueOf(expectedZoomFactor), zoomFactor);
   }
 
-  @Test
-  void zoom_knot_with_zoom_factor_1() {
+  @ParameterizedTest(name = "Check optional dot grid #{index} - Zoom in known range")
+  @CsvSource({"1, 1, 1.5", "-1, 0.6, 1", "-5, 0.2, 0.3", "-15, 0.01, 0.1"})
+  void zoom_knot_with_zoom_factor(String initialZoomFactor, String minZoomFactor, String maxZoomFactor) {
     // Given
     Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
-    knot.setZoomFactor(1);
+    knot.setZoomFactor(Integer.parseInt(initialZoomFactor));
 
     // When
     double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
 
     // Then
-    assertTrue(zoomFactor > 1d);
-    assertTrue(zoomFactor < 1.5d);
-  }
-
-
-  @Test
-  void zoom_knot_with_zoom_factor_minus_1() {
-    // Given
-    Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
-    knot.setZoomFactor(-1);
-
-    // When
-    double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
-
-    // Then
-    assertTrue(zoomFactor < 1d);
-    assertTrue(zoomFactor > 0.6d);
-  }
-
-  @Test
-  void zoom_knot_factor_7() {
-    // Given
-    Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
-    knot.setZoomFactor(7);
-
-    // When
-    double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
-
-    // Then
-    assertEquals(2.05d, zoomFactor);
-  }
-
-  @Test
-  void zoom_knot_factor_20() {
-    // Given
-    Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
-    knot.setZoomFactor(20);
-
-    // When
-    double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
-
-    // Then
-    assertEquals(4d, zoomFactor);
-  }
-
-  @Test
-  void zoom_knot_factor_minus_5() {
-    // Given
-    Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
-    knot.setZoomFactor(-5);
-
-    // When
-    double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
-
-    // Then
-    assertTrue(zoomFactor < 0.3d);
-    assertTrue(zoomFactor > 0.2);
-  }
-
-  @Test
-  void zoom_knot_factor_minus_15() {
-    // Given
-    Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
-    knot.setZoomFactor(-15);
-
-    // When
-    double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
-
-    // Then
-    assertTrue(zoomFactor < 0.1d);
-    assertTrue(zoomFactor > 0.01d);
+    assertTrue(zoomFactor > Double.parseDouble(minZoomFactor));
+    assertTrue(zoomFactor < Double.parseDouble(maxZoomFactor));
   }
 
   private Pattern buildPattern() {
@@ -125,8 +58,6 @@ class OptionalDotGridTest {
     try (FileInputStream fis = new FileInputStream(new FileUtil().getResources(this, java.util.regex.Pattern.compile(CLASSPATH_RESOURCES_PATH_JPG)).get(0))) {
       Image image = new Image(fis);
       imageView = new ImageView(image);
-    } catch (FileNotFoundException e) {
-      throw new RuntimeException(e);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

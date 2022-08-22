@@ -4,7 +4,7 @@ module org.alienlabs.adaloveslace.test {
   opens org.alienlabs.adaloveslace.functionaltest                         to org.junit.platform.commons, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view                    to org.junit.platform.commons, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.component.spinner  to org.junit.platform.commons, org.testfx.junit5;
-  opens org.alienlabs.adaloveslace.test                                   to org.junit.platform.commons, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.test                                   to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
 
   requires javafx.controls;
   requires javafx.graphics;
@@ -17,6 +17,7 @@ module org.alienlabs.adaloveslace.test {
   requires org.testfx.junit5;
 
   requires transitive org.assertj.core;
-  requires transitive org.junit.jupiter.engine;
   requires transitive org.junit.jupiter.api;
+  requires transitive org.junit.jupiter.engine;
+  requires org.junit.jupiter.params;
 }
