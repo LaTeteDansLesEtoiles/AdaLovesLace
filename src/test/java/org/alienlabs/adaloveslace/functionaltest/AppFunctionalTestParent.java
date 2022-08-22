@@ -141,6 +141,10 @@ public class AppFunctionalTestParent {
     spinner.decrement(nbSteps);
   }
 
+  protected void setSpinnerValue(Spinner<Integer> spinner, int value) {
+    spinner.getValueFactory().setValue(value);
+  }
+
   protected void selectSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(SNOWFLAKE_PIXEL_X + 10d, SNOWFLAKE_PIXEL_Y + 10d);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);

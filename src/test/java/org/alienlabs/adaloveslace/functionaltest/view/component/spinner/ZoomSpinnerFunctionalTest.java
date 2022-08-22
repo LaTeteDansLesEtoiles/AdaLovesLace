@@ -54,7 +54,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1(),1 ));
+    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner1(),1));
 
     // Then
     assertZoomFactorsEqual(1.1); // Spinner contains 1
@@ -71,7 +71,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner1(), 1));
+    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner1(), -1));
 
     // Then
     assertZoomFactorsEqual(0.95d); // Spinner contains -1
@@ -88,7 +88,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1(), 2));
+    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner1(), 2));
 
     // Then
     assertZoomFactorsEqual(1.2d); // Spinner contains 2
@@ -105,7 +105,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner1(), 2));
+    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner1(), 2));
 
     // Then
     assertZoomFactorsEqual(0.8d); // Spinner contains -2
@@ -122,7 +122,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1(), 3));
+    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner1(), 3));
 
     // Then
     assertZoomFactorsEqual(1.3); // Spinner contains 3
@@ -139,7 +139,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner1(), 3));
+    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner1(), 3));
 
     // Then
     assertZoomFactorsEqual(0.55); // Spinner contains -3
