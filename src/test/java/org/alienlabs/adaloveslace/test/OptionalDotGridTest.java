@@ -23,27 +23,27 @@ class OptionalDotGridTest {
 
   @Test
   void zoom_knot_factor_0() {
-    // Init
+    // Given
     Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
     knot.setZoomFactor(0);
 
-    // Run
+    // When
     double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
 
-    // Verify
+    // Then
     assertEquals(1d, zoomFactor);
   }
 
   @Test
   void zoom_knot_with_zoom_factor_1() {
-    // Init
+    // Given
     Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
     knot.setZoomFactor(1);
 
-    // Run
+    // When
     double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
 
-    // Verify
+    // Then
     assertTrue(zoomFactor > 1d);
     assertTrue(zoomFactor < 1.5d);
   }
@@ -51,68 +51,68 @@ class OptionalDotGridTest {
 
   @Test
   void zoom_knot_with_zoom_factor_minus_1() {
-    // Init
+    // Given
     Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
     knot.setZoomFactor(-1);
 
-    // Run
+    // When
     double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
 
-    // Verify
+    // Then
     assertTrue(zoomFactor < 1d);
     assertTrue(zoomFactor > 0.6d);
   }
 
   @Test
   void zoom_knot_factor_7() {
-    // Init
+    // Given
     Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
     knot.setZoomFactor(7);
 
-    // Run
+    // When
     double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
 
-    // Verify
+    // Then
     assertEquals(2.05d, zoomFactor);
   }
 
   @Test
   void zoom_knot_factor_20() {
-    // Init
+    // Given
     Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
     knot.setZoomFactor(20);
 
-    // Run
+    // When
     double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
 
-    // Verify
+    // Then
     assertEquals(4d, zoomFactor);
   }
 
   @Test
   void zoom_knot_factor_minus_5() {
-    // Init
+    // Given
     Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
     knot.setZoomFactor(-5);
 
-    // Run
+    // When
     double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
 
-    // Verify
+    // Then
     assertTrue(zoomFactor < 0.3d);
     assertTrue(zoomFactor > 0.2);
   }
 
   @Test
   void zoom_knot_factor_minus_15() {
-    // Init
+    // Given
     Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
     knot.setZoomFactor(-15);
 
-    // Run
+    // When
     double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot, null);
 
-    // Verify
+    // Then
     assertTrue(zoomFactor < 0.1d);
     assertTrue(zoomFactor > 0.01d);
   }

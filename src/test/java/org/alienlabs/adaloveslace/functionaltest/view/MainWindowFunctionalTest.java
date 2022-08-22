@@ -56,16 +56,16 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
    */
   @Test
   void testDrawSnowflake(FxRobot robot) {
-    // Init
+    // Given
     selectAndClickOnSnowflakeButton(robot);
     drawSnowflake(robot);
 
-    // Run
+    // When
     // Move mouse and get the color of the pixel under the pointer
     Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
     robot.moveTo(pointToCheck);
 
-    // Verify
+    // Then
     foundColorOnGrid = getColor(pointToCheck);
 
     // If we choose a point in the snowflake it must not be of the same color than the grid dots
@@ -87,16 +87,16 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
    */
   @Test
   void testClickOutsideOfAGridDot(FxRobot robot) {
-    // Init
+    // Given
     // Move mouse and get the color of the pixel under the pointer
     Point2D pointToMoveTo = newPointOnGrid(WHITE_PIXEL_X, app.getRoot().getLayoutY() + WHITE_PIXEL_Y);
 
-    // Run
+    // When
     robot.moveTo(pointToMoveTo);
     Point2D pointToCheck = new Point2D(WHITE_PIXEL_X, WHITE_PIXEL_Y);
     foundColorOnGrid = getColor(pointToCheck);
 
-    // Verify
+    // Then
     verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.WHITE));
   }
 
@@ -108,15 +108,15 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
    */
   @Test
   void testClickOnTheGrid(FxRobot robot) {
-    // Init
+    // Given
     // Move mouse and get the color of the pixel under the pointer
     Point2D pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
 
-    // Run
+    // When
     robot.moveTo(pointToCheck);
     foundColorOnGrid = getColor(pointToCheck);
 
-    // Verify
+    // Then
     // If we click on a grid dot, it is gray
     assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
   }
@@ -129,7 +129,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
    */
   @Test
   void testUndoSnowflake(FxRobot robot) {
-    // Init
+    // Given
     selectAndClickOnSnowflakeButton(robot);
     drawSnowflake(robot);
 
@@ -139,10 +139,10 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     // have access to the UI thread for the copy without "Platform.runLater()"
     Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
-    // Run: issue an "Undo knot" command
+    // When: issue an "Undo knot" command
     synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
-    // Verify
+    // Then
     // Move mouse and get the color of the pixel under the pointer
     snowflakePoint = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
     Color foundColorOnGridAfterUndo = getColor(snowflakePoint);
@@ -158,7 +158,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
    */
   @Test
   void testRedoSnowflake(FxRobot robot) {
-    // Init
+    // Given
     selectAndClickOnSnowflakeButton(robot);
     drawSnowflake(robot);
 
@@ -171,10 +171,10 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     // Issue an "Undo knot" command
     synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
-    // Run: Issue a "Redo knot" command
+    // When: Issue a "Redo knot" command
     synchronizeTask(() -> RedoKnotButton.redoKnot(app));
 
-    // Verify
+    // Then
     // Move mouse and get the color of the pixel under the pointer
     snowflakePoint = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
     Color foundColorOnGridAfterRedo = getColor(snowflakePoint);
@@ -190,7 +190,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
    */
   @Test
   void testResetSnowflake(FxRobot robot) {
-    // Init
+    // Given
     selectAndClickOnSnowflakeButton(robot);
     drawSnowflake(robot);
 
@@ -200,10 +200,10 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
     Color foundColorOnGridBeforeReset = getColor(pointToCheck);
 
-    // Run: issue a "Reset diagram" command
+    // When: issue a "Reset diagram" command
     synchronizeTask(() -> ResetDiagramButton.resetDiagram(app));
 
-    // Verify
+    // Then
     // Move mouse and get the color of the pixel under the pointer
     pointToCheck = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
     robot.moveTo(pointToCheck);

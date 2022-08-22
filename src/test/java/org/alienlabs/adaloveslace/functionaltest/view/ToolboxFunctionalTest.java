@@ -48,13 +48,13 @@ class ToolboxFunctionalTest extends AppFunctionalTestParent {
    */
   @Test
   void testHideGrid(FxRobot robot) {
-    // Init
+    // Given
     Point2D pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
     robot.moveTo(pointToCheck);
     foundColorOnGrid = getColor(pointToCheck);
     assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
 
-    // Run
+    // When
     synchronizeTask(() -> ShowHideGridButton.showHideGrid(app));
 
     // Move mouse and get the color of the pixel under the pointer
@@ -74,13 +74,13 @@ class ToolboxFunctionalTest extends AppFunctionalTestParent {
    */
   @Test
   void testHideAndShowAgainGrid(FxRobot robot) {
-    // Init
+    // Given
     Point2D pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
     robot.moveTo(pointToCheck);
     foundColorOnGrid = getColor(pointToCheck);
     assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
 
-    // Run
+    // When
     synchronizeTask(() -> ShowHideGridButton.showHideGrid(app));
 
     // Move mouse and get the color of the pixel under the pointer
@@ -91,7 +91,7 @@ class ToolboxFunctionalTest extends AppFunctionalTestParent {
     // All we can say is that if we click on the empty canvas, then the pixel is white
     assertTrue(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
 
-    // Run
+    // When
     // Show the dot grid again
     synchronizeTask(() -> ShowHideGridButton.showHideGrid(app));
 
