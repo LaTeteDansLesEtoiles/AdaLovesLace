@@ -189,6 +189,11 @@ public class AppFunctionalTestParent {
       .get())).getAngle();
   }
 
+  protected double getSnowFlakeZoomFactor() {
+    return this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
+      stream().findFirst().get().getImageView().getScaleX();
+  }
+
   protected void drawAndSelectSnowFlake(FxRobot robot) {
     synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
     synchronizeTask(() -> drawSnowflake(robot));

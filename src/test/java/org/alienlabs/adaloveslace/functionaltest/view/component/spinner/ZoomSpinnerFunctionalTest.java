@@ -1,7 +1,6 @@
 package org.alienlabs.adaloveslace.functionaltest.view.component.spinner;
 
 import javafx.stage.Stage;
-import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -37,9 +36,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-      stream().findFirst().get()));
+    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM));
   }
 
   /**
@@ -56,9 +53,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-      stream().findFirst().get()));
+    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_1));
   }
 
   /**
@@ -75,9 +70,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner1()));
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-        stream().findFirst().get()));
+    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_1));
   }
 
   /**
@@ -94,9 +87,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-        stream().findFirst().get()));
+    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_2));
   }
 
   /**
@@ -113,9 +104,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner2()));
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-        stream().findFirst().get()));
+    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_2));
   }
 
   /**
@@ -132,9 +121,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner3()));
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-        stream().findFirst().get()));
+    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM + ZOOM_SPINNER_INCREMENTS_3));
   }
 
   /**
@@ -151,13 +138,11 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> decrementSpinner(this.geometryWindow.getZoomSpinner3()));
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-        stream().findFirst().get()));
+    synchronizeTask(() -> assertZoomFactorsEqual(DEFAULT_ZOOM - ZOOM_SPINNER_INCREMENTS_3));
   }
 
-  private void assertZoomFactorsEqual(int expectedZoom, Knot knot) {
-    assertEquals(app.getOptionalDotGrid().computeZoomFactor(expectedZoom), app.getOptionalDotGrid().computeZoomFactor(knot));
+  private void assertZoomFactorsEqual(int expectedZoom) {
+    assertEquals(app.getOptionalDotGrid().computeZoomFactor(expectedZoom), getSnowFlakeZoomFactor());
   }
 
 }
