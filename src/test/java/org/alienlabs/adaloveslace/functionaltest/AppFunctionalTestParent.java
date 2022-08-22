@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
+import org.testfx.framework.junit5.Stop;
 import org.testfx.robot.Motion;
 
 import java.util.Locale;
@@ -94,6 +95,15 @@ public class AppFunctionalTestParent {
     this.geometryWindow = this.app.showGeometryWindow(this.app);
     this.app.getGeometryStage().setX(720d);
     this.app.getGeometryStage().setY(50d);
+  }
+
+  @Stop
+  public void stop() {
+    try {
+      app.stop();
+    } catch (Exception e) {
+      logger.error("Error closing app in tests!", e);
+    }
   }
 
   // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't

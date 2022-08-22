@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
+import org.testfx.framework.junit5.Stop;
 
 import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.*;
@@ -26,6 +27,11 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     super.start(primaryStage);
   }
 
+  @Stop
+  public void stop() {
+    super.stop();
+  }
+
   /**
    * Checks if the three rotation spinners in the toolbox contain the right default value
    *
@@ -36,8 +42,8 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // Then
-    assertRotationAnglesEqual(DEFAULT_ROTATION, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-        stream().findFirst().get().getRotationAngle());
+    synchronizeAssertTask(() -> assertRotationAnglesEqual(DEFAULT_ROTATION, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
+        stream().findFirst().get().getRotationAngle()));
   }
 
   /**
@@ -51,10 +57,11 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
+    synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()
+    ));
 
     // Then
-    assertRotationAnglesEqual(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle());
+    synchronizeAssertTask(() -> assertRotationAnglesEqual(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle()));
   }
 
   /**
@@ -68,10 +75,11 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> decrementSpinner(this.geometryWindow.getRotationSpinner1()));
+    synchronizeTask(() -> decrementSpinner(this.geometryWindow.getRotationSpinner1()
+    ));
 
     // ThenDEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1
-    assertRotationAnglesEqual(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle());
+    synchronizeAssertTask(() -> assertRotationAnglesEqual(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle()));
   }
 
   /**
@@ -85,10 +93,11 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
+    synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()
+    ));
 
     // Then
-    assertRotationAnglesEqual(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle());
+    synchronizeAssertTask(() -> assertRotationAnglesEqual(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle()));
   }
 
   /**
@@ -102,10 +111,11 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> decrementSpinner(this.geometryWindow.getRotationSpinner2()));
+    synchronizeTask(() -> decrementSpinner(this.geometryWindow.getRotationSpinner2()
+    ));
 
     // Then
-    assertRotationAnglesEqual(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle());
+    synchronizeAssertTask(() -> assertRotationAnglesEqual(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle()));
   }
 
   /**
@@ -119,10 +129,11 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner3()));
+    synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner3()
+    ));
 
     // Then
-    assertRotationAnglesEqual(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle());
+    synchronizeAssertTask(() -> assertRotationAnglesEqual(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle()));
   }
 
   /**
@@ -136,10 +147,11 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     drawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> decrementSpinner(this.geometryWindow.getRotationSpinner3()));
+    synchronizeTask(() -> decrementSpinner(this.geometryWindow.getRotationSpinner3()
+    ));
 
     // Then
-    assertRotationAnglesEqual(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle());
+    synchronizeAssertTask(() -> assertRotationAnglesEqual(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle()));
   }
 
   private void assertRotationAnglesEqual(int defaultRotation, double snowFlakeRotationAngle) {
