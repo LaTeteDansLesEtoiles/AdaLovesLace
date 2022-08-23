@@ -36,7 +36,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     initDrawAndSelectSnowFlake(robot);
 
     // Then
-    synchronizeTask(() -> assertZoomFactorEquals(1d)); // Spinner contains 0
+    assertZoomFactorEquals(1d); // Spinner contains 0
   }
 
   /**

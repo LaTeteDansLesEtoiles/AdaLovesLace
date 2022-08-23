@@ -59,8 +59,6 @@ public class OptionalDotGrid extends Pane {
 
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
   private final Group root;
-  private final Set<Knot> allSelectedKnots = new TreeSet<>();
-
   private final Set<Knot> allHoveredKnots = new TreeSet<>();
 
   /**
@@ -191,7 +189,6 @@ public class OptionalDotGrid extends Pane {
 
           knot.setHovered(rec);
           knot.setSelection(rec);
-          allSelectedKnots.add(knot);
 
           root.getChildren().add(rec);
         } else if (!toUnselect && allHoveredKnots.contains(knot)) {
@@ -218,7 +215,6 @@ public class OptionalDotGrid extends Pane {
           rec.setRotate(knot.getRotationAngle());
 
           knot.setSelection(rec);
-          allSelectedKnots.add(knot);
 
           root.getChildren().add(rec);
         } else if (toUnselect) {
@@ -226,7 +222,6 @@ public class OptionalDotGrid extends Pane {
           logger.info("Removing from hovered {}", root.getChildren().remove(knot.getHovered()));
           knot.setSelection(null);
           knot.setHovered(null);
-          allSelectedKnots.remove(knot);
         }
       }
     });
@@ -330,19 +325,23 @@ public class OptionalDotGrid extends Pane {
   }
 
   private double zoom(Knot knot) {
-    double zoomFactor = computeZoomFactor(knot);
+    double scaleFactor = computeZoomFactor(knot);
 
     if (knot.getImageView() != null) {
-      Scale scale = new Scale(zoomFactor, zoomFactor);
+      Scale scale = new Scale(scaleFactor, scaleFactor);
       scale.setPivotX(knot.getImageView().getX() + knot.getPattern().getWidth() / 2d);
       scale.setPivotY(knot.getImageView().getY() + knot.getPattern().getHeight() / 2d);
 
       knot.getImageView().getTransforms().add(scale);
+
+      logger.info("zoomed knot {} at zoom factor {} and scale factor {}",
+        knot.getPattern().getFilename(), knot.getZoomFactor(), scaleFactor);
+    } else {
+      logger.info("not zoomed knot {} because it does not have an ImageView", knot.getPattern().getFilename());
     }
 
-    logger.info("zoomed knot {} at factor {}", knot.getPattern().getFilename(), zoomFactor);
 
-    return zoomFactor;
+    return scaleFactor;
   }
   private void flip(boolean flip, Point3D axis, Knot knot) {
     if (flip) {
