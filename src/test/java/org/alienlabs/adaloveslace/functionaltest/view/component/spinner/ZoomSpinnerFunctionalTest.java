@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,11 +26,6 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     super.start(primaryStage);
   }
 
-  @Stop
-  public void stop() {
-    super.stop();
-  }
-
   /**
    * Checks if the three zoom spinners in the toolbox contain the right default value
    *
@@ -42,7 +36,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     initDrawAndSelectSnowFlake(robot);
 
     // Then
-    synchronizeTask(() -> assertZoomFactorsEqual(1d)); // Spinner contains 0
+    synchronizeTask(() -> assertZoomFactorEquals(1d)); // Spinner contains 0
   }
 
   /**
@@ -59,7 +53,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner1(), spinnerValue));
 
     // Then
-    assertZoomFactorsEqual(expectedZoomFactor);
+    synchronizeTask(() -> assertZoomFactorEquals(expectedZoomFactor));
   }
 
 
@@ -77,7 +71,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner2(), spinnerValue));
 
     // Then
-    assertZoomFactorsEqual(expectedZoomFactor);
+    assertZoomFactorEquals(expectedZoomFactor);
   }
 
   /**
@@ -94,7 +88,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner3(), spinnerValue));
 
     // Then
-    assertZoomFactorsEqual(expectedZoomFactor);
+    assertZoomFactorEquals(expectedZoomFactor);
   }
 
   /**
@@ -158,7 +152,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     assertEquals(spinnerValue, this.geometryWindow.getZoomSpinner2().getValueFactory().getValue());
   }
 
-  private void assertZoomFactorsEqual(double expectedZoom) {
+  private void assertZoomFactorEquals(double expectedZoom) {
     assertEquals(expectedZoom, getSnowFlakeZoomFactor());
   }
 

@@ -23,13 +23,11 @@ import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
 import org.testfx.robot.Motion;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.alienlabs.adaloveslace.App.EXPORT_IMAGE_FILE_TYPE;
 import static org.alienlabs.adaloveslace.App.GRID_DOTS_RADIUS;
@@ -98,15 +96,6 @@ public class AppFunctionalTestParent {
     this.app.getGeometryStage().setY(50d);
   }
 
-  @Stop
-  public void stop() {
-    try {
-      app.stop();
-    } catch (Exception e) {
-      logger.error("Error closing app in tests!", e);
-    }
-  }
-
   // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
   // have access to the UI thread for the copy without "Platform.runLater()"
   protected Color getColor(Point2D pointToMoveTo) {
@@ -163,24 +152,7 @@ public class AppFunctionalTestParent {
 
     try {
       // And when the runnable has returned we can continue
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
-  }
-
-  public void synchronizeAssertTask(Runnable runnable) {
-    final CountDownLatch lock  = new CountDownLatch(1);
-    Platform.runLater(() -> {
-      // We let time to the JavaFX application thread to work before checking the assertion
-      sleepMainThread();
-      runnable.run();
-      lock.countDown();
-    });
-
-    try {
-      // We wait for the assertion to return
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
+      lock.await();
     } catch (InterruptedException e) {
       logger.error("Interrupted!", e);
     }
@@ -230,16 +202,6 @@ public class AppFunctionalTestParent {
   }
 
   protected void initDrawAndSelectSnowFlake(FxRobot robot) {
-    synchronizeTask(() -> {
-      setSpinnerValue(this.geometryWindow.getRotationSpinner1(), 0);
-      setSpinnerValue(this.geometryWindow.getRotationSpinner2(), 0);
-      setSpinnerValue(this.geometryWindow.getRotationSpinner3(), 0);
-
-      setSpinnerValue(this.geometryWindow.getZoomSpinner1(), 0);
-      setSpinnerValue(this.geometryWindow.getZoomSpinner2(), 0);
-      setSpinnerValue(this.geometryWindow.getZoomSpinner3(), 0);
-    });
-
     synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
     synchronizeTask(() -> drawSnowflake(robot));
     synchronizeTask(() -> clickSelectButton(robot));

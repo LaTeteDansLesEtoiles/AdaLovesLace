@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
 
 import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.*;
@@ -25,11 +24,6 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
   @Start
   public void start(Stage primaryStage) {
     super.start(primaryStage);
-  }
-
-  @Stop
-  public void stop() {
-    super.stop();
   }
 
   /**
