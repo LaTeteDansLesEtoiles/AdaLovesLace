@@ -53,7 +53,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner1(), spinnerValue));
 
     // Then
-    synchronizeTask(() -> assertZoomFactorEquals(expectedZoomFactor));
+    assertZoomFactorEquals(expectedZoomFactor);
   }
 
 
