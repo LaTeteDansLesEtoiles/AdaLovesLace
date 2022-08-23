@@ -238,12 +238,12 @@ public class AppFunctionalTestParent {
       setSpinnerValue(this.geometryWindow.getZoomSpinner1(), 0);
       setSpinnerValue(this.geometryWindow.getZoomSpinner2(), 0);
       setSpinnerValue(this.geometryWindow.getZoomSpinner3(), 0);
-
-      selectAndClickOnSnowflakeButton(robot);
-      drawSnowflake(robot);
-      clickSelectButton(robot);
-      selectSnowflake(robot);
     });
+
+    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
+    synchronizeTask(() -> drawSnowflake(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
+    synchronizeTask(() -> selectSnowflake(robot));
   }
 
 
