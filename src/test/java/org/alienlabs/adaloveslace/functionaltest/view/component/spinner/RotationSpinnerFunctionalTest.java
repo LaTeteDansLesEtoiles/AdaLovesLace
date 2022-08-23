@@ -3,6 +3,8 @@ package org.alienlabs.adaloveslace.functionaltest.view.component.spinner;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
@@ -140,6 +142,66 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     assertRotationAnglesEqual(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle());
+  }
+
+  /**
+   *
+   * Checks if the second and third zoom spinners in the toolbox
+   * contain the right value when choosing a value in the first one
+   *
+   */
+  @ParameterizedTest(name = "Check changing first rotation value #{index}")
+  @CsvSource({"1", "20", "50", "100", "200", "-1", "-20", "-50", "-100", "-200", "0"})
+  void any_rotation_spinner_should_react_to_the_first_rotation_value_change(int spinnerValue) {
+    // Given
+    initDrawAndSelectSnowFlake(new FxRobot());
+
+    // When
+    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getRotationSpinner1(), spinnerValue));
+
+    // Then
+    assertEquals(spinnerValue, this.geometryWindow.getRotationSpinner2().getValueFactory().getValue());
+    assertEquals(spinnerValue, this.geometryWindow.getRotationSpinner3().getValueFactory().getValue());
+  }
+
+  /**
+   *
+   * Checks if the first and third rotation spinners in the toolbox
+   * contain the right value when choosing a value in the second one
+   *
+   */
+  @ParameterizedTest(name = "Check changing second zoom value #{index}")
+  @CsvSource({"1", "20", "50", "100", "200", "-1", "-20", "-50", "-100", "-200", "0"})
+  void any_rotation_spinner_should_react_to_the_second_rotation_value_change(int spinnerValue) {
+    // Given
+    initDrawAndSelectSnowFlake(new FxRobot());
+
+    // When
+    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getRotationSpinner2(), spinnerValue));
+
+    // Then
+    assertEquals(spinnerValue, this.geometryWindow.getRotationSpinner1().getValueFactory().getValue());
+    assertEquals(spinnerValue, this.geometryWindow.getRotationSpinner3().getValueFactory().getValue());
+  }
+
+  /**
+   *
+   * Checks if the first and second rotation spinners in the toolbox
+   * contain the right value when choosing a value in the third one
+   *
+   */
+  @ParameterizedTest(name = "Check changing third zoom value #{index}")
+  @CsvSource({"1", "20", "50", "100", "200", "-1", "-20", "-50", "-100", "-200", "0"})
+  void any_rotation_spinner_should_react_to_third_rotation_value_change(int spinnerValue) {
+    // Given
+    initDrawAndSelectSnowFlake(new FxRobot());
+
+    // When
+    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getRotationSpinner3(), spinnerValue));
+
+    // Then
+    assertEquals(spinnerValue, this.geometryWindow.getRotationSpinner1().getValueFactory().getValue());
+    assertEquals(spinnerValue, this.geometryWindow.getRotationSpinner2().getValueFactory().getValue());
   }
 
   private void assertRotationAnglesEqual(int defaultRotation, double snowFlakeRotationAngle) {
