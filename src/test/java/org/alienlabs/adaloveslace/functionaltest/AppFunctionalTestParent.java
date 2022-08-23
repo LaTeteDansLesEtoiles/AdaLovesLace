@@ -230,18 +230,20 @@ public class AppFunctionalTestParent {
   }
 
   protected void initDrawAndSelectSnowFlake(FxRobot robot) {
-    setSpinnerValue(this.geometryWindow.getRotationSpinner1(), 0);
-    setSpinnerValue(this.geometryWindow.getRotationSpinner2(), 0);
-    setSpinnerValue(this.geometryWindow.getRotationSpinner3(), 0);
+    synchronizeTask(() -> {
+      setSpinnerValue(this.geometryWindow.getRotationSpinner1(), 0);
+      setSpinnerValue(this.geometryWindow.getRotationSpinner2(), 0);
+      setSpinnerValue(this.geometryWindow.getRotationSpinner3(), 0);
 
-    setSpinnerValue(this.geometryWindow.getZoomSpinner1(), 0);
-    setSpinnerValue(this.geometryWindow.getZoomSpinner2(), 0);
-    setSpinnerValue(this.geometryWindow.getZoomSpinner3(), 0);
+      setSpinnerValue(this.geometryWindow.getZoomSpinner1(), 0);
+      setSpinnerValue(this.geometryWindow.getZoomSpinner2(), 0);
+      setSpinnerValue(this.geometryWindow.getZoomSpinner3(), 0);
 
-    selectAndClickOnSnowflakeButton(robot);
-    drawSnowflake(robot);
-    clickSelectButton(robot);
-    selectSnowflake(robot);
+      selectAndClickOnSnowflakeButton(robot);
+      drawSnowflake(robot);
+      clickSelectButton(robot);
+      selectSnowflake(robot);
+    });
   }
 
 
