@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.functionaltest.view;
+package org.alienlabs.adaloveslace.functionaltest.view.window;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;

@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.functionaltest.view;
+package org.alienlabs.adaloveslace.functionaltest.view.window;
 
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -13,11 +13,11 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
 
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
-import static org.alienlabs.adaloveslace.functionaltest.view.MainWindowFunctionalTest.GRAY_DOTS_COLOR;
+import static org.alienlabs.adaloveslace.functionaltest.view.window.MainWindowFunctionalTest.GRAY_DOTS_COLOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ToolboxFunctionalTest extends AppFunctionalTestParent {
+class ToolboxWindowFunctionalTest extends AppFunctionalTestParent {
 
   private static final Logger logger = LoggerFactory.getLogger(MainWindowFunctionalTest.class);
 

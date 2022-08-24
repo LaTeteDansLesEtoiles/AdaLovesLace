@@ -58,6 +58,10 @@ public class AppFunctionalTestParent {
 
   public static final double SNOWFLAKE_PIXEL_Y            = 145d;
 
+  public static final double SECOND_SNOWFLAKE_PIXEL_X     = 315d;
+
+  public static final double SECOND_SNOWFLAKE_PIXEL_Y     = 145d;
+
   public static final double GRAY_PIXEL_X                 = 98d;
   public static final double GRAY_PIXEL_Y                 = 67d;
   public static final Color  SNOWFLAKE_DOT_COLOR          = Color.valueOf("0x9df6feff");
@@ -108,6 +112,12 @@ public class AppFunctionalTestParent {
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
+  // Click on the grid with the second snowflake selected in order to draw a snowflake on the grid elsewhere
+  protected void drawSecondSnowflake(FxRobot robot) {
+    Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X, SECOND_SNOWFLAKE_PIXEL_Y);
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
   // Click on the grid where the snowflake is in order to select it
   protected void clickSelectButton(FxRobot robot) {
     robot.clickOn(geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
@@ -125,13 +135,13 @@ public class AppFunctionalTestParent {
     spinner.getValueFactory().setValue(value);
   }
 
-  protected void selectSnowflake(FxRobot robot) {
+  protected void selectFirstSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(SNOWFLAKE_PIXEL_X + 10d, SNOWFLAKE_PIXEL_Y + 10d);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   // Click on the snowflake in the toolbox to select its pattern
-  protected void selectAndClickOnSnowflakeButton(FxRobot robot) {
+  protected void selectAndClickOnSnowflakePatternButton(FxRobot robot) {
     clickOnButton(robot, toolboxWindow.getSnowflakeButton());
   }
 
@@ -202,10 +212,10 @@ public class AppFunctionalTestParent {
   }
 
   protected void initDrawAndSelectSnowFlake(FxRobot robot) {
-    synchronizeTask(() -> selectAndClickOnSnowflakeButton(robot));
+    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawSnowflake(robot));
     synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectSnowflake(robot));
+    synchronizeTask(() -> selectFirstSnowflake(robot));
   }
 
 

@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.functionaltest.view;
+package org.alienlabs.adaloveslace.functionaltest.view.window;
 
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -57,7 +57,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testDrawSnowflake(FxRobot robot) {
     // Given
-    selectAndClickOnSnowflakeButton(robot);
+    selectAndClickOnSnowflakePatternButton(robot);
     drawSnowflake(robot);
 
     // When
@@ -130,7 +130,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testUndoSnowflake(FxRobot robot) {
     // Given
-    selectAndClickOnSnowflakeButton(robot);
+    selectAndClickOnSnowflakePatternButton(robot);
     drawSnowflake(robot);
 
     Point2D snowflakePoint = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
@@ -159,7 +159,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testRedoSnowflake(FxRobot robot) {
     // Given
-    selectAndClickOnSnowflakeButton(robot);
+    selectAndClickOnSnowflakePatternButton(robot);
     drawSnowflake(robot);
 
     Point2D snowflakePoint = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
@@ -191,7 +191,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testResetSnowflake(FxRobot robot) {
     // Given
-    selectAndClickOnSnowflakeButton(robot);
+    selectAndClickOnSnowflakePatternButton(robot);
     drawSnowflake(robot);
 
     // Move mouse and get the color of the pixel under the pointer

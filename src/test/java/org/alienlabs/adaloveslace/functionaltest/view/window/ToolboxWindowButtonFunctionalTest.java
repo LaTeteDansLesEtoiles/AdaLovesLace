@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.functionaltest.view;
+package org.alienlabs.adaloveslace.functionaltest.view.window;
 
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
@@ -11,7 +11,7 @@ import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
-class ToolboxButtonFunctionalTest extends AppFunctionalTestParent {
+class ToolboxWindowButtonFunctionalTest extends AppFunctionalTestParent {
 
   /**
    * Init method called before each test
