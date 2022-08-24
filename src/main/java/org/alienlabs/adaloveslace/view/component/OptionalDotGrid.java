@@ -215,7 +215,6 @@ public class OptionalDotGrid extends Pane {
           rec.setRotate(knot.getRotationAngle());
 
           knot.setSelection(rec);
-
           root.getChildren().add(rec);
         } else if (toUnselect) {
           logger.info("Removing from selection {}", root.getChildren().remove(knot.getSelection()));

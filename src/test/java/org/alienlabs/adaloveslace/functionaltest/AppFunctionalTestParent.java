@@ -42,7 +42,6 @@ public class AppFunctionalTestParent {
   public App app;
 
   // For tests:
-  public static final long   SLEEP_BETWEEN_ACTIONS_TIME   = Long.getLong("SLEEP_BETWEEN_ACTIONS_TIME", 15_000L);
   public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME",1_000L);
   public static final double GRID_WIDTH                   = 600d;
   public static final double GRID_HEIGHT                  = 420d;
@@ -151,7 +150,8 @@ public class AppFunctionalTestParent {
     sleepMainThread();
 
     try {
-      // And when the runnable has returned we can continue
+      // And when the runnable has returned we can continue,
+      // but we must let it as much time as it needs to complete, lest the assertion which comes after will be wrong
       lock.await();
     } catch (InterruptedException e) {
       logger.error("Interrupted!", e);
