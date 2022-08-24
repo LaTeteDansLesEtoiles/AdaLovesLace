@@ -1,8 +1,5 @@
 package org.alienlabs.adaloveslace.functionaltest.view.component.button.geometrywindow;
 
-import javafx.geometry.Point2D;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.junit.jupiter.api.Test;
@@ -10,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
-import org.testfx.robot.Motion;
 
 import java.util.Comparator;
 
@@ -152,25 +148,6 @@ class DuplicationButtonTest extends AppFunctionalTestParent {
       this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().stream().
         filter(knot -> knot.getSelection() == null).
         findFirst().get().getY());
-  }
-
-  private FxRobot enterSelectMode(FxRobot robot) {
-    return robot.clickOn(this.geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
-  }
-
-  private FxRobot duplicateKnots(FxRobot robot) {
-    return robot.clickOn(this.geometryWindow.getDuplicationButton(), Motion.DEFAULT, MouseButton.PRIMARY);
-  }
-
-  private FxRobot selectSecondKnotWithControlKeyPressed(FxRobot robot) {
-    robot.press(KeyCode.CONTROL);
-
-    Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 10d, SECOND_SNOWFLAKE_PIXEL_Y + 10d);
-    return robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
-  }
-
-  private FxRobot unselectControlKey(FxRobot robot) {
-    return robot.release(KeyCode.CONTROL);
   }
 
 }

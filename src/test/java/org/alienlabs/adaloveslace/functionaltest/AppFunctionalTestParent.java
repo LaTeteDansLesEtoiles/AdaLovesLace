@@ -7,6 +7,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
@@ -146,7 +147,12 @@ public class AppFunctionalTestParent {
   }
 
   protected void selectFirstSnowflake(FxRobot robot) {
-    Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 10d, FIRST_SNOWFLAKE_PIXEL_Y + 10d);
+    Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  protected void selectSecondSnowflake(FxRobot robot) {
+    Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
@@ -228,5 +234,27 @@ public class AppFunctionalTestParent {
     synchronizeTask(() -> selectFirstSnowflake(robot));
   }
 
+  protected FxRobot enterSelectMode(FxRobot robot) {
+    return robot.clickOn(this.geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  protected FxRobot duplicateKnots(FxRobot robot) {
+    return robot.clickOn(this.geometryWindow.getDuplicationButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  protected FxRobot selectDeleteMode(FxRobot robot) {
+    return robot.clickOn(this.geometryWindow.getDeletionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  protected FxRobot selectSecondKnotWithControlKeyPressed(FxRobot robot) {
+    robot.press(KeyCode.CONTROL);
+
+    Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 10d, SECOND_SNOWFLAKE_PIXEL_Y + 10d);
+    return robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  protected FxRobot unselectControlKey(FxRobot robot) {
+    return robot.release(KeyCode.CONTROL);
+  }
 
 }

@@ -200,7 +200,7 @@ public class Knot implements Comparable<Knot> {
   @Override
   public String toString() {
     return "Knot{" +
-      ", x=" + x +
+      "x=" + x +
       ", y=" + y +
       ", pattern=" + pattern.getFilename() +
       ", visible=" + visible +

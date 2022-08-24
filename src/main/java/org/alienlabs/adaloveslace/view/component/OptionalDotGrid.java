@@ -246,24 +246,17 @@ public class OptionalDotGrid extends Pane {
     });
   }
 
-  public Set<Knot> getAllVisibleKnots() {
-    Set<Knot> visible = new HashSet<>(diagram.getCurrentStep().getSelectedKnots());
-    visible.addAll(diagram.getCurrentStep().getDisplayedKnots());
-
-    return visible;
-  }
-
   public void clearGuideLines(final Knot knot) {
     root.getChildren().removeAll(knot.getGuideLines());
     knot.getGuideLines().clear();
   }
 
   public void clearSelections() {
-    getAllVisibleKnots().stream().forEach(knot -> root.getChildren().remove(knot.getSelection()));
+    getDiagram().getCurrentStep().getDisplayedKnots().stream().forEach(knot -> root.getChildren().remove(knot.getSelection()));
   }
 
   public void clearHovered() {
-    getAllVisibleKnots().stream().forEach(knot -> root.getChildren().remove(knot.getHovered()));
+    getDiagram().getCurrentStep().getDisplayedKnots().stream().forEach(knot -> root.getChildren().remove(knot.getHovered()));
   }
 
   public void clearSelection(Knot knot) {

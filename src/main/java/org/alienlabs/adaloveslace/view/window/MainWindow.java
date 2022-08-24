@@ -27,7 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
@@ -238,7 +241,7 @@ public class MainWindow {
   }
 
   public void onClickWithSelectionMode(App app, double x, double y) {
-    Iterator<Knot> it = optionalDotGrid.getAllVisibleKnots().iterator();
+    Iterator<Knot> it = optionalDotGrid.getDiagram().getCurrentStep().getDisplayedKnots().iterator();
     boolean hasClickedOnAKnot = false;
     boolean hasClickedOnAGivenKnot = false;
     app.getOptionalDotGrid().clearHovered();
@@ -347,34 +350,32 @@ public class MainWindow {
   }
 
   public void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
-    for (Knot knot : app.getOptionalDotGrid().getAllHoveredKnots()) {
+    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots()) {
 
       try {
-        if (removeKnotIfClicked(app, diagram, knot)) {
-          return;
+        if (new NodeUtil().isMouseOverKnot(knot, x, y)) {
+          removeKnotIfClicked(app, diagram, knot);
+          break;
         }
       } catch (MalformedURLException e) {
-        throw new RuntimeException(e);
+        logger.error("Error removing knot {} ", knot, e);
       }
     }
   }
 
-  private boolean removeKnotIfClicked(App app, Diagram diagram, Knot knot) throws MalformedURLException {
-    if (app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
+  private void removeKnotIfClicked(App app, Diagram diagram, Knot knot) throws MalformedURLException {
+    app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView());
+    app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, knot);
 
-      Set<Knot> knotsToFilterOut = new TreeSet<>();
-      knotsToFilterOut.add(knot);
+    Set<Knot> visibleKnotsToFilterOut = app.getDiagram().getCurrentStep().getAllVisibleKnots();
+    visibleKnotsToFilterOut.remove(knot);
+    Set<Knot> selectedKnotsToFilterOut = app.getDiagram().getCurrentStep().getSelectedKnots();
+    selectedKnotsToFilterOut.remove(knot);
 
-      Set<Knot> knotsToInclude = new TreeSet<>();
+    app.getDiagram().addKnotsToStep(visibleKnotsToFilterOut, selectedKnotsToFilterOut);
 
-      app.getDiagram().addKnotWithStepFiltering(app, knotsToInclude, knotsToFilterOut);
-      app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, knot);
-
-      logger.info("Removing Knot {}, current index = {}", knot, diagram.getCurrentStepIndex());
-      return true;
-    }
-
-    return false;
+    logger.info("Removing Knot {}, current index = {}", knot, diagram.getCurrentStepIndex());
+    optionalDotGrid.layoutChildren();
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

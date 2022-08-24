@@ -11,7 +11,10 @@ import org.alienlabs.adaloveslace.App;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * What is drawn on a Canvas: the Diagram is the desired, final business object consisting of Knots drawn with Patterns.
@@ -109,25 +112,6 @@ public class Diagram {
     return step;
   }
 
-  public Set<Knot> addKnotsToStep(final App app, final Set<Knot> knots) {
-    Step step = Step.of(knots, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-    this.getAllSteps().add(step);
-    this.currentStepIndex = this.getAllSteps().size() - 1;
-
-    return step.getDisplayedKnots();
-  }
-
-  public Set<Knot> addKnotWithStepFiltering(final App app, final Set<Knot> knotsToInclude, final Set<Knot> knotsToFilterOut) {
-    Set<Knot> knotsToAdd = new HashSet<>(this.getCurrentStep().getDisplayedKnots());
-    knotsToAdd.removeAll(knotsToFilterOut);
-    knotsToAdd.addAll(knotsToInclude);
-
-    this.getAllSteps().add(new Step(knotsToAdd, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()));
-    this.currentStepIndex = this.getAllSteps().size() - 1;
-
-    return knotsToAdd;
-  }
-
   public void undoLastStep(App app) {
     logger.info("Undo step, current step={}", currentStepIndex);
 
@@ -157,13 +141,13 @@ public class Diagram {
       app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView()); // Delete nodes from step before
       app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
       app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
-      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getGuideLines());
+      app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
     });
     getCurrentStep().getSelectedKnots().stream().forEach(knot -> {
       app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView()); // Delete nodes from step before
       app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
       app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
-      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getGuideLines());
+      app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
     });
   }
 
@@ -181,7 +165,7 @@ public class Diagram {
   // We don't lose the undo / redo history
   public void resetDiagram(App app) {
     app.getRoot().getChildren().removeAll(this.getCurrentStep().getDisplayedKnots().stream().
-      map(knot -> knot.getImageView()).toList());
+      map(Knot::getImageView).toList());
     app.getOptionalDotGrid().clearSelections();
     this.getAllSteps().clear();
     this.currentStepIndex = -1;

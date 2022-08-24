@@ -23,7 +23,7 @@ public class Events {
     // Not accessible on purpose since all the events are static
   }
 
-  public static EventHandler<MouseEvent> mouseClickEventHandler = event -> {
+  public static final EventHandler<MouseEvent> mouseClickEventHandler = event -> {
     String eType = event.getEventType().toString();
     logger.debug("Event type -> {},  current Step index {}, current mode: {}", eType,
       app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
@@ -47,7 +47,7 @@ public class Events {
     switch (app.getOptionalDotGrid().getDiagram().getCurrentMode()) {
       case DRAWING          -> app.getOptionalDotGrid().addKnot(app, x, y);
       case SELECTION        -> app.getMainWindow().onClickWithSelectionMode(app, screenX, screenY);
-      case DELETION         -> app.getMainWindow().onClickWithDeletionMode(app, app.getOptionalDotGrid().getDiagram(), x, y) ;
+      case DELETION         -> app.getMainWindow().onClickWithDeletionMode(app, app.getOptionalDotGrid().getDiagram(), screenX, screenY) ;
       case DUPLICATION      -> {}
       case CREATE_PATTERN   -> {} // This is managed in CreatePatternButton
       case MIRROR           -> {} // This is managed in CreatePatternButton
@@ -56,7 +56,7 @@ public class Events {
     }
   }
 
-  public static EventHandler<MouseEvent> gridHoverEventHandler = mouseEvent -> {
+  public static final EventHandler<MouseEvent> gridHoverEventHandler = mouseEvent -> {
     logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getScreenX(), mouseEvent.getScreenY());
 
     Set<Knot> allKnots = app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots();
