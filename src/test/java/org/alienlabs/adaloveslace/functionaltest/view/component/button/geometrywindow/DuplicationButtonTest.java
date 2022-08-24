@@ -1,5 +1,7 @@
 package org.alienlabs.adaloveslace.functionaltest.view.component.button.geometrywindow;
 
+import javafx.geometry.Point2D;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
@@ -9,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.robot.Motion;
+
+import java.util.Comparator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -31,22 +35,24 @@ class DuplicationButtonTest extends AppFunctionalTestParent {
    *
    */
   @Test
-  void should_duplicate_knots(final FxRobot robot) {
+  void should_duplicate_one_knot(final FxRobot robot) {
     // Given
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawSecondSnowflake(robot));
-    synchronizeTask(() -> drawSnowflake(robot));
-    synchronizeTask(() -> robot.clickOn(this.geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY));
+    synchronizeTask(() -> drawFirstSnowflake(robot));
+    synchronizeTask(() -> enterSelectMode(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
 
     // When
-    synchronizeTask(() -> robot.clickOn(this.geometryWindow.getDuplicationButton(), Motion.DEFAULT, MouseButton.PRIMARY));
+    synchronizeTask(() -> duplicateKnots(robot));
 
     // Then
     assertEquals(230d,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getX());
+      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+        sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).findFirst().get().getX());
     assertEquals(150d,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getY());
+      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+        sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).findFirst().get().getY());
   }
 
   /**
@@ -56,16 +62,17 @@ class DuplicationButtonTest extends AppFunctionalTestParent {
    *
    */
   @Test
-  void should_duplicate_knots_leaving_other_knot_untouched(final FxRobot robot) {
+  void should_duplicate_one_knot_leaving_other_knot_untouched(final FxRobot robot) {
     // Given
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawSecondSnowflake(robot));
-    synchronizeTask(() -> drawSnowflake(robot));
-    synchronizeTask(() -> robot.clickOn(this.geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY));
+    synchronizeTask(() -> drawFirstSnowflake(robot));
+    synchronizeTask(() -> enterSelectMode(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
+    synchronizeTask(() -> enterSelectMode(robot));
 
     // When
-    synchronizeTask(() -> robot.clickOn(this.geometryWindow.getDuplicationButton(), Motion.DEFAULT, MouseButton.PRIMARY));
+    synchronizeTask(() -> duplicateKnots(robot));
 
     // Then
     assertEquals(315d,
@@ -76,6 +83,94 @@ class DuplicationButtonTest extends AppFunctionalTestParent {
       this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().stream().
         filter(knot -> knot.getSelection() == null).
         findFirst().get().getY());
+  }
+
+  /**
+   * Checks if the 2 selected Knots are the right ones and if they are shifted on bottom right when duplicating knots.
+   *
+   */
+  @Test
+  void should_duplicate_two_knots(final FxRobot robot) {
+    // Given
+    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+    synchronizeTask(() -> drawOtherSnowflake(robot)); // Not to be duplicated
+    synchronizeTask(() -> drawSecondSnowflake(robot)); // To duplicate
+    synchronizeTask(() -> drawFirstSnowflake(robot)); // To duplicate
+    synchronizeTask(() -> enterSelectMode(robot));
+    synchronizeTask(() -> selectFirstSnowflake(robot));
+    synchronizeTask(() -> selectSecondKnotWithControlKeyPressed(robot)); // The first 2 snowflakes shall be selected, ready to be copied
+    synchronizeTask(() -> unselectControlKey(robot)); // The first 2 snowflakes shall be selected, ready to be copied
+
+    // When
+    synchronizeTask(() -> duplicateKnots(robot)); // Copy the first 2 snowflakes
+
+    // Then
+    // First copied knot
+    assertEquals(230d,
+      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+        sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).findFirst().get().getX());
+    assertEquals(150d,
+      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+      sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).findFirst().get().getY());
+
+    // Second copied knot
+    assertEquals(330d,
+      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+        sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).toList().get(1).getX());
+    assertEquals(150d,
+      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+        sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).toList().get(1).getY());
+  }
+
+  /**
+   * When duplicating knots, the selected Knots are shifted on bottom right.
+   *
+   * Check if the not selected knot is unaffected in the process.
+   *
+   */
+  @Test
+  void should_duplicate_two_knots_leaving_other_knot_untouched(final FxRobot robot) {
+    // Given
+    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+    synchronizeTask(() -> drawOtherSnowflake(robot)); // Not to be duplicated
+    synchronizeTask(() -> drawSecondSnowflake(robot)); // To duplicate
+    synchronizeTask(() -> drawFirstSnowflake(robot)); // To duplicate
+    synchronizeTask(() -> enterSelectMode(robot));
+    synchronizeTask(() -> selectFirstSnowflake(robot));
+    synchronizeTask(() -> selectSecondKnotWithControlKeyPressed(robot)); // The first 2 snowflakes shall be selected, ready to be copied
+    synchronizeTask(() -> unselectControlKey(robot)); // The first 2 snowflakes shall be selected, ready to be copied
+
+    // When
+    synchronizeTask(() -> duplicateKnots(robot)); // Copy the first 2 snowflakes
+
+    // Then
+    assertEquals(115d,
+      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().stream().
+        filter(knot -> knot.getSelection() == null).
+        findFirst().get().getX());
+    assertEquals(65d,
+      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().stream().
+        filter(knot -> knot.getSelection() == null).
+        findFirst().get().getY());
+  }
+
+  private FxRobot enterSelectMode(FxRobot robot) {
+    return robot.clickOn(this.geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  private FxRobot duplicateKnots(FxRobot robot) {
+    return robot.clickOn(this.geometryWindow.getDuplicationButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  private FxRobot selectSecondKnotWithControlKeyPressed(FxRobot robot) {
+    robot.press(KeyCode.CONTROL);
+
+    Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 10d, SECOND_SNOWFLAKE_PIXEL_Y + 10d);
+    return robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  private FxRobot unselectControlKey(FxRobot robot) {
+    return robot.release(KeyCode.CONTROL);
   }
 
 }

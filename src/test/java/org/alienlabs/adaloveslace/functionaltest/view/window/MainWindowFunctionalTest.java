@@ -58,7 +58,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   void testDrawSnowflake(FxRobot robot) {
     // Given
     selectAndClickOnSnowflakePatternButton(robot);
-    drawSnowflake(robot);
+    drawFirstSnowflake(robot);
 
     // When
     // Move mouse and get the color of the pixel under the pointer
@@ -131,9 +131,9 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   void testUndoSnowflake(FxRobot robot) {
     // Given
     selectAndClickOnSnowflakePatternButton(robot);
-    drawSnowflake(robot);
+    drawFirstSnowflake(robot);
 
-    Point2D snowflakePoint = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
 
     // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
     // have access to the UI thread for the copy without "Platform.runLater()"
@@ -144,7 +144,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     // Move mouse and get the color of the pixel under the pointer
-    snowflakePoint = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     Color foundColorOnGridAfterUndo = getColor(snowflakePoint);
 
     assertNotEquals(foundColorOnGridAfterUndo, foundColorOnGridBeforeUndo,
@@ -160,9 +160,9 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   void testRedoSnowflake(FxRobot robot) {
     // Given
     selectAndClickOnSnowflakePatternButton(robot);
-    drawSnowflake(robot);
+    drawFirstSnowflake(robot);
 
-    Point2D snowflakePoint = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    Point2D snowflakePoint = new Point2D(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
 
     // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
     // have access to the UI thread for the copy without "Platform.runLater()"
@@ -176,7 +176,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     // Move mouse and get the color of the pixel under the pointer
-    snowflakePoint = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    snowflakePoint = new Point2D(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     Color foundColorOnGridAfterRedo = getColor(snowflakePoint);
 
     assertEquals(foundColorOnGridAfterRedo, foundColorOnGridBeforeRedo,
@@ -192,10 +192,10 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   void testResetSnowflake(FxRobot robot) {
     // Given
     selectAndClickOnSnowflakePatternButton(robot);
-    drawSnowflake(robot);
+    drawFirstSnowflake(robot);
 
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToCheck = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    Point2D pointToCheck = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     robot.moveTo(pointToCheck);
 
     Color foundColorOnGridBeforeReset = getColor(pointToCheck);
@@ -205,7 +205,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     // Move mouse and get the color of the pixel under the pointer
-    pointToCheck = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    pointToCheck = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     robot.moveTo(pointToCheck);
     Color foundColorOnGridAfterReset = getColor(pointToCheck);
 

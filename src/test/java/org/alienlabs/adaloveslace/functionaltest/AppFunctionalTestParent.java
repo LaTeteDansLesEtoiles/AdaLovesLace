@@ -54,13 +54,17 @@ public class AppFunctionalTestParent {
   public static final String SNOWFLAKE                    = "snowflake_small";
   public static final String SNOWFLAKE_IMAGE              = "snowflake_small.jpg";
 
-  public static final double SNOWFLAKE_PIXEL_X            = 215d;
+  public static final double FIRST_SNOWFLAKE_PIXEL_X      = 215d;
 
-  public static final double SNOWFLAKE_PIXEL_Y            = 145d;
+  public static final double FIRST_SNOWFLAKE_PIXEL_Y      = 145d;
 
   public static final double SECOND_SNOWFLAKE_PIXEL_X     = 315d;
 
   public static final double SECOND_SNOWFLAKE_PIXEL_Y     = 145d;
+
+  public static final double OTHER_SNOWFLAKE_PIXEL_X      = 115d;
+
+  public static final double OTHER_SNOWFLAKE_PIXEL_Y      = 75d;
 
   public static final double GRAY_PIXEL_X                 = 98d;
   public static final double GRAY_PIXEL_Y                 = 67d;
@@ -107,14 +111,20 @@ public class AppFunctionalTestParent {
   }
 
   // Click on the grid with the snowflake selected in order to draw a snowflake on the grid
-  protected void drawSnowflake(FxRobot robot) {
-    Point2D snowflakeOnTheGrid = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+  protected void drawFirstSnowflake(FxRobot robot) {
+    Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   // Click on the grid with the second snowflake selected in order to draw a snowflake on the grid elsewhere
   protected void drawSecondSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X, SECOND_SNOWFLAKE_PIXEL_Y);
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  // Click on the grid with the third (not duplicated) snowflake selected in order to draw a snowflake on the grid elsewhere
+  protected void drawOtherSnowflake(FxRobot robot) {
+    Point2D snowflakeOnTheGrid = newPointOnGrid(OTHER_SNOWFLAKE_PIXEL_X, OTHER_SNOWFLAKE_PIXEL_Y);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
@@ -136,7 +146,7 @@ public class AppFunctionalTestParent {
   }
 
   protected void selectFirstSnowflake(FxRobot robot) {
-    Point2D snowflakeOnTheGrid = newPointOnGrid(SNOWFLAKE_PIXEL_X + 10d, SNOWFLAKE_PIXEL_Y + 10d);
+    Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 10d, FIRST_SNOWFLAKE_PIXEL_Y + 10d);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
@@ -213,7 +223,7 @@ public class AppFunctionalTestParent {
 
   protected void initDrawAndSelectSnowFlake(FxRobot robot) {
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-    synchronizeTask(() -> drawSnowflake(robot));
+    synchronizeTask(() -> drawFirstSnowflake(robot));
     synchronizeTask(() -> clickSelectButton(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
   }
