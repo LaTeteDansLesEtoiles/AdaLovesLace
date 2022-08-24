@@ -1,7 +1,6 @@
 module org.alienlabs.adaloveslace.test {
   requires org.alienlabs.adaloveslace.impl;
 
-  opens com.sun.javafx.application                                                      to org.testfx;
   opens org.alienlabs.adaloveslace.functionaltest                                       to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.component.button.geometrywindow  to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.component.spinner                to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
