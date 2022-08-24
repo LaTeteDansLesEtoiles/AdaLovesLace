@@ -234,6 +234,7 @@
         <!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
         <version>${test-plugins.version}</version>
         <configuration>
+          <argLine>@{argLine} --add-exports javafx.graphics/com.sun.javafx.application=org.testfx</argLine>
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
           </additionalClasspathElements>
