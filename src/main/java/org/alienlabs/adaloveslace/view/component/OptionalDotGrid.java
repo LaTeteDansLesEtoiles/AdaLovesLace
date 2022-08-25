@@ -22,6 +22,7 @@ import org.alienlabs.adaloveslace.business.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +31,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static java.util.Objects.requireNonNullElseGet;
+import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
+import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 
 /**
  * A grid (= coordinate system) with dots (= used as landmarks for lace).
@@ -434,7 +437,7 @@ public class OptionalDotGrid extends Pane {
     logger.info("Current pattern  -> {}", currentPattern);
     Knot currentKnot = null;
 
-    try (FileInputStream fis = new FileInputStream(currentPattern.getAbsoluteFilename())) {
+    try (FileInputStream fis = new FileInputStream(new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, currentPattern.getFilename()))) {
       Image image = new Image(fis);
       ImageView iv = new ImageView(image);
 

@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.zip.ZipEntry;
@@ -48,12 +49,11 @@ class FileUtilTest {
 
     Pattern pattern = new Pattern();
     pattern.setAbsoluteFilename(
-      new File(this.getClass().getResource(SNOWFLAKE_IMAGE)
-        .toString().replace("file:", "")).getAbsolutePath());
+      new File(this.getClass().getResource(SNOWFLAKE_IMAGE).toString()
+        .replace("file:", "")).getAbsolutePath());
     pattern.setFilename(SNOWFLAKE_IMAGE);
 
     diagramToSave.addPattern(pattern);
-    fileUtil.buildAbsoluteFilenamesForPatterns(diagramToSave);
     app.setDiagram(diagramToSave);
 
     dotLaceFile = new File(dotLaceFileTempDir, "1.lace");
@@ -102,12 +102,13 @@ class FileUtilTest {
       logger.error("Error reading .jar file!", e);
       fail();
     }
-    final Enumeration<? extends ZipEntry> e = zf.entries();
 
     assertEquals(2, zf.size());
-    e.nextElement();
-    assertEquals(XML_FILE_TO_SAVE_IN_LACE_FILE, e.nextElement().getName());
+    Iterator<? extends ZipEntry> iterator = zf.entries().asIterator();
+    iterator.next();
+    ZipEntry file = iterator.next();
 
+    assertEquals(XML_FILE_TO_SAVE_IN_LACE_FILE, file.getName());
   }
 
   @Test

@@ -34,7 +34,6 @@ public class ToolboxWindow {
 
   public static final double TOOLBOX_WINDOW_X             = 600d;
   public static final double TOOLBOX_WINDOW_WIDTH         = 550d;
-  public static final double WINDOW_SPACING               = 60d;
 
   public static final String THE_FOLLOWING_FOLDER_STRING  = "The following folder: '";
 

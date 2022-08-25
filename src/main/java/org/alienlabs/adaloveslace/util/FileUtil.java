@@ -93,7 +93,8 @@ public class FileUtil {
   private void buildKnotsImageViews(App app, Diagram diagram) {
     for (Step step : diagram.getAllSteps()) {
       for (Knot knot : step.getDisplayedKnots()) {
-        try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
+        try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
+          + knot.getPattern().getFilename())) {
           buildKnotImageView(app, knot, fis);
         } catch (IOException e) {
           logger.error("Problem with pattern resource file!", e);
@@ -101,7 +102,8 @@ public class FileUtil {
       }
 
       for (Knot knot : step.getSelectedKnots()) {
-        try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
+        try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
+          + knot.getPattern().getFilename())) {
           buildKnotImageView(app, knot, fis);
         } catch (IOException e) {
           logger.error("Problem with pattern resource file!", e);
@@ -151,7 +153,6 @@ public class FileUtil {
   private Diagram buildDiagram(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
     Diagram diagram = unmarshallXmlFile(zipFile, entry);
 
-    buildAbsoluteFilenamesForPatterns(diagram);
     buildAbsoluteFilenamesForKnots(diagram);
 
     diagram.setCurrentPattern(diagram.getPatterns().get(0));
@@ -166,13 +167,7 @@ public class FileUtil {
 
   private void buildAbsoluteFilenamesForKnots(Diagram diagram) {
     for (Knot k : diagram.getKnots()) {
-      k.getPattern().setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + k.getPattern().getFilename());
-    }
-  }
-
-  public void buildAbsoluteFilenamesForPatterns(Diagram diagram) {
-    for (org.alienlabs.adaloveslace.business.model.Pattern p : diagram.getPatterns()) {
-      p.setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
+      k.getPattern().setAbsoluteFilename(PATTERNS_DIRECTORY_NAME + File.separator + k.getPattern().getFilename());
     }
   }
 
@@ -186,7 +181,7 @@ public class FileUtil {
       File homeDirectoryResourcesPath = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME);
 
       if (!file.getName().endsWith(LACE_FILE_EXTENSION)) {
-        file = new File(file.getParent() + File.separator + file.getName() + LACE_FILE_EXTENSION);
+        file = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, file.getName() + LACE_FILE_EXTENSION);
       }
 
       if (homeDirectoryResourcesPath.exists() && homeDirectoryResourcesPath.canRead()) {
@@ -216,7 +211,7 @@ public class FileUtil {
     File xmlFile = new File(homeDirectoryResourcesPath + File.separator + XML_FILE_TO_SAVE_IN_LACE_FILE);
     jaxbMarshaller.marshal(toSave, xmlFile);
 
-    zipOut.putNextEntry(new ZipEntry(xmlFile.getName()));
+    zipOut.putNextEntry(new ZipEntry(XML_FILE_TO_SAVE_IN_LACE_FILE));
     Files.copy(xmlFile.toPath(), zipOut);
   }
 
