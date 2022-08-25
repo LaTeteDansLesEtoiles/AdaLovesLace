@@ -49,9 +49,11 @@ then:
     ./mvnw clean install          -DskipUTs=true                     # generate a package skipping unit tests
     ./mvnw clean install          -DskipFTs=true                     # generate a package skipping functional tests
     ./mvnw clean install          -DskipUTs=true -DskipFTs=true      # generate a package skipping all tests
+    ./mvnw clean install                                             # generate a package launching all tests
 
+    ./mvnw clean integration-test                                    # launch all tests 
     ./mvnw clean test             -DskipFTs=true                     # launch unit tests
-    ./mvnw clean integration-test -DskipUTs=true                      # launch functional tests 
+    ./mvnw clean integration-test -DskipUTs=true                     # launch functional tests 
 
 or:
 
