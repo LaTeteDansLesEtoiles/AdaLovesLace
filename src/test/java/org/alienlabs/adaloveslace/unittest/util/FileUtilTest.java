@@ -24,7 +24,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static org.alienlabs.adaloveslace.App.*;
-import static org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent.CLASSPATH_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent.SNOWFLAKE_IMAGE;
 import static org.alienlabs.adaloveslace.util.FileUtil.XML_FILE_TO_SAVE_IN_LACE_FILE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,7 +47,9 @@ class FileUtilTest {
     diagramToSave = new Diagram();
 
     Pattern pattern = new Pattern();
-    pattern.setAbsoluteFilename(CLASSPATH_RESOURCES_PATH + SNOWFLAKE_IMAGE);
+    pattern.setAbsoluteFilename(
+      new File(this.getClass().getResource(SNOWFLAKE_IMAGE)
+        .toString().replace("file:", "")).getAbsolutePath());
     pattern.setFilename(SNOWFLAKE_IMAGE);
 
     diagramToSave.addPattern(pattern);
