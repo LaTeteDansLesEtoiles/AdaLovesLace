@@ -45,7 +45,7 @@ public class MainWindow {
   public static final String EDIT = "Edit";
   public static final String FILE = "File";
 
-  public final MenuBar menuBar;
+  public MenuBar menuBar;
   private OptionalDotGrid optionalDotGrid;
   private TilePane footer;
 
@@ -79,10 +79,12 @@ public class MainWindow {
   private static final Logger logger        = LoggerFactory.getLogger(MainWindow.class);
 
   public MainWindow() {
-    menuBar = new MenuBar();
+    // Just to be able to unit test code using the UI without effectively instantiating the UI
   }
 
   public void createMenuBar(Group root, App app, Stage primaryStage) {
+    menuBar = new MenuBar();
+
     Menu fileMenu     = new Menu(resourceBundle.getString(FILE));
     Menu editMenu     = new Menu(resourceBundle.getString(EDIT));
     Menu toolMenu     = new Menu(resourceBundle.getString(TOOL));
@@ -363,7 +365,7 @@ public class MainWindow {
     }
   }
 
-  private void removeKnotIfClicked(App app, Diagram diagram, Knot knot) throws MalformedURLException {
+  private void removeKnotIfClicked(App app, Diagram diagram, Knot knot) {
     app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView());
     app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, knot);
 
@@ -395,6 +397,10 @@ public class MainWindow {
 
   public StackPane getGrid() {
     return grid;
+  }
+
+  public void setOptionalDotGrid(OptionalDotGrid optionalDotGrid) {
+    this.optionalDotGrid = optionalDotGrid;
   }
 
 }

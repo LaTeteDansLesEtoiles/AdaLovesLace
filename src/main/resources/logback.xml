@@ -22,7 +22,7 @@
     <appender-ref ref="FILE" />
     <appender-ref ref="STDOUT" />
   </logger>
-  <logger name="org.alienlabs.adaloveslace.test" level="INFO">
+  <logger name="org.alienlabs.adaloveslace.unittest" level="INFO">
     <appender-ref ref="FILE" />
     <appender-ref ref="STDOUT" />
   </logger>

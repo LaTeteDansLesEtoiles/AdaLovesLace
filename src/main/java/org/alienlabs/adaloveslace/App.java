@@ -210,10 +210,10 @@ public class App extends Application {
 
     if ((!prefs.getStringValue(LOCALE_LANGUAGE).equals("")) && (!prefs.getStringValue(LOCALE_COUNTRY).equals(""))) {
       Locale locale = new Locale(prefs.getStringValue(LOCALE_LANGUAGE), prefs.getStringValue(LOCALE_COUNTRY));
-      resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
+      resourceBundle = ResourceBundle.getBundle(ADA_LOVES_LACE, locale);
     } else {
       Locale locale = new Locale(DEFAULT_LOCALE_LANGUAGE, DEFAULT_LOCALE_COUNTRY);
-      resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
+      resourceBundle = ResourceBundle.getBundle(ADA_LOVES_LACE, locale);
 
       prefs.setStringValue(LOCALE_LANGUAGE, DEFAULT_LOCALE_LANGUAGE);
       prefs.setStringValue(LOCALE_COUNTRY, DEFAULT_LOCALE_COUNTRY);
@@ -284,6 +284,14 @@ public class App extends Application {
 
   public void setPrimaryStage(Stage primaryStage) {
     this.primaryStage = primaryStage;
+  }
+
+  public void setMainWindow(MainWindow mainWindow) {
+    this.mainWindow = mainWindow;
+  }
+
+  public static void setResourceBundle(ResourceBundle resourceBundle) {
+    App.resourceBundle = resourceBundle;
   }
 
   public Map<KeyCode, Boolean> getCurrentlyActiveKeys() {

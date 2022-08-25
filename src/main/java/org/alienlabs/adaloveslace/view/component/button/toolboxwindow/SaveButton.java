@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
@@ -60,7 +61,7 @@ public class SaveButton extends ImageButton {
       preferences.setPathWithFileValue(file, SAVED_LACE_FILE);
       preferences.setPathWithFileValue(file.getParentFile(), LACE_FILE_FOLDER_SAVE_PATH);
 
-      new FileUtil().saveFile(app, file);
+      new FileUtil().saveFile(file, new Diagram(app.getOptionalDotGrid().getDiagram()));
     }
   }
 

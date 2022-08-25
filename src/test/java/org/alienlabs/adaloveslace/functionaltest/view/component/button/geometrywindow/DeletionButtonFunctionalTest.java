@@ -11,9 +11,9 @@ import org.testfx.framework.junit5.Start;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DeletionButtonTest extends AppFunctionalTestParent {
+class DeletionButtonFunctionalTest extends AppFunctionalTestParent {
 
-  private static final Logger logger          = LoggerFactory.getLogger(DeletionButtonTest.class);
+  private static final Logger logger          = LoggerFactory.getLogger(DeletionButtonFunctionalTest.class);
 
   /**
    * Init method called before each test

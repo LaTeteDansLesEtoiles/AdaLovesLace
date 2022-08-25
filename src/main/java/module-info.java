@@ -5,11 +5,11 @@ module org.alienlabs.adaloveslace.impl {
   requires layout;
 
   requires com.google.gson;
+  requires jakarta.xml.bind;
   requires java.net.http;
   requires javafx.controls;
   requires javafx.graphics;
   requires javafx.swing;
-  requires jakarta.xml.bind;
   requires java.prefs;
   requires org.slf4j;
   requires static com.github.spotbugs.annotations;

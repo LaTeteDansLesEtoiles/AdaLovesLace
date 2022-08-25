@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.test;
+package org.alienlabs.adaloveslace.unittest;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

@@ -46,7 +46,12 @@ Feel free to run the Maven wrapper generation command again if Java version used
 
 then:
 
-    ./mvnw clean package
+    ./mvnw clean install          -DskipUTs=true                     # generate a package skipping unit tests
+    ./mvnw clean install          -DskipFTs=true                     # generate a package skipping functional tests
+    ./mvnw clean install          -DskipUTs=true -DskipFTs=true      # generate a package skipping all tests
+
+    ./mvnw clean test             -DskipFTs=true                     # launch unit tests
+    ./mvnw clean integration-test -DskipUTs=true                      # launch functional tests 
 
 or:
 

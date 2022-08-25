@@ -12,9 +12,9 @@ import java.util.Comparator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class DuplicationButtonTest extends AppFunctionalTestParent {
+class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
 
-  private static final Logger logger          = LoggerFactory.getLogger(DuplicationButtonTest.class);
+  private static final Logger logger          = LoggerFactory.getLogger(DuplicationButtonFunctionalTest.class);
 
   /**
    * Init method called before each test

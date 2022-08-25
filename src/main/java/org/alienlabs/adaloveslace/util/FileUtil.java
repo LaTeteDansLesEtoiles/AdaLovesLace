@@ -50,7 +50,20 @@ public class FileUtil {
     // Nothing to do here, that's just to avoid an all-static class
   }
 
-  public void loadFromLaceFile(App app, File file) {
+  public void buildUiFromLaceFile(App app, File file) {
+    Diagram diagram = loadFromLaceFile(app, file);
+
+    app.getOptionalDotGrid().getDiagramProperty().set(diagram);
+    app.getOptionalDotGrid().setDiagram(diagram);
+    app.getPrimaryStage().close();
+    app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
+      app.getPrimaryStage());
+    app.initializeKeyboardShorcuts();
+    app.getToolboxStage().close();
+    app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
+  }
+
+  public Diagram loadFromLaceFile(App app, File file) {
     Diagram diagram = null;
 
     try (ZipFile zipFile = new ZipFile(file)) {
@@ -74,14 +87,7 @@ public class FileUtil {
       logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
     }
 
-    app.getOptionalDotGrid().getDiagramProperty().set(diagram);
-    app.getOptionalDotGrid().setDiagram(diagram);
-    app.getPrimaryStage().close();
-    app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
-      app.getPrimaryStage());
-    app.initializeKeyboardShorcuts();
-    app.getToolboxStage().close();
-    app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
+    return diagram;
   }
 
   private void buildKnotsImageViews(App app, Diagram diagram) {
@@ -143,9 +149,7 @@ public class FileUtil {
   }
 
   private Diagram buildDiagram(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
-    JAXBContext context = JAXBContext.newInstance(Diagram.class);
-    Unmarshaller jaxbUnmarshaller = context.createUnmarshaller();
-    Diagram diagram = (Diagram) jaxbUnmarshaller.unmarshal(zipFile.getInputStream(entry));
+    Diagram diagram = unmarshallXmlFile(zipFile, entry);
 
     buildAbsoluteFilenamesForPatterns(diagram);
     buildAbsoluteFilenamesForKnots(diagram);
@@ -154,26 +158,31 @@ public class FileUtil {
     return diagram;
   }
 
+  public Diagram unmarshallXmlFile(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
+    JAXBContext context = JAXBContext.newInstance(Diagram.class);
+    Unmarshaller jaxbUnmarshaller = context.createUnmarshaller();
+    return (Diagram) jaxbUnmarshaller.unmarshal(zipFile.getInputStream(entry));
+  }
+
   private void buildAbsoluteFilenamesForKnots(Diagram diagram) {
     for (Knot k : diagram.getKnots()) {
       k.getPattern().setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + k.getPattern().getFilename());
     }
   }
 
-  private void buildAbsoluteFilenamesForPatterns(Diagram diagram) {
+  public void buildAbsoluteFilenamesForPatterns(Diagram diagram) {
     for (org.alienlabs.adaloveslace.business.model.Pattern p : diagram.getPatterns()) {
       p.setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
     }
   }
 
-  public File saveFile(App app, File file) {
+  public File saveFile(File file, Diagram diagram) {
     try {
       JAXBContext context = JAXBContext.newInstance(Diagram.class);
       Marshaller jaxbMarshaller = context.createMarshaller();
       jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
       // In order not to lose the undo / redo history
-      Diagram toSave = buildDiagramToSave(app);
       File homeDirectoryResourcesPath = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME);
 
       if (!file.getName().endsWith(LACE_FILE_EXTENSION)) {
@@ -181,7 +190,7 @@ public class FileUtil {
       }
 
       if (homeDirectoryResourcesPath.exists() && homeDirectoryResourcesPath.canRead()) {
-        writeLaceFile(file, jaxbMarshaller, toSave, homeDirectoryResourcesPath);
+        writeLaceFile(file, jaxbMarshaller, diagram, homeDirectoryResourcesPath);
       } else {
         throw new IllegalArgumentException("Home directory " + homeDirectoryResourcesPath.getAbsolutePath() + " not read accessible!");
       }
@@ -217,10 +226,6 @@ public class FileUtil {
       zipOut.putNextEntry(new ZipEntry(pattern.getFilename()));
       Files.copy(fileToZip.toPath(), zipOut);
     }
-  }
-
-  private Diagram buildDiagramToSave(App app) {
-    return new Diagram(app.getOptionalDotGrid().getDiagram());
   }
 
   /**
