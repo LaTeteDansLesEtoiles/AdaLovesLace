@@ -167,7 +167,7 @@ public class FileUtil {
 
   private void buildAbsoluteFilenamesForKnots(Diagram diagram) {
     for (Knot k : diagram.getKnots()) {
-      k.getPattern().setAbsoluteFilename(PATTERNS_DIRECTORY_NAME + File.separator + k.getPattern().getFilename());
+      k.getPattern().setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + k.getPattern().getFilename());
     }
   }
 
@@ -217,7 +217,8 @@ public class FileUtil {
 
   private void writePatternsToLaceFile(Diagram toSave, ZipOutputStream zipOut) throws IOException {
     for (org.alienlabs.adaloveslace.business.model.Pattern pattern : new HashSet<>(toSave.getPatterns())) {
-      File fileToZip = new File(pattern.getAbsoluteFilename());
+      File fileToZip = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
+        + pattern.getFilename());
       zipOut.putNextEntry(new ZipEntry(pattern.getFilename()));
       Files.copy(fileToZip.toPath(), zipOut);
     }

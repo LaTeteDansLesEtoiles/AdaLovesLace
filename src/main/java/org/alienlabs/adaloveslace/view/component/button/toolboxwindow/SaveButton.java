@@ -37,7 +37,7 @@ public class SaveButton extends ImageButton {
     Preferences preferences = new Preferences();
     File laceFilePath = preferences.getPathWithFileValue(SAVED_LACE_FILE);
 
-    if (laceFilePath == null || !laceFilePath.canWrite()) {
+    if (laceFilePath == null || !laceFilePath.exists() || !laceFilePath.isDirectory() || !laceFilePath.canWrite()) {
       // Save as anyway, since we don't know where to save
       FileChooser saveAs = new FileChooser();
       saveAs.setTitle(SAVE_FILE_DIALOG_TITLE);

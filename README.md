@@ -46,6 +46,9 @@ Feel free to run the Maven wrapper generation command again if Java version used
 
 then:
 
+    
+    export JAVA_HOME=/usr/lib/jvm/jdk-19
+
     ./mvnw clean install          -DskipUTs=true                     # generate a package skipping unit tests
     ./mvnw clean install          -DskipFTs=true                     # generate a package skipping functional tests
     ./mvnw clean install          -DskipUTs=true -DskipFTs=true      # generate a package skipping all tests

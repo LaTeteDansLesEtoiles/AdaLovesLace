@@ -38,7 +38,7 @@ public class SaveAsButton extends ImageButton {
 
     Preferences preferences = new Preferences();
     File laceFilePath = preferences.getPathWithFileValue(LACE_FILE_FOLDER_SAVE_PATH);
-    if (laceFilePath == null) {
+    if (laceFilePath == null || !laceFilePath.exists() || !laceFilePath.isDirectory() || !laceFilePath.canWrite()) {
       File userHome = new File(System.getProperty(USER_HOME));
       saveAs.setInitialDirectory(userHome);
       preferences.setPathWithFileValue(userHome, LACE_FILE_FOLDER_SAVE_PATH);

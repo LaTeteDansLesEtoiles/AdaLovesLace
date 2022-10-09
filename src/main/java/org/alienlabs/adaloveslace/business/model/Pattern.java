@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.business.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 
@@ -23,6 +24,7 @@ import java.util.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Pattern {
 
+  @XmlTransient
   private String absoluteFilename;
 
   private String filename;

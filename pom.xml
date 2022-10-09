@@ -3,16 +3,16 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.alienlabs.adaloveslace</groupId>
   <artifactId>adaloveslace</artifactId>
-  <version>0.1.1</version>
+  <version>0.2.2</version>
   <description>A tatting lace patterns creation software</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>17</java.version>
+    <java.version>19</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <test-plugins.version>3.0.0-M7</test-plugins.version>
-    <javafx.version>17.0.2</javafx.version>
+    <javafx.version>19</javafx.version>
     <itext.version>7.2.2</itext.version>
     <testfx.version>4.0.16-alpha</testfx.version>
     <junit.version>5.8.2</junit.version>
@@ -151,7 +151,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.9.0</version>
+        <version>3.10.1</version>
         <configuration>
           <release>${java.version}</release>
         </configuration>
