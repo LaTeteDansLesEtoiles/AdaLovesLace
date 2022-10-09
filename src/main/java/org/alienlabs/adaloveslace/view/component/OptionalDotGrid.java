@@ -16,7 +16,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
-import javafx.scene.transform.Translate;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.*;
 import org.slf4j.Logger;
@@ -339,22 +338,38 @@ public class OptionalDotGrid extends Pane {
     return scaleFactor;
   }
   private void flip(boolean flip, Point3D axis, Knot knot) {
-    if (flip) {
-      Rotate rot = new Rotate(180d, axis);
-      rot.setPivotX(knot.getImageView().getX() + knot.getPattern().getWidth() / 2d);
-      rot.setPivotY(knot.getImageView().getY() + knot.getPattern().getHeight() / 2d);
-      knot.getImageView().getTransforms().add(rot);
-
-      Translate translate = new Translate(0d, 0d, knot.getPattern().getWidth() / 2.0);
-      knot.getImageView().getTransforms().add(translate);
-    } else {
-      Rotate rot = new Rotate(0, axis);
-      rot.setPivotX(knot.getImageView().getX() + knot.getPattern().getWidth() / 2d);
-      rot.setPivotY(knot.getImageView().getY() + knot.getPattern().getHeight() / 2d);
-      knot.getImageView().getTransforms().add(rot);
-
-      Translate translate = new Translate(0d, 0d, knot.getPattern().getWidth() / 2.0);
-      knot.getImageView().getTransforms().add(translate);
+    if (axis.equals(Rotate.Y_AXIS)) {
+      if (flip) {
+        Rotate rot = new Rotate();
+        rot.setAxis(Rotate.Y_AXIS);
+        rot.setAngle(180d);
+        rot.setPivotX(knot.getImageView().getX() + knot.getPattern().getWidth() / 2d);
+        rot.setPivotY(knot.getImageView().getY() + knot.getPattern().getHeight() / 2d);
+        knot.getImageView().getTransforms().add(rot);
+      } else {
+        Rotate rot = new Rotate();
+        rot.setAxis(Rotate.Y_AXIS);
+        rot.setAngle(0d);
+        rot.setPivotX(knot.getImageView().getX() + knot.getPattern().getWidth() / 2d);
+        rot.setPivotY(knot.getImageView().getY() + knot.getPattern().getHeight() / 2d);
+        knot.getImageView().getTransforms().add(rot);
+      }
+    } else if (axis.equals(Rotate.X_AXIS)) {
+      if (flip) {
+        Rotate rot = new Rotate();
+        rot.setAxis(Rotate.X_AXIS);
+        rot.setAngle(180d);
+        rot.setPivotX(knot.getImageView().getX() + knot.getPattern().getWidth() / 2d);
+        rot.setPivotY(knot.getImageView().getY() + knot.getPattern().getHeight() / 2d);
+        knot.getImageView().getTransforms().add(rot);
+      } else {
+        Rotate rot = new Rotate();
+        rot.setAxis(Rotate.X_AXIS);
+        rot.setAngle(0d);
+        rot.setPivotX(knot.getImageView().getX() + knot.getPattern().getWidth() / 2d);
+        rot.setPivotY(knot.getImageView().getY() + knot.getPattern().getHeight() / 2d);
+        knot.getImageView().getTransforms().add(rot);
+      }
     }
   }
 
