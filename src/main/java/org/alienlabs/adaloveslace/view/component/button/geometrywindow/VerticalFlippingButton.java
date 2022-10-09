@@ -46,6 +46,7 @@ public class VerticalFlippingButton extends ImageButton {
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
       Knot copy = new NodeUtil().copyKnot(knot);
+      knot.setVisible(false);
       copy.setFlippedVertically(!knot.isFlippedVertically());
       knots.add(copy);
     }

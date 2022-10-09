@@ -69,7 +69,7 @@ public class App extends Application {
 
   public static final double  MAIN_WINDOW_Y           = 20d;
   public static final double  MAIN_WINDOW_X           = 75d;
-  public static final double  MAIN_WINDOW_WIDTH       = 500d;
+  public static final double  MAIN_WINDOW_WIDTH       = 520d;
   public static final double  MAIN_WINDOW_HEIGHT      = 680d;
   public static final double  GRID_WIDTH              = 650d;
   public static final double  GRID_HEIGHT             = 650d;
