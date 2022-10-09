@@ -38,20 +38,18 @@ public class HorizontalFlippingButton extends ImageButton {
     logger.info("Flipping horizontally");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MIRROR);
 
-    Set<Knot> knots = new TreeSet<>();
-
-    app.getDiagram().addKnotsToStep(
-      app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
-      app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    Set<Knot> newSelectedKnots = new TreeSet<>();
+    Set<Knot> newDisplayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
       Knot copy = new NodeUtil().copyKnot(knot);
       copy.setFlippedHorizontally(!knot.isFlippedHorizontally());
-      knots.add(copy);
+      newSelectedKnots.add(copy);
+      newDisplayedKnots.add(copy);
+      newDisplayedKnots.remove(knot);
     }
 
-    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
-    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().addAll(knots);
+    app.getDiagram().addKnotsToStep(newDisplayedKnots, newSelectedKnots);
 
     app.getOptionalDotGrid().layoutChildren();
   }
