@@ -34,6 +34,19 @@
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
       <version>${javafx.version}</version>
+      <classifier>win</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-graphics</artifactId>
+      <version>${javafx.version}</version>
+      <classifier>linux</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-graphics</artifactId>
+      <version>${javafx.version}</version>
+      <classifier>mac</classifier>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
@@ -167,9 +180,133 @@
       </plugin>
 
       <plugin>
+        <!-- This copies the JRE used to do the build from java.home - should be 32 bit Windows JRE -->
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <!-- here the phase you need -->
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/win32/java</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${java.home}</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>unpack-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <excludeScope>system</excludeScope>
+              <excludes>META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA</excludes>
+              <excludeGroupIds>junit,org.mockito,org.hamcrest</excludeGroupIds>
+              <outputDirectory>${project.build.directory}/classes</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.4.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <finalName>adaloveslace-0.2.6</finalName>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <transformers>
+                <transformer implementation=
+                                     "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Main-Class>org.alienlabs.adaloveslace.NewMain</Main-Class>
+                  </manifestEntries>
+                  <mainClass>org.alienlabs.adaloveslace.NewMain</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- This calls launch4j to create the program EXE -->
+        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+        <artifactId>launch4j-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>l4j-clui</id>
+            <phase>package</phase>
+            <goals>
+              <goal>launch4j</goal>
+            </goals>
+            <configuration>
+              <headerType>console</headerType>
+              <outfile>target/adaloveslace-0.2.6.exe</outfile>
+              <jar>target/adaloveslace-0.2.6.jar</jar>
+              <errTitle>encc</errTitle>
+              <classPath>
+                <mainClass>org.alienlabs.adaloveslace.NewMain</mainClass>
+                <addDependencies>false</addDependencies>
+              </classPath>
+              <jre>
+                <path>./win32/java</path>
+              </jre>
+              <versionInfo>
+                <fileVersion>0.2.6.0</fileVersion>
+                <txtFileVersion>txt file version</txtFileVersion>
+                <fileDescription>a description</fileDescription>
+                <copyright>my copyright</copyright>
+                <productVersion>0.2.6.0</productVersion>
+                <txtProductVersion>AdaLovesLace</txtProductVersion>
+                <productName>AdaLovesLace</productName>
+                <internalName>adaloveslace</internalName>
+                <originalFilename>adaloveslace.exe</originalFilename>
+              </versionInfo>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>io.github.fvarrui</groupId>
         <artifactId>javapackager</artifactId>
-        <version>1.6.2</version>
+        <version>1.6.7</version>
+        <dependencies>
+          <dependency>
+            <groupId>io.github.fvarrui</groupId>
+            <artifactId>launch4j</artifactId>
+            <version>2.5.2</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
             <phase>install</phase>
@@ -179,7 +316,9 @@
             <configuration>
               <name>adaloveslace</name>
               <mainClass>org.alienlabs.adaloveslace.App</mainClass>
-              <generateInstaller>true</generateInstaller>
+              <generateInstaller>false</generateInstaller>
+              <generateMsi>true</generateMsi>
+              <generateMsm>false</generateMsm>
               <administratorRequired>false</administratorRequired>
               <bundleJre>true</bundleJre>
               <!--
@@ -191,7 +330,7 @@
               <organizationEmail>goupilpierre@gmail.com</organizationEmail>
               <assetsDir>${basedir}/src/main/resources/assets</assetsDir>
               <outputDirectory>${project.build.directory}/artifacts</outputDirectory>
-              <platform>auto</platform>
+              <platform>windows</platform>
               <copyDependencies>true</copyDependencies>
               <winConfig>
                 <headerType>console</headerType>
