@@ -50,14 +50,15 @@ then:
     export JAVA_HOME=/usr/lib/jvm/jdk-19
 
     Windows:
+    export JAVA_HOME=/C/Program\ Files/Java/jdk-19/
     /C/Program\ Files/Java/jdk-19/bin/java -jar target/adaloveslace-0.2.6.jar
-    ./mvnw clean package          -DskipUTs=true -DskipFTs=true
+    ./mvnw clean install -Pwindows          -DskipUTs=true -DskipFTs=true
 
     Linux:
-    ./mvnw clean install          -DskipUTs=true                     # generate a package skipping unit tests
-    ./mvnw clean install          -DskipFTs=true                     # generate a package skipping functional tests
-    ./mvnw clean install          -DskipUTs=true -DskipFTs=true      # generate a package skipping all tests
-    ./mvnw clean install                                             # generate a package launching all tests
+    ./mvnw clean install -P linux         -DskipUTs=true                     # generate a package skipping unit tests
+    ./mvnw clean install -P linux         -DskipFTs=true                     # generate a package skipping functional tests
+    ./mvnw clean install -P linux         -DskipUTs=true -DskipFTs=true      # generate a package skipping all tests
+    ./mvnw clean install -P linux                                            # generate a package launching all tests
 
     ./mvnw clean integration-test                                    # launch all tests 
     ./mvnw clean test             -DskipFTs=true                     # launch unit tests

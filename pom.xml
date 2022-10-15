@@ -34,7 +34,7 @@
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
       <version>${javafx.version}</version>
-      <classifier>linux</classifier>
+      <classifier>win</classifier>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
@@ -167,14 +167,14 @@
         </configuration>
       </plugin>
 
-      <plugin>
-        <!-- This copies the JRE used to do the build from java.home - should be 32 bit Windows JRE -->
+      <!--<plugin>
+        &lt;!&ndash; This copies the JRE used to do the build from java.home - should be 32 bit Windows JRE &ndash;&gt;
         <artifactId>maven-resources-plugin</artifactId>
         <version>3.3.0</version>
         <executions>
           <execution>
             <id>copy-resources</id>
-            <!-- here the phase you need -->
+            &lt;!&ndash; here the phase you need &ndash;&gt;
             <phase>package</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -220,8 +220,7 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/artifacts</outputDirectory>
-              <finalName>adaloveslace-${project.version}</finalName>
+              <finalName>adaloveslace-0.2.6</finalName>
               <filters>
                 <filter>
                   <artifact>*:*</artifact>
@@ -247,18 +246,9 @@
         </executions>
       </plugin>
       <plugin>
-        <!-- This calls launch4j to create the program EXE -->
+        &lt;!&ndash; This calls launch4j to create the program EXE &ndash;&gt;
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>2.1.2</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-graphics</artifactId>
-            <version>${javafx.version}</version>
-            <classifier>win</classifier>
-          </dependency>
-        </dependencies>
         <executions>
           <execution>
             <id>l4j-clui</id>
@@ -268,8 +258,8 @@
             </goals>
             <configuration>
               <headerType>console</headerType>
-              <outfile>${project.build.directory}/artifacts/adaloveslace-${project.version}.exe</outfile>
-              <jar>${project.build.directory}/artifacts/adaloveslace-${project.version}.jar</jar>
+              <outfile>target/adaloveslace-0.2.6.exe</outfile>
+              <jar>target/adaloveslace-0.2.6.jar</jar>
               <errTitle>encc</errTitle>
               <classPath>
                 <mainClass>org.alienlabs.adaloveslace.NewMain</mainClass>
@@ -279,11 +269,11 @@
                 <path>./win32/java</path>
               </jre>
               <versionInfo>
-                <fileVersion>${project.version}.0</fileVersion>
-                <txtFileVersion>${project.version}</txtFileVersion>
-                <fileDescription>Ada Loves Lace: A tatting lace patterns creation software</fileDescription>
-                <copyright>(c) 2022 AlienLabs</copyright>
-                <productVersion>${project.version}.0</productVersion>
+                <fileVersion>0.2.6.0</fileVersion>
+                <txtFileVersion>txt file version</txtFileVersion>
+                <fileDescription>a description</fileDescription>
+                <copyright>my copyright</copyright>
+                <productVersion>0.2.6.0</productVersion>
                 <txtProductVersion>AdaLovesLace</txtProductVersion>
                 <productName>AdaLovesLace</productName>
                 <internalName>adaloveslace</internalName>
@@ -292,9 +282,9 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
+      </plugin>-->
 
-      <plugin>
+      <!--<plugin>
         <groupId>io.github.fvarrui</groupId>
         <artifactId>javapackager</artifactId>
         <version>1.6.7</version>
@@ -308,23 +298,33 @@
               <name>adaloveslace</name>
               <mainClass>org.alienlabs.adaloveslace.App</mainClass>
               <generateInstaller>true</generateInstaller>
+              <generateMsi>true</generateMsi>
+              <generateMsm>false</generateMsm>
               <administratorRequired>false</administratorRequired>
               <bundleJre>true</bundleJre>
-              <!--
+              <jdkPath>C:\Program Files\Java\jdk-19</jdkPath>
+              &lt;!&ndash;
                 customizedJre = false because of iText (which is not modular yet)
                 See: https://github.com/fvarrui/JavaPackager/issues/126
-              -->
+              &ndash;&gt;
               <customizedJre>false</customizedJre>
               <organizationName>AlienLabs</organizationName>
               <organizationEmail>goupilpierre@gmail.com</organizationEmail>
               <assetsDir>${basedir}/src/main/resources/assets</assetsDir>
               <outputDirectory>${project.build.directory}/artifacts</outputDirectory>
-              <platform>linux</platform>
+              <platform>windows</platform>
               <copyDependencies>true</copyDependencies>
+              <winConfig>
+                <headerType>console</headerType>
+                <setupLanguages>
+                  <french>compiler:Languages\French.isl</french>
+                  <english>compiler:Languages\English.isl</english>
+                </setupLanguages>
+              </winConfig>
               <vmArgs>
                 <vmArg>-Dglass.gtk.uiScale=200%</vmArg>
-                <vmArg>--module-path libs</vmArg>
-                <vmArg>--add-modules io,kernel,layout,javafx.base,javafx.controls,javafx.graphics,javafx.swing,org.slf4j</vmArg>
+                <vmArg>&#45;&#45;module-path libs</vmArg>
+                <vmArg>&#45;&#45;add-modules io,kernel,layout,javafx.base,javafx.controls,javafx.graphics,javafx.swing,org.slf4j</vmArg>
               </vmArgs>
               <additionalResources>
                 <additionalResource>${basedir}/target/classes/org/</additionalResource>
@@ -340,6 +340,18 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.alienlabs.adaloveslace.NewMain</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -439,4 +451,84 @@
       </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+    <profile>
+      <id>linux</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.github.fvarrui</groupId>
+            <artifactId>javapackager</artifactId>
+            <version>1.6.7</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>package</goal>
+                </goals>
+                <configuration>
+                  <!-- mandatory -->
+                  <mainClass>org.alienlabs.adaloveslace.NewMain</mainClass>
+                  <outputDirectory>${project.build.directory}/artifacts</outputDirectory>
+                  <!-- optional -->
+                  <bundleJre>true</bundleJre>
+                  <generateInstaller>true</generateInstaller>
+                  <generateMsi>false</generateMsi>
+                  <generateMsm>false</generateMsm>
+                  <administratorRequired>false</administratorRequired>
+                  <platform>linux</platform>
+                  <jrePath>/usr/lib/jvm/jdk-19</jrePath>
+                  <additionalResources>
+                  </additionalResources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>windows</id>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>io.github.fvarrui</groupId>
+              <artifactId>javapackager</artifactId>
+              <version>1.6.7</version>
+              <executions>
+                <execution>
+                  <phase>package</phase>
+                  <goals>
+                    <goal>package</goal>
+                  </goals>
+                  <configuration>
+                    <!-- mandatory -->
+                    <mainClass>org.alienlabs.adaloveslace.NewMain</mainClass>
+                    <outputDirectory>${project.build.directory}/artifacts</outputDirectory>
+                    <!-- optional -->
+                    <bundleJre>true</bundleJre>
+                    <generateInstaller>true</generateInstaller>
+                    <generateMsi>false</generateMsi>
+                    <generateMsm>false</generateMsm>
+                    <administratorRequired>false</administratorRequired>
+                    <platform>windows</platform>
+                    <jrePath>C:\Program Files\Java\jdk-19</jrePath>
+                    <winConfig>
+                      <headerType>console</headerType>
+                      <setupLanguages>
+                        <french>compiler:Languages\French.isl</french>
+                        <english>compiler:Languages\English.isl</english>
+                      </setupLanguages>
+                    </winConfig>
+                    <additionalResources>
+                    </additionalResources>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+    </profile>
+  </profiles>
 </project>
