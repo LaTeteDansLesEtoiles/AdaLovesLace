@@ -509,8 +509,8 @@
                     <!-- optional -->
                     <bundleJre>true</bundleJre>
                     <generateInstaller>true</generateInstaller>
-                    <generateMsi>false</generateMsi>
-                    <generateMsm>false</generateMsm>
+                    <generateMsi>true</generateMsi>
+                    <generateMsm>true</generateMsm>
                     <administratorRequired>false</administratorRequired>
                     <platform>windows</platform>
                     <jrePath>C:\Program Files\Java\jdk-19</jrePath>
