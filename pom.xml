@@ -152,9 +152,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.10.1</version>
-        <configuration>
-          <release>${java.version}</release>
-        </configuration>
+          <configuration>
+              <source>${java.version}</source>
+              <target>${java.version}</target>
+          </configuration>
       </plugin>
 
       <plugin>
@@ -162,7 +163,13 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
-          <mainClass>org.alienlabs.adaloveslace.App</mainClass>
+            <mainClass>org.alienlabs.adaloveslace/org.alienlabs.adaloveslace.App</mainClass>
+            <launcher>AdaLovesLace</launcher>
+            <jlinkZipName>AdaLovesLace</jlinkZipName>
+            <jlinkImageName>AdaLovesLace</jlinkImageName>
+            <noManPages>true</noManPages>
+            <stripDebug>true</stripDebug>
+            <noHeaderFiles>true</noHeaderFiles>
         </configuration>
       </plugin>
 

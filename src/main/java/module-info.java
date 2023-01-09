@@ -1,4 +1,4 @@
-module org.alienlabs.adaloveslace.impl {
+module org.alienlabs.adaloveslace {
   // iText
   requires io;
   requires kernel;
@@ -7,6 +7,7 @@ module org.alienlabs.adaloveslace.impl {
   requires jakarta.xml.bind;
   requires java.net.http;
   requires java.prefs;
+  requires javafx.graphics;
   requires org.slf4j;
   requires static com.github.spotbugs.annotations;
   requires static javafx.controls;
