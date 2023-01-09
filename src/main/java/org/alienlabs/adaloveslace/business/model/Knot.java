@@ -4,13 +4,16 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Something drawn on a Canvas, like with a brush (which is a lace Pattern), at certain x & y coordinates.
+ * Something drawn on a Canvas, like with a brush (which is a lace Pattern), at given x & y coordinates.
  *
  * @see Pattern
  * @see javafx.scene.canvas.Canvas
@@ -18,10 +21,12 @@ import java.util.UUID;
   */
 @XmlType(name = "Knot")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Knot {
+public class Knot implements Comparable<Knot> {
 
+  @XmlTransient
   public static final int DEFAULT_ROTATION  = 0;
-  public static final int DEFAULT_ZOOM      = 1;
+  @XmlTransient
+  public static final int DEFAULT_ZOOM      = 0;
 
   // Two coinciding Knots can be different
   private final UUID uuid;
@@ -37,24 +42,41 @@ public class Knot {
 
   private boolean visible;
 
+  private boolean flippedVertically;
+
+  private boolean flippedHorizontally;
+
   @XmlTransient
   private ImageView imageView;
 
+  @XmlTransient
+  private Node selection;
+
+  @XmlTransient
+  private Node hovered;
+
+  @XmlTransient
+  private List<Node> guideLines = new ArrayList<>();
+
   public Knot() {
-    this.uuid = UUID.randomUUID();
-    this.visible = true;
+    this.uuid                 = UUID.randomUUID();
+    this.visible              = true;
+    this.flippedVertically    = false;
+    this.flippedHorizontally  = false;
   }
 
   public Knot(final double x, final double y, final Pattern pattern, final ImageView imageView) {
-    this.x              = x;
-    this.y              = y;
-    this.pattern        = pattern;
-    this.imageView      = imageView;
+    this.x                    = x;
+    this.y                    = y;
+    this.pattern              = pattern;
+    this.imageView            = imageView;
 
-    this.uuid           = UUID.randomUUID();
-    this.rotationAngle  = DEFAULT_ROTATION;
-    this.zoomFactor     = DEFAULT_ZOOM;
-    this.visible        = true;
+    this.uuid                 = UUID.randomUUID();
+    this.rotationAngle        = DEFAULT_ROTATION;
+    this.zoomFactor           = DEFAULT_ZOOM;
+    this.visible              = true;
+    this.flippedVertically    = false;
+    this.flippedHorizontally  = false;
   }
 
   public UUID getUuid() {
@@ -109,12 +131,52 @@ public class Knot {
     this.imageView = imageView;
   }
 
+  public Node getSelection() {
+    return selection;
+  }
+
+  public void setSelection(Node selection) {
+    this.selection = selection;
+  }
+
+  public Node getHovered() {
+    return hovered;
+  }
+
+  public void setHovered(Node hovered) {
+    this.hovered = hovered;
+  }
+
+  public List<Node> getGuideLines() {
+    return guideLines;
+  }
+
+  public void setGuideLines(List<Node> guideLines) {
+    this.guideLines = guideLines;
+  }
+
   public boolean isVisible() {
     return visible;
   }
 
   public void setVisible(boolean visible) {
     this.visible = visible;
+  }
+
+  public boolean isFlippedVertically() {
+    return flippedVertically;
+  }
+
+  public void setFlippedVertically(boolean flippedVertically) {
+    this.flippedVertically = flippedVertically;
+  }
+
+  public boolean isFlippedHorizontally() {
+    return flippedHorizontally;
+  }
+
+  public void setFlippedHorizontally(boolean flippedHorizontally) {
+    this.flippedHorizontally = flippedHorizontally;
   }
 
   public boolean coincide(Knot other) {
@@ -138,14 +200,15 @@ public class Knot {
   @Override
   public String toString() {
     return "Knot{" +
-      "uuid=" + uuid +
-      ", x=" + x +
+      "x=" + x +
       ", y=" + y +
-      ", rotationAngle=" + rotationAngle +
-      ", zoomFactor=" + zoomFactor +
-      ", pattern=" + pattern +
+      ", pattern=" + pattern.getFilename() +
       ", visible=" + visible +
       '}';
   }
 
+  @Override
+  public int compareTo(Knot knot) {
+    return uuid.compareTo(knot.getUuid());
+  }
 }

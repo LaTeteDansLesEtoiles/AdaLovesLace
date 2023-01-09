@@ -15,16 +15,14 @@ import javafx.scene.image.ImageView;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.business.model.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -37,6 +35,8 @@ public class FileUtil {
   public static final String JAVA_CLASS_PATH_PROPERTY       = System.getProperty("java.class.path", ".");
   public static final String PATH_SEPARATOR_PROPERTY        = System.getProperty("path.separator");
   public static final String PATH_SEPARATOR                 = File.separator;
+  public static final String APP_FOLDER_IN_USER_HOME        = System.getProperty(USER_HOME) + File.separator +
+                                                              PROJECT_NAME + File.separator;
 
   // For code under test:
   public static final String CLASSPATH_RESOURCES_PATH       = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*.jpg";
@@ -50,7 +50,20 @@ public class FileUtil {
     // Nothing to do here, that's just to avoid an all-static class
   }
 
-  public void loadFromLaceFile(App app, File file) {
+  public void buildUiFromLaceFile(App app, File file) {
+    Diagram diagram = loadFromLaceFile(app, file);
+
+    app.getOptionalDotGrid().getDiagramProperty().set(diagram);
+    app.getOptionalDotGrid().setDiagram(diagram);
+    app.getPrimaryStage().close();
+    app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
+      app.getPrimaryStage());
+    app.initializeKeyboardShorcuts();
+    app.getToolboxStage().close();
+    app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
+  }
+
+  public Diagram loadFromLaceFile(App app, File file) {
     Diagram diagram = null;
 
     try (ZipFile zipFile = new ZipFile(file)) {
@@ -61,49 +74,60 @@ public class FileUtil {
 
         if (XML_FILE_TO_SAVE_IN_LACE_FILE.equals(entry.getName())) {
           diagram = buildDiagram(zipFile, entry);
+          app.setDiagram(diagram);
         } else {
           copyPattern(file, zipFile, entry);
         }
       }
 
       if (null != diagram) {
-        buildKnotsImageViews(diagram);
+        buildKnotsImageViews(app, diagram);
       }
-      deleteXmlFile();
     } catch (JAXBException | IOException e) {
       logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
     }
 
-    app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
-
-    app.getOptionalDotGrid().getDiagramProperty().set(diagram);
-    app.getOptionalDotGrid().layoutChildren();
+    return diagram;
   }
 
-  private void buildKnotsImageViews(Diagram diagram) {
-    for (Knot knot : diagram.getKnots()) {
-      try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
-        buildKnotImageView(knot, fis);
-      } catch (IOException e) {
-        logger.error("Problem with pattern resource file!", e);
+  private void buildKnotsImageViews(App app, Diagram diagram) {
+    for (Step step : diagram.getAllSteps()) {
+      for (Knot knot : step.getDisplayedKnots()) {
+        try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
+          + knot.getPattern().getFilename())) {
+          buildKnotImageView(app, knot, fis);
+        } catch (IOException e) {
+          logger.error("Problem with pattern resource file!", e);
+        }
+      }
+
+      for (Knot knot : step.getSelectedKnots()) {
+        try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
+          + knot.getPattern().getFilename())) {
+          buildKnotImageView(app, knot, fis);
+        } catch (IOException e) {
+          logger.error("Problem with pattern resource file!", e);
+        }
       }
     }
   }
 
-  public void buildKnotImageView(Knot knot, FileInputStream fis) {
+  public void buildKnotImageView(App app, Knot knot, FileInputStream fis) {
     Image image = new Image(fis);
     ImageView iv = new ImageView(image);
 
     iv.setX(knot.getX());
     iv.setY(knot.getY());
-    iv.setRotate(0d);
-    iv.setOpacity(1.0d);
+
+    iv.setScaleX(app.getOptionalDotGrid().computeZoomFactor(knot));
+    iv.setScaleY(app.getOptionalDotGrid().computeZoomFactor(knot));
+    iv.setRotate(knot.getRotationAngle());
+
     knot.setImageView(iv);
   }
 
   private void deleteXmlFile() throws IOException {
-    File xmlFile = new File(System.getProperty(USER_HOME) + File.separator +
-      PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator +
+    File xmlFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
       XML_FILE_TO_SAVE_IN_LACE_FILE);
 
     if (xmlFile.exists() && xmlFile.canWrite()) {
@@ -113,8 +137,7 @@ public class FileUtil {
 
   private void copyPattern(File file, ZipFile zipFile, ZipEntry entry) {
     try (InputStream initialStream = zipFile.getInputStream(entry)) {
-      File targetFile = new File(System.getProperty(USER_HOME) + File.separator +
-        PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator + entry.getName());
+      File targetFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + entry.getName());
 
       if (!targetFile.exists()) {
         Files.copy(
@@ -128,48 +151,41 @@ public class FileUtil {
   }
 
   private Diagram buildDiagram(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
-    JAXBContext context = JAXBContext.newInstance(Diagram.class);
-    Unmarshaller jaxbUnmarshaller = context.createUnmarshaller();
-    Diagram diagram = (Diagram) jaxbUnmarshaller.unmarshal(zipFile.getInputStream(entry));
+    Diagram diagram = unmarshallXmlFile(zipFile, entry);
 
-    buildAbsoluteFilenamesForPatterns(diagram);
     buildAbsoluteFilenamesForKnots(diagram);
 
-    diagram.setCurrentKnotIndex(diagram.getKnots().size());
     diagram.setCurrentPattern(diagram.getPatterns().get(0));
     return diagram;
   }
 
+  public Diagram unmarshallXmlFile(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
+    JAXBContext context = JAXBContext.newInstance(Diagram.class);
+    Unmarshaller jaxbUnmarshaller = context.createUnmarshaller();
+    return (Diagram) jaxbUnmarshaller.unmarshal(zipFile.getInputStream(entry));
+  }
+
   private void buildAbsoluteFilenamesForKnots(Diagram diagram) {
     for (Knot k : diagram.getKnots()) {
-      k.getPattern().setAbsoluteFilename(System.getProperty(USER_HOME) + File.separator +
-        PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator + k.getPattern().getFilename());
+      k.getPattern().setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + k.getPattern().getFilename());
     }
   }
 
-  private void buildAbsoluteFilenamesForPatterns(Diagram diagram) {
-    for (org.alienlabs.adaloveslace.business.model.Pattern p : diagram.getPatterns()) {
-      p.setAbsoluteFilename(System.getProperty(USER_HOME) + File.separator +
-        PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
-    }
-  }
-
-  public void saveFile(App app, File file) {
+  public File saveFile(File file, Diagram diagram) {
     try {
       JAXBContext context = JAXBContext.newInstance(Diagram.class);
       Marshaller jaxbMarshaller = context.createMarshaller();
       jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
       // In order not to lose the undo / redo history
-      Diagram toSave = buildDiagramToSave(app);
-      File homeDirectoryResourcesPath = new File(System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
+      File homeDirectoryResourcesPath = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME);
 
       if (!file.getName().endsWith(LACE_FILE_EXTENSION)) {
-        file = new File(file.getParent() + File.separator + file.getName() + LACE_FILE_EXTENSION);
+        file = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, file.getName() + LACE_FILE_EXTENSION);
       }
 
       if (homeDirectoryResourcesPath.exists() && homeDirectoryResourcesPath.canRead()) {
-        writeLaceFile(file, jaxbMarshaller, toSave, homeDirectoryResourcesPath);
+        writeLaceFile(file, jaxbMarshaller, diagram, homeDirectoryResourcesPath);
       } else {
         throw new IllegalArgumentException("Home directory " + homeDirectoryResourcesPath.getAbsolutePath() + " not read accessible!");
       }
@@ -178,6 +194,8 @@ public class FileUtil {
     } catch (JAXBException | IOException e) {
       logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
     }
+
+    return file;
   }
 
   private void writeLaceFile(File file, Marshaller jaxbMarshaller, Diagram toSave, File homeDirectoryResourcesPath) throws JAXBException {
@@ -193,23 +211,17 @@ public class FileUtil {
     File xmlFile = new File(homeDirectoryResourcesPath + File.separator + XML_FILE_TO_SAVE_IN_LACE_FILE);
     jaxbMarshaller.marshal(toSave, xmlFile);
 
-    zipOut.putNextEntry(new ZipEntry(xmlFile.getName()));
+    zipOut.putNextEntry(new ZipEntry(XML_FILE_TO_SAVE_IN_LACE_FILE));
     Files.copy(xmlFile.toPath(), zipOut);
   }
 
   private void writePatternsToLaceFile(Diagram toSave, ZipOutputStream zipOut) throws IOException {
-    for (org.alienlabs.adaloveslace.business.model.Pattern pattern : toSave.getPatterns()) {
-      File fileToZip = new File(pattern.getAbsoluteFilename());
+    for (org.alienlabs.adaloveslace.business.model.Pattern pattern : new HashSet<>(toSave.getPatterns())) {
+      File fileToZip = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
+        + pattern.getFilename());
       zipOut.putNextEntry(new ZipEntry(pattern.getFilename()));
       Files.copy(fileToZip.toPath(), zipOut);
     }
-  }
-
-  private Diagram buildDiagramToSave(App app) {
-    Diagram toSave = new Diagram(app.getOptionalDotGrid().getDiagram());
-    toSave.setKnots(toSave.getKnots().subList(0, toSave.getCurrentKnotIndex()));
-
-    return toSave;
   }
 
   /**
@@ -297,7 +309,7 @@ public class FileUtil {
     try {
       zf = new ZipFile(file);
     } catch(final IOException e) {
-      logger.error("Error reading classpath .jar file!", e);
+      logger.debug("Error reading classpath .jar file!", e);
       return retval;
     }
     final Enumeration<? extends ZipEntry> e = zf.entries();

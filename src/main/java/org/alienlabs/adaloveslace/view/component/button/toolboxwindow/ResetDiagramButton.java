@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 public class ResetDiagramButton extends ImageButton {
 
-  public static final String RESET_DIAGRAM_BUTTON_NAME = "  Reset diagram  ";
-
   private static final Logger logger = LoggerFactory.getLogger(ResetDiagramButton.class);
 
   public ResetDiagramButton(String buttonLabel, App app) {
@@ -18,8 +16,9 @@ public class ResetDiagramButton extends ImageButton {
   }
 
   public static void resetDiagram(App app) {
-    app.getOptionalDotGrid().getDiagram().resetDiagram();
+    app.getOptionalDotGrid().getDiagram().resetDiagram(app);
     app.getOptionalDotGrid().layoutChildren();
+
     logger.info("Event reset diagram: {}", app);
   }
 

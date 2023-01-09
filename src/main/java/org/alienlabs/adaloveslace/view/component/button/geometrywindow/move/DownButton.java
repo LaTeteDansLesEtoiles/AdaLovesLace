@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow.move;
 import javafx.scene.control.Button;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +20,16 @@ public class DownButton extends Button {
   }
 
   public static void onMoveKnotDownAction(App app, GeometryWindow window) {
-    Knot currentKnot = app.getOptionalDotGrid().getDiagram().getCurrentKnot();
-    logger.debug("Moving down knot {}", currentKnot);
+    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MOVE);
 
-    currentKnot.setY(currentKnot.getY() + FastMoveModeButton.getMoveSpeed());
+    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
+      knot.setY(knot.getY() + FastMoveModeButton.getMoveSpeed());
+      logger.debug("Moving down knot {}", knot);
+    }
+
+    app.getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
+      app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+
     app.getOptionalDotGrid().layoutChildren();
   }
 

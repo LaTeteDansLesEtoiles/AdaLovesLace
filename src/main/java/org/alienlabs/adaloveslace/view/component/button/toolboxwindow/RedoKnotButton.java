@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 public class RedoKnotButton extends ImageButton {
 
-  public static final String REDO_KNOT_BUTTON_NAME = "      Redo knot     ";
-
   private static final Logger logger = LoggerFactory.getLogger(RedoKnotButton.class);
 
   public RedoKnotButton(String buttonLabel, App app) {
@@ -18,9 +16,9 @@ public class RedoKnotButton extends ImageButton {
   }
 
   public static void redoKnot(App app) {
-    app.getOptionalDotGrid().getDiagram().redoLastKnot();
+    app.getOptionalDotGrid().getDiagram().redoLastStep(app);
     app.getOptionalDotGrid().layoutChildren();
-    logger.info("Event redo knot: {}", app);
+    logger.info("Redo knot event");
   }
 
 }

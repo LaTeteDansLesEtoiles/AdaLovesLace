@@ -15,8 +15,6 @@ import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
 public class LoadButton extends ImageButton {
 
-  public static final String LOAD_BUTTON_NAME         = "          Load          ";
-
   public static final String LOAD_FILE_DIALOG_TITLE   = "Load diagram";
   public static final String DIAGRAM_FILES            = ".lace files (*.lace)";
   public static final String DIAGRAM_FILE_FILTER      = "*.lace";
@@ -36,7 +34,9 @@ public class LoadButton extends ImageButton {
     File file = load.showOpenDialog(app.getScene().getWindow());
 
     if (file != null) {
-      new FileUtil().loadFromLaceFile(app, file);
+      app.getOptionalDotGrid().clearSelections();
+      app.getOptionalDotGrid().clearAllGuideLines();
+      new FileUtil().buildUiFromLaceFile(app, file);
     }
   }
 

@@ -16,15 +16,25 @@ node {
         sh "./mvnw clean"
     }
 
+    stage('unit tests') {
+        try {
+            sh "./mvnw clean test -DskipFTs=true"
+        } catch(err) {
+            throw err
+        } finally {
+            junit '**/target/surefire-reports/TEST-*.xml'
+        }
+    }
+
     wrap([$class: 'Xvfb']) {
-        stage('automated tests') {
-            try {
-                sh "./mvnw test -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=5000"
-            } catch(err) {
-                throw err
-            } finally {
-                junit '**/target/surefire-reports/TEST-*.xml'
-            }
+
+        stage('functional tests') {
+          try {
+            sh "./mvnw clean integration-test -DskipUTs=true -Dtestfx.launch.timeout=20000 -Dtestfx.setup.timeout=20000 -DSLEEP_TIME=5000"          } catch(err) {
+            throw err
+          } finally {
+            junit '**/target/failsafe-reports/TEST-*.xml'
+          }
         }
 
         stage('test coverage') {
@@ -85,7 +95,7 @@ node {
         }
 
         stage('packaging') {
-            sh "./mvnw package -DskipTests"
+            sh "./mvnw clean install -DskipUTs=true -DskipFTs=true"
             archiveArtifacts artifacts: '**/target/artifacts/adaloveslace-*,**/target/artifacts/adaloveslace_*', fingerprint: true
         }
     }

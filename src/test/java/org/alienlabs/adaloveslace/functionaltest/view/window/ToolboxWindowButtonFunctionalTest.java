@@ -1,19 +1,17 @@
-package org.alienlabs.adaloveslace.test.view;
+package org.alienlabs.adaloveslace.functionaltest.view.window;
 
 import javafx.stage.Stage;
-import org.alienlabs.adaloveslace.test.AppTestParent;
+import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.NodeMatchers;
 
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton.QUIT_APP_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton.REDO_KNOT_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ResetDiagramButton.RESET_DIAGRAM_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton.UNDO_KNOT_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
-class ToolboxButtonTest extends AppTestParent {
+class ToolboxWindowButtonFunctionalTest extends AppFunctionalTestParent {
 
   /**
    * Init method called before each test
@@ -40,7 +38,7 @@ class ToolboxButtonTest extends AppTestParent {
    */
   @Test
   void should_contain_show_hide_grid_button_with_text() {
-    FxAssert.verifyThat(SHOW_HIDE_GRID_BUTTON_NAME, NodeMatchers.isVisible());
+    FxAssert.verifyThat(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME), NodeMatchers.isVisible());
   }
 
   /**
@@ -49,7 +47,7 @@ class ToolboxButtonTest extends AppTestParent {
    */
   @Test
   void should_contain_quit_button_with_text() {
-    FxAssert.verifyThat(QUIT_APP_BUTTON_NAME, NodeMatchers.isVisible());
+    FxAssert.verifyThat(resourceBundle.getString(QUIT_APP), NodeMatchers.isVisible());
   }
 
   /**
@@ -58,7 +56,7 @@ class ToolboxButtonTest extends AppTestParent {
    */
   @Test
   void should_contain_undo_knot_button_with_text() {
-    FxAssert.verifyThat(UNDO_KNOT_BUTTON_NAME, NodeMatchers.isVisible());
+    FxAssert.verifyThat(resourceBundle.getString(UNDO_KNOT), NodeMatchers.isVisible());
   }
 
   /**
@@ -67,7 +65,7 @@ class ToolboxButtonTest extends AppTestParent {
    */
   @Test
   void should_contain_redo_knot_button_with_text() {
-    FxAssert.verifyThat(REDO_KNOT_BUTTON_NAME, NodeMatchers.isVisible());
+    FxAssert.verifyThat(resourceBundle.getString(REDO_KNOT), NodeMatchers.isVisible());
   }
 
   /**
@@ -76,7 +74,7 @@ class ToolboxButtonTest extends AppTestParent {
    */
   @Test
   void should_contain_reset_diagram_button_with_text() {
-    FxAssert.verifyThat(RESET_DIAGRAM_BUTTON_NAME, NodeMatchers.isVisible());
+    FxAssert.verifyThat(resourceBundle.getString(RESET_DIAGRAM), NodeMatchers.isVisible());
   }
 
 }

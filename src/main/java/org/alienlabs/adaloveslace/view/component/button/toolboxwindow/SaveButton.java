@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
@@ -16,7 +17,6 @@ import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
 public class SaveButton extends ImageButton {
 
-  public static final String SAVE_FILE_BUTTON_NAME    = "         Save          ";
   public static final String SAVE_FILE_DIALOG_TITLE   = "Save diagram as";
   public static final String DIAGRAM_FILES            = ".lace files (*.lace)";
   public static final String DIAGRAM_FILE_FILTER      = "*.lace";
@@ -37,7 +37,7 @@ public class SaveButton extends ImageButton {
     Preferences preferences = new Preferences();
     File laceFilePath = preferences.getPathWithFileValue(SAVED_LACE_FILE);
 
-    if (laceFilePath == null || !laceFilePath.canWrite()) {
+    if (laceFilePath == null || !laceFilePath.exists() || !laceFilePath.isDirectory() || !laceFilePath.canWrite()) {
       // Save as anyway, since we don't know where to save
       FileChooser saveAs = new FileChooser();
       saveAs.setTitle(SAVE_FILE_DIALOG_TITLE);
@@ -61,7 +61,7 @@ public class SaveButton extends ImageButton {
       preferences.setPathWithFileValue(file, SAVED_LACE_FILE);
       preferences.setPathWithFileValue(file.getParentFile(), LACE_FILE_FOLDER_SAVE_PATH);
 
-      new FileUtil().saveFile(app, file);
+      new FileUtil().saveFile(file, new Diagram(app.getOptionalDotGrid().getDiagram()));
     }
   }
 

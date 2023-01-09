@@ -28,7 +28,7 @@ public class Preferences {
     }
   }
 
-  public File setPathWithFileValue(File file, String path) {
+  public void setPathWithFileValue(File file, String path) {
     java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userNodeForPackage(App.class);
 
     if (file != null) {
@@ -36,22 +36,20 @@ public class Preferences {
     } else {
       prefs.remove(path);
     }
-
-    return file;
   }
 
-  public String getPathWithStringValue(String path) {
+  public String getStringValue(String key) {
     java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userNodeForPackage(App.class);
-    return prefs.get(path, null);
+    return prefs.get(key, "");
   }
 
-  public void setPathWithStringValue(String value, String path) {
+  public void setStringValue(String key, String value) {
     java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userNodeForPackage(App.class);
 
     if (value != null) {
-      prefs.put(path, value);
+      prefs.put(key, value);
     } else {
-      prefs.remove(path);
+      prefs.remove(key);
     }
   }
 

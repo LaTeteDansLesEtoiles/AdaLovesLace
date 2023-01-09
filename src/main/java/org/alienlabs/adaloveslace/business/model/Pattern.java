@@ -7,12 +7,13 @@ import jakarta.xml.bind.annotation.XmlType;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * An image, or at least the one represented by a Pattern filename, which can be put at will on a Canvas and chosen
  * in the ToolboxWindow.
  * <p>
- * Initially, the Patterns are loaded from a certain package of the classpath, according to the expression:
+ * Initially, the Patterns are loaded from a given package of the classpath, according to the expression:
  *
  * @see org.alienlabs.adaloveslace.util.FileUtil#CLASSPATH_RESOURCES_PATH
  * <p>
@@ -31,6 +32,10 @@ public class Pattern {
   private double centerX;
 
   private double centerY;
+
+  private double width;
+
+  private double height;
 
   public Pattern(String absoluteFilename) {
     this.absoluteFilename = absoluteFilename;
@@ -77,11 +82,42 @@ public class Pattern {
     this.centerY = centerY;
   }
 
+  public double getWidth() {
+    return width;
+  }
+
+  public void setWidth(double width) {
+    this.width = width;
+  }
+
+  public double getHeight() {
+    return height;
+  }
+
+  public void setHeight(double height) {
+    this.height = height;
+  }
+
   @Override
   public String toString() {
     return "Pattern{" +
       "absoluteFilename='" + absoluteFilename + '\'' +
+      "width='" + width + '\'' +
+      "height='" + height + '\'' +
       '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Pattern)) return false;
+    Pattern pattern = (Pattern) o;
+    return Objects.equals(filename, pattern.filename);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(filename);
   }
 
 }

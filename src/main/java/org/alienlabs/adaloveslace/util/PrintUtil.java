@@ -1,9 +1,9 @@
 package org.alienlabs.adaloveslace.util;
 
 import javafx.collections.ObservableSet;
+import javafx.print.PageLayout;
 import javafx.print.Printer;
 import javafx.print.PrinterJob;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import org.alienlabs.adaloveslace.App;
@@ -54,7 +54,7 @@ public class PrintUtil {
           boolean proceed = pJ.showPrintDialog(app.getPrimaryStage());
 
           if (proceed) {
-            print(pJ, app.getRoot());
+            print(pJ);
           } else {
             logger.info("Printing diagram aborted by user!");
           }
@@ -65,18 +65,20 @@ public class PrintUtil {
   /**
    * Print the main window using the Java print dialog
    * @param job the printer job
-   * @param node the node to print
    */
-  private void print(PrinterJob job, Node node)
+  public void print(PrinterJob job)
   {
     ImageUtil iu = new ImageUtil(app);
     iu.hideTechnicalElementsFromRootGroup();
 
-    // Print the node
-    boolean printed = job.printPage(job.getJobSettings().getPageLayout(), node);
+    Printer printer = job.getPrinter();
+    PageLayout pageLayout = printer.createPageLayout(job.getJobSettings().getPageLayout().getPaper(),
+      job.getJobSettings().getPageLayout().getPageOrientation(), Printer.MarginType.HARDWARE_MINIMUM);
 
-    if (printed)
-    {
+    // Print the JavaFX root
+    boolean printed = job.printPage(pageLayout, app.getRoot());
+
+    if(printed){
       logger.info("Printed diagram successfully");
       job.endJob();
     } else {

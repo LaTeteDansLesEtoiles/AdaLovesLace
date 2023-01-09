@@ -16,8 +16,6 @@ import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
 public class ExportImageButton extends ImageButton {
 
-  public static final String EXPORT_IMAGE_BUTTON_NAME   = " Export as image";
-
   public static final String EXPORT_IMAGE_DIALOG_TITLE  = "Export a diagram image";
 
   public static final String EXPORTED_FILES             = ".png files (*.png)";
