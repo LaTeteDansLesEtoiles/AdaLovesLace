@@ -17,7 +17,6 @@ import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
-import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -425,7 +424,7 @@ public class OptionalDotGrid extends Pane {
     }
   }
 
-  public void addKnot(App app, double x, double y) {
+  public void addKnot(double x, double y) {
     Pattern currentPattern = this.diagram.getCurrentPattern();
     logger.info("Current pattern  -> {}", currentPattern);
     Knot currentKnot = null;
@@ -444,7 +443,7 @@ public class OptionalDotGrid extends Pane {
       currentKnot = new Knot(x, y, currentPattern, iv);
       diagram.setCurrentKnot(currentKnot);
 
-      this.diagram.addKnotsWithStep(app, currentKnot);
+      this.diagram.addKnotsWithStep(currentKnot);
     } catch (IOException e) {
       logger.error("Problem with pattern resource file!", e);
     }
