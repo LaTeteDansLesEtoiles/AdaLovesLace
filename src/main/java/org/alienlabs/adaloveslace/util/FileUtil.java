@@ -154,9 +154,9 @@ public class FileUtil {
 
     private Diagram buildDiagram(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
         Diagram diagram = unmarshallXmlFile(zipFile, entry);
-
         buildAbsoluteFilenamesForKnots(diagram);
 
+        diagram.setCurrentStepIndex(diagram.getAllSteps().get(diagram.getAllSteps().size() - 1).getStepIndex());
         diagram.setCurrentPattern(diagram.getPatterns().get(0));
         return diagram;
     }
@@ -211,6 +211,7 @@ public class FileUtil {
 
     private void writeDiagramToLaceFile(Marshaller jaxbMarshaller, Diagram toSave, File homeDirectoryResourcesPath, ZipOutputStream zipOut) throws JAXBException, IOException {
         File xmlFile = new File(homeDirectoryResourcesPath + File.separator + XML_FILE_TO_SAVE_IN_LACE_FILE);
+        toSave.setCurrentStepIndex(toSave.getAllSteps().get(toSave.getAllSteps().size() - 1).getStepIndex());
         jaxbMarshaller.marshal(toSave, xmlFile);
 
         zipOut.putNextEntry(new ZipEntry(XML_FILE_TO_SAVE_IN_LACE_FILE));

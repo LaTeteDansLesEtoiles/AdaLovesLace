@@ -6,6 +6,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -18,45 +19,72 @@ import java.util.Set;
  */
 @XmlRootElement(name = "Step")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Step {
+public class Step implements Comparable<Step> {
 
-  private Set<Knot> displayedKnots;
+    private static Integer totalStepIndices = 0;
 
-  private Set<Knot> selectedKnots;
+    private final Integer stepIndex;
 
-  public Step() {
-    this.displayedKnots = new HashSet<>();
-    this.selectedKnots = new HashSet<>();
-  }
+    private final Set<Knot> displayedKnots;
 
-  public Step(Set<Knot> displayedKnots, Set<Knot> selectedKnots) {
-    this.displayedKnots = new HashSet<>(displayedKnots.stream().filter(knot -> !selectedKnots.contains(knot)).toList());
+    private final Set<Knot> selectedKnots;
 
-    this.selectedKnots =  new HashSet<>(selectedKnots.stream().map(knot ->
-      new NodeUtil().copyKnot(knot)).toList());
-  }
+    public Step() {
+        this.stepIndex = ++totalStepIndices;
+        this.displayedKnots = new HashSet<>();
+        this.selectedKnots = new HashSet<>();
+    }
 
-  public static Step of(Set<Knot> displayedKnots, Set<Knot> selectedKnots) {
-    Step step = new Step();
-    step.getDisplayedKnots().addAll(displayedKnots);
-    step.getSelectedKnots().addAll(selectedKnots);
+    public Step(Set<Knot> displayedKnots, Set<Knot> selectedKnots) {
+        this.stepIndex = ++totalStepIndices;
+        this.displayedKnots = new HashSet<>(displayedKnots.stream().filter(knot -> !selectedKnots.contains(knot)).toList());
 
-    return step;
-  }
+        this.selectedKnots =  new HashSet<>(selectedKnots.stream().map(knot ->
+            new NodeUtil().copyKnot(knot)).toList());
+    }
 
-  public Set<Knot> getDisplayedKnots() {
-    return displayedKnots;
-  }
+    public static Step of(Set<Knot> displayedKnots, Set<Knot> selectedKnots) {
+        Step step = new Step();
+        step.getDisplayedKnots().addAll(displayedKnots);
+        step.getSelectedKnots().addAll(selectedKnots);
 
-  public Set<Knot> getSelectedKnots() {
-    return selectedKnots;
-  }
+        return step;
+    }
 
-  public Set<Knot> getAllVisibleKnots() {
-    Set<Knot> all = new HashSet<>(selectedKnots);
-    all.addAll(displayedKnots);
+    public Set<Knot> getDisplayedKnots() {
+        return displayedKnots;
+    }
 
-    return all;
-  }
+    public Set<Knot> getSelectedKnots() {
+        return selectedKnots;
+    }
 
+    public Set<Knot> getAllVisibleKnots() {
+        Set<Knot> all = new HashSet<>(selectedKnots);
+        all.addAll(displayedKnots);
+
+        return all;
+    }
+
+    public Integer getStepIndex() {
+        return stepIndex;
+    }
+
+    @Override
+    public int compareTo(Step o) {
+        return this.stepIndex.compareTo(o.stepIndex);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Step step = (Step) o;
+        return stepIndex.equals(step.stepIndex);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stepIndex);
+    }
 }
