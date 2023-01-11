@@ -29,22 +29,26 @@ public class Step implements Comparable<Step> {
 
     private final Set<Knot> selectedKnots;
 
+    // For JAXB
     public Step() {
-        this.stepIndex = ++totalStepIndices;
+        this(0);
+    }
+    public Step(int stepIndex) {
+        this.stepIndex = stepIndex;
         this.displayedKnots = new HashSet<>();
         this.selectedKnots = new HashSet<>();
     }
 
-    public Step(Set<Knot> displayedKnots, Set<Knot> selectedKnots) {
-        this.stepIndex = ++totalStepIndices;
+    public Step(Set<Knot> displayedKnots, Set<Knot> selectedKnots, int stepIndex) {
+        this.stepIndex = stepIndex;
         this.displayedKnots = new HashSet<>(displayedKnots.stream().filter(knot -> !selectedKnots.contains(knot)).toList());
 
         this.selectedKnots =  new HashSet<>(selectedKnots.stream().map(knot ->
             new NodeUtil().copyKnot(knot)).toList());
     }
 
-    public static Step of(Set<Knot> displayedKnots, Set<Knot> selectedKnots) {
-        Step step = new Step();
+    public static Step of(Set<Knot> displayedKnots, Set<Knot> selectedKnots, int stepIndex) {
+        Step step = new Step(stepIndex);
         step.getDisplayedKnots().addAll(displayedKnots);
         step.getSelectedKnots().addAll(selectedKnots);
 
@@ -64,6 +68,14 @@ public class Step implements Comparable<Step> {
         all.addAll(displayedKnots);
 
         return all;
+    }
+
+    public static Integer incrementIndex() {
+        return ++totalStepIndices;
+    }
+
+    public static Integer getTotalStepIndices() {
+        return totalStepIndices;
     }
 
     public Integer getStepIndex() {
