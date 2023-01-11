@@ -46,7 +46,7 @@ public class Events {
   private static void processMouseClick(double x, double y, double screenX, double screenY) {
     switch (app.getOptionalDotGrid().getDiagram().getCurrentMode()) {
       case DRAWING          -> app.getOptionalDotGrid().addKnot(app, x, y);
-      case SELECTION        -> app.getMainWindow().onClickWithSelectionMode(app, screenX, screenY);
+      case SELECTION, MOVE  -> app.getMainWindow().onClickWithSelectionMode(app, screenX, screenY);
       case DELETION         -> app.getMainWindow().onClickWithDeletionMode(app, app.getOptionalDotGrid().getDiagram(), screenX, screenY) ;
       case DUPLICATION      -> {}
       case CREATE_PATTERN   -> {} // This is managed in CreatePatternButton
