@@ -124,7 +124,7 @@ public class Diagram {
     public void undoLastStep(App app) {
         logger.info("Undo step, current step={}", currentStepIndex);
 
-        if (this.currentStepIndex >= 0) {
+        if (this.currentStepIndex >= 1) {
             deleteNodesFromCurrentStep(app);
 
             this.currentStepIndex--;
@@ -136,7 +136,7 @@ public class Diagram {
     public void redoLastStep(App app) {
         logger.info("Redo step, current step={}", currentStepIndex);
 
-        if (currentStepIndex < this.getAllSteps().size() -1) {
+        if (currentStepIndex < this.getAllSteps().size()) {
             deleteNodesFromCurrentStep(app);
             this.currentStepIndex++;
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
