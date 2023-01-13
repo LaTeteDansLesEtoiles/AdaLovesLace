@@ -4,7 +4,7 @@ Ada Aime la Dentelle : un logiciel de création de diagrammes de dentelle
 
 This is Free Software, under [Affero GPL V3 license](license.md)
 
-© 2022 Zala GOUPIL
+© 2023 Zala GOUPIL
 
 This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by applicable law.
 
