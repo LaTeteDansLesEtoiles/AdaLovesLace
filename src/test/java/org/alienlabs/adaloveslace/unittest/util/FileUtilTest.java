@@ -33,10 +33,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class FileUtilTest {
 
-    public static final int NUMBER_OF_STEPS = 23;
-    public static final int NUMBER_OF_PATTERNS = 22;
-    public static final int LAST_PATTERN_INDEX = 21;
-    public static final int LAST_STEP_INDEX = 22;
+    public static final int NUMBER_OF_STEPS     = 23;
+    public static final int NUMBER_OF_PATTERNS  = 22;
+    public static final int LAST_PATTERN_INDEX  = 21;
+    public static final int LAST_STEP_INDEX     = 22;
+
     @TempDir
     File dotLaceFileTempDir;
     private File dotLaceFile;
