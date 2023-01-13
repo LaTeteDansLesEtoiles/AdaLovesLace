@@ -94,8 +94,8 @@ node {
         }
 
         stage('packaging') {
-            sh "./mvnw clean install -DskipUTs=true -DskipFTs=true"
-            archiveArtifacts artifacts: '**/target/artifacts/adaloveslace-*,**/target/artifacts/adaloveslace_*', fingerprint: true
+            sh "./mvnw package -P linux -DskipUTs=true -DskipFTs=true"
+            archiveArtifacts artifacts: '**/target/artifacts/*.deb,**/target/artifacts/*.rpm,**/target/artifacts/*.AppImage', fingerprint: true
         }
     }
 }
