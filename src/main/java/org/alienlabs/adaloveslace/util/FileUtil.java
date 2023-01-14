@@ -16,6 +16,7 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Step;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.DrawingButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +83,7 @@ public class FileUtil {
 
             if (null != diagram) {
                 buildKnotsImageViews(app, diagram);
+                DrawingButton.onSetDrawModeAction(app, app.getGeometryWindow());
             }
         } catch (JAXBException | IOException e) {
             logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
