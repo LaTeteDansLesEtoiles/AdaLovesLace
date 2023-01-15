@@ -62,6 +62,8 @@ public class FileUtil {
         app.initializeKeyboardShorcuts();
         app.getToolboxStage().close();
         app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
+
+        DrawingButton.onSetDrawModeAction(app, app.getGeometryWindow());
     }
 
     public Diagram loadFromLaceFile(App app, File file) {
@@ -83,7 +85,6 @@ public class FileUtil {
 
             if (null != diagram) {
                 buildKnotsImageViews(app, diagram);
-                DrawingButton.onSetDrawModeAction(app, app.getGeometryWindow());
             }
         } catch (JAXBException | IOException e) {
             logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
@@ -181,14 +182,13 @@ public class FileUtil {
             Marshaller jaxbMarshaller = context.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-            // In order not to lose the undo / redo history
-            File homeDirectoryResourcesPath = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME);
+            File homeDirectoryResourcesPath = new File(APP_FOLDER_IN_USER_HOME);
 
             if (!file.getName().endsWith(LACE_FILE_EXTENSION)) {
-                file = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, file.getName() + LACE_FILE_EXTENSION);
+                file = new File(file.getAbsoluteFile().getName() + LACE_FILE_EXTENSION);
             }
 
-            if (homeDirectoryResourcesPath.exists() && homeDirectoryResourcesPath.canRead()) {
+            if (file.exists() && file.canRead() && file.canWrite()) {
                 writeLaceFile(file, jaxbMarshaller, diagram, homeDirectoryResourcesPath);
             } else {
                 throw new IllegalArgumentException("Home directory " + homeDirectoryResourcesPath.getAbsolutePath() + " not read accessible!");
