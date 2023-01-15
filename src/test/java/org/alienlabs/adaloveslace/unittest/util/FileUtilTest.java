@@ -11,6 +11,7 @@ import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,7 @@ class FileUtilTest {
     public static final int LAST_PATTERN_INDEX  = 21;
     public static final int LAST_STEP_INDEX     = 22;
 
+    @TempDir
     File dotLaceFileTempDir;
     private File dotLaceFile;
     private FileUtil fileUtil;
@@ -63,7 +65,7 @@ class FileUtilTest {
         diagramToSave.addPattern(pattern);
         app.setDiagram(diagramToSave);
 
-        dotLaceFileTempDir = new File(APP_FOLDER_IN_USER_HOME);
+//        dotLaceFileTempDir = new File(APP_FOLDER_IN_USER_HOME);
         dotLaceFile = new File(dotLaceFileTempDir, "1.lace");
     }
 
