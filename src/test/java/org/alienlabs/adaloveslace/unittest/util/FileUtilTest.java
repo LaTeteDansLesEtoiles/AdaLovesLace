@@ -65,7 +65,6 @@ class FileUtilTest {
         diagramToSave.addPattern(pattern);
         app.setDiagram(diagramToSave);
 
-//        dotLaceFileTempDir = new File(APP_FOLDER_IN_USER_HOME);
         dotLaceFile = new File(dotLaceFileTempDir, "1.lace");
     }
 
@@ -144,7 +143,7 @@ class FileUtilTest {
             logger.error("Error unmarshalling .jar file!", e);
         }
 
-        assertEquals(0, diagramToCheck.getCurrentStepIndex());
+        assertEquals(1, diagramToCheck.getCurrentStepIndex());
         assertEquals(1, diagramToCheck.getPatterns().size());
         assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getPatterns().get(0).getFilename());
     }

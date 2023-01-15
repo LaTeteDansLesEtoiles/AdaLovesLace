@@ -189,7 +189,7 @@ public class Knot implements Comparable<Knot> {
     if (this == o) return true;
     if (!(o instanceof Knot knot)) return false;
 
-    return uuid.equals(knot.uuid);
+    return uuid.equals(((Knot)o).uuid);
   }
 
   @Override

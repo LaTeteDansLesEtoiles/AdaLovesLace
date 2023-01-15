@@ -46,9 +46,14 @@ public class FileUtil {
     public static final String XML_FILE_TO_SAVE_IN_LACE_FILE = "save.xml";
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
+    private App app;
 
     public FileUtil() {
-        // Nothing to do here, that's just to avoid an all-static class
+        // Sometimes you don't need the Application
+    }
+
+    public FileUtil(App app) {
+        this.app = app;
     }
 
     public void buildUiFromLaceFile(App app, File file) {
@@ -177,18 +182,26 @@ public class FileUtil {
     }
 
     public File saveFile(File file, Diagram diagram) {
+        Step current = diagram.getAllSteps().get(diagram.getAllSteps().size() - 1);
+        Step last = new Step(diagram.getAllSteps().size());
+        last.getDisplayedKnots().addAll(current.getDisplayedKnots());
+        last.getDisplayedKnots().addAll(current.getSelectedKnots());
+        diagram.getAllSteps().add(last);
+
+        if (this.app != null) {
+            this.app.getOptionalDotGrid().layoutChildren();
+        }
+
         try {
             JAXBContext context = JAXBContext.newInstance(Diagram.class);
             Marshaller jaxbMarshaller = context.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-            File homeDirectoryResourcesPath = new File(APP_FOLDER_IN_USER_HOME);
-
             if (!file.getName().endsWith(LACE_FILE_EXTENSION)) {
                 file = new File(file.getAbsoluteFile().getName() + LACE_FILE_EXTENSION);
             }
 
-            writeLaceFile(file, jaxbMarshaller, diagram, homeDirectoryResourcesPath);
+            writeLaceFile(file, jaxbMarshaller, diagram);
             deleteXmlFile();
         } catch (JAXBException | IOException e) {
             logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
@@ -197,18 +210,19 @@ public class FileUtil {
         return file;
     }
 
-    private void writeLaceFile(File file, Marshaller jaxbMarshaller, Diagram toSave, File homeDirectoryResourcesPath) throws JAXBException {
+    private void writeLaceFile(File file, Marshaller jaxbMarshaller, Diagram toSave) throws JAXBException {
         try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(file))) {
             writePatternsToLaceFile(toSave, zipOut);
-            writeDiagramToLaceFile(jaxbMarshaller, toSave, homeDirectoryResourcesPath, zipOut);
+            writeDiagramToLaceFile(jaxbMarshaller, toSave, zipOut);
         } catch (IOException e) {
             logger.error("Error saving .lace file!", e);
         }
     }
 
-    private void writeDiagramToLaceFile(Marshaller jaxbMarshaller, Diagram toSave, File homeDirectoryResourcesPath, ZipOutputStream zipOut) throws JAXBException, IOException {
-        File xmlFile = new File(homeDirectoryResourcesPath + File.separator + XML_FILE_TO_SAVE_IN_LACE_FILE);
+    private void writeDiagramToLaceFile(Marshaller jaxbMarshaller, Diagram toSave, ZipOutputStream zipOut) throws JAXBException, IOException {
         toSave.setCurrentStepIndex(toSave.getAllSteps().get(toSave.getAllSteps().size() - 1).getStepIndex());
+        File xmlFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
+                XML_FILE_TO_SAVE_IN_LACE_FILE);
         jaxbMarshaller.marshal(toSave, xmlFile);
 
         zipOut.putNextEntry(new ZipEntry(XML_FILE_TO_SAVE_IN_LACE_FILE));
