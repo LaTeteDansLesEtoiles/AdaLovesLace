@@ -188,12 +188,7 @@ public class FileUtil {
                 file = new File(file.getAbsoluteFile().getName() + LACE_FILE_EXTENSION);
             }
 
-            if (file.exists() && file.canRead() && file.canWrite()) {
-                writeLaceFile(file, jaxbMarshaller, diagram, homeDirectoryResourcesPath);
-            } else {
-                throw new IllegalArgumentException("Home directory " + homeDirectoryResourcesPath.getAbsolutePath() + " not read accessible!");
-            }
-
+            writeLaceFile(file, jaxbMarshaller, diagram, homeDirectoryResourcesPath);
             deleteXmlFile();
         } catch (JAXBException | IOException e) {
             logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
