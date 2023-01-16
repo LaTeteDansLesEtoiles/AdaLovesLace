@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace.business.model;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 
 import java.util.HashSet;
@@ -20,8 +21,6 @@ import java.util.Set;
 @XmlRootElement(name = "Step")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Step implements Comparable<Step> {
-
-    private static Integer totalStepIndices = 0;
 
     private final Integer stepIndex;
 
@@ -70,12 +69,8 @@ public class Step implements Comparable<Step> {
         return all;
     }
 
-    public static Integer incrementIndex() {
-        return ++totalStepIndices;
-    }
-
-    public static Integer getTotalStepIndices() {
-        return totalStepIndices;
+    public static Integer incrementIndex(App app) {
+        return app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() + 1;
     }
 
     public Integer getStepIndex() {

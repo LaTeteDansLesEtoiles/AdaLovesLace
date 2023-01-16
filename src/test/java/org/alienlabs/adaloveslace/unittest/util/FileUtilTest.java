@@ -143,7 +143,7 @@ class FileUtilTest {
             logger.error("Error unmarshalling .jar file!", e);
         }
 
-        assertEquals(1, diagramToCheck.getCurrentStepIndex());
+        assertEquals(2, diagramToCheck.getCurrentStepIndex());
         assertEquals(1, diagramToCheck.getPatterns().size());
         assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getPatterns().get(0).getFilename());
     }

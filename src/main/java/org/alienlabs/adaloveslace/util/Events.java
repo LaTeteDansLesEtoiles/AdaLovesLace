@@ -45,7 +45,7 @@ public class Events {
 
   private static void processMouseClick(double x, double y, double screenX, double screenY) {
     switch (app.getOptionalDotGrid().getDiagram().getCurrentMode()) {
-      case DRAWING          -> app.getOptionalDotGrid().addKnot(x, y);
+      case DRAWING          -> app.getOptionalDotGrid().addKnot(app, x, y);
       case SELECTION, MOVE  -> app.getMainWindow().onClickWithSelectionMode(app, screenX, screenY);
       case DELETION         -> app.getMainWindow().onClickWithDeletionMode(app, app.getOptionalDotGrid().getDiagram(), screenX, screenY) ;
       case DUPLICATION      -> {}
@@ -68,7 +68,7 @@ public class Events {
         // If a knot is already selected, we must still hover over it because we may want to unselect it afterwards
         // But if it's already hovered over, we shall not hover it again
         boolean isMouseOverAGivenKnot = new NodeUtil().isMouseOverKnot(knot, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-        app.getDiagram().setCurrentKnot(knot);
+        app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
 
         if (knot.isVisible() && isMouseOverAGivenKnot && !app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
           logger.debug("Hover over not already an hovered over knot: {}", knot);

@@ -28,7 +28,7 @@ public class UpRightButton extends Button {
       logger.debug("Moving up right knot {}", knot);
     }
 
-    app.getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
+    app.getOptionalDotGrid().getDiagram().addKnotsWithStep(app, app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
       app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
     app.getOptionalDotGrid().layoutChildren();

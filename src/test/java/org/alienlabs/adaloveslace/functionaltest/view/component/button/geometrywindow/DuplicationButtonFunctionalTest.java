@@ -44,11 +44,11 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     assertEquals(230d,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
-        sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).findFirst().get().getX());
+      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getX());
     assertEquals(150d,
-      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
-        sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).findFirst().get().getY());
+      this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getY());
+    assertEquals(1, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size());
+    assertEquals(2, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().size());
   }
 
   /**

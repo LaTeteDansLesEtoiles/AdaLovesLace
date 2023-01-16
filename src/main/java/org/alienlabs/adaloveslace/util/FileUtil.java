@@ -183,10 +183,11 @@ public class FileUtil {
 
     public File saveFile(File file, Diagram diagram) {
         Step current = diagram.getAllSteps().get(diagram.getAllSteps().size() - 1);
-        Step last = new Step(diagram.getAllSteps().size());
+        Step last = new Step(diagram.getAllSteps().size() + 1);
         last.getDisplayedKnots().addAll(current.getDisplayedKnots());
         last.getDisplayedKnots().addAll(current.getSelectedKnots());
         diagram.getAllSteps().add(last);
+        diagram.setCurrentStepIndex(last.getStepIndex());
 
         if (this.app != null) {
             this.app.getOptionalDotGrid().layoutChildren();
