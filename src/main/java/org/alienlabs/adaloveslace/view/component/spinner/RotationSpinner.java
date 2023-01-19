@@ -28,7 +28,7 @@ public class RotationSpinner {
           currentKnot.setRotationAngle(newValue);
         }
 
-        app.getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
+        app.getOptionalDotGrid().getDiagram().addKnotsWithStep(app, app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
       }
 

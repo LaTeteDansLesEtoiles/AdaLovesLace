@@ -7,8 +7,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.CreatePatternButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,15 +38,14 @@ public class CreatePatternWindow {
   private static final Logger logger = LoggerFactory.getLogger(CreatePatternWindow.class);
   private final File previewFile;
 
-  public CreatePatternWindow(App app, Rectangle rectangle, File previewFile) {
-    this.previewFile = previewFile;
+  public CreatePatternWindow(App app) {
+    this.previewFile = ImageUtil.OUTPUT;
     Alert alert = new Alert(CONFIRMATION);
 
     ButtonType createPatternButton = buildAlertWindow(alert);
     GridPane gridPane = buildGridPane();
     alert.getDialogPane().setContent(gridPane);
 
-    app.getRoot().getChildren().add(rectangle);
     Optional<ButtonType> result = alert.showAndWait();
 
     if (result.isPresent() && result.get() == createPatternButton) {

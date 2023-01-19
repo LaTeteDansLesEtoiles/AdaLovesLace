@@ -8,10 +8,10 @@ module org.alienlabs.adaloveslace {
   requires java.net.http;
   requires java.prefs;
   requires javafx.graphics;
+  requires javafx.swing;
   requires org.slf4j;
   requires static com.github.spotbugs.annotations;
   requires static javafx.controls;
-  requires static javafx.swing;
   requires static layout;
 
   opens org.alienlabs.adaloveslace                  to javafx.controls, javafx.graphics, layout;

@@ -55,7 +55,7 @@ public class SaveAsButton extends ImageButton {
       preferences.setPathWithFileValue(file, SAVED_LACE_FILE);
       preferences.setPathWithFileValue(file.getParentFile(), LACE_FILE_FOLDER_SAVE_PATH);
 
-      new FileUtil().saveFile(file, new Diagram(app.getOptionalDotGrid().getDiagram()));
+      new FileUtil(app).saveFile(file, new Diagram(app.getOptionalDotGrid().getDiagram()));
     }
   }
 

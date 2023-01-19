@@ -6,7 +6,6 @@ node {
     }
 
     stage('check java') {
-        env.JAVA_HOME="${tool 'OpenJDK_17'}"
         env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
         sh "java -version"
     }
@@ -22,7 +21,7 @@ node {
         } catch(err) {
             throw err
         } finally {
-            junit '**/target/surefire-reports/TEST-*.xml'
+            junit '**/target/surefire-reports/*.xml'
         }
     }
 
@@ -95,8 +94,8 @@ node {
         }
 
         stage('packaging') {
-            sh "./mvnw clean install -DskipUTs=true -DskipFTs=true"
-            archiveArtifacts artifacts: '**/target/artifacts/adaloveslace-*,**/target/artifacts/adaloveslace_*', fingerprint: true
+            sh "./mvnw package -P linux -DskipUTs=true -DskipFTs=true"
+            archiveArtifacts artifacts: '**/target/artifacts/*.deb,**/target/artifacts/*.rpm,**/target/artifacts/*.AppImage', fingerprint: true
         }
     }
 }

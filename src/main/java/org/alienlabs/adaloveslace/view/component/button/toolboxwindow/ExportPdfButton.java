@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.util.ImageUtil.PATH_NAME;
 import static org.alienlabs.adaloveslace.util.Preferences.LACE_FILE_FOLDER_SAVE_PATH;
 import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
@@ -45,11 +46,10 @@ public class ExportPdfButton extends ImageButton {
         file.getAbsolutePath() :
         file.getAbsolutePath() + EXPORT_PDF_FILE_TYPE;
 
-      String imageFilename = System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator +
-        PATTERNS_DIRECTORY_NAME + File.separator + OUTPUT_TEMPORARY_IMAGE;
+      String imageFilename = System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator + OUTPUT_TEMPORARY_IMAGE;
 
       new ImageUtil(app).buildWritableImageWithoutTechnicalElements(imageFilename);
-      new FileUtil().generatePdf(pdfFilename, imageFilename);
+      new FileUtil().generatePdf(pdfFilename, PATH_NAME.getAbsolutePath());
     }
   }
 

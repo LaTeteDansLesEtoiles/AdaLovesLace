@@ -27,7 +27,7 @@ public class RightButton extends Button {
       logger.debug("Moving right knot {}", knot);
     }
 
-    app.getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
+    app.getOptionalDotGrid().getDiagram().addKnotsWithStep(app, app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
       app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
     app.getOptionalDotGrid().layoutChildren();

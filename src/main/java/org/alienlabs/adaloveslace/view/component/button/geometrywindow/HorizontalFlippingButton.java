@@ -49,7 +49,7 @@ public class HorizontalFlippingButton extends ImageButton {
       newDisplayedKnots.remove(knot);
     }
 
-    app.getDiagram().addKnotsToStep(newDisplayedKnots, newSelectedKnots);
+    app.getOptionalDotGrid().getDiagram().addKnotsToStep(app, newDisplayedKnots, newSelectedKnots);
 
     app.getOptionalDotGrid().layoutChildren();
   }

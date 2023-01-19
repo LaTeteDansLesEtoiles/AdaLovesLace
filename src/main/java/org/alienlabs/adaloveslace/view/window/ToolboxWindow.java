@@ -213,14 +213,14 @@ public class ToolboxWindow {
   }
 
   private int computeWindowHeight(App app) {
-    if (app.getDiagram().getPatterns().isEmpty()) {
+    if (app.getOptionalDotGrid().getDiagram().getPatterns().isEmpty()) {
       return 900;
     } else {
-      if (app.getDiagram().getPatterns().size() > 12) {
+      if (app.getOptionalDotGrid().getDiagram().getPatterns().size() > 12) {
         return 900;
       }
 
-      return app.getDiagram().getPatterns().size() * 60;
+      return app.getOptionalDotGrid().getDiagram().getPatterns().size() * 60;
     }
   }
 

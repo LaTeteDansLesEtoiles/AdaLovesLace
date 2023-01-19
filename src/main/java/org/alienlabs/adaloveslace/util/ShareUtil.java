@@ -1,6 +1,7 @@
 package org.alienlabs.adaloveslace.util;
 
 import com.google.gson.Gson;
+import javafx.application.Platform;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.DiagramDTO;
 import org.slf4j.Logger;
@@ -23,19 +24,22 @@ public class ShareUtil {
 
   public ShareUtil(App app, String diagramName, String username, String clientId, String clientSecret) {
     logger.info("Sharing in progress");
-    DiagramDTO diagram;
 
-    try {
-      diagram = new ImageUtil(app).getDiagram(diagramName, username, clientId, clientSecret);
-    } catch (IOException e) {
-      throw new IllegalArgumentException(e);
-    }
+    Platform.runLater(() -> {
+      DiagramDTO diagram;
 
-    Gson gson = new Gson();
-    HttpClient client = HttpClient.newHttpClient();
-    HttpRequest request = postRequest(diagram, gson);
+      try {
+        diagram = new ImageUtil(app).getDiagram(diagramName, username, clientId, clientSecret);
+      } catch (IOException e) {
+        throw new IllegalArgumentException(e);
+      }
 
-    handleResponse(client, request);
+      Gson gson = new Gson();
+      HttpClient client = HttpClient.newHttpClient();
+      HttpRequest request = postRequest(diagram, gson);
+
+      handleResponse(client, request);
+    });
   }
 
   private void handleResponse(HttpClient client, HttpRequest request) {
@@ -48,7 +52,6 @@ public class ShareUtil {
     try {
       logger.info("Response status code: {}", completableFuture.get().statusCode());
     } catch (InterruptedException | ExecutionException e) {
-      logger.error("Error getting response status code!", e);
       throw new RuntimeException("Error getting response status code!", e);
     }
   }
