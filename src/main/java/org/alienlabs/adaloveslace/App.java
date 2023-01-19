@@ -44,7 +44,6 @@ import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_
  */
 public class App extends Application {
 
-  public static final String ID                       = "#";
   public static final String TOOLBOX_BUTTON           = "toolbox-btn-";
   public static final String ADA_LOVES_LACE           = "AdaLovesLace";
   public static final String MAIN_WINDOW_TITLE        = ADA_LOVES_LACE;
@@ -187,7 +186,7 @@ public class App extends Application {
     geometryWindow.createGeometryButtons(app, parent);
     geometryWindow.createMoveKnotButtons(app, parent);
 
-    geometryWindow.createGeometryStage(app, geometryStage, parent);
+    geometryWindow.createGeometryStage(geometryStage, parent);
 
     initializeKeyboardShorcuts();
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
@@ -225,13 +224,13 @@ public class App extends Application {
   public void initializeKeyboardShorcuts() {
     Platform.runLater(() -> {
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.UP),
-        () -> UpButton.onMoveKnotUpAction       (this, this.getGeometryWindow()));
+        () -> UpButton.onMoveKnotUpAction       (this));
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN),
-        () -> DownButton.onMoveKnotDownAction   (this, this.getGeometryWindow()));
+        () -> DownButton.onMoveKnotDownAction   (this));
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.LEFT),
-        () -> LeftButton.onMoveKnotLeftAction   (this, this.getGeometryWindow()));
+        () -> LeftButton.onMoveKnotLeftAction   (this));
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT),
-        () -> RightButton.onMoveKnotRightAction (this, this.getGeometryWindow()));
+        () -> RightButton.onMoveKnotRightAction (this));
     });
   }
 

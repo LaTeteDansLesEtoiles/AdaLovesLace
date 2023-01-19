@@ -51,7 +51,7 @@ public class DuplicationButton extends ToggleButton {
     newDisplayedKnots.addAll(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
     newDisplayedKnots.addAll(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
 
-    app.getOptionalDotGrid().getDiagram().addKnotsToStep(app, newDisplayedKnots, copiedKnots);
+    app.getOptionalDotGrid().getDiagram().addKnotsToStep(newDisplayedKnots, copiedKnots);
     app.getOptionalDotGrid().layoutChildren();
 
     window.getDrawingButton()     .setSelected(false);

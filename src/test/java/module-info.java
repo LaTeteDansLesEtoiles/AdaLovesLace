@@ -5,8 +5,9 @@ module org.alienlabs.adaloveslace.test {
   opens org.alienlabs.adaloveslace.functionaltest.view.component.button.geometrywindow  to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.component.spinner                to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.window                           to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
-  opens org.alienlabs.adaloveslace.unittest to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
-  opens org.alienlabs.adaloveslace.unittest.util                                            to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.unittest.business.model                              to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.unittest.util                                        to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.unittest.view.component                              to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
 
   requires javafx.controls;
   requires javafx.graphics;
@@ -26,6 +27,7 @@ module org.alienlabs.adaloveslace.test {
 
   exports org.alienlabs.adaloveslace.functionaltest;
   exports org.alienlabs.adaloveslace.functionaltest.view.component.button.geometrywindow;
-  exports org.alienlabs.adaloveslace.unittest;
+  exports org.alienlabs.adaloveslace.unittest.business.model;
   exports org.alienlabs.adaloveslace.unittest.util;
+  exports org.alienlabs.adaloveslace.unittest.view.component;
 }

@@ -16,8 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.alienlabs.adaloveslace.business.model.Step.incrementIndex;
-
 /**
  * What is drawn on a Canvas: the Diagram is the desired, final business object consisting of Knots drawn with Patterns.
  *
@@ -85,7 +83,7 @@ public class Diagram {
         this.patterns.add(pattern);
     }
 
-    public Set<Knot> addKnotsWithStep(App app, final Knot knot) {
+    public Set<Knot> addKnotsWithStep(final Knot knot) {
         Set<Knot> displayedKnots = this.getCurrentStep().getDisplayedKnots();
         Set<Knot> selectedKnots = this.getCurrentStep().getSelectedKnots();
 
@@ -94,11 +92,11 @@ public class Diagram {
         if (knot.getSelection() == null) {
             Set<Knot> newDisplayed = new HashSet<>(displayedKnots);
             newDisplayed.add(knot);
-            newStep = new Step(newDisplayed, selectedKnots, incrementIndex(app));
+            newStep = new Step(this, newDisplayed, selectedKnots);
         } else {
             Set<Knot> newSelected = new HashSet<>(selectedKnots);
             newSelected.add(knot);
-            newStep = new Step(displayedKnots, newSelected, incrementIndex(app));
+            newStep = new Step(this, displayedKnots, newSelected);
         }
 
         this.getAllSteps().add(newStep);
@@ -106,17 +104,15 @@ public class Diagram {
         return newStep.getAllVisibleKnots();
     }
 
-    public Step addKnotsWithStep(App app, final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
-        this.currentStepIndex = incrementIndex(app);
-        Step step = new Step(displayedKnots, selectedKnots, this.currentStepIndex);
+    public Step addKnotsWithStep(final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
+        Step step = new Step(this, displayedKnots, selectedKnots);
         this.getAllSteps().add(step);
 
         return step;
     }
 
-    public void addKnotsToStep(App app, final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
-        this.currentStepIndex = incrementIndex(app);
-        Step step = Step.of(displayedKnots, selectedKnots, this.currentStepIndex);
+    public void addKnotsToStep(final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
+        Step step = Step.of(this, displayedKnots, selectedKnots);
         this.getAllSteps().add(step);
     }
 
@@ -217,14 +213,14 @@ public class Diagram {
 
     public Step getCurrentStep() {
         if (allSteps.isEmpty() || currentStepIndex == -1) {
-            return new Step(1);
+            return new Step(this, 1);
         }
 
         if (allSteps.stream().anyMatch(step -> step.getStepIndex().equals(currentStepIndex))) {
             return allSteps.stream().filter(step -> step.getStepIndex().equals(currentStepIndex)).findFirst().get();
         }
 
-        return new Step(1);
+        return new Step(this, 1);
     }
 
     public List<Step> getAllSteps() {
