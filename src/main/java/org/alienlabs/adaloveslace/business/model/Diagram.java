@@ -83,7 +83,12 @@ public class Diagram {
         this.patterns.add(pattern);
     }
 
-    public Set<Knot> addKnotsWithStep(final Knot knot) {
+    /**
+     * Adds a single Knot to a new undo / redo Step
+     * @param knot the Knot to add.
+     * @return the new undo / redo Step
+     */
+    public Set<Knot> addKnotWithStep(final Knot knot) {
         Set<Knot> displayedKnots = this.getCurrentStep().getDisplayedKnots();
         Set<Knot> selectedKnots = this.getCurrentStep().getSelectedKnots();
 
@@ -104,6 +109,13 @@ public class Diagram {
         return newStep.getAllVisibleKnots();
     }
 
+    /**
+     * Creates a step given the displayed knots and the selected knots. A knot can only be one of those, not both.
+     *
+     * @param displayedKnots the displayed but not selected knots to add to the new Step
+     * @param selectedKnots the selected (hence displayed but not in the displayedKnots Set) to add to the new Step
+     * @return the new undo / redo Step
+     */
     public Step addKnotsWithStep(final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
         Step step = new Step(this, displayedKnots, selectedKnots);
         this.getAllSteps().add(step);

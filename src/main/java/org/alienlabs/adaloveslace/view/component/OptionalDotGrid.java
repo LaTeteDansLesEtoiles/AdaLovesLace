@@ -443,7 +443,7 @@ public class OptionalDotGrid extends Pane {
       currentKnot = new Knot(x, y, currentPattern, iv);
       diagram.setCurrentKnot(currentKnot);
 
-      this.diagram.addKnotsWithStep(currentKnot);
+      this.diagram.addKnotWithStep(currentKnot);
     } catch (IOException e) {
       logger.error("Problem with pattern resource file!", e);
     }

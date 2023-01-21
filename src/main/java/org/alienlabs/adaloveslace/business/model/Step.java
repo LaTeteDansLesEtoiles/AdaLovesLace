@@ -42,6 +42,13 @@ public class Step implements Comparable<Step> {
         this.selectedKnots = new HashSet<>();
     }
 
+    /**
+     * Creates a step given the displayed knots and the selected knots. A knot can only be one of those, not both.
+     *
+     * @param diagram the diagram onto which to work
+     * @param displayedKnots the displayed but not selected knots to add to the new Step
+     * @param selectedKnots the selected (hence displayed but not in the displayedKnots Set) to add to the new Step
+     */
     public Step(Diagram diagram, Set<Knot> displayedKnots, Set<Knot> selectedKnots) {
         diagram.setCurrentStepIndex(diagram.getCurrentStepIndex() + 1);
         this.diagram = clearStepGreaterThan(diagram, diagram.getCurrentStepIndex());

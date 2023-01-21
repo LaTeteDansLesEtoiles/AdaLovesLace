@@ -312,7 +312,7 @@ public class MainWindow {
           Set<Knot> displayed = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
           displayed.remove(knot);
 
-          app.getOptionalDotGrid().getDiagram().addKnotsWithStep(displayed, selected);
+          app.getOptionalDotGrid().getDiagram().addKnotsToStep(displayed, selected);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
 
           Knot[] knots = new Knot[app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size()];
