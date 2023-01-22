@@ -3,6 +3,7 @@ module org.alienlabs.adaloveslace.test {
 
   opens org.alienlabs.adaloveslace.functionaltest                                       to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.component.button.geometrywindow  to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.functionaltest.view.component.button.toolboxwindow   to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.component.spinner                to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.window                           to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.unittest.business.model                              to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;

@@ -86,9 +86,8 @@ public class Diagram {
     /**
      * Adds a single Knot to a new undo / redo Step
      * @param knot the Knot to add.
-     * @return the new undo / redo Step
      */
-    public Set<Knot> addKnotWithStep(final Knot knot) {
+    public void addKnotWithStep(final Knot knot) {
         Set<Knot> displayedKnots = this.getCurrentStep().getDisplayedKnots();
         Set<Knot> selectedKnots = this.getCurrentStep().getSelectedKnots();
 
@@ -106,7 +105,6 @@ public class Diagram {
 
         this.getAllSteps().add(newStep);
         this.currentStepIndex = newStep.getStepIndex();
-        return newStep.getAllVisibleKnots();
     }
 
     /**
@@ -155,13 +153,11 @@ public class Diagram {
     private void deleteNodesFromCurrentStep(App app) {
         getCurrentStep().getDisplayedKnots().forEach(knot -> {
             app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView()); // Delete nodes from step before
-            app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
             app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
             app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
         });
         getCurrentStep().getSelectedKnots().forEach(knot -> {
             app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView()); // Delete nodes from step before
-            app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
             app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
             app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
         });

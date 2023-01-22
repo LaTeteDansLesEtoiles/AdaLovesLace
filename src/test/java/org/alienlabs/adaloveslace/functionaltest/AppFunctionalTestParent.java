@@ -43,7 +43,7 @@ public class AppFunctionalTestParent {
   public App app;
 
   // For tests:
-  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME",1_000L);
+  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME",1_500L);
   public static final double GRID_WIDTH                   = 600d;
   public static final double GRID_HEIGHT                  = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
@@ -173,7 +173,7 @@ public class AppFunctionalTestParent {
     });
 
     // We block the JavaFX application thread to let the runnable work
-    sleepMainThread();
+    this.sleepMainThread();
 
     try {
       // And when the runnable has returned we can continue,
@@ -234,27 +234,27 @@ public class AppFunctionalTestParent {
     synchronizeTask(() -> selectFirstSnowflake(robot));
   }
 
-  protected FxRobot enterSelectMode(FxRobot robot) {
-    return robot.clickOn(this.geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+  protected void enterSelectMode(FxRobot robot) {
+    robot.clickOn(this.geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
-  protected FxRobot duplicateKnots(FxRobot robot) {
-    return robot.clickOn(this.geometryWindow.getDuplicationButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+  protected void duplicateKnots(FxRobot robot) {
+    robot.clickOn(this.geometryWindow.getDuplicationButton(), Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
-  protected FxRobot selectDeleteMode(FxRobot robot) {
-    return robot.clickOn(this.geometryWindow.getDeletionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+  protected void selectDeleteMode(FxRobot robot) {
+    robot.clickOn(this.geometryWindow.getDeletionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
-  protected FxRobot selectSecondKnotWithControlKeyPressed(FxRobot robot) {
+  protected void selectSecondKnotWithControlKeyPressed(FxRobot robot) {
     robot.press(KeyCode.CONTROL);
 
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 10d, SECOND_SNOWFLAKE_PIXEL_Y + 10d);
-    return robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
-  protected FxRobot unselectControlKey(FxRobot robot) {
-    return robot.release(KeyCode.CONTROL);
+  protected void unselectControlKey(FxRobot robot) {
+    robot.release(KeyCode.CONTROL);
   }
 
 }

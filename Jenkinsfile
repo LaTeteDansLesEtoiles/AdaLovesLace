@@ -29,7 +29,8 @@ node {
 
         stage('functional tests') {
           try {
-            sh "./mvnw clean integration-test -DskipUTs=true -Dtestfx.launch.timeout=20000 -Dtestfx.setup.timeout=20000 -DSLEEP_TIME=5000"          } catch(err) {
+            sh "./mvnw clean integration-test -DskipUTs=true -Dtestfx.launch.timeout=20000 -Dtestfx.setup.timeout=20000 -DSLEEP_TIME=2000"
+            } catch(err) {
             throw err
           } finally {
             junit '**/target/failsafe-reports/TEST-*.xml'
