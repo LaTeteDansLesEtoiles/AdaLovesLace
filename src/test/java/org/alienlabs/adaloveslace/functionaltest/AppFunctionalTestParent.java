@@ -88,11 +88,13 @@ public class AppFunctionalTestParent {
 
     Locale locale = new Locale("en", "EN");
     App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
-    this.app.setDiagram(new Diagram());
+    Diagram diagram = new Diagram();
+    this.app.setDiagram(diagram);
     this.primaryStage = primaryStage;
 
     // The grid dots are twice as big as in the production code in order to facilitate tests
     this.app.showMainWindow(640d, 480d, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS * 2d, this.primaryStage);
+    this.app.setOptionalDotGrid(this.app.getMainWindow().getOptionalDotGrid());
 
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
     this.app.getToolboxStage().setX(1150d);
@@ -187,14 +189,6 @@ public class AppFunctionalTestParent {
   public void sleepMainThread() {
     try {
       Thread.sleep(SLEEP_TIME);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
-  }
-
-  public void sleepMainThreadLonger() {
-    try {
-      Thread.sleep(5_000L);
     } catch (InterruptedException e) {
       logger.error("Interrupted!", e);
     }

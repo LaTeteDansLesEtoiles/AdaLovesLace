@@ -249,16 +249,16 @@ public class App extends Application {
     return geometryStage;
   }
 
-  public Diagram getDiagram() {
-    return diagram;
-  }
-
   public void setDiagram(Diagram diagram) {
     this.diagram = diagram;
   }
 
   public OptionalDotGrid getOptionalDotGrid() {
     return this.mainWindow.getOptionalDotGrid();
+  }
+
+  public void setOptionalDotGrid(OptionalDotGrid grid) {
+    this.mainWindow.setOptionalDotGrid(grid);
   }
 
   public MainWindow getMainWindow() {

@@ -26,7 +26,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
   }
 
   @Test
-  void test_add_a_knot_then_undo_step_then_redo_step(FxRobot robot) {
+  void test_add_a_knot_then_undo_step_then_redo_step(final FxRobot robot) {
     // Given
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawFirstSnowflake(robot));
@@ -36,9 +36,9 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     // Logical state
-    this.sleepMainThreadLonger();
-    assertTrue(app.getDiagram().getCurrentStep().getDisplayedKnots().isEmpty(),
-            "We should not have any Knot in this Step!");
+    this.sleepMainThread();
+    assertEquals(0, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
+            "We should be at Step #0!");
 
     // Physical state
     Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
@@ -53,9 +53,9 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     // Logical state
-    this.sleepMainThreadLonger();
-    assertEquals(1, app.getDiagram().getCurrentStep().getDisplayedKnots().size(),
-            "We should  have 1 Knot in this Step!");
+    this.sleepMainThread();
+    assertEquals(1, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
+            "We should be at Step #1!");
 
     // Physical state
     Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
@@ -70,7 +70,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
   }
 
   @Test
-  void test_add_2_knots_then_undo_a_step_then_make_another_step(FxRobot robot) {
+  void test_add_2_knots_then_undo_a_step_then_make_another_step(final FxRobot robot) {
     // Given
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawFirstSnowflake(robot));
@@ -78,16 +78,13 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
     // When
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton(), MouseButton.PRIMARY));
-    this.sleepMainThreadLonger();
-    synchronizeTask(() -> drawOtherSnowflake(robot));
+    this.sleepMainThread();
 
     // Then
     this.sleepMainThread();
     // Logical state
-    assertEquals(2, app.getDiagram().getAllSteps().size(),
-            "We should have two Steps in this diagram!");
-    assertEquals(2, app.getDiagram().getCurrentStep().getDisplayedKnots().size(),
-            "We should have 2 Knots in this Step!");
+    assertEquals(1, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
+            "We should be at Step #1!");
 
     // Physical state
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
@@ -95,10 +92,27 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     this.sleepMainThread();
     foundColorOnGrid = getColor(snowflakeOnTheGrid);
     verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.WHITE));
+
+    // When
+    synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getRedoKnotButton(), MouseButton.PRIMARY));
+
+    // Then
+    // Logical state
+    this.sleepMainThread();
+    assertEquals(2, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
+            "We should be at Step #2!");
+
+    // Physical state
+    snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 25d, SECOND_SNOWFLAKE_PIXEL_Y + 25d);
+    robot.moveTo(snowflakeOnTheGrid);
+    this.sleepMainThread();
+    foundColorOnGrid = getColor(snowflakeOnTheGrid);
+    assertTrue(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid),
+            "Expected color: " + SNOWFLAKE_DOT_COLOR + ", actual color: " + foundColorOnGrid);
   }
 
   @Test
-  void test_add_a_knot_then_turn_it_twice_then_undo_one_step(FxRobot robot) {
+  void test_add_a_knot_then_turn_it_twice_then_undo_one_step(final FxRobot robot) {
     // Given
     synchronizeTask(() -> drawSecondSnowflake(robot));
     initDrawAndSelectSnowFlake(robot);
@@ -109,19 +123,17 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton(), MouseButton.PRIMARY));
 
     // Then
-    this.sleepMainThreadLonger();
-    assertEquals(5, app.getDiagram().getAllSteps().size(),
-            "We should now have 5 Steps in this Diagram!");
-    assertEquals(4, app.getDiagram().getCurrentStepIndex(),
-            "We should now be at the 4th Step in this Diagram!");
-    assertEquals(1, app.getDiagram().getCurrentStep().getSelectedKnots().size(),
+    this.sleepMainThread();
+    assertEquals(4, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
+            "We should be at Step #4!");
+    assertEquals(1, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size(),
             "We should have 1 selected Knot in this Diagram!");
-    assertEquals(10, app.getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getRotationAngle(),
+    assertEquals(10, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getRotationAngle(),
             "This Knot should not be turned!");
   }
 
   @Test
-  void test_add_a_knot_then_zoom_it_twice_then_undo_one_step(FxRobot robot) {
+  void test_add_a_knot_then_zoom_it_twice_then_undo_one_step(final FxRobot robot) {
     // Given
     synchronizeTask(() -> drawSecondSnowflake(robot));
     initDrawAndSelectSnowFlake(robot);
@@ -132,14 +144,12 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton(), MouseButton.PRIMARY));
 
     // Then
-    this.sleepMainThreadLonger();
-    assertEquals(5, app.getDiagram().getAllSteps().size(),
-            "We should now have 5 Steps in this Diagram!");
-    assertEquals(4, app.getDiagram().getCurrentStepIndex(),
-            "We should now be at the 4th Step in this Diagram!");
-    assertEquals(1, app.getDiagram().getCurrentStep().getSelectedKnots().size(),
+    this.sleepMainThread();
+    assertEquals(4, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
+            "We should be at Step #4!");
+    assertEquals(1, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size(),
             "We should have 1 selected Knot in this Diagram!");
-    assertEquals(2, app.getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getZoomFactor(),
+    assertEquals(2, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getZoomFactor(),
             "This Knot should not be turned!");
   }
 
