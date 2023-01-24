@@ -129,10 +129,15 @@ public class Diagram {
     public void undoLastStep(App app) {
         logger.info("Undo step, current step={}", currentStepIndex);
 
-        if (this.currentStepIndex >= 1) {
+        if (this.currentStepIndex > 0) {
             deleteNodesFromCurrentStep(app);
 
             this.currentStepIndex--;
+            app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
+            logger.info("Undo step, new step={}", currentStepIndex);
+        } else if (this.currentStepIndex == 0) {
+            deleteNodesFromCurrentStep(app);
+
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
             logger.info("Undo step, new step={}", currentStepIndex);
         }
@@ -141,7 +146,12 @@ public class Diagram {
     public void redoLastStep(App app) {
         logger.info("Redo step, current step={}", currentStepIndex);
 
-        if (currentStepIndex < this.getAllSteps().size()) {
+        if (currentStepIndex == this.getAllSteps().size()) {
+            deleteNodesFromCurrentStep(app);
+            app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
+
+            logger.info("Redo step, new step={}", currentStepIndex);
+        } else if (currentStepIndex < this.getAllSteps().size()) {
             deleteNodesFromCurrentStep(app);
             this.currentStepIndex++;
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state

@@ -50,8 +50,11 @@ class FileUtilTest {
         app = new App();
         fileUtil = new FileUtil();
         diagramToSave = new Diagram();
-        Step step = new Step(diagramToSave, 0);
-        diagramToSave.getAllSteps().add(step);
+        Step step1 = new Step(diagramToSave, 1);
+        diagramToSave.getAllSteps().add(step1);
+        Step step2 = new Step(diagramToSave, 2);
+        diagramToSave.getAllSteps().add(step2);
+        diagramToSave.setCurrentStepIndex(2);
 
         Pattern pattern = new Pattern();
         pattern.setAbsoluteFilename(

@@ -6,8 +6,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
@@ -17,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
 class UndoRedoFunctionalTest extends AppFunctionalTestParent {
-  private static final Logger logger = LoggerFactory.getLogger(AppFunctionalTestParent.class);
-  public static final long LONGER_SLEEP = 20_000L;
 
   /**
    * Init method called before each test
@@ -40,11 +36,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     // Logical state
-    try {
-      Thread.sleep(LONGER_SLEEP);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
+    this.sleepMainThreadLonger();
     assertTrue(app.getDiagram().getCurrentStep().getDisplayedKnots().isEmpty(),
             "We should not have any Knot in this Step!");
 
@@ -61,11 +53,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     // Logical state
-    try {
-      Thread.sleep(LONGER_SLEEP);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
+    this.sleepMainThreadLonger();
     assertEquals(1, app.getDiagram().getCurrentStep().getDisplayedKnots().size(),
             "We should  have 1 Knot in this Step!");
 
@@ -90,11 +78,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
     // When
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton(), MouseButton.PRIMARY));
-    try {
-      Thread.sleep(LONGER_SLEEP);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
+    this.sleepMainThreadLonger();
     synchronizeTask(() -> drawOtherSnowflake(robot));
 
     // Then
@@ -125,11 +109,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton(), MouseButton.PRIMARY));
 
     // Then
-    try {
-      Thread.sleep(LONGER_SLEEP);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
+    this.sleepMainThreadLonger();
     assertEquals(5, app.getDiagram().getAllSteps().size(),
             "We should now have 5 Steps in this Diagram!");
     assertEquals(4, app.getDiagram().getCurrentStepIndex(),
@@ -152,11 +132,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton(), MouseButton.PRIMARY));
 
     // Then
-    try {
-      Thread.sleep(LONGER_SLEEP);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
+    this.sleepMainThreadLonger();
     assertEquals(5, app.getDiagram().getAllSteps().size(),
             "We should now have 5 Steps in this Diagram!");
     assertEquals(4, app.getDiagram().getCurrentStepIndex(),

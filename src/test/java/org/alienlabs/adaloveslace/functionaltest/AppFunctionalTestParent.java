@@ -192,6 +192,14 @@ public class AppFunctionalTestParent {
     }
   }
 
+  public void sleepMainThreadLonger() {
+    try {
+      Thread.sleep(5_000L);
+    } catch (InterruptedException e) {
+      logger.error("Interrupted!", e);
+    }
+  }
+
   private void copyCanvas(Point2D pointToMoveTo) {
     WritableImage snapshot = new ImageUtil(this.app).buildWritableImageWithTechnicalElements(
       BUILD_TOOL_OUTPUT_DIRECTORY + TEST_SCREEN_CAPTURE_FILE);
