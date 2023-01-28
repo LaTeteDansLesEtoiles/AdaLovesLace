@@ -38,8 +38,8 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     // Then
     // Logical state
     this.sleepMainThread();
-    synchronizeTask(() -> assertEquals(0, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-            "We should be at Step #0!"));
+    assertEquals(0, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
+            "We should be at Step #0!");
 
     // Physical state
     Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
@@ -47,7 +47,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     robot.moveTo(snowflakeOnTheGrid);
     this.sleepMainThread();
     foundColorOnGrid = getColor(snowflakeOnTheGrid);
-    synchronizeTask(() -> verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.WHITE)));
+    verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.WHITE));
 
     // When
     synchronizeTask(() -> RedoKnotButton.redoKnot(this.app));
@@ -55,8 +55,8 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     // Then
     // Logical state
     this.sleepMainThread();
-    synchronizeTask(() -> assertEquals(1, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-            "We should be at Step #1!"));
+    assertEquals(1, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
+            "We should be at Step #1!");
 
     // Physical state
     Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
@@ -66,8 +66,8 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     // Then
     foundColorOnGrid = getColor(pointToCheck);
     // If we choose a point in the snowflake it must be of the right color
-    synchronizeTask(() -> assertTrue(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid),
-            "Expected color: " + SNOWFLAKE_DOT_COLOR + ", actual color: " + foundColorOnGrid));
+    assertTrue(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid),
+            "Expected color: " + SNOWFLAKE_DOT_COLOR + ", actual color: " + foundColorOnGrid);
   }
 
   @Test
