@@ -4,8 +4,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -33,7 +31,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> drawFirstSnowflake(robot));
 
     // When
-    synchronizeTask(() -> UndoKnotButton.undoKnot(this.app));
+    synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton()));
 
     // Then
     // Logical state
@@ -50,7 +48,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.WHITE));
 
     // When
-    synchronizeTask(() -> RedoKnotButton.redoKnot(this.app));
+    synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getRedoKnotButton()));
 
     // Then
     // Logical state
@@ -78,7 +76,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> drawSecondSnowflake(robot));
 
     // When
-    synchronizeTask(() -> UndoKnotButton.undoKnot(this.app));
+    synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton()));
     this.sleepMainThread();
 
     // Then
@@ -95,7 +93,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.WHITE));
 
     // When
-    synchronizeTask(() -> RedoKnotButton.redoKnot(this.app));
+    synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getRedoKnotButton()));
 
     // Then
     // Logical state
@@ -121,7 +119,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     // When
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-    synchronizeTask(() -> UndoKnotButton.undoKnot(this.app));
+    synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton()));
 
     // Then
     this.sleepMainThread();
@@ -142,7 +140,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     // When
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
-    synchronizeTask(() -> UndoKnotButton.undoKnot(this.app));
+    synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton()));
 
     // Then
     this.sleepMainThread();
