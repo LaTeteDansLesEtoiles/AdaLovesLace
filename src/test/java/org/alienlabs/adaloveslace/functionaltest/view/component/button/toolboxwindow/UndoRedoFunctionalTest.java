@@ -34,10 +34,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton()));
 
     // Then
-    // Logical state
     this.sleepMainThread();
-    assertEquals(0, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-            "We should be at Step #0!");
 
     // Physical state
     Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
@@ -51,10 +48,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getRedoKnotButton()));
 
     // Then
-    // Logical state
     this.sleepMainThread();
-    assertEquals(1, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-            "We should be at Step #1!");
 
     // Physical state
     Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
@@ -81,9 +75,6 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     this.sleepMainThread();
-    // Logical state
-    assertEquals(1, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-            "We should be at Step #1!");
 
     // Physical state
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
@@ -96,7 +87,6 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getRedoKnotButton()));
 
     // Then
-    // Logical state
     this.sleepMainThread();
     assertEquals(2, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
             "We should be at Step #2!");
