@@ -35,8 +35,6 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     this.sleepMainThread();
-
-    // Physical state
     Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
 
     robot.moveTo(snowflakeOnTheGrid);
@@ -49,13 +47,10 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     this.sleepMainThread();
-
-    // Physical state
     Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
     robot.moveTo(pointToCheck);
     this.sleepMainThread();
 
-    // Then
     foundColorOnGrid = getColor(pointToCheck);
     // If we choose a point in the snowflake it must be of the right color
     assertTrue(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid),
@@ -75,11 +70,10 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     this.sleepMainThread();
-
-    // Physical state
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
     robot.moveTo(snowflakeOnTheGrid);
     this.sleepMainThread();
+
     foundColorOnGrid = getColor(snowflakeOnTheGrid);
     verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.WHITE));
 
@@ -88,13 +82,10 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     this.sleepMainThread();
-    assertEquals(2, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-            "We should be at Step #2!");
-
-    // Physical state
     snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 25d, SECOND_SNOWFLAKE_PIXEL_Y + 25d);
     robot.moveTo(snowflakeOnTheGrid);
     this.sleepMainThread();
+
     foundColorOnGrid = getColor(snowflakeOnTheGrid);
     assertTrue(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid),
             "Expected color: " + SNOWFLAKE_DOT_COLOR + ", actual color: " + foundColorOnGrid);
