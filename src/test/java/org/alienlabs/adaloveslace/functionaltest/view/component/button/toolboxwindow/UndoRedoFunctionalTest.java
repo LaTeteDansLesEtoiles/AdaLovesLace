@@ -78,7 +78,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     this.sleepMainThread();
 
     foundColorOnGrid = getColor(snowflakeOnTheGrid);
-    assertNotSame(foundColorOnGridBeforeRedo, foundColorOnGrid);
+    assertNotEquals(foundColorOnGridBeforeRedo, foundColorOnGrid);
 
     // When
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getRedoKnotButton()));
