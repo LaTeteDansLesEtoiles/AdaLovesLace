@@ -63,14 +63,16 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> drawFirstSnowflake(robot));
     synchronizeTask(() -> drawSecondSnowflake(robot));
 
-    // When
-    Point2D snowflakePoint = new Point2D(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
+    Point2D snowflakePoint = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
+    robot.moveTo(snowflakePoint);
+    this.sleepMainThread();
     Color foundColorOnGridBeforeRedo = getColor(snowflakePoint);
+
+    // When
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton()));
     this.sleepMainThread();
 
     // Then
-    this.sleepMainThread();
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
     robot.moveTo(snowflakeOnTheGrid);
     this.sleepMainThread();
