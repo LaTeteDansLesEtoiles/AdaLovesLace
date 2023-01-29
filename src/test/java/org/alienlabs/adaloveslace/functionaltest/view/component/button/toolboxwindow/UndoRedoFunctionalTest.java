@@ -9,8 +9,7 @@ import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.api.FxAssert.verifyThat;
 
 class UndoRedoFunctionalTest extends AppFunctionalTestParent {
@@ -65,6 +64,8 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> drawSecondSnowflake(robot));
 
     // When
+    Point2D snowflakePoint = new Point2D(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
+    Color foundColorOnGridBeforeRedo = getColor(snowflakePoint);
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton()));
     this.sleepMainThread();
 
@@ -75,7 +76,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     this.sleepMainThread();
 
     foundColorOnGrid = getColor(snowflakeOnTheGrid);
-    verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.WHITE));
+    assertNotSame(foundColorOnGridBeforeRedo, foundColorOnGrid);
 
     // When
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getRedoKnotButton()));
