@@ -66,7 +66,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     Point2D snowflakePoint = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
     robot.moveTo(snowflakePoint);
     this.sleepMainThread();
-    Color foundColorOnGridBeforeRedo = getColor(snowflakePoint);
+    Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
     // When
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton()));
@@ -78,7 +78,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     this.sleepMainThread();
 
     foundColorOnGrid = getColor(snowflakeOnTheGrid);
-    assertNotEquals(foundColorOnGridBeforeRedo, foundColorOnGrid);
+    assertNotEquals(foundColorOnGridBeforeUndo, foundColorOnGrid);
 
     // When
     synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getRedoKnotButton()));
