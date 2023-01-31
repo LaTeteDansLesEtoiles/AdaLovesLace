@@ -171,11 +171,10 @@ public class AppFunctionalTestParent {
     final CountDownLatch lock  = new CountDownLatch(1);
     Platform.runLater(() -> {
       runnable.run();
-      this.sleepMainThread();
       lock.countDown();
     });
 
-    // We block the JavaFX application thread to let the runnable work
+    // We block the main thread to let the runnable (JavaFX application thread) work
     this.sleepMainThread();
 
     try {
