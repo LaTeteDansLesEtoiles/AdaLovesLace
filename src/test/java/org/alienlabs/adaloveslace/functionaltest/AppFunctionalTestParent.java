@@ -171,6 +171,7 @@ public class AppFunctionalTestParent {
     final CountDownLatch lock  = new CountDownLatch(1);
     Platform.runLater(() -> {
       runnable.run();
+      this.sleepMainThread();
       lock.countDown();
     });
 
