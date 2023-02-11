@@ -4,7 +4,6 @@ import javafx.scene.control.Button;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
-import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,12 +13,12 @@ public class LeftButton extends Button {
 
   private static final Logger logger        = LoggerFactory.getLogger(LeftButton.class);
 
-  public LeftButton(App app, GeometryWindow window) {
-    this.setOnMouseClicked(event -> onMoveKnotLeftAction(app, window));
+  public LeftButton(App app) {
+    this.setOnMouseClicked(event -> onMoveKnotLeftAction(app));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
   }
 
-  public static void onMoveKnotLeftAction(App app, GeometryWindow window) {
+  public static void onMoveKnotLeftAction(App app) {
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MOVE);
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
@@ -27,7 +26,7 @@ public class LeftButton extends Button {
       logger.debug("Moving left knot {}", knot);
     }
 
-    app.getOptionalDotGrid().getDiagram().addKnotsWithStep(app, app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
+    app.getOptionalDotGrid().getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
       app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
     app.getOptionalDotGrid().layoutChildren();

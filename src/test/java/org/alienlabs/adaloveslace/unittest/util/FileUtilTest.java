@@ -11,7 +11,6 @@ import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +38,6 @@ class FileUtilTest {
     public static final int LAST_PATTERN_INDEX  = 21;
     public static final int LAST_STEP_INDEX     = 22;
 
-    @TempDir
-    File dotLaceFileTempDir;
     private File dotLaceFile;
     private FileUtil fileUtil;
     private App app;
@@ -53,8 +50,11 @@ class FileUtilTest {
         app = new App();
         fileUtil = new FileUtil();
         diagramToSave = new Diagram();
-        Step step = new Step();
-        diagramToSave.getAllSteps().add(step);
+        Step step1 = new Step(diagramToSave, 1);
+        diagramToSave.getAllSteps().add(step1);
+        Step step2 = new Step(diagramToSave, 2);
+        diagramToSave.getAllSteps().add(step2);
+        diagramToSave.setCurrentStepIndex(2);
 
         Pattern pattern = new Pattern();
         pattern.setAbsoluteFilename(
@@ -65,7 +65,7 @@ class FileUtilTest {
         diagramToSave.addPattern(pattern);
         app.setDiagram(diagramToSave);
 
-        dotLaceFile = new File(dotLaceFileTempDir, "1.lace");
+        dotLaceFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + "test.lace");
     }
 
     @AfterEach
@@ -80,7 +80,7 @@ class FileUtilTest {
     @Test
     void saved_dot_lace_file_should_contain_a_pattern_file() {
         // When
-        File fileTocheck = fileUtil.saveFile(new File(APP_FOLDER_IN_USER_HOME), diagramToSave);
+        File fileTocheck = fileUtil.saveFile(new File(APP_FOLDER_IN_USER_HOME, "1.lace"), diagramToSave);
 
         // Then
         try (ZipFile zf = new ZipFile(fileTocheck)){

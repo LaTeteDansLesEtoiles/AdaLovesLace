@@ -17,7 +17,6 @@ import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
-import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +93,9 @@ public class OptionalDotGrid extends Pane {
     });
 
     this.gridNeedsToBeRedrawn = true;
+
+    this.diagram.getAllSteps().clear();
+    this.diagram.setCurrentStepIndex(0);
   }
 
   public OptionalDotGrid(double width, double height, double desiredRadius, Diagram diagram, Group root) {
@@ -155,7 +157,7 @@ public class OptionalDotGrid extends Pane {
     logger.debug("removed? {}", root.getChildren().removeAll(nodeListToRemove));
   }
 
-  public Knot drawHoveredOverKnot(Knot knot) {
+  public void drawHoveredOverKnot(Knot knot) {
     if (knot.getSelection() != null) {
       root.getChildren().remove(knot.getSelection());
     }
@@ -173,7 +175,6 @@ public class OptionalDotGrid extends Pane {
       knot.setSelection(rec);
     }
 
-    return knot;
   }
 
   public void drawHoveredOverOrSelectedKnot(boolean toUnselect, Knot... knots) {
@@ -425,7 +426,7 @@ public class OptionalDotGrid extends Pane {
     }
   }
 
-  public void addKnot(App app, double x, double y) {
+  public void addKnot(double x, double y) {
     Pattern currentPattern = this.diagram.getCurrentPattern();
     logger.info("Current pattern  -> {}", currentPattern);
     Knot currentKnot = null;
@@ -444,7 +445,7 @@ public class OptionalDotGrid extends Pane {
       currentKnot = new Knot(x, y, currentPattern, iv);
       diagram.setCurrentKnot(currentKnot);
 
-      this.diagram.addKnotsWithStep(app, currentKnot);
+      this.diagram.addKnotWithStep(currentKnot);
     } catch (IOException e) {
       logger.error("Problem with pattern resource file!", e);
     }

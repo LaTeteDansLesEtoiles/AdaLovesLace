@@ -6,7 +6,6 @@ import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
-import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +21,9 @@ public class HorizontalFlippingButton extends ImageButton {
 
   private static final Logger logger                            = LoggerFactory.getLogger(HorizontalFlippingButton.class);
 
-  public HorizontalFlippingButton(App app, GeometryWindow window, String buttonLabel) {
+  public HorizontalFlippingButton(App app, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onFlipHorizontallyAction(app, window));
+    this.setOnMouseClicked(event -> onFlipHorizontallyAction(app));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
@@ -34,7 +33,7 @@ public class HorizontalFlippingButton extends ImageButton {
     buildButtonImage("flip_horizontally.png");
   }
 
-  public static void onFlipHorizontallyAction(final App app, final GeometryWindow window) {
+  public static void onFlipHorizontallyAction(final App app) {
     logger.info("Flipping horizontally");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MIRROR);
 
@@ -49,7 +48,7 @@ public class HorizontalFlippingButton extends ImageButton {
       newDisplayedKnots.remove(knot);
     }
 
-    app.getOptionalDotGrid().getDiagram().addKnotsToStep(app, newDisplayedKnots, newSelectedKnots);
+    app.getOptionalDotGrid().getDiagram().addKnotsToStep(newDisplayedKnots, newSelectedKnots);
 
     app.getOptionalDotGrid().layoutChildren();
   }

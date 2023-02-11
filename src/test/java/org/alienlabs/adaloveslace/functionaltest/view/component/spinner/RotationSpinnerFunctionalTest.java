@@ -5,8 +5,6 @@ import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 
@@ -16,11 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
 
-  private static final Logger logger          = LoggerFactory.getLogger(RotationSpinnerFunctionalTest.class);
-
   /**
    * Init method called before each test
-   *
    * @param primaryStage The injected window (stage)
    */
   @Start
@@ -38,6 +33,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     initDrawAndSelectSnowFlake(robot);
 
     // Then
+    this.sleepMainThread();
     assertRotationAnglesEqual(DEFAULT_ROTATION, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
         stream().findFirst().get().getRotationAngle());
   }

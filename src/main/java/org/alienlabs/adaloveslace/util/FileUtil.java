@@ -163,8 +163,6 @@ public class FileUtil {
     private Diagram buildDiagram(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
         Diagram diagram = unmarshallXmlFile(zipFile, entry);
         buildAbsoluteFilenamesForKnots(diagram);
-
-        diagram.setCurrentStepIndex(diagram.getAllSteps().get(diagram.getAllSteps().size() - 1).getStepIndex());
         diagram.setCurrentPattern(diagram.getPatterns().get(0));
         return diagram;
     }
@@ -182,13 +180,6 @@ public class FileUtil {
     }
 
     public File saveFile(File file, Diagram diagram) {
-        Step current = diagram.getAllSteps().get(diagram.getAllSteps().size() - 1);
-        Step last = new Step(diagram.getAllSteps().size() + 1);
-        last.getDisplayedKnots().addAll(current.getDisplayedKnots());
-        last.getDisplayedKnots().addAll(current.getSelectedKnots());
-        diagram.getAllSteps().add(last);
-        diagram.setCurrentStepIndex(last.getStepIndex());
-
         if (this.app != null) {
             this.app.getOptionalDotGrid().layoutChildren();
         }
