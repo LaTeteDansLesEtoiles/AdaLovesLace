@@ -110,7 +110,6 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton()));
 
         // Then
-        this.sleepMainThread();
         assertEquals(6, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
                 "We should be at Step #6!");
         assertEquals(1, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size(),

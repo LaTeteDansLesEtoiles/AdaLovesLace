@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
 import org.testfx.robot.Motion;
 
 import java.util.Locale;
@@ -80,7 +79,6 @@ public class AppFunctionalTestParent {
    *
    * @param primaryStage The injected window (stage)
    */
-  @Start
   public void start(Stage primaryStage) {
     this.app = new App();
     this.app.setPrimaryStage(primaryStage);
