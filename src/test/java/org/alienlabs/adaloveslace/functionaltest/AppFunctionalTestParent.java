@@ -82,7 +82,6 @@ public class AppFunctionalTestParent {
    */
   @Start
   public void start(Stage primaryStage) {
-
     this.app = new App();
     this.app.setPrimaryStage(primaryStage);
 
