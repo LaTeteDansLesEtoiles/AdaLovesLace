@@ -111,8 +111,8 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
         // Then
         this.sleepMainThread();
-        assertEquals(5, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-                "We should be at Step #4!");
+        assertEquals(6, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
+                "We should be at Step #6!");
         assertEquals(1, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size(),
                 "We should have 1 selected Knot in this Diagram!");
         assertEquals(10, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getRotationAngle(),
@@ -132,8 +132,8 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
         // Then
         this.sleepMainThread();
-        assertEquals(5, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-                "We should be at Step #4!");
+        assertEquals(6, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
+                "We should be at Step #6!");
         assertEquals(1, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size(),
                 "We should have 1 selected Knot in this Diagram!");
         assertEquals(2, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getZoomFactor(),

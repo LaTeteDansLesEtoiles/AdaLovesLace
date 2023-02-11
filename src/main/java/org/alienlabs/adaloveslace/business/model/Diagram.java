@@ -230,8 +230,12 @@ public class Diagram {
     }
 
     public Step getCurrentStep() {
+
         if (allSteps.isEmpty() || currentStepIndex == -1) {
-            return new Step(this, 1);
+            Step newEmptyStep = new Step(this, 1);
+            this.getAllSteps().add(newEmptyStep);
+            this.setCurrentStepIndex(1);
+            return newEmptyStep;
         }
 
         if (allSteps.stream().anyMatch(step -> step.getStepIndex().equals(currentStepIndex))) {

@@ -154,130 +154,9 @@ class StepTest {
         this.diagram.addKnotsWithStep(knotsStep2, new HashSet<>());
 
         // Then
-        assertEquals(2,
-                this.diagram.getAllSteps().size(),
-                "We should have 2 Steps!");
-
-        assertEquals(3,
-                this.diagram.getAllSteps().get(1).getDisplayedKnots().size(),
-                "We should have 3 knots in the 2nd Step!");
-
-        assertTrue(this.diagram.getAllSteps().get(1).
-                        getDisplayedKnots().
-                        stream().
-                        anyMatch(knot -> knot.getX() == 10),
-                "We should have only one knot at X=10 in the 2nd Step!");
-        assertTrue(this.diagram.getAllSteps().get(1).
-                        getDisplayedKnots().
-                        stream().
-                        anyMatch(knot -> knot.getY() == 15),
-                "We should have only one knot at Y=15 in the 2nd Step!");
-
-        assertTrue(this.diagram.getAllSteps().get(1).
-                        getDisplayedKnots().
-                        stream().
-                        anyMatch(knot -> knot.getX() == 20),
-                "We should have only one knot at X=20 in the 2nd Step!");
-        assertTrue(this.diagram.getAllSteps().get(1).
-                        getDisplayedKnots().
-                        stream().
-                        anyMatch(knot -> knot.getY() == 25),
-                "We should have only one knot at Y=25 in the 2nd Step!");
-        assertTrue(this.diagram.getAllSteps().get(1).
-                        getDisplayedKnots().
-                        stream().
-                        anyMatch(knot -> knot.getX() == 30),
-                "We should have only one knot at X=30 in the 2nd Step!");
-        assertTrue(this.diagram.getAllSteps().get(1).
-                        getDisplayedKnots().
-                        stream().
-                        anyMatch(knot -> knot.getY() == 35),
-                "We should have only one knot at Y=35 in the 2nd Step!");
-    }
-
-    @Test
-    void test_add_several_knots_then_undo_a_step_then_make_another_step() {
-        // Given
-        Knot knotStep1 = new Knot(10, 15, new Pattern(), null);
-        diagram.addKnotWithStep(knotStep1);
-
-        Knot knotStep2 = new Knot(20, 25, new Pattern(), null);
-        this.diagram.addKnotWithStep(knotStep2);
-
-        Knot knotStep3 = new Knot(30, 35, new Pattern(), null);
-        this.diagram.addKnotWithStep(knotStep3);
-
-        // When
-        this.diagram.setCurrentStepIndex(2);
-        Knot knotStep32 = new Knot(40, 45, new Pattern(), null);
-        this.diagram.addKnotWithStep(knotStep32);
-
-        // Then
         assertEquals(3,
                 this.diagram.getAllSteps().size(),
                 "We should have 3 Steps!");
-
-        assertEquals(3,
-                this.diagram.getAllSteps().get(2).getDisplayedKnots().size(),
-                "We should have 3 knots in the 3rd Step!");
-
-        assertTrue(this.diagram.getAllSteps().get(2).
-                        getDisplayedKnots().
-                        stream().
-                        anyMatch(knot -> knot.getX() == 10),
-                "We should have only one knot at X=10 in the 3rd Step!");
-        assertTrue(this.diagram.getAllSteps().get(2).
-                        getDisplayedKnots().
-                        stream().
-                        anyMatch(knot -> knot.getY() == 15),
-                "We should have only one knot at Y=15 in the 3rd Step!");
-
-        assertTrue(this.diagram.getAllSteps().get(2).
-                        getDisplayedKnots().
-                        stream().
-                        anyMatch(knot -> knot.getX() == 20),
-                "We should have only one knot at X=20 in the 3rd Step!");
-        assertTrue(this.diagram.getAllSteps().get(2).
-                        getDisplayedKnots().
-                        stream().
-                        anyMatch(knot -> knot.getY() == 25),
-                "We should have only one knot at Y=25 in the 3rd Step!");
-        assertTrue(this.diagram.getAllSteps().get(2).
-                        getDisplayedKnots().
-                        stream().
-                        anyMatch(knot -> knot.getX() == 40),
-                "We should have only one knot at X=40 in the 3rd Step!");
-        assertTrue(this.diagram.getAllSteps().get(2).
-                        getDisplayedKnots().
-                        stream().
-                        anyMatch(knot -> knot.getY() == 45),
-                "We should have only one knot at Y=45 in the 3rd Step!");
-    }
-
-    @Test
-    void test_add_several_knots_then_undo_a_step_then_redo_this_step() {
-        // Given
-        Knot knotStep1 = new Knot(10, 15, new Pattern(), null);
-        diagram.addKnotWithStep(knotStep1);
-
-        Knot knotStep2 = new Knot(20, 25, new Pattern(), null);
-        this.diagram.addKnotWithStep(knotStep2);
-
-        Knot knotStep3 = new Knot(30, 35, new Pattern(), null);
-        this.diagram.addKnotWithStep(knotStep3);
-
-        // When
-        this.diagram.setCurrentStepIndex(2);
-        this.diagram.setCurrentStepIndex(3);
-
-        // Then
-        assertEquals(3,
-                this.diagram.getAllSteps().size(),
-                "We should have 3 Steps!");
-
-        assertEquals(3,
-                this.diagram.getAllSteps().get(2).getStepIndex(),
-                "We should have 3 as stepIndex of the last Step!");
 
         assertEquals(3,
                 this.diagram.getAllSteps().get(2).getDisplayedKnots().size(),
@@ -314,6 +193,117 @@ class StepTest {
                         stream().
                         anyMatch(knot -> knot.getY() == 35),
                 "We should have only one knot at Y=35 in the 3rd Step!");
+    }
+
+    @Test
+    void test_add_several_knots_then_undo_a_step_then_make_another_step() {
+        // Given
+        Knot knotStep1 = new Knot(10, 15, new Pattern(), null);
+        diagram.addKnotWithStep(knotStep1);
+
+        Knot knotStep2 = new Knot(20, 25, new Pattern(), null);
+        this.diagram.addKnotWithStep(knotStep2);
+
+        Knot knotStep3 = new Knot(30, 35, new Pattern(), null);
+        this.diagram.addKnotWithStep(knotStep3);
+
+        // When
+        this.diagram.setCurrentStepIndex(3);
+        Knot knotStep32 = new Knot(40, 45, new Pattern(), null);
+        this.diagram.addKnotWithStep(knotStep32);
+
+        // Then
+        assertEquals(4,
+                this.diagram.getAllSteps().size(),
+                "We should have 4 Steps!");
+
+        assertEquals(2,
+                this.diagram.getAllSteps().get(2).getDisplayedKnots().size(),
+                "We should have 2 knots in the 3rd Step!");
+
+        assertTrue(this.diagram.getAllSteps().get(2).
+                        getDisplayedKnots().
+                        stream().
+                        anyMatch(knot -> knot.getX() == 10),
+                "We should have only one knot at X=10 in the 3rd Step!");
+        assertTrue(this.diagram.getAllSteps().get(2).
+                        getDisplayedKnots().
+                        stream().
+                        anyMatch(knot -> knot.getY() == 15),
+                "We should have only one knot at Y=15 in the 3rd Step!");
+
+        assertTrue(this.diagram.getAllSteps().get(2).
+                        getDisplayedKnots().
+                        stream().
+                        anyMatch(knot -> knot.getX() == 20),
+                "We should have only one knot at X=20 in the 3rd Step!");
+        assertTrue(this.diagram.getAllSteps().get(2).
+                        getDisplayedKnots().
+                        stream().
+                        anyMatch(knot -> knot.getY() == 25),
+                "We should have only one knot at Y=25 in the 3rd Step!");
+    }
+
+    @Test
+    void test_add_several_knots_then_undo_a_step_then_redo_this_step() {
+        // Given
+        Knot knotStep1 = new Knot(10, 15, new Pattern(), null);
+        diagram.addKnotWithStep(knotStep1);
+
+        Knot knotStep2 = new Knot(20, 25, new Pattern(), null);
+        this.diagram.addKnotWithStep(knotStep2);
+
+        Knot knotStep3 = new Knot(30, 35, new Pattern(), null);
+        this.diagram.addKnotWithStep(knotStep3);
+
+        // When
+        this.diagram.setCurrentStepIndex(2);
+        this.diagram.setCurrentStepIndex(3);
+
+        // Then
+        assertEquals(4,
+                this.diagram.getAllSteps().size(),
+                "We should have 4 Steps!");
+
+        assertEquals(3,
+                this.diagram.getAllSteps().get(2).getStepIndex(),
+                "We should have 3 as stepIndex of the 3rd step!");
+
+        assertEquals(3,
+                this.diagram.getAllSteps().get(3).getDisplayedKnots().size(),
+                "We should have 3 knots in the 4th Step!");
+
+        assertTrue(this.diagram.getAllSteps().get(3).
+                        getDisplayedKnots().
+                        stream().
+                        anyMatch(knot -> knot.getX() == 10),
+                "We should have only one knot at X=10 in the 4th Step!");
+        assertTrue(this.diagram.getAllSteps().get(3).
+                        getDisplayedKnots().
+                        stream().
+                        anyMatch(knot -> knot.getY() == 15),
+                "We should have only one knot at Y=15 in the 4th Step!");
+
+        assertTrue(this.diagram.getAllSteps().get(3).
+                        getDisplayedKnots().
+                        stream().
+                        anyMatch(knot -> knot.getX() == 20),
+                "We should have only one knot at X=20 in the 4th Step!");
+        assertTrue(this.diagram.getAllSteps().get(3).
+                        getDisplayedKnots().
+                        stream().
+                        anyMatch(knot -> knot.getY() == 25),
+                "We should have only one knot at Y=25 in the 4th Step!");
+        assertTrue(this.diagram.getAllSteps().get(3).
+                        getDisplayedKnots().
+                        stream().
+                        anyMatch(knot -> knot.getX() == 30),
+                "We should have only one knot at X=30 in the 4th Step!");
+        assertTrue(this.diagram.getAllSteps().get(3).
+                        getDisplayedKnots().
+                        stream().
+                        anyMatch(knot -> knot.getY() == 35),
+                "We should have only one knot at Y=35 in the 4th Step!");
     }
 
 }

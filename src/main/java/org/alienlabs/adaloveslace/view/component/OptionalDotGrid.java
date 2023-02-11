@@ -93,6 +93,9 @@ public class OptionalDotGrid extends Pane {
     });
 
     this.gridNeedsToBeRedrawn = true;
+
+    this.diagram.getAllSteps().clear();
+    this.diagram.setCurrentStepIndex(0);
   }
 
   public OptionalDotGrid(double width, double height, double desiredRadius, Diagram diagram, Group root) {
@@ -154,7 +157,7 @@ public class OptionalDotGrid extends Pane {
     logger.debug("removed? {}", root.getChildren().removeAll(nodeListToRemove));
   }
 
-  public Knot drawHoveredOverKnot(Knot knot) {
+  public void drawHoveredOverKnot(Knot knot) {
     if (knot.getSelection() != null) {
       root.getChildren().remove(knot.getSelection());
     }
@@ -172,7 +175,6 @@ public class OptionalDotGrid extends Pane {
       knot.setSelection(rec);
     }
 
-    return knot;
   }
 
   public void drawHoveredOverOrSelectedKnot(boolean toUnselect, Knot... knots) {
