@@ -6,12 +6,18 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.util.NodeUtil;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class RotationSpinner {
 
   public static final String BUTTON_TOOLTIP = "Use these fields to rotate\nthe currently selected knot\n";
+
+  private static int numberOfUpdates = 0;
 
   public void buildRotationSpinner(App app, Spinner<Integer> spinner,
                                    SpinnerValueFactory<Integer> spinnerToReflect1,
@@ -23,16 +29,30 @@ public class RotationSpinner {
       spinnerToReflect1.setValue(newValue);
       spinnerToReflect2.setValue(newValue);
 
-      if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots() != null && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().isEmpty()) {
-        for (Knot currentKnot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
-          currentKnot.setRotationAngle(newValue);
+      if (++numberOfUpdates == 1) {
+        Set<Knot> displayedCopy = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+        Set<Knot> selectedCopy = new HashSet<>();
+
+        if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots() != null && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().isEmpty()) {
+          for (Knot currentKnot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
+            Knot knotCopy = new NodeUtil().copyKnot(currentKnot);
+            knotCopy.setRotationAngle(newValue);
+            selectedCopy.add(knotCopy);
+
+            if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots() != null && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().isEmpty()) {
+              displayedCopy.remove(currentKnot);
+              app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().remove(currentKnot);
+            }
+          }
         }
 
-        app.getOptionalDotGrid().getDiagram().addKnotsWithStep(app, app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+        app.getOptionalDotGrid().getDiagram().addKnotsWithStep(displayedCopy, selectedCopy);
+        app.getOptionalDotGrid().layoutChildren();
       }
 
-      app.getOptionalDotGrid().layoutChildren();
+      if (numberOfUpdates > 2) {
+        numberOfUpdates = 0;
+      }
     };
 
     valueFactory.valueProperty().addListener(valueChangeListener);

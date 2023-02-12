@@ -16,8 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.alienlabs.adaloveslace.business.model.Step.incrementIndex;
-
 /**
  * What is drawn on a Canvas: the Diagram is the desired, final business object consisting of Knots drawn with Patterns.
  *
@@ -85,7 +83,11 @@ public class Diagram {
         this.patterns.add(pattern);
     }
 
-    public Set<Knot> addKnotsWithStep(App app, final Knot knot) {
+    /**
+     * Adds a single Knot to a new undo / redo Step
+     * @param knot the Knot to add.
+     */
+    public void addKnotWithStep(final Knot knot) {
         Set<Knot> displayedKnots = this.getCurrentStep().getDisplayedKnots();
         Set<Knot> selectedKnots = this.getCurrentStep().getSelectedKnots();
 
@@ -94,66 +96,88 @@ public class Diagram {
         if (knot.getSelection() == null) {
             Set<Knot> newDisplayed = new HashSet<>(displayedKnots);
             newDisplayed.add(knot);
-            newStep = new Step(newDisplayed, selectedKnots, incrementIndex(app));
+            newStep = new Step(this, newDisplayed, selectedKnots);
         } else {
             Set<Knot> newSelected = new HashSet<>(selectedKnots);
             newSelected.add(knot);
-            newStep = new Step(displayedKnots, newSelected, incrementIndex(app));
+            newStep = new Step(this, displayedKnots, newSelected);
         }
 
         this.getAllSteps().add(newStep);
         this.currentStepIndex = newStep.getStepIndex();
-        return newStep.getAllVisibleKnots();
     }
 
-    public Step addKnotsWithStep(App app, final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
-        this.currentStepIndex = incrementIndex(app);
-        Step step = new Step(displayedKnots, selectedKnots, this.currentStepIndex);
+    /**
+     * Creates a step given the displayed knots and the selected knots. A knot can only be one of those, not both.
+     *
+     * @param displayedKnots the displayed but not selected knots to add to the new Step
+     * @param selectedKnots the selected (hence displayed but not in the displayedKnots Set) to add to the new Step
+     * @return the new undo / redo Step
+     */
+    public Step addKnotsWithStep(final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
+        Step step = new Step(this, displayedKnots, selectedKnots);
         this.getAllSteps().add(step);
 
         return step;
     }
 
-    public void addKnotsToStep(App app, final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
-        this.currentStepIndex = incrementIndex(app);
-        Step step = Step.of(displayedKnots, selectedKnots, this.currentStepIndex);
+    public void addKnotsToStep(final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
+        Step step = Step.of(this, displayedKnots, selectedKnots);
         this.getAllSteps().add(step);
     }
 
     public void undoLastStep(App app) {
         logger.info("Undo step, current step={}", currentStepIndex);
 
-        if (this.currentStepIndex >= 1) {
-            deleteNodesFromCurrentStep(app);
+        if (this.allSteps == null || this.allSteps.isEmpty()) {
+            return;
+        }
 
+        if (this.currentStepIndex > 1) {
+            deleteNodesFromCurrentStep(app);
             this.currentStepIndex--;
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
+
+            logger.info("Undo step, new step={}", currentStepIndex);
+        } else {
+            deleteNodesFromCurrentStep(app);
+            this.currentStepIndex = 1;
+            app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
+
             logger.info("Undo step, new step={}", currentStepIndex);
         }
     }
 
     public void redoLastStep(App app) {
-        logger.info("Redo step, current step={}", currentStepIndex);
+        logger.info("Redo 0 step, current step={}", this.currentStepIndex);
 
-        if (currentStepIndex < this.getAllSteps().size()) {
+        if (this.allSteps == null || this.allSteps.isEmpty()) {
+            return;
+        }
+
+        if (this.currentStepIndex < 1 && this.allSteps.size() > 1) {
+            app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
+            logger.info("Redo 1 step, new step={}", this.currentStepIndex);
+        } else if (this.currentStepIndex < this.allSteps.size()) {
             deleteNodesFromCurrentStep(app);
             this.currentStepIndex++;
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
 
-            logger.info("Redo step, new step={}", currentStepIndex);
+            logger.info("Redo 2 step, new step={}", this.currentStepIndex);
+        } else {
+            this.currentStepIndex = this.allSteps.size();
+            logger.info("Redo 3 step, new index={}", this.currentStepIndex);
         }
     }
 
     private void deleteNodesFromCurrentStep(App app) {
         getCurrentStep().getDisplayedKnots().forEach(knot -> {
             app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView()); // Delete nodes from step before
-            app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
             app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
             app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
         });
         getCurrentStep().getSelectedKnots().forEach(knot -> {
             app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView()); // Delete nodes from step before
-            app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
             app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
             app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
         });
@@ -216,15 +240,22 @@ public class Diagram {
     }
 
     public Step getCurrentStep() {
+
         if (allSteps.isEmpty() || currentStepIndex == -1) {
-            return new Step(1);
+            Step newEmptyStep = new Step(this, 1);
+            this.getAllSteps().add(newEmptyStep);
+            this.setCurrentStepIndex(1);
+            return newEmptyStep;
         }
 
         if (allSteps.stream().anyMatch(step -> step.getStepIndex().equals(currentStepIndex))) {
             return allSteps.stream().filter(step -> step.getStepIndex().equals(currentStepIndex)).findFirst().get();
         }
 
-        return new Step(1);
+        Step newEmptyStep = new Step(this, 1);
+        this.getAllSteps().add(newEmptyStep);
+        this.setCurrentStepIndex(1);
+        return newEmptyStep;
     }
 
     public List<Step> getAllSteps() {

@@ -59,15 +59,16 @@ public class FileUtil {
     public void buildUiFromLaceFile(App app, File file) {
         Diagram diagram = loadFromLaceFile(app, file);
 
-        app.getOptionalDotGrid().getDiagramProperty().set(diagram);
-        app.getOptionalDotGrid().setDiagram(diagram);
         app.getPrimaryStage().close();
         app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
-            app.getPrimaryStage());
+            app.getPrimaryStage(), diagram);
+        app.getOptionalDotGrid().getDiagramProperty().set(diagram);
+        app.getOptionalDotGrid().setDiagram(diagram);
         app.initializeKeyboardShorcuts();
         app.getToolboxStage().close();
         app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
 
+        app.getOptionalDotGrid().layoutChildren();
         DrawingButton.onSetDrawModeAction(app, app.getGeometryWindow());
     }
 
@@ -163,8 +164,6 @@ public class FileUtil {
     private Diagram buildDiagram(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
         Diagram diagram = unmarshallXmlFile(zipFile, entry);
         buildAbsoluteFilenamesForKnots(diagram);
-
-        diagram.setCurrentStepIndex(diagram.getAllSteps().get(diagram.getAllSteps().size() - 1).getStepIndex());
         diagram.setCurrentPattern(diagram.getPatterns().get(0));
         return diagram;
     }
@@ -182,13 +181,6 @@ public class FileUtil {
     }
 
     public File saveFile(File file, Diagram diagram) {
-        Step current = diagram.getAllSteps().get(diagram.getAllSteps().size() - 1);
-        Step last = new Step(diagram.getAllSteps().size() + 1);
-        last.getDisplayedKnots().addAll(current.getDisplayedKnots());
-        last.getDisplayedKnots().addAll(current.getSelectedKnots());
-        diagram.getAllSteps().add(last);
-        diagram.setCurrentStepIndex(last.getStepIndex());
-
         if (this.app != null) {
             this.app.getOptionalDotGrid().layoutChildren();
         }

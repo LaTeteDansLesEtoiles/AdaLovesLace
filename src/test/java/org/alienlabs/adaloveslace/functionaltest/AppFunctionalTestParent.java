@@ -23,15 +23,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
 import org.testfx.robot.Motion;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
-import static org.alienlabs.adaloveslace.App.EXPORT_IMAGE_FILE_TYPE;
-import static org.alienlabs.adaloveslace.App.GRID_DOTS_RADIUS;
+import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.PATH_SEPARATOR;
 
 @ExtendWith(ApplicationExtension.class)
@@ -43,7 +42,8 @@ public class AppFunctionalTestParent {
   public App app;
 
   // For tests:
-  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME",1_000L);
+  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME", 500L);
+  public static final long   WAIT_TIME                    = Long.getLong("WAIT_TIME", 5_000L);
   public static final double GRID_WIDTH                   = 600d;
   public static final double GRID_HEIGHT                  = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
@@ -54,6 +54,9 @@ public class AppFunctionalTestParent {
 
   public static final String SNOWFLAKE                    = "snowflake_small";
   public static final String SNOWFLAKE_IMAGE              = "snowflake_small.jpg";
+
+  public static final String COLOR_WHEEL                  = "color wheel";
+  public static final String COLOR_WHEEL_IMAGE            = "color wheel.jpg";
 
   public static final double FIRST_SNOWFLAKE_PIXEL_X      = 215d;
 
@@ -80,19 +83,19 @@ public class AppFunctionalTestParent {
    *
    * @param primaryStage The injected window (stage)
    */
-  @Start
   public void start(Stage primaryStage) {
-
     this.app = new App();
     this.app.setPrimaryStage(primaryStage);
 
     Locale locale = new Locale("en", "EN");
     App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
-    this.app.setDiagram(new Diagram());
+    Diagram diagram = new Diagram();
+    this.app.setDiagram(diagram);
     this.primaryStage = primaryStage;
 
     // The grid dots are twice as big as in the production code in order to facilitate tests
-    this.app.showMainWindow(640d, 480d, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS * 2d, this.primaryStage);
+    this.app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS * 2d, this.primaryStage, diagram);
+    this.app.setOptionalDotGrid(this.app.getMainWindow().getOptionalDotGrid());
 
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
     this.app.getToolboxStage().setX(1150d);
@@ -115,6 +118,12 @@ public class AppFunctionalTestParent {
   protected void drawFirstSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  // Click on the grid with the color wheel selected in order to draw a color wheel on the grid
+  protected void drawFirstColorWheel(FxRobot robot) {
+    Point2D colorWheelOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
+    robot.clickOn(colorWheelOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   // Click on the grid with the second snowflake selected in order to draw a snowflake on the grid elsewhere
@@ -151,6 +160,11 @@ public class AppFunctionalTestParent {
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
+  protected void selectFirstColorWheel(FxRobot robot) {
+    Point2D colorWheelOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
+    robot.clickOn(colorWheelOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
   protected void selectSecondSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
@@ -161,7 +175,12 @@ public class AppFunctionalTestParent {
     clickOnButton(robot, toolboxWindow.getSnowflakeButton());
   }
 
-  private void clickOnButton(FxRobot robot, Node button) {
+  // Click on the color wheel in the toolbox to select its pattern
+  protected void selectAndClickOnColorWheelPatternButton(FxRobot robot) {
+    clickOnButton(robot, toolboxWindow.getColorWheelButton());
+  }
+
+  protected void clickOnButton(FxRobot robot, Node button) {
     robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
@@ -172,13 +191,13 @@ public class AppFunctionalTestParent {
       lock.countDown();
     });
 
-    // We block the JavaFX application thread to let the runnable work
-    sleepMainThread();
+    // We block the main thread to let the runnable (JavaFX application thread) work
+    this.sleepMainThread();
 
     try {
       // And when the runnable has returned we can continue,
       // but we must let it as much time as it needs to complete, lest the assertion which comes after will be wrong
-      lock.await();
+      lock.await(WAIT_TIME, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
       logger.error("Interrupted!", e);
     }
@@ -233,28 +252,34 @@ public class AppFunctionalTestParent {
     synchronizeTask(() -> clickSelectButton(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
   }
-
-  protected FxRobot enterSelectMode(FxRobot robot) {
-    return robot.clickOn(this.geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+  protected void initDrawAndSelectColorWheel(FxRobot robot) {
+    synchronizeTask(() -> selectAndClickOnColorWheelPatternButton(robot));
+    synchronizeTask(() -> drawFirstColorWheel(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
+    synchronizeTask(() -> selectFirstColorWheel(robot));
   }
 
-  protected FxRobot duplicateKnots(FxRobot robot) {
-    return robot.clickOn(this.geometryWindow.getDuplicationButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+  protected void enterSelectMode(FxRobot robot) {
+    robot.clickOn(this.geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
-  protected FxRobot selectDeleteMode(FxRobot robot) {
-    return robot.clickOn(this.geometryWindow.getDeletionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+  protected void duplicateKnots(FxRobot robot) {
+    robot.clickOn(this.geometryWindow.getDuplicationButton(), Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
-  protected FxRobot selectSecondKnotWithControlKeyPressed(FxRobot robot) {
+  protected void selectDeleteMode(FxRobot robot) {
+    robot.clickOn(this.geometryWindow.getDeletionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  protected void selectSecondKnotWithControlKeyPressed(FxRobot robot) {
     robot.press(KeyCode.CONTROL);
 
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 10d, SECOND_SNOWFLAKE_PIXEL_Y + 10d);
-    return robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
-  protected FxRobot unselectControlKey(FxRobot robot) {
-    return robot.release(KeyCode.CONTROL);
+  protected void unselectControlKey(FxRobot robot) {
+    robot.release(KeyCode.CONTROL);
   }
 
 }

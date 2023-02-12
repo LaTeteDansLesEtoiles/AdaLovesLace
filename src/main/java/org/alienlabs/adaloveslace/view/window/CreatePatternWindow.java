@@ -55,7 +55,7 @@ public class CreatePatternWindow {
       app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_CLICKED, CreatePatternButton.getMouseClickedListener());
       app.getPrimaryStage().close();
       app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
-        app.getPrimaryStage());
+        app.getPrimaryStage(), app.getOptionalDotGrid().getDiagram());
       app.getToolboxStage().close();
       app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
       app.getGeometryStage().close();

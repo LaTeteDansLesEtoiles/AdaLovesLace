@@ -44,7 +44,6 @@ import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_
  */
 public class App extends Application {
 
-  public static final String ID                       = "#";
   public static final String TOOLBOX_BUTTON           = "toolbox-btn-";
   public static final String ADA_LOVES_LACE           = "AdaLovesLace";
   public static final String MAIN_WINDOW_TITLE        = ADA_LOVES_LACE;
@@ -91,7 +90,7 @@ public class App extends Application {
   private MainWindow mainWindow;
   private Group root;
   private Scene scene;
-  private Stage primaryStage;
+  public Stage primaryStage;
   private Stage geometryStage;
   private GeometryWindow geometryWindow;
   private ToolboxWindow toolboxWindow;
@@ -108,7 +107,7 @@ public class App extends Application {
     }
 
     logger.info("Starting app: opening main window");
-    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage);
+    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage, diagram);
 
     logger.info("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
@@ -118,8 +117,9 @@ public class App extends Application {
   }
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
-                             double gridDotsRadius, Stage primaryStage) {
+                             double gridDotsRadius, Stage primaryStage, Diagram diagram) {
     this.mainWindow = new MainWindow();
+    this.diagram = diagram;
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
@@ -157,6 +157,7 @@ public class App extends Application {
     });
 
     this.mainWindow.createMenuBar(root, this, primaryStage);
+    this.getOptionalDotGrid().setDiagram(diagram);
     this.primaryStage = primaryStage;
     primaryStage.show();
   }
@@ -187,7 +188,7 @@ public class App extends Application {
     geometryWindow.createGeometryButtons(app, parent);
     geometryWindow.createMoveKnotButtons(app, parent);
 
-    geometryWindow.createGeometryStage(app, geometryStage, parent);
+    geometryWindow.createGeometryStage(geometryStage, parent);
 
     initializeKeyboardShorcuts();
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
@@ -225,13 +226,13 @@ public class App extends Application {
   public void initializeKeyboardShorcuts() {
     Platform.runLater(() -> {
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.UP),
-        () -> UpButton.onMoveKnotUpAction       (this, this.getGeometryWindow()));
+        () -> UpButton.onMoveKnotUpAction       (this));
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN),
-        () -> DownButton.onMoveKnotDownAction   (this, this.getGeometryWindow()));
+        () -> DownButton.onMoveKnotDownAction   (this));
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.LEFT),
-        () -> LeftButton.onMoveKnotLeftAction   (this, this.getGeometryWindow()));
+        () -> LeftButton.onMoveKnotLeftAction   (this));
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT),
-        () -> RightButton.onMoveKnotRightAction (this, this.getGeometryWindow()));
+        () -> RightButton.onMoveKnotRightAction (this));
     });
   }
 
@@ -250,16 +251,16 @@ public class App extends Application {
     return geometryStage;
   }
 
-  public Diagram getDiagram() {
-    return diagram;
-  }
-
   public void setDiagram(Diagram diagram) {
     this.diagram = diagram;
   }
 
   public OptionalDotGrid getOptionalDotGrid() {
     return this.mainWindow.getOptionalDotGrid();
+  }
+
+  public void setOptionalDotGrid(OptionalDotGrid grid) {
+    this.mainWindow.setOptionalDotGrid(grid);
   }
 
   public MainWindow getMainWindow() {

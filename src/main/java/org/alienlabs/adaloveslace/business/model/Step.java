@@ -2,13 +2,11 @@ package org.alienlabs.adaloveslace.business.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import org.alienlabs.adaloveslace.App;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * What is drawn on a Canvas at any given time: we can move back and forward the Step list in order to undo / redo
@@ -18,9 +16,12 @@ import java.util.Set;
  * @see Knot
  *
  */
-@XmlRootElement(name = "Step")
+@XmlType(name = "Step")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Step implements Comparable<Step> {
+
+    @XmlTransient
+    private final Diagram diagram;
 
     private final Integer stepIndex;
 
@@ -30,28 +31,52 @@ public class Step implements Comparable<Step> {
 
     // For JAXB
     public Step() {
-        this(0);
+        this(new Diagram(), 1);
     }
-    public Step(int stepIndex) {
+
+    public Step(Diagram diagram, int stepIndex) {
+        this.diagram = diagram;
         this.stepIndex = stepIndex;
+
         this.displayedKnots = new HashSet<>();
         this.selectedKnots = new HashSet<>();
     }
 
-    public Step(Set<Knot> displayedKnots, Set<Knot> selectedKnots, int stepIndex) {
-        this.stepIndex = stepIndex;
-        this.displayedKnots = new HashSet<>(displayedKnots.stream().filter(knot -> !selectedKnots.contains(knot)).toList());
+    /**
+     * Creates a step given the displayed knots and the selected knots. A knot can only be one of those, not both.
+     *
+     * @param diagram the diagram onto which to work
+     * @param displayedKnots the displayed but not selected knots to add to the new Step
+     * @param selectedKnots the selected (hence displayed but not in the displayedKnots Set) to add to the new Step
+     */
+    public Step(Diagram diagram, Set<Knot> displayedKnots, Set<Knot> selectedKnots) {
+        diagram.setCurrentStepIndex(diagram.getCurrentStepIndex() + 1);
+        this.diagram = clearStepGreaterThan(diagram, diagram.getCurrentStepIndex());
+        this.stepIndex = diagram.getCurrentStepIndex();
 
+        this.displayedKnots = new HashSet<>(displayedKnots.stream().filter(knot -> !selectedKnots.contains(knot)).toList());
         this.selectedKnots =  new HashSet<>(selectedKnots.stream().map(knot ->
             new NodeUtil().copyKnot(knot)).toList());
     }
 
-    public static Step of(Set<Knot> displayedKnots, Set<Knot> selectedKnots, int stepIndex) {
-        Step step = new Step(stepIndex);
+    public static Step of(Diagram diagram, Set<Knot> displayedKnots, Set<Knot> selectedKnots) {
+        diagram.setCurrentStepIndex(diagram.getCurrentStepIndex() + 1);
+        Step step = new Step(clearStepGreaterThan(diagram, diagram.getCurrentStepIndex()), diagram.getCurrentStepIndex());
+
         step.getDisplayedKnots().addAll(displayedKnots);
         step.getSelectedKnots().addAll(selectedKnots);
 
         return step;
+    }
+
+    private static Diagram clearStepGreaterThan(Diagram diagram, int stepIndex) {
+        List<Step> toKeep = new ArrayList<>(diagram.getAllSteps().stream().
+                filter(step1 -> step1.stepIndex < stepIndex).
+                toList());
+        diagram.getAllSteps().clear();
+        diagram.getAllSteps().addAll(toKeep);
+
+        return diagram;
     }
 
     public Set<Knot> getDisplayedKnots() {
@@ -67,10 +92,6 @@ public class Step implements Comparable<Step> {
         all.addAll(displayedKnots);
 
         return all;
-    }
-
-    public static Integer incrementIndex(App app) {
-        return app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() + 1;
     }
 
     public Integer getStepIndex() {

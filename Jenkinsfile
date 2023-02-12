@@ -6,7 +6,7 @@ node {
     }
 
     stage('check java') {
-        env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
+        env.PATH="/usr/lib/jvm/jdk-19/bin:${env.PATH}"
         sh "java -version"
     }
 
@@ -29,7 +29,8 @@ node {
 
         stage('functional tests') {
           try {
-            sh "./mvnw clean integration-test -DskipUTs=true -Dtestfx.launch.timeout=20000 -Dtestfx.setup.timeout=20000 -DSLEEP_TIME=5000"          } catch(err) {
+            sh "./mvnw clean integration-test -P linux -DskipUTs=true -Dtestfx.launch.timeout=5000 -Dtestfx.setup.timeout=5000 -DSLEEP_TIME=500 -DWAIT_TIME=5000"
+            } catch(err) {
             throw err
           } finally {
             junit '**/target/failsafe-reports/TEST-*.xml'
