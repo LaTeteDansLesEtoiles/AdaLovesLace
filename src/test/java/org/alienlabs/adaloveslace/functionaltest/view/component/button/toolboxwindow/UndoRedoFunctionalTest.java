@@ -4,6 +4,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -34,7 +36,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         Color foundColorOnGridBeforeUndo = getColor(pointToCheck);
 
         // When
-        synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton()));
+        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
         // Then
         this.sleepMainThread();
@@ -46,7 +48,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         assertNotEquals(foundColorOnGridBeforeUndo, foundColorOnGrid, "Both colors should not be the same!");
 
         // When
-        synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getRedoKnotButton()));
+        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
 
         // Then
         this.sleepMainThread();
@@ -73,7 +75,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
         // When
-        synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton()));
+        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
         this.sleepMainThread();
 
         // Then
@@ -85,7 +87,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         assertNotEquals(foundColorOnGridBeforeUndo, foundColorOnGrid);
 
         // When
-        synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getRedoKnotButton()));
+        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
 
         // Then
         this.sleepMainThread();
@@ -107,7 +109,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         // When
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton()));
+        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
         // Then
         assertEquals(6, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
@@ -127,7 +129,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         // When
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
-        synchronizeTask(() -> robot.clickOn(this.toolboxWindow.getUndoKnotButton()));
+        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
         // Then
         this.sleepMainThread();

@@ -213,11 +213,11 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   }
 
   private String getMainWindowTitle() {
-    return this.primaryStage.getTitle();
+    return this.app.primaryStage.getTitle();
   }
 
   private boolean isMainWindowDisplayed() {
-    return this.primaryStage.getScene().getWindow().isShowing();
+    return this.app.primaryStage.getScene().getWindow().isShowing();
   }
 
 }

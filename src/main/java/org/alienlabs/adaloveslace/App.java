@@ -90,7 +90,7 @@ public class App extends Application {
   private MainWindow mainWindow;
   private Group root;
   private Scene scene;
-  private Stage primaryStage;
+  public Stage primaryStage;
   private Stage geometryStage;
   private GeometryWindow geometryWindow;
   private ToolboxWindow toolboxWindow;
