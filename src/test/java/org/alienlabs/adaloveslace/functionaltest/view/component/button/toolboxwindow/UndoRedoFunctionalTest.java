@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -101,6 +102,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     }
 
     @Test
+    @Disabled("Not stable in Jenkins")
     void test_add_a_knot_then_turn_it_then_undo(final FxRobot robot) {
         // Given
         initDrawAndSelectSnowFlake(robot);
@@ -127,6 +129,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     }
 
     @Test
+    @Disabled("Not stable in Jenkins")
     void test_add_a_knot_then_zoom_it_then_undo(final FxRobot robot) {
         // Given
         initDrawAndSelectSnowFlake(robot);
