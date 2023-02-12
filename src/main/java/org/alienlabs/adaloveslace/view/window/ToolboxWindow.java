@@ -43,6 +43,7 @@ public class ToolboxWindow {
   private RedoKnotButton      redoKnotButton;
   private ResetDiagramButton  resetDiagramButton;
   private ToggleButton        snowflakeButton;
+  private ToggleButton        colorWheelButton;
   private final List<ToggleButton>  allPatterns;
 
   private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
@@ -111,6 +112,11 @@ public class ToolboxWindow {
     this.allPatterns.add(button);
 
     if (i == 0) {
+      this.colorWheelButton = button;
+      diagram.setCurrentPattern(pattern);
+    }
+
+    if (i == 1) {
       this.snowflakeButton = button;
       button.setStyle("-fx-border-color: blue;");
       diagram.setCurrentPattern(pattern);
@@ -139,8 +145,10 @@ public class ToolboxWindow {
   // classpathResourceFiles & homeDirectoryResourceFiles
   private List<String> getAllResourceFilesWithoutDuplicates(List<String> homeDirectoryResourceFiles) {
     return homeDirectoryResourceFiles.stream().filter(patternDirectoryResource -> classpathResourceFiles.stream().noneMatch(
-      classpathResource -> patternDirectoryResource.split(File.separator)[patternDirectoryResource.split(File.separator).length - 1]
-        .equals(classpathResource.split(File.separator)[classpathResource.split(File.separator).length - 1]))).toList();
+      classpathResource -> patternDirectoryResource.split(String.valueOf(File.separatorChar))
+              [patternDirectoryResource.split((String.valueOf(File.separatorChar))).length - 1]
+        .equals(classpathResource.split((String.valueOf(File.separatorChar)))
+                [classpathResource.split((String.valueOf(File.separatorChar))).length - 1]))).toList();
   }
 
   private File createPatternDirectory() {
@@ -207,9 +215,9 @@ public class ToolboxWindow {
     this.toolboxStage.show();
 
     this.toolboxStage.setTitle(resourceBundle.getString(TOOLBOX_TITLE));
-    this.toolboxStage.setOnCloseRequest(windowEvent -> {
-      logger.info("You shall not close the toolbox window directly!");
-    });
+    this.toolboxStage.setOnCloseRequest(windowEvent ->
+            logger.info("You shall not close the toolbox window directly!")
+    );
   }
 
   private int computeWindowHeight(App app) {
@@ -314,14 +322,6 @@ public class ToolboxWindow {
     alert.showAndWait();
   }
 
-  public UndoKnotButton getUndoKnotButton() {
-    return this.undoKnotButton;
-  }
-
-  public RedoKnotButton getRedoKnotButton() {
-    return this.redoKnotButton;
-  }
-
   public ResetDiagramButton getResetDiagramButton() {
     return this.resetDiagramButton;
   }
@@ -336,6 +336,10 @@ public class ToolboxWindow {
 
   public ToggleButton getSnowflakeButton() {
     return this.snowflakeButton;
+  }
+
+  public ToggleButton getColorWheelButton() {
+    return this.colorWheelButton;
   }
 
   public Stage getToolboxStage() {

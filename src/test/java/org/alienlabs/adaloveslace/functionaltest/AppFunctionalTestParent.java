@@ -53,6 +53,9 @@ public class AppFunctionalTestParent {
   public static final String SNOWFLAKE                    = "snowflake_small";
   public static final String SNOWFLAKE_IMAGE              = "snowflake_small.jpg";
 
+  public static final String COLOR_WHEEL                  = "color_wheel";
+  public static final String COLOR_WHEEL_IMAGE            = "color_wheel.jpg";
+
   public static final double FIRST_SNOWFLAKE_PIXEL_X      = 215d;
 
   public static final double FIRST_SNOWFLAKE_PIXEL_Y      = 145d;
@@ -115,6 +118,12 @@ public class AppFunctionalTestParent {
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
+  // Click on the grid with the color wheel selected in order to draw a color wheel on the grid
+  protected void drawFirstColorWheel(FxRobot robot) {
+    Point2D colorWheelOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
+    robot.clickOn(colorWheelOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
   // Click on the grid with the second snowflake selected in order to draw a snowflake on the grid elsewhere
   protected void drawSecondSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X, SECOND_SNOWFLAKE_PIXEL_Y);
@@ -149,6 +158,11 @@ public class AppFunctionalTestParent {
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
+  protected void selectFirstColorWheel(FxRobot robot) {
+    Point2D colorWheelOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
+    robot.clickOn(colorWheelOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
   protected void selectSecondSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
@@ -157,6 +171,11 @@ public class AppFunctionalTestParent {
   // Click on the snowflake in the toolbox to select its pattern
   protected void selectAndClickOnSnowflakePatternButton(FxRobot robot) {
     clickOnButton(robot, toolboxWindow.getSnowflakeButton());
+  }
+
+  // Click on the color wheel in the toolbox to select its pattern
+  protected void selectAndClickOnColorWheelPatternButton(FxRobot robot) {
+    clickOnButton(robot, toolboxWindow.getColorWheelButton());
   }
 
   private void clickOnButton(FxRobot robot, Node button) {
@@ -230,6 +249,12 @@ public class AppFunctionalTestParent {
     synchronizeTask(() -> drawFirstSnowflake(robot));
     synchronizeTask(() -> clickSelectButton(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
+  }
+  protected void initDrawAndSelectColorWheel(FxRobot robot) {
+    synchronizeTask(() -> selectAndClickOnColorWheelPatternButton(robot));
+    synchronizeTask(() -> drawFirstColorWheel(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
+    synchronizeTask(() -> selectFirstColorWheel(robot));
   }
 
   protected void enterSelectMode(FxRobot robot) {

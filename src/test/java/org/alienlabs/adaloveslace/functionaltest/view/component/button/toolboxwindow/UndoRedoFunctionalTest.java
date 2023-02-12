@@ -103,28 +103,26 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     @Test
     void test_add_a_knot_then_turn_it_several_times_then_undo(final FxRobot robot) {
         // Given
-        synchronizeTask(() -> drawSecondSnowflake(robot));
-        initDrawAndSelectSnowFlake(robot);
+        initDrawAndSelectColorWheel(robot);
 
         // When
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
 
-        Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
+        Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 40d, FIRST_SNOWFLAKE_PIXEL_Y + 40d);
         robot.moveTo(snowflakePoint);
         this.sleepMainThread();
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
         synchronizeTask(() -> UndoKnotButton.undoKnot(app));
         synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
         // Then
         this.sleepMainThread();
-        Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
+        Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 40d, FIRST_SNOWFLAKE_PIXEL_Y + 40d);
         robot.moveTo(snowflakeOnTheGrid);
         this.sleepMainThread();
 
@@ -136,17 +134,16 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     @Test
     void test_add_a_knot_then_zoom_it_several_times_then_undo(final FxRobot robot) {
         // Given
-        synchronizeTask(() -> drawSecondSnowflake(robot));
-        initDrawAndSelectSnowFlake(robot);
+        initDrawAndSelectColorWheel(robot);
 
         // When
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
 
-        Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y  + 20d);
+        Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 40d, FIRST_SNOWFLAKE_PIXEL_Y  + 40d);
         robot.moveTo(snowflakePoint);
         this.sleepMainThread();
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);

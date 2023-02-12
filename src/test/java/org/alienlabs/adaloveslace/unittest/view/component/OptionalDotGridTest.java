@@ -53,7 +53,7 @@ class OptionalDotGridTest {
   private Pattern buildPattern() {
     Pattern pattern = new Pattern();
 
-    pattern.setAbsoluteFilename(CLASSPATH_RESOURCES_PATH + SNOWFLAKE_IMAGE);
+    pattern.setAbsoluteFilename(CLASSPATH_RESOURCES_PATH + COLOR_WHEEL_IMAGE);
 
     try (FileInputStream fis = new FileInputStream(new FileUtil().getResources(this, java.util.regex.Pattern.compile(CLASSPATH_RESOURCES_PATH_JPG)).get(0))) {
       Image image = new Image(fis);

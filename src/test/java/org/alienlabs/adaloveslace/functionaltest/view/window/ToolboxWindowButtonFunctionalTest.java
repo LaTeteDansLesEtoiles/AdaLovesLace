@@ -24,7 +24,16 @@ class ToolboxWindowButtonFunctionalTest extends AppFunctionalTestParent {
   }
 
   /**
-   * Checks if 1st pattern toolbox button contains image "snowflake_small.jpg"
+   * Checks if 1st pattern toolbox button contains image "color wheel.jpg"
+   *
+   */
+  @Test
+  void should_contain_color_wheel_pattern_button_with_text() {
+    FxAssert.verifyThat(COLOR_WHEEL, NodeMatchers.isVisible());
+  }
+
+  /**
+   * Checks if 2nd pattern toolbox button contains image "snowflake_small.jpg"
    *
    */
   @Test
