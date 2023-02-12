@@ -145,7 +145,7 @@
   </dependencies>
 
   <build>
-    <finalName>adaloveslace</finalName>
+    <finalName>AdaLovesLace</finalName>
 
     <plugins>
       <plugin>
