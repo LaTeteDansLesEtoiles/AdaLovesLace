@@ -155,6 +155,12 @@ When creating a branch, if you wish to set tracking information for this branch 
 
 -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=20000
 
+- Multi-system file separators used in regexps: 
+
+https://stackoverflow.com/questions/20488617/code-analysis-failure-file-separator-used-for-regular-expression
+
+See: ToolboxWindow.java#getAllResourceFilesWithoutDuplicates()
+
 
 --------------------------------------------------------------------------------------------
 
