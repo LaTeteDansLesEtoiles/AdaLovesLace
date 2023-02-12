@@ -111,7 +111,8 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 40d, FIRST_SNOWFLAKE_PIXEL_Y + 40d);
