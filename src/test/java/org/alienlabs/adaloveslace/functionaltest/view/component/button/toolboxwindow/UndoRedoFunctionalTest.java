@@ -107,9 +107,9 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         initDrawAndSelectSnowFlake(robot);
 
         // When
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 10d, FIRST_SNOWFLAKE_PIXEL_Y + 10d);
         robot.moveTo(snowflakePoint);
@@ -137,9 +137,9 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         initDrawAndSelectSnowFlake(robot);
 
         // When
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 10d, FIRST_SNOWFLAKE_PIXEL_Y  + 10d);
         robot.moveTo(snowflakePoint);
@@ -150,6 +150,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
         // Then
+        this.sleepMainThread();
         this.sleepMainThread();
         Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 10d, FIRST_SNOWFLAKE_PIXEL_Y + 10d);
         robot.moveTo(snowflakeOnTheGrid);
