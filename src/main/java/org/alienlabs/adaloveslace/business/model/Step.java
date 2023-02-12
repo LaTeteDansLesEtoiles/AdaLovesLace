@@ -2,8 +2,8 @@ package org.alienlabs.adaloveslace.business.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import java.util.*;
  * @see Knot
  *
  */
-@XmlRootElement(name = "Step")
+@XmlType(name = "Step")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Step implements Comparable<Step> {
 
@@ -31,7 +31,7 @@ public class Step implements Comparable<Step> {
 
     // For JAXB
     public Step() {
-        this(new Diagram(), 0);
+        this(new Diagram(), 1);
     }
 
     public Step(Diagram diagram, int stepIndex) {

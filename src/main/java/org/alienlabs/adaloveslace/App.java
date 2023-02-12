@@ -107,7 +107,7 @@ public class App extends Application {
     }
 
     logger.info("Starting app: opening main window");
-    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage);
+    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage, diagram);
 
     logger.info("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
@@ -117,8 +117,9 @@ public class App extends Application {
   }
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
-                             double gridDotsRadius, Stage primaryStage) {
+                             double gridDotsRadius, Stage primaryStage, Diagram diagram) {
     this.mainWindow = new MainWindow();
+    this.diagram = diagram;
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
@@ -156,6 +157,7 @@ public class App extends Application {
     });
 
     this.mainWindow.createMenuBar(root, this, primaryStage);
+    this.getOptionalDotGrid().setDiagram(diagram);
     this.primaryStage = primaryStage;
     primaryStage.show();
   }

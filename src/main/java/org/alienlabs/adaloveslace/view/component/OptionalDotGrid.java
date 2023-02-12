@@ -93,9 +93,6 @@ public class OptionalDotGrid extends Pane {
     });
 
     this.gridNeedsToBeRedrawn = true;
-
-    this.diagram.getAllSteps().clear();
-    this.diagram.setCurrentStepIndex(0);
   }
 
   public OptionalDotGrid(double width, double height, double desiredRadius, Diagram diagram, Group root) {

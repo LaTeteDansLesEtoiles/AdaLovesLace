@@ -92,7 +92,7 @@ public class AppFunctionalTestParent {
     this.primaryStage = primaryStage;
 
     // The grid dots are twice as big as in the production code in order to facilitate tests
-    this.app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS * 2d, this.primaryStage);
+    this.app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS * 2d, this.primaryStage, diagram);
     this.app.setOptionalDotGrid(this.app.getMainWindow().getOptionalDotGrid());
 
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);

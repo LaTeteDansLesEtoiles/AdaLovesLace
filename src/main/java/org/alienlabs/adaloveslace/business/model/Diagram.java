@@ -129,34 +129,44 @@ public class Diagram {
     public void undoLastStep(App app) {
         logger.info("Undo step, current step={}", currentStepIndex);
 
-        if (this.currentStepIndex > 0) {
-            deleteNodesFromCurrentStep(app);
+        if (this.allSteps == null || this.allSteps.isEmpty()) {
+            return;
+        }
 
+        if (this.currentStepIndex > 1) {
+            deleteNodesFromCurrentStep(app);
             this.currentStepIndex--;
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
-            logger.info("Undo step, new step={}", currentStepIndex);
-        } else if (this.currentStepIndex == 0) {
-            deleteNodesFromCurrentStep(app);
 
+            logger.info("Undo step, new step={}", currentStepIndex);
+        } else {
+            deleteNodesFromCurrentStep(app);
+            this.currentStepIndex = 1;
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
+
             logger.info("Undo step, new step={}", currentStepIndex);
         }
     }
 
     public void redoLastStep(App app) {
-        logger.info("Redo step, current step={}", currentStepIndex);
+        logger.info("Redo 0 step, current step={}", this.currentStepIndex);
 
-        if (currentStepIndex == this.getAllSteps().size()) {
-            deleteNodesFromCurrentStep(app);
+        if (this.allSteps == null || this.allSteps.isEmpty()) {
+            return;
+        }
+
+        if (this.currentStepIndex < 1 && this.allSteps.size() > 1) {
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
-
-            logger.info("Redo step, new step={}", currentStepIndex);
-        } else if (currentStepIndex < this.getAllSteps().size()) {
+            logger.info("Redo 1 step, new step={}", this.currentStepIndex);
+        } else if (this.currentStepIndex < this.allSteps.size()) {
             deleteNodesFromCurrentStep(app);
             this.currentStepIndex++;
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
 
-            logger.info("Redo step, new step={}", currentStepIndex);
+            logger.info("Redo 2 step, new step={}", this.currentStepIndex);
+        } else {
+            this.currentStepIndex = this.allSteps.size();
+            logger.info("Redo 3 step, new index={}", this.currentStepIndex);
         }
     }
 
@@ -242,7 +252,10 @@ public class Diagram {
             return allSteps.stream().filter(step -> step.getStepIndex().equals(currentStepIndex)).findFirst().get();
         }
 
-        return new Step(this, 1);
+        Step newEmptyStep = new Step(this, 1);
+        this.getAllSteps().add(newEmptyStep);
+        this.setCurrentStepIndex(1);
+        return newEmptyStep;
     }
 
     public List<Step> getAllSteps() {
