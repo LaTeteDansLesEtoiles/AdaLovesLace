@@ -101,20 +101,22 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     }
 
     @Test
-    void test_add_a_knot_then_turn_it_twice_then_undo_one_step(final FxRobot robot) {
+    void test_add_a_knot_then_turn_it_three_times_then_undo_two_steps(final FxRobot robot) {
         // Given
         synchronizeTask(() -> drawSecondSnowflake(robot));
         initDrawAndSelectSnowFlake(robot);
 
         // When
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner3()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner3()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
         robot.moveTo(snowflakePoint);
         this.sleepMainThread();
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
+        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
         synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
         // Then
@@ -129,20 +131,22 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     }
 
     @Test
-    void test_add_a_knot_then_zoom_it_twice_then_undo_one_step(final FxRobot robot) {
+    void test_add_a_knot_then_zoom_it_three_times_then_undo_two_steps(final FxRobot robot) {
         // Given
         synchronizeTask(() -> drawSecondSnowflake(robot));
         initDrawAndSelectSnowFlake(robot);
 
         // When
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner3()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner3()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y  + 20d);
         robot.moveTo(snowflakePoint);
         this.sleepMainThread();
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
+        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
         synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
         // Then
