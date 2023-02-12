@@ -53,8 +53,8 @@ public class AppFunctionalTestParent {
   public static final String SNOWFLAKE                    = "snowflake_small";
   public static final String SNOWFLAKE_IMAGE              = "snowflake_small.jpg";
 
-  public static final String COLOR_WHEEL                  = "color_wheel";
-  public static final String COLOR_WHEEL_IMAGE            = "color_wheel.jpg";
+  public static final String COLOR_WHEEL                  = "color wheel";
+  public static final String COLOR_WHEEL_IMAGE            = "color wheel.jpg";
 
   public static final double FIRST_SNOWFLAKE_PIXEL_X      = 215d;
 
