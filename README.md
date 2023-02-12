@@ -1,4 +1,4 @@
-Ada Loves Lace: A tatting lace patterns creation software 
+AdaLovesLace: A tatting lace patterns creation software 
 
 Ada Aime la Dentelle : un logiciel de création de diagrammes de dentelle
 
@@ -11,10 +11,14 @@ This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by app
 
 --------------------------------------------------------------------------------------------
 
-- This project uses Java JDK 17 (because it is an LTS JDK) & JavaFX 17.0.2
+This is the developer documentation, for a draft of a (French) user guide, see folder: src/main/resources/documentation 
+of the branch "23-frenchuserguide".
 
-- You need to copy the jmods for Javafx 17 (from here: https://gluonhq.com/products/javafx/ => check 'Include older versions')
- into your JDK 17 folder.
+
+- This project uses Java JDK 19 (because of bugs we had to switch to the latest JDK) & JavaFX 19.0.2
+
+- You need to copy the jmods for Javafx 19 (from here: https://gluonhq.com/products/javafx/ => check 'Include older versions')
+ into your JDK 19 folder.
 
 - Project generated with:
 
@@ -22,7 +26,7 @@ This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by app
     mvn archetype:generate -DarchetypeGroupId=org.openjfx -DarchetypeArtifactId=javafx-archetype-simple -DarchetypeVersion=0.0.3 -DgroupId=org.alienlabs.adaloveslace -DartifactId=adaloveslace -Dversion=0.0.1 -Djavafx-version=11
 
 
-- for mvnw (see below) to run OK, you need to set JAVA_HOME to a JDK 17 modified according to:
+- for mvnw (see below) to run OK, you need to set JAVA_HOME to a JDK 19 modified according to:
 
 
     https://github.com/jgneff/javafx-graphics
@@ -101,6 +105,9 @@ When creating a branch, if you wish to set tracking information for this branch 
     git branch --set-upstream-to=origin/4-undoredoclear 4-undoredoclear
     => Branch '4-undoredoclear' set up to track remote branch '4-undoredoclear' from 'origin'.
 
+To copy all project from "Gogs" remote (= origin) to "Github" remote:
+
+    git push github --mirror
 
 --------------------------------------------------------------------------------------------
 
