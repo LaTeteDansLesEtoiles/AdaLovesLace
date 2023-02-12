@@ -107,7 +107,6 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
         // When
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner3()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner3()));
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 40d, FIRST_SNOWFLAKE_PIXEL_Y + 40d);
         robot.moveTo(snowflakePoint);
@@ -133,7 +132,6 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         initDrawAndSelectColorWheel(robot);
 
         // When
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner3()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner3()));
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 40d, FIRST_SNOWFLAKE_PIXEL_Y  + 40d);
