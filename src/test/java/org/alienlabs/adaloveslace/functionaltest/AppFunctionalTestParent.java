@@ -178,7 +178,7 @@ public class AppFunctionalTestParent {
     clickOnButton(robot, toolboxWindow.getColorWheelButton());
   }
 
-  private void clickOnButton(FxRobot robot, Node button) {
+  protected void clickOnButton(FxRobot robot, Node button) {
     robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 

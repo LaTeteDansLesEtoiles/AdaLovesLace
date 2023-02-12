@@ -326,6 +326,14 @@ public class ToolboxWindow {
     return this.resetDiagramButton;
   }
 
+  public UndoKnotButton getUndoKnotButton() {
+    return this.undoKnotButton;
+  }
+
+  public RedoKnotButton getRedoKnotButton() {
+    return this.redoKnotButton;
+  }
+
   public TextArea getPrintersTextArea() {
     return printersTextArea;
   }

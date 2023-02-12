@@ -50,7 +50,7 @@ public class ZoomSpinner {
         app.getOptionalDotGrid().layoutChildren();
       }
 
-      if (numberOfUpdates >= 2) {
+      if (numberOfUpdates > 2) {
         numberOfUpdates = 0;
       }
     };

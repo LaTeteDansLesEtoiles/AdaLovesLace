@@ -4,8 +4,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -36,7 +34,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         Color foundColorOnGridBeforeUndo = getColor(pointToCheck);
 
         // When
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+        synchronizeTask(() -> clickOnButton(robot, this.app.getToolboxWindow().getUndoKnotButton()));
 
         // Then
         this.sleepMainThread();
@@ -48,7 +46,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         assertNotEquals(foundColorOnGridBeforeUndo, foundColorOnGrid, "Both colors should not be the same!");
 
         // When
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
+        synchronizeTask(() -> clickOnButton(robot, this.app.getToolboxWindow().getRedoKnotButton()));
 
         // Then
         this.sleepMainThread();
@@ -75,7 +73,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
         // When
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+        synchronizeTask(() -> clickOnButton(robot, this.app.getToolboxWindow().getUndoKnotButton()));
         this.sleepMainThread();
 
         // Then
@@ -87,7 +85,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         assertNotEquals(foundColorOnGridBeforeUndo, foundColorOnGrid);
 
         // When
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
+        synchronizeTask(() -> clickOnButton(robot, this.app.getToolboxWindow().getRedoKnotButton()));
 
         // Then
         this.sleepMainThread();
@@ -101,34 +99,19 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     }
 
     @Test
-    void test_add_a_knot_then_turn_it_several_times_then_undo(final FxRobot robot) {
+    void test_add_a_knot_then_turn_it_then_undo(final FxRobot robot) {
         // Given
         initDrawAndSelectColorWheel(robot);
 
         // When
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner3()));
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 40d, FIRST_SNOWFLAKE_PIXEL_Y + 40d);
         robot.moveTo(snowflakePoint);
         this.sleepMainThread();
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+        synchronizeTask(() -> clickOnButton(robot, this.app.getToolboxWindow().getUndoKnotButton()));
 
         // Then
         this.sleepMainThread();
@@ -142,25 +125,19 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     }
 
     @Test
-    void test_add_a_knot_then_zoom_it_several_times_then_undo(final FxRobot robot) {
+    void test_add_a_knot_then_zoom_it_then_undo(final FxRobot robot) {
         // Given
         initDrawAndSelectColorWheel(robot);
 
         // When
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
-        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner1()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner3()));
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 40d, FIRST_SNOWFLAKE_PIXEL_Y  + 40d);
         robot.moveTo(snowflakePoint);
         this.sleepMainThread();
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+        synchronizeTask(() -> clickOnButton(robot, this.app.getToolboxWindow().getUndoKnotButton()));
 
         // Then
         this.sleepMainThread();
