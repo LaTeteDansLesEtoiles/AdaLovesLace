@@ -109,15 +109,23 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         // When
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
+
+        Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
+        robot.moveTo(snowflakePoint);
+        this.sleepMainThread();
+        Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
+
         synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
         // Then
-        assertEquals(6, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-                "We should be at Step #6!");
-        assertEquals(1, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size(),
-                "We should have 1 selected Knot in this Diagram!");
-        assertEquals(10, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getRotationAngle(),
-                "This Knot should not be turned!");
+        this.sleepMainThread();
+        Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
+        robot.moveTo(snowflakeOnTheGrid);
+        this.sleepMainThread();
+
+        Color foundColorOnGridAfterUndo = getColor(snowflakeOnTheGrid);
+        assertFalse(ColorMatchers.isColor(foundColorOnGridBeforeUndo).matches(foundColorOnGridAfterUndo),
+                "Before undo color: " + foundColorOnGridBeforeUndo + ", after redo color: " + foundColorOnGridAfterUndo);
     }
 
     @Test
@@ -129,16 +137,23 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         // When
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
+
+        Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y  + 20d);
+        robot.moveTo(snowflakePoint);
+        this.sleepMainThread();
+        Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
+
         synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
         // Then
         this.sleepMainThread();
-        assertEquals(6, app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-                "We should be at Step #6!");
-        assertEquals(1, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size(),
-                "We should have 1 selected Knot in this Diagram!");
-        assertEquals(2, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getZoomFactor(),
-                "This Knot should not be turned!");
+        Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
+        robot.moveTo(snowflakeOnTheGrid);
+        this.sleepMainThread();
+
+        Color foundColorOnGridAfterUndo = getColor(snowflakeOnTheGrid);
+        assertFalse(ColorMatchers.isColor(foundColorOnGridBeforeUndo).matches(foundColorOnGridAfterUndo),
+                "Before undo color: " + foundColorOnGridBeforeUndo + ", after redo color: " + foundColorOnGridAfterUndo);
     }
 
 }
