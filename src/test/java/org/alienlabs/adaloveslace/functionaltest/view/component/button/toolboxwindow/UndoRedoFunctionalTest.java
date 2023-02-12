@@ -79,7 +79,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         this.sleepMainThread();
 
         // Then
-        Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 10d, SECOND_SNOWFLAKE_PIXEL_Y + 10d);
+        Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
         robot.moveTo(snowflakeOnTheGrid);
         this.sleepMainThread();
 
@@ -91,7 +91,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
         // Then
         this.sleepMainThread();
-        snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 10d, SECOND_SNOWFLAKE_PIXEL_Y + 10d);
+        snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
         robot.moveTo(snowflakeOnTheGrid);
         this.sleepMainThread();
 
