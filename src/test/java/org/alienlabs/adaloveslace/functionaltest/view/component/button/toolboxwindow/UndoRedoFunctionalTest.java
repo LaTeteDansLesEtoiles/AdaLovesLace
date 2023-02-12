@@ -113,7 +113,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         this.sleepMainThread();
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+        synchronizeTask(() -> clickOnButton(robot, this.app.getToolboxWindow().getUndoKnotButton()));
 
         // Then
         this.sleepMainThread();
@@ -139,7 +139,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         this.sleepMainThread();
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+        synchronizeTask(() -> clickOnButton(robot, this.app.getToolboxWindow().getUndoKnotButton()));
 
         // Then
         this.sleepMainThread();
