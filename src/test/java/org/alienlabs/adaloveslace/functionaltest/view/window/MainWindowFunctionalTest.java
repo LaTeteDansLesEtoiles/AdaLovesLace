@@ -35,8 +35,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
    */
   @Start
   public void start(Stage primaryStage) {
-    this.primaryStage = primaryStage;
-    super.start(this.primaryStage);
+    super.start(primaryStage);
   }
 
   @Test
