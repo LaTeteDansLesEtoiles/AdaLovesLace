@@ -28,6 +28,7 @@ import org.testfx.robot.Motion;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.PATH_SEPARATOR;
@@ -41,7 +42,8 @@ public class AppFunctionalTestParent {
   public App app;
 
   // For tests:
-  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME",500L);
+  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME", 500L);
+  public static final long   WAIT_TIME                    = Long.getLong("WAIT_TIME", 5_000L);
   public static final double GRID_WIDTH                   = 600d;
   public static final double GRID_HEIGHT                  = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
@@ -195,7 +197,7 @@ public class AppFunctionalTestParent {
     try {
       // And when the runnable has returned we can continue,
       // but we must let it as much time as it needs to complete, lest the assertion which comes after will be wrong
-      lock.await();
+      lock.await(WAIT_TIME, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
       logger.error("Interrupted!", e);
     }
