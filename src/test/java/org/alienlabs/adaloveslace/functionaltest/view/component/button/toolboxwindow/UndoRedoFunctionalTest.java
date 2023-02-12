@@ -101,12 +101,14 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     }
 
     @Test
-    void test_add_a_knot_then_turn_it_three_times_then_undo_two_steps(final FxRobot robot) {
+    void test_add_a_knot_then_turn_it_several_times_then_undo_two_steps(final FxRobot robot) {
         // Given
         synchronizeTask(() -> drawSecondSnowflake(robot));
         initDrawAndSelectSnowFlake(robot);
 
         // When
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner2()));
@@ -131,12 +133,14 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     }
 
     @Test
-    void test_add_a_knot_then_zoom_it_three_times_then_undo_two_steps(final FxRobot robot) {
+    void test_add_a_knot_then_zoom_it_several_times_then_undo_two_steps(final FxRobot robot) {
         // Given
         synchronizeTask(() -> drawSecondSnowflake(robot));
         initDrawAndSelectSnowFlake(robot);
 
         // When
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
+        synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner2()));
