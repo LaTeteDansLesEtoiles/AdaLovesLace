@@ -79,7 +79,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         this.sleepMainThread();
 
         // Then
-        Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
+        Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 10d, SECOND_SNOWFLAKE_PIXEL_Y + 10d);
         robot.moveTo(snowflakeOnTheGrid);
         this.sleepMainThread();
 
@@ -91,7 +91,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
         // Then
         this.sleepMainThread();
-        snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
+        snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 10d, SECOND_SNOWFLAKE_PIXEL_Y + 10d);
         robot.moveTo(snowflakeOnTheGrid);
         this.sleepMainThread();
 
@@ -111,7 +111,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
         synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
 
-        Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
+        Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 10d, FIRST_SNOWFLAKE_PIXEL_Y + 10d);
         robot.moveTo(snowflakePoint);
         this.sleepMainThread();
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
@@ -121,7 +121,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
         // Then
         this.sleepMainThread();
-        Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
+        Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 10d, FIRST_SNOWFLAKE_PIXEL_Y + 10d);
         robot.moveTo(snowflakeOnTheGrid);
         this.sleepMainThread();
 
