@@ -8,7 +8,6 @@ import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.MalformedURLException;
 import java.util.Set;
 
 import static org.alienlabs.adaloveslace.view.window.MainWindow.MOUSE_CLICKED;
@@ -45,7 +44,7 @@ public class Events {
 
   private static void processMouseClick(double x, double y, double screenX, double screenY) {
     switch (app.getOptionalDotGrid().getDiagram().getCurrentMode()) {
-      case DRAWING          -> app.getOptionalDotGrid().addKnot(x, y);
+      case DRAWING          -> app.getOptionalDotGrid().addKnot(app, x, y);
       case SELECTION, MOVE  -> app.getMainWindow().onClickWithSelectionMode(app, x, y);
       case DELETION         -> app.getMainWindow().onClickWithDeletionMode(app, app.getOptionalDotGrid().getDiagram(), x, y) ;
       case DUPLICATION      -> {}
@@ -64,28 +63,24 @@ public class Events {
     app.getOptionalDotGrid().clearHovered();
 
     for (Knot knot : allKnots) {
-      try {
-        // If a knot is already selected, we must still hover over it because we may want to unselect it afterwards
-        // But if it's already hovered over, we shall not hover it again
-        boolean isMouseOverAGivenKnot = new NodeUtil().isMouseOverKnot(knot, mouseEvent.getSceneX(), mouseEvent.getSceneY());
-        app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+      // If a knot is already selected, we must still hover over it because we may want to unselect it afterwards
+      // But if it's already hovered over, we shall not hover it again
+      boolean isMouseOverAGivenKnot = new NodeUtil().isMouseOverKnot(knot, mouseEvent.getSceneX(), mouseEvent.getSceneY());
+      app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
 
-        if (knot.isVisible() && isMouseOverAGivenKnot && !app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
-          logger.debug("Hover over not already an hovered over knot: {}", knot);
+      if (knot.isVisible() && isMouseOverAGivenKnot && !app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
+        logger.debug("Hover over not already an hovered over knot: {}", knot);
 
-          // We can have only one hovered over knot at once
-          app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
-        } else if(knot.isVisible() && isMouseOverAGivenKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
-          logger.debug("Hover over an already hovered over knot: {}", knot);
-        } else if(!isMouseOverAGivenKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
-          logger.debug("Don't hover over knot: {}", knot);
-          app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
-        }
-
-        app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(false, knot);
-      } catch (MalformedURLException e) {
-        logger.error("Error in mouse hover event!", e);
+        // We can have only one hovered over knot at once
+        app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
+      } else if(knot.isVisible() && isMouseOverAGivenKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
+        logger.debug("Hover over an already hovered over knot: {}", knot);
+      } else if(!isMouseOverAGivenKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
+        logger.debug("Don't hover over knot: {}", knot);
+        app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
       }
+
+      app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(false, knot);
     }
   };
 

@@ -26,7 +26,6 @@ import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.MalformedURLException;
 import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.*;
@@ -250,14 +249,10 @@ public class MainWindow {
     while (it.hasNext()) {
       Knot knot = it.next();
 
-      try {
-        hasClickedOnAGivenKnot = new NodeUtil().isMouseOverKnot(knot, x, y);
+      hasClickedOnAGivenKnot = new NodeUtil().isMouseOverKnot(knot, x, y);
 
-        if (hasClickedOnAGivenKnot && !hasClickedOnAKnot) {
-          hasClickedOnAKnot = true;
-        }
-      } catch (MalformedURLException e) {
-        logger.error("Error during click on select!", e);
+      if (hasClickedOnAGivenKnot && !hasClickedOnAKnot) {
+        hasClickedOnAKnot = true;
       }
 
       if (hasClickedOnAGivenKnot && (knot.getSelection() == null || knot.getHovered() == null)) {
@@ -367,14 +362,9 @@ public class MainWindow {
 
   public void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots()) {
-
-      try {
-        if (new NodeUtil().isMouseOverKnot(knot, x, y)) {
-          removeKnotIfClicked(app, diagram, knot);
-          break;
-        }
-      } catch (MalformedURLException e) {
-        logger.error("Error removing knot {} ", knot, e);
+      if (new NodeUtil().isMouseOverKnot(knot, x, y)) {
+        removeKnotIfClicked(app, diagram, knot);
+        break;
       }
     }
   }

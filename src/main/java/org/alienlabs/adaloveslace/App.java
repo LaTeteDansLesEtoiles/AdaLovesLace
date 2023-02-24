@@ -2,6 +2,8 @@ package org.alienlabs.adaloveslace;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -9,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -97,6 +100,10 @@ public class App extends Application {
 
   private final Map<KeyCode, Boolean> currentlyActiveKeys = new HashMap<>();
 
+  private final SimpleBooleanProperty focusProperty = new SimpleBooleanProperty(false);
+
+  private final SimpleIntegerProperty numberOfFocusProperty = new SimpleIntegerProperty(0);
+
   @Override
   public void start(Stage primaryStage) {
     this.primaryStage = primaryStage;
@@ -156,9 +163,30 @@ public class App extends Application {
       Platform.exit();
     });
 
+    this.primaryStage.focusedProperty().addListener((ov, onHidden, onShown) -> {
+
+      if (onShown.booleanValue()) {
+        logger.info("Got focus");
+        focusProperty.setValue(true);
+      } else {
+        focusProperty.setValue(false);
+        numberOfFocusProperty.setValue(0);
+      }
+    });
+
     this.mainWindow.createMenuBar(root, this, primaryStage);
     this.getOptionalDotGrid().setDiagram(diagram);
     this.primaryStage = primaryStage;
+
+    this.root.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+      numberOfFocusProperty.setValue(numberOfFocusProperty.getValue() + 1);
+      logger.info("Got number of focus clicks: {}", numberOfFocusProperty.getValue());
+
+      if (numberOfFocusProperty.getValue() == 1) {
+        event.consume();
+      }
+    });
+
     primaryStage.show();
   }
 
@@ -297,6 +325,18 @@ public class App extends Application {
 
   public Map<KeyCode, Boolean> getCurrentlyActiveKeys() {
     return currentlyActiveKeys;
+  }
+
+  public boolean getFocusProperty() {
+    return focusProperty.get();
+  }
+
+  public int getNumberOfFocusProperty() {
+    return numberOfFocusProperty.get();
+  }
+
+  public void setNumberOfFocusProperty(int numberOfFocusProperty) {
+    this.numberOfFocusProperty.set(numberOfFocusProperty);
   }
 
 }

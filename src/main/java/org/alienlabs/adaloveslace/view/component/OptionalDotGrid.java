@@ -17,6 +17,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
+import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -423,28 +424,32 @@ public class OptionalDotGrid extends Pane {
     }
   }
 
-  public void addKnot(double x, double y) {
-    Pattern currentPattern = this.diagram.getCurrentPattern();
-    logger.info("Current pattern  -> {}", currentPattern);
-    Knot currentKnot = null;
+  public void addKnot(App app, double x, double y) {
+    if (app.getFocusProperty() && app.getNumberOfFocusProperty() > 1) {
+      Pattern currentPattern = this.diagram.getCurrentPattern();
+      logger.info("Current pattern  -> {}", currentPattern);
+      Knot currentKnot = null;
 
-    try (FileInputStream fis = new FileInputStream(new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, currentPattern.getFilename()))) {
-      Image image = new Image(fis);
-      ImageView iv = new ImageView(image);
+      try (FileInputStream fis = new FileInputStream(new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, currentPattern.getFilename()))) {
+        Image image = new Image(fis);
+        ImageView iv = new ImageView(image);
 
-      iv.setX(x);
-      iv.setY(y);
-      iv.setRotate(0d);
+        iv.setX(x);
+        iv.setY(y);
+        iv.setRotate(0d);
 
-      logger.debug("Top left corner of the knot {} is ({},{})", currentPattern.getFilename(), x, y);
+        logger.debug("Top left corner of the knot {} is ({},{})", currentPattern.getFilename(), x, y);
 
-      root.getChildren().add(iv);
-      currentKnot = new Knot(x, y, currentPattern, iv);
-      diagram.setCurrentKnot(currentKnot);
+        root.getChildren().add(iv);
+        currentKnot = new Knot(x, y, currentPattern, iv);
+        diagram.setCurrentKnot(currentKnot);
 
-      this.diagram.addKnotWithStep(currentKnot);
-    } catch (IOException e) {
-      logger.error("Problem with pattern resource file!", e);
+        this.diagram.addKnotWithStep(currentKnot);
+      } catch (IOException e) {
+        logger.error("Problem with pattern resource file!", e);
+      }
+    } else if (app.getFocusProperty()) {
+      app.setNumberOfFocusProperty(app.getNumberOfFocusProperty() + 1);
     }
   }
 
