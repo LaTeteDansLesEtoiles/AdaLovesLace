@@ -327,10 +327,10 @@ public class OptionalDotGrid extends Pane {
 
       knot.getImageView().getTransforms().add(scale);
 
-      logger.info("zoomed knot {} at zoom factor {} and scale factor {}",
+      logger.debug("zoomed knot {} at zoom factor {} and scale factor {}",
         knot.getPattern().getFilename(), knot.getZoomFactor(), scaleFactor);
     } else {
-      logger.info("not zoomed knot {} because it does not have an ImageView", knot.getPattern().getFilename());
+      logger.debug("not zoomed knot {} because it does not have an ImageView", knot.getPattern().getFilename());
     }
 
 
@@ -377,7 +377,7 @@ public class OptionalDotGrid extends Pane {
     rot.setPivotY(knot.getImageView().getY() + knot.getPattern().getHeight() / 2d);
 
     knot.getImageView().getTransforms().add(rot);
-    logger.info("rotated knot {} at angle {}", knot.getPattern().getFilename(), knot.getRotationAngle());
+    logger.debug("rotated knot {} at angle {}", knot.getPattern().getFilename(), knot.getRotationAngle());
 
     return knot.getImageView();
   }

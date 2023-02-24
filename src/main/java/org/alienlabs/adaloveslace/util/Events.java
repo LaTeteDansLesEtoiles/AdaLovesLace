@@ -46,8 +46,8 @@ public class Events {
   private static void processMouseClick(double x, double y, double screenX, double screenY) {
     switch (app.getOptionalDotGrid().getDiagram().getCurrentMode()) {
       case DRAWING          -> app.getOptionalDotGrid().addKnot(x, y);
-      case SELECTION, MOVE  -> app.getMainWindow().onClickWithSelectionMode(app, screenX, screenY);
-      case DELETION         -> app.getMainWindow().onClickWithDeletionMode(app, app.getOptionalDotGrid().getDiagram(), screenX, screenY) ;
+      case SELECTION, MOVE  -> app.getMainWindow().onClickWithSelectionMode(app, x, y);
+      case DELETION         -> app.getMainWindow().onClickWithDeletionMode(app, app.getOptionalDotGrid().getDiagram(), x, y) ;
       case DUPLICATION      -> {}
       case CREATE_PATTERN   -> {} // This is managed in CreatePatternButton
       case MIRROR           -> {} // This is managed in CreatePatternButton
@@ -57,7 +57,7 @@ public class Events {
   }
 
   public static final EventHandler<MouseEvent> gridHoverEventHandler = mouseEvent -> {
-    logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getScreenX(), mouseEvent.getScreenY());
+    logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
     Set<Knot> allKnots = app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots();
     allKnots.addAll(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
@@ -67,7 +67,7 @@ public class Events {
       try {
         // If a knot is already selected, we must still hover over it because we may want to unselect it afterwards
         // But if it's already hovered over, we shall not hover it again
-        boolean isMouseOverAGivenKnot = new NodeUtil().isMouseOverKnot(knot, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+        boolean isMouseOverAGivenKnot = new NodeUtil().isMouseOverKnot(knot, mouseEvent.getSceneX(), mouseEvent.getSceneY());
         app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
 
         if (knot.isVisible() && isMouseOverAGivenKnot && !app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {

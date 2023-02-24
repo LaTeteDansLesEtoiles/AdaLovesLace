@@ -6,9 +6,9 @@ import org.alienlabs.adaloveslace.business.model.Knot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.MalformedURLException;
-
 public class NodeUtil {
+
+  public static final int KNOT_PADDING = 15; // https://stackoverflow.com/questions/36294985/javafx-get-the-x-and-y-pixel-coordinates-clicked-on-an-imageview
 
   private static final Logger logger                  = LoggerFactory.getLogger(NodeUtil.class);
 
@@ -16,7 +16,7 @@ public class NodeUtil {
     // Nothing to do here, that's just to avoid an all-static class
   }
 
-  public boolean isMouseOverKnot(Knot knot, double mouseX, double mouseY) throws MalformedURLException {
+  public boolean isMouseOverKnot(Knot knot, double mouseX, double mouseY) {
     if (!knot.isVisible()) {
       return false;
     }
@@ -24,14 +24,15 @@ public class NodeUtil {
     ImageView img = knot.getImageView();
 
     // Get coordinates of the img relative to screen (as mouse coordinates are relative to screen, too)
-    Bounds boundsInScreen = img.localToScreen(img.getBoundsInParent());
-    if (boundsInScreen == null) {
+    Bounds boundsInParent = img.getBoundsInParent();
+    if (boundsInParent == null) {
       return false;
     }
-    logger.debug("nodeCoord X= {}, Y={}", boundsInScreen.getMinX(), boundsInScreen.getMinY());
+    logger.debug("nodeCoord X= {}, Y={}", boundsInParent.getMinX(), boundsInParent.getMinY());
+    logger.debug("mouseCoord X= {}, Y={}", mouseX, mouseY);
 
-    return (boundsInScreen.getMinX() <= mouseX) && (boundsInScreen.getMaxX() >= mouseX) &&
-      (boundsInScreen.getMinY() <= mouseY) && (boundsInScreen.getMaxY() >= mouseY);
+    return (boundsInParent.getMinX() + KNOT_PADDING <= mouseX) && (boundsInParent.getMaxX() - KNOT_PADDING >= mouseX) &&
+      (boundsInParent.getMinY() <= mouseY + KNOT_PADDING) && (boundsInParent.getMaxY() - KNOT_PADDING >= mouseY);
   }
 
   public Knot copyKnot(Knot knot) {
