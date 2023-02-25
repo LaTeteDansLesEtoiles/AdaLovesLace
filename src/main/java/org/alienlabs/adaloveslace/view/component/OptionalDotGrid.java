@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -41,6 +42,7 @@ public class OptionalDotGrid extends Pane {
 
   public static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
   private static final double RADIUS    = 0.5d; // The dots are ellipses, this is their radius
+  public static final int HANDLE_SIZE   = 7;
   double GRID_WIDTH                     = 1240d;
   double GRID_HEIGHT                    = 600d;
   public static final double TOP_MARGIN = 10d;
@@ -161,13 +163,7 @@ public class OptionalDotGrid extends Pane {
     }
 
     if (this.diagram.getCurrentStep().getSelectedKnots().contains(knot)) {
-      Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
-      rec.setStroke(Color.GRAY);
-      rec.setStrokeWidth(2d);
-      rec.setFill(Color.TRANSPARENT);
-      rec.setScaleX(computeZoomFactor(knot));
-      rec.setScaleY(computeZoomFactor(knot));
-      rec.setRotate(knot.getRotationAngle());
+      Rectangle rec = newRectangle(knot, Color.GRAY);
 
       root.getChildren().add(rec);
       knot.setSelection(rec);
@@ -178,54 +174,78 @@ public class OptionalDotGrid extends Pane {
   public void drawHoveredOverOrSelectedKnot(boolean toUnselect, Knot... knots) {
     Platform.runLater(() -> {
       for (Knot knot : knots) {
-        Rectangle rec;
+
         // If selected & hovered: red
         if (!toUnselect && getDiagram().getCurrentStep().getSelectedKnots().contains(knot) && allHoveredKnots.contains(knot)) {
-          rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
-          rec.setStroke(Color.RED);
-          rec.setStrokeWidth(2d);
-          rec.setFill(Color.TRANSPARENT);
-          rec.setScaleX(computeZoomFactor(knot));
-          rec.setScaleY(computeZoomFactor(knot));
-          rec.setRotate(knot.getRotationAngle());
+          Color selectedAndHovered = Color.RED;
+          Rectangle rec = newRectangle(knot, selectedAndHovered);
+          Circle handle = newHandle(knot, selectedAndHovered, rec);
 
           knot.setHovered(rec);
-          knot.setSelection(rec);
-
           root.getChildren().add(rec);
+
+          knot.setSelection(rec);
+          root.getChildren().add(handle);
         } else if (!toUnselect && allHoveredKnots.contains(knot)) {
           // If hovered & not selected: gray
-          rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
-          rec.setStroke(Color.GRAY);
-          rec.setStrokeWidth(2d);
-          rec.setFill(Color.TRANSPARENT);
-          rec.setScaleX(computeZoomFactor(knot));
-          rec.setScaleY(computeZoomFactor(knot));
-          rec.setRotate(knot.getRotationAngle());
+          Rectangle rec = newRectangle(knot, Color.GRAY);
 
           knot.setHovered(rec);
-
           root.getChildren().add(rec);
+
+          if (knot.getHandle() != null) {
+            root.getChildren().remove(knot.getHandle());
+          }
         } else if (!toUnselect && getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
           // If not hovered & selected: blue
-          rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
-          rec.setStroke(Color.BLUE);
-          rec.setStrokeWidth(2d);
-          rec.setFill(Color.TRANSPARENT);
-          rec.setScaleX(computeZoomFactor(knot));
-          rec.setScaleY(computeZoomFactor(knot));
-          rec.setRotate(knot.getRotationAngle());
+          Color notHoveredAndSelected = Color.BLUE;
+          Rectangle rec = newRectangle(knot, notHoveredAndSelected);
+          Circle handle = newHandle(knot, notHoveredAndSelected, rec);
 
           knot.setSelection(rec);
           root.getChildren().add(rec);
+          knot.setHandle(handle);
+          root.getChildren().add(handle);
         } else if (toUnselect) {
           logger.info("Removing from selection {}", root.getChildren().remove(knot.getSelection()));
           logger.info("Removing from hovered {}", root.getChildren().remove(knot.getHovered()));
+          logger.info("Removing handle {}", root.getChildren().remove(knot.getHandle()));
           knot.setSelection(null);
           knot.setHovered(null);
+          knot.setHandle(null);
         }
       }
     });
+  }
+
+  // The handle is the top left corner of the rectangle of the zoomed, rotated knot
+  // @see https://stackoverflow.com/questions/41898990/find-corners-of-a-rotated-rectangle-given-its-center-point-and-rotation
+  // And invert "TOP LEFT VERTEX:" & "BOTTOM LEFT VERTEX:" (small error from the author)
+  private static Circle newHandle(Knot knot, Color handleColor, Rectangle rec) {
+    return new Circle(
+            knot.getImageView().getBoundsInParent().getCenterX() -
+                    (knot.getPattern().getWidth() / 2 * rec.getScaleX()) *
+                            Math.cos(Math.toRadians(knot.getRotationAngle())) +
+                    (knot.getPattern().getHeight() / 2 * rec.getScaleY()) *
+                            Math.sin(Math.toRadians(knot.getRotationAngle())),
+            knot.getImageView().getBoundsInParent().getCenterY() -
+                    (knot.getPattern().getWidth() / 2 * rec.getScaleX()) *
+                            Math.sin(Math.toRadians(knot.getRotationAngle())) -
+                    (knot.getPattern().getHeight() / 2 * rec.getScaleY()) *
+                            Math.cos(Math.toRadians(knot.getRotationAngle())),
+            HANDLE_SIZE,
+            handleColor);
+  }
+
+  private Rectangle newRectangle(Knot knot, Color notHoveredAndSelected) {
+    Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
+    rec.setStroke(notHoveredAndSelected);
+    rec.setStrokeWidth(2d);
+    rec.setFill(Color.TRANSPARENT);
+    rec.setScaleX(computeZoomFactor(knot));
+    rec.setScaleY(computeZoomFactor(knot));
+    rec.setRotate(knot.getRotationAngle());
+    return rec;
   }
 
   public void drawGuideLines(final Step step, final Knot knot) {

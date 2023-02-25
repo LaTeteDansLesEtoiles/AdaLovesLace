@@ -56,6 +56,9 @@ public class Knot implements Comparable<Knot> {
   private Node hovered;
 
   @XmlTransient
+  private Node handle;
+
+  @XmlTransient
   private List<Node> guideLines = new ArrayList<>();
 
   public Knot() {
@@ -145,6 +148,14 @@ public class Knot implements Comparable<Knot> {
 
   public void setHovered(Node hovered) {
     this.hovered = hovered;
+  }
+
+  public Node getHandle() {
+    return handle;
+  }
+
+  public void setHandle(Node handle) {
+    this.handle = handle;
   }
 
   public List<Node> getGuideLines() {

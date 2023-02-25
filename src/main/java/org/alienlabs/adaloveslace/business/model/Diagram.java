@@ -5,6 +5,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import javafx.scene.Group;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
@@ -191,7 +192,10 @@ public class Diagram {
     }
 
     public void deleteNodesFromCurrentStep(Group root) {
-        root.getChildren().removeAll(root.getChildren().stream().filter(node -> (node instanceof Line || node instanceof Rectangle)).toList());
+        root.getChildren().removeAll(root.getChildren().stream().filter(node ->
+                (node instanceof Line ||
+                        node instanceof Rectangle ||
+                        node instanceof Circle)).toList());
     }
 
     // We don't lose the undo / redo history
