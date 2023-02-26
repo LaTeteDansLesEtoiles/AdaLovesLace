@@ -118,11 +118,13 @@ public class AppFunctionalTestParent {
   protected void drawFirstSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   // Click on the grid with the color wheel selected in order to draw a color wheel on the grid
   protected void drawFirstColorWheel(FxRobot robot) {
     Point2D colorWheelOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
+    robot.clickOn(colorWheelOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
     robot.clickOn(colorWheelOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
@@ -130,11 +132,20 @@ public class AppFunctionalTestParent {
   protected void drawSecondSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X, SECOND_SNOWFLAKE_PIXEL_Y);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
+  // Click on the grid with the second snowflake selected in order to draw a snowflake on the grid
+  // elsewhere with mouse being already on the grid (no need for a focus click)
+  protected void drawSecondSnowflakeWithoutFocusClick(FxRobot robot) {
+    Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X, SECOND_SNOWFLAKE_PIXEL_Y);
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   // Click on the grid with the third (not duplicated) snowflake selected in order to draw a snowflake on the grid elsewhere
   protected void drawOtherSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(OTHER_SNOWFLAKE_PIXEL_X, OTHER_SNOWFLAKE_PIXEL_Y);
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 

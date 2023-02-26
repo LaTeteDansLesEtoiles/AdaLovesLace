@@ -68,7 +68,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         // Given
         synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
         synchronizeTask(() -> drawFirstSnowflake(robot));
-        synchronizeTask(() -> drawSecondSnowflake(robot));
+        synchronizeTask(() -> drawSecondSnowflakeWithoutFocusClick(robot));
 
         Point2D snowflakePoint = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
         robot.moveTo(snowflakePoint);
