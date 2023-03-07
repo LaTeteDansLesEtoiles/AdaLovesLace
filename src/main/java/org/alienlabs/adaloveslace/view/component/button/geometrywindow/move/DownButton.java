@@ -24,10 +24,9 @@ public class DownButton extends Button {
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
       knot.setY(knot.getY() + FastMoveModeButton.getMoveSpeed());
       logger.debug("Moving down knot {}", knot);
+      app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot, true);
     }
 
-    app.getOptionalDotGrid().getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
-      app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
     app.getOptionalDotGrid().layoutChildren();
   }

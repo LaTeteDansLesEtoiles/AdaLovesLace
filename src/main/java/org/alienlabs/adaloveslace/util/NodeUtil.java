@@ -8,9 +8,10 @@ import org.slf4j.LoggerFactory;
 
 public class NodeUtil {
 
-  public static final int KNOT_PADDING = 15; // https://stackoverflow.com/questions/36294985/javafx-get-the-x-and-y-pixel-coordinates-clicked-on-an-imageview
+  public static final int KNOT_PADDING  = 15;   // https://stackoverflow.com/questions/36294985/javafx-get-the-x-and-y-pixel-coordinates-clicked-on-an-imageview
+  public static final int HANDLE_SIZE   = 25;
 
-  private static final Logger logger                  = LoggerFactory.getLogger(NodeUtil.class);
+  private static final Logger logger    = LoggerFactory.getLogger(NodeUtil.class);
 
   public NodeUtil() {
     // Nothing to do here, that's just to avoid an all-static class

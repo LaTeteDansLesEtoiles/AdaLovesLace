@@ -24,11 +24,9 @@ public class DownLeftButton extends Button {
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
       knot.setX(knot.getX() - FastMoveModeButton.getMoveSpeed());
       knot.setY(knot.getY() + FastMoveModeButton.getMoveSpeed());
+      app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot, true);
       logger.debug("Moving down left knot {}", knot);
     }
-
-    app.getOptionalDotGrid().getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
-      app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
     app.getOptionalDotGrid().layoutChildren();
   }

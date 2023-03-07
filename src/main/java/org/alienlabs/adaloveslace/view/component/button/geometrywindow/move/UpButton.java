@@ -23,12 +23,10 @@ public class UpButton extends Button {
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
       knot.setY(knot.getY() - FastMoveModeButton.getMoveSpeed());
+      app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot, true);
 
       logger.debug("Moving up knot {}", knot);
     }
-
-    app.getOptionalDotGrid().getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
-      app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
     app.getOptionalDotGrid().layoutChildren();
   }

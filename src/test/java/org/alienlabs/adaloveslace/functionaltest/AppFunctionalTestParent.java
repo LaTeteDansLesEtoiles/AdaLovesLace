@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.ImageUtil;
@@ -42,7 +43,7 @@ public class AppFunctionalTestParent {
   public App app;
 
   // For tests:
-  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME", 500L);
+  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME", 2500L);
   public static final long   WAIT_TIME                    = Long.getLong("WAIT_TIME", 5_000L);
   public static final double GRID_WIDTH                   = 600d;
   public static final double GRID_HEIGHT                  = 420d;
@@ -84,6 +85,7 @@ public class AppFunctionalTestParent {
    * @param primaryStage The injected window (stage)
    */
   public void start(Stage primaryStage) {
+    primaryStage.initStyle(StageStyle.DECORATED);
     this.app = new App();
     this.app.setPrimaryStage(primaryStage);
 
@@ -117,21 +119,21 @@ public class AppFunctionalTestParent {
   // Click on the grid with the snowflake selected in order to draw a snowflake on the grid
   protected void drawFirstSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
-    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+    app.getMainWindow().getOptionalDotGrid().requestFocus();
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   // Click on the grid with the color wheel selected in order to draw a color wheel on the grid
   protected void drawFirstColorWheel(FxRobot robot) {
     Point2D colorWheelOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
-    robot.clickOn(colorWheelOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+    app.getMainWindow().getOptionalDotGrid().requestFocus();
     robot.clickOn(colorWheelOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   // Click on the grid with the second snowflake selected in order to draw a snowflake on the grid elsewhere
   protected void drawSecondSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X, SECOND_SNOWFLAKE_PIXEL_Y);
-    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+    app.getMainWindow().getOptionalDotGrid().requestFocus();
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
@@ -139,18 +141,24 @@ public class AppFunctionalTestParent {
   // elsewhere with mouse being already on the grid (no need for a focus click)
   protected void drawSecondSnowflakeWithoutFocusClick(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X, SECOND_SNOWFLAKE_PIXEL_Y);
+    if (!primaryStage.isFocused()) {
+      robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+    }
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   // Click on the grid with the third (not duplicated) snowflake selected in order to draw a snowflake on the grid elsewhere
   protected void drawOtherSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(OTHER_SNOWFLAKE_PIXEL_X, OTHER_SNOWFLAKE_PIXEL_Y);
-    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+    if (!primaryStage.isFocused()) {
+      robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+    }
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   // Click on the grid where the snowflake is in order to select it
   protected void clickSelectButton(FxRobot robot) {
+    app.getGeometryWindow().getGeometryStage().requestFocus();
     robot.clickOn(geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
@@ -168,30 +176,36 @@ public class AppFunctionalTestParent {
 
   protected void selectFirstSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
+    app.getMainWindow().getOptionalDotGrid().getRoot().requestFocus();
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   protected void selectFirstColorWheel(FxRobot robot) {
     Point2D colorWheelOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
+    app.getMainWindow().getOptionalDotGrid().requestFocus();
     robot.clickOn(colorWheelOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   protected void selectSecondSnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
+    app.getMainWindow().getOptionalDotGrid().requestFocus();
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   // Click on the snowflake in the toolbox to select its pattern
   protected void selectAndClickOnSnowflakePatternButton(FxRobot robot) {
+    toolboxWindow.getSnowflakeButton().requestFocus();
     clickOnButton(robot, toolboxWindow.getSnowflakeButton());
   }
 
   // Click on the color wheel in the toolbox to select its pattern
   protected void selectAndClickOnColorWheelPatternButton(FxRobot robot) {
+    toolboxWindow.getColorWheelButton().requestFocus();
     clickOnButton(robot, toolboxWindow.getColorWheelButton());
   }
 
   protected void clickOnButton(FxRobot robot, Node button) {
+    button.requestFocus();
     robot.clickOn(button, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
@@ -270,22 +284,20 @@ public class AppFunctionalTestParent {
     synchronizeTask(() -> selectFirstColorWheel(robot));
   }
 
-  protected void enterSelectMode(FxRobot robot) {
-    robot.clickOn(this.geometryWindow.getSelectionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
-  }
-
   protected void duplicateKnots(FxRobot robot) {
+    this.geometryWindow.getDuplicationButton().requestFocus();
     robot.clickOn(this.geometryWindow.getDuplicationButton(), Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   protected void selectDeleteMode(FxRobot robot) {
+    this.geometryWindow.getDeletionButton().requestFocus();
     robot.clickOn(this.geometryWindow.getDeletionButton(), Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
   protected void selectSecondKnotWithControlKeyPressed(FxRobot robot) {
-    robot.press(KeyCode.CONTROL);
-
     Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 10d, SECOND_SNOWFLAKE_PIXEL_Y + 10d);
+    app.getMainWindow().getOptionalDotGrid().requestFocus();
+    robot.press(KeyCode.CONTROL);
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 

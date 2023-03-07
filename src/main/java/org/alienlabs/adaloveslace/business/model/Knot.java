@@ -56,6 +56,9 @@ public class Knot implements Comparable<Knot> {
   private Node hovered;
 
   @XmlTransient
+  private boolean hoveredKnot = false;
+
+  @XmlTransient
   private Node handle;
 
   @XmlTransient
@@ -188,6 +191,14 @@ public class Knot implements Comparable<Knot> {
 
   public void setFlippedHorizontally(boolean flippedHorizontally) {
     this.flippedHorizontally = flippedHorizontally;
+  }
+
+  public boolean isHoveredKnot() {
+    return this.hoveredKnot;
+  }
+
+  public void setHoveredKnot(boolean hoveredKnot) {
+    this.hoveredKnot = hoveredKnot;
   }
 
   public boolean coincide(Knot other) {

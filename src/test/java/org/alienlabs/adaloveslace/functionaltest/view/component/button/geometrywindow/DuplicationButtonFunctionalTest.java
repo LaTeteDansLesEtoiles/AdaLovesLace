@@ -32,7 +32,7 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawSecondSnowflake(robot));
     synchronizeTask(() -> drawFirstSnowflake(robot));
-    synchronizeTask(() -> enterSelectMode(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
 
     // When
@@ -59,9 +59,8 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawSecondSnowflake(robot));
     synchronizeTask(() -> drawFirstSnowflake(robot));
-    synchronizeTask(() -> enterSelectMode(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
-    synchronizeTask(() -> enterSelectMode(robot));
 
     // When
     synchronizeTask(() -> duplicateKnots(robot));
@@ -89,7 +88,7 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> drawFirstSnowflake(robot)); // To duplicate
     synchronizeTask(() -> drawSecondSnowflake(robot)); // To duplicate
     this.sleepMainThread();
-    synchronizeTask(() -> enterSelectMode(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
     this.sleepMainThread();
     synchronizeTask(() -> selectSecondKnotWithControlKeyPressed(robot)); // The first 2 snowflakes shall be selected, ready to be copied
@@ -131,7 +130,7 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> drawOtherSnowflake(robot)); // Not to be duplicated
     synchronizeTask(() -> drawSecondSnowflake(robot)); // To duplicate
     synchronizeTask(() -> drawFirstSnowflake(robot)); // To duplicate
-    synchronizeTask(() -> enterSelectMode(robot));
+    synchronizeTask(() -> clickSelectButton(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
     synchronizeTask(() -> selectSecondKnotWithControlKeyPressed(robot)); // The first 2 snowflakes shall be selected, ready to be copied
     synchronizeTask(() -> unselectControlKey(robot)); // The first 2 snowflakes shall be selected, ready to be copied

@@ -23,11 +23,9 @@ public class RightButton extends Button {
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
       knot.setX(knot.getX() + FastMoveModeButton.getMoveSpeed());
+      app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot, true);
       logger.debug("Moving right knot {}", knot);
     }
-
-    app.getOptionalDotGrid().getDiagram().addKnotsWithStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
-      app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
     app.getOptionalDotGrid().layoutChildren();
   }

@@ -6,10 +6,6 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.util.NodeUtil;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
@@ -30,23 +26,14 @@ public class RotationSpinner {
       spinnerToReflect2.setValue(newValue);
 
       if (++numberOfUpdates == 1) {
-        Set<Knot> displayedCopy = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-        Set<Knot> selectedCopy = new HashSet<>();
-
         if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots() != null && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().isEmpty()) {
           for (Knot currentKnot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
-            Knot knotCopy = new NodeUtil().copyKnot(currentKnot);
-            knotCopy.setRotationAngle(newValue);
-            selectedCopy.add(knotCopy);
+            currentKnot.setRotationAngle(newValue);
 
-            if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots() != null && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().isEmpty()) {
-              displayedCopy.remove(currentKnot);
-              app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().remove(currentKnot);
-            }
+            app.getOptionalDotGrid().getDiagram().addKnotWithStep(currentKnot, true);
           }
         }
 
-        app.getOptionalDotGrid().getDiagram().addKnotsWithStep(displayedCopy, selectedCopy);
         app.getOptionalDotGrid().layoutChildren();
       }
 
