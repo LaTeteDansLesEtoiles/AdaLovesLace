@@ -13,7 +13,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.ImageUtil;
@@ -85,7 +84,6 @@ public class AppFunctionalTestParent {
    * @param primaryStage The injected window (stage)
    */
   public void start(Stage primaryStage) {
-    primaryStage.initStyle(StageStyle.DECORATED);
     this.app = new App();
     this.app.setPrimaryStage(primaryStage);
 
