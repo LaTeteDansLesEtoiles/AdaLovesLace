@@ -178,7 +178,11 @@ public class OptionalDotGrid extends Pane {
         // If selected & hovered: red
         if (knot.isHoveredKnot() &&
                 getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
-          addSelectionAndHandleToAKnot(knot, Color.rgb(255, 0, 0, 0.5));
+          Knot firstKnot = getDiagram().getCurrentStep().getSelectedKnots().stream()
+                  .min(Comparator.comparing(Knot::getX)
+                          .thenComparing(Knot::getY))
+                  .get();
+          addSelectionAndHandleToAKnot(knot, Color.rgb(255, 0, 0, 0.5), firstKnot);
         } else if (knot.isHoveredKnot()) {
           // If hovered & not selected: gray
           Rectangle rec = newRectangle(knot, Color.GRAY);
@@ -193,7 +197,11 @@ public class OptionalDotGrid extends Pane {
 
         if (!knot.isHoveredKnot() && getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
           // If not hovered & selected: blue
-          addSelectionAndHandleToAKnot(knot, Color.rgb(0,0,255, 0.5));
+          Knot firstKnot = getDiagram().getCurrentStep().getSelectedKnots().stream()
+                  .min(Comparator.comparing(Knot::getX)
+                          .thenComparing(Knot::getY))
+                  .get();
+          addSelectionAndHandleToAKnot(knot, Color.rgb(0,0,255, 0.5), firstKnot);
         } else if (!knot.isHoveredKnot()) {
           logger.debug("Removing from selection {}", root.getChildren().remove(knot.getSelection()));
           logger.debug("Removing from hovered {}", root.getChildren().remove(knot.getHovered()));
@@ -206,23 +214,25 @@ public class OptionalDotGrid extends Pane {
     });
   }
 
-  public void addSelectionAndHandleToAKnot(Knot knot, Color rgba) {
+  public void addSelectionAndHandleToAKnot(Knot knot, Color rgba, Knot firstKnot) {
     Rectangle rec = newRectangle(knot, rgba);
 
     knot.setHovered(rec);
     knot.setSelection(rec);
     root.getChildren().add(rec);
 
-    // Only the last knot of a multi-selection has a handle
-    getDiagram().deleteHandlesFromCurrentStep(getRoot());
+    // Only the first knot of a multi-selection has a handle
+    if (firstKnot.equals(knot)) {
+      getDiagram().deleteHandlesFromCurrentStep(getRoot());
 
-    Circle handle = newHandle(knot, rgba, rec);
-    knot.setHandle(handle);
-    root.getChildren().add(handle);
+      Circle handle = newHandle(knot, rgba, rec);
+      knot.setHandle(handle);
+      root.getChildren().add(handle);
 
-    handle.setOnDragDetected(Events.getDragInitiatedOverHandleEventHandler());
-    handle.setOnDragOver(Events.getMouseDragOverHandleEventHandler());
-    handle.setOnDragDropped(Events.getMouseDragDroppedHandleEventHandler());
+      handle.setOnDragDetected(Events.getDragInitiatedOverHandleEventHandler());
+      handle.setOnDragOver(Events.getMouseDragOverHandleEventHandler());
+      handle.setOnDragDropped(Events.getMouseDragDroppedHandleEventHandler());
+    }
   }
 
   // The handle is the top left corner of the rectangle of the zoomed, rotated knot

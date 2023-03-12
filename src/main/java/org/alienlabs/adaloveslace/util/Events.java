@@ -10,6 +10,7 @@ import org.alienlabs.adaloveslace.business.model.Knot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -63,7 +64,7 @@ public class Events {
     Optional<Knot> first = app.getOptionalDotGrid().getDiagram().getCurrentStep()
             .getSelectedKnots()
             .stream()
-            .filter(knot -> handle.equals(knot.getHandle()))
+            .filter(knot -> knot.getHandle() != null)
             .findFirst();
 
     first.ifPresent(knot -> app.getOptionalDotGrid()
@@ -106,9 +107,13 @@ public class Events {
     app.getOptionalDotGrid().getDiagram().addKnotsToStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
             moveDraggedAndDroppedNodesWithCopy(app, x, y, handle));
 
+    Knot firstKnot = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream()
+            .min(Comparator.comparing(Knot::getX)
+                    .thenComparing(Knot::getY))
+            .get();
     app.getOptionalDotGrid().addSelectionAndHandleToAKnot(
             app.getOptionalDotGrid().getDragOriginKnot(),
-            Color.rgb(0,0,255, 0.5));
+            Color.rgb(0,0,255, 0.5), firstKnot);
 
     logger.info("After event type -> {},  current Step index {}, current mode: {}", eType,
             app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),

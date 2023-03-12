@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace.business.model;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlType;
+import org.alienlabs.adaloveslace.util.NodeUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,7 +72,7 @@ public class Step implements Comparable<Step> {
         diagram.setCurrentStepIndex(step.stepIndex);
 
         step.getDisplayedKnots().addAll(displayedKnots);
-        step.getSelectedKnots().addAll(selectedKnots);
+        step.getSelectedKnots().addAll(selectedKnots.stream().map(knot -> new NodeUtil().copyKnot(knot)).collect(Collectors.toSet()));
 
         return step;
     }

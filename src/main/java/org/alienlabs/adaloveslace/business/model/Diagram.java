@@ -120,6 +120,11 @@ public class Diagram {
         this.setCurrentStepIndex(step.getStepIndex());
     }
 
+    public void addKnotsToStepWithCopy(final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
+        Step step = Step.of(this, displayedKnots, selectedKnots);
+        this.setCurrentStepIndex(step.getStepIndex());
+    }
+
     public void undoLastStep(App app) {
         logger.info("Undo step, current step={}", currentStepIndex);
 
