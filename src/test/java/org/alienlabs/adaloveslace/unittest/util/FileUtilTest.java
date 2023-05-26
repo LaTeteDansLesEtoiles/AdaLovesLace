@@ -48,11 +48,12 @@ class FileUtilTest {
     @BeforeEach
     void beforeEach() {
         app = new App();
-        fileUtil = new FileUtil();
         diagramToSave = new Diagram();
-        Step step1 = new Step(diagramToSave, 1);
+        this.app.setDiagram(diagramToSave);
+        fileUtil = new FileUtil(app);
+        Step step1 = new Step(diagramToSave, 1, app);
         diagramToSave.getAllSteps().add(step1);
-        Step step2 = new Step(diagramToSave, 2);
+        Step step2 = new Step(diagramToSave, 2, app);
         diagramToSave.getAllSteps().add(step2);
         diagramToSave.setCurrentStepIndex(2);
 
@@ -80,7 +81,7 @@ class FileUtilTest {
     @Test
     void saved_dot_lace_file_should_contain_a_pattern_file() {
         // When
-        File fileTocheck = fileUtil.saveFile(new File(APP_FOLDER_IN_USER_HOME, "1.lace"), diagramToSave);
+        File fileTocheck = fileUtil.saveFile(new File(APP_FOLDER_IN_USER_HOME, "1.lace"), diagramToSave, 2);
 
         // Then
         try (ZipFile zf = new ZipFile(fileTocheck)){
@@ -97,7 +98,8 @@ class FileUtilTest {
     @Test
     void saved_dot_lace_file_should_contain_an_xml_file() {
         // When
-        File fileTocheck = fileUtil.saveFile(dotLaceFile, diagramToSave);
+        app.setOptionalDotGrid(null);
+        File fileTocheck = fileUtil.saveFile(dotLaceFile, diagramToSave, 2);
 
         // Then
         try (ZipFile zf  = new ZipFile(fileTocheck)) {
@@ -118,7 +120,7 @@ class FileUtilTest {
     @Test
     void saved_xml_file_should_contain_a_pattern_and_a_current_index() {
         // When
-        File fileTocheck = fileUtil.saveFile(dotLaceFile, diagramToSave);
+        File fileTocheck = fileUtil.saveFile(dotLaceFile, diagramToSave, 5);
 
         // Then
         ZipFile zf = null;
@@ -143,7 +145,7 @@ class FileUtilTest {
             logger.error("Error unmarshalling .jar file!", e);
         }
 
-        assertEquals(2, diagramToCheck.getCurrentStepIndex());
+        assertEquals(5, diagramToCheck.getCurrentStepIndex());
         assertEquals(1, diagramToCheck.getPatterns().size());
         assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getPatterns().get(0).getFilename());
     }

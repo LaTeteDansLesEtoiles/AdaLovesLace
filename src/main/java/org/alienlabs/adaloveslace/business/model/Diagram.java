@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -46,6 +45,9 @@ public class Diagram {
     private boolean             isKnotSelected;
 
     @XmlTransient
+    private App                 app;
+
+    @XmlTransient
     private MouseMode           currentMode;
 
     @XmlTransient
@@ -56,19 +58,30 @@ public class Diagram {
         this.patterns           = new ArrayList<>();
         this.knots              = new ArrayList<>();
         this.currentMode        = MouseMode.DRAWING;
-        this.currentStepIndex   = 1;
+        this.currentStepIndex   = 0;
         this.allSteps.add(new Step());
     }
 
-    public Diagram(final Diagram diagram) {
-        this.patterns         = new ArrayList<>(diagram.getPatterns());
-        this.knots            = new ArrayList<>(diagram.getKnots());
-        this.allSteps         = new ArrayList<>(diagram.getAllSteps());
-        this.currentStepIndex = diagram.getCurrentStepIndex();
-        this.currentMode      = diagram.getCurrentMode();
-        this.currentKnot      = diagram.getCurrentKnot();
-        this.isKnotSelected   = diagram.isKnotSelected();
+    public Diagram(App app) {
+        this.patterns           = new ArrayList<>();
+        this.knots              = new ArrayList<>();
+        this.currentMode        = MouseMode.DRAWING;
+        this.currentStepIndex   = 0;
+        this.allSteps.add(new Step());
+        this.app = app;
+    }
+
+    public Diagram(final Diagram diagram, App app) {
+        this.patterns               = new ArrayList<>(diagram.getPatterns());
+        this.knots                  = new ArrayList<>(diagram.getKnots());
+        this.allSteps               = new ArrayList<>(diagram.getAllSteps());
+        this.currentStepIndex       = diagram.getCurrentStepIndex();
+        this.currentMode            = diagram.getCurrentMode();
+        this.currentKnot            = diagram.getCurrentKnot();
+        this.isKnotSelected         = diagram.isKnotSelected();
         this.setCurrentPattern(diagram.getCurrentPattern());
+        this.currentStepIndex       = 0;
+        this.app = app;
     }
 
     public List<Pattern> getPatterns() {
@@ -92,27 +105,23 @@ public class Diagram {
         Set<Knot> displayed = this.getCurrentStep().getDisplayedKnots();
         Set<Knot> selected = this.getCurrentStep().getSelectedKnots();
 
-        Step newStep = new Step(this, this.getCurrentStepIndex() + 1);
+        Step newStep = new Step(this, this.getCurrentStepIndex() + 1, app);
         newStep.getDisplayedKnots().add(knot);
         newStep.getDisplayedKnots().addAll(displayed);
         newStep.getSelectedKnots().addAll(selected);
 
-        Step.clearStepGreaterThan(this, this.getCurrentStepIndex() + 1);
-        this.currentStepIndex = newStep.getStepIndex();
+        app.getOptionalDotGrid().getDiagram().setCurrentStepIndex(newStep.getStepIndex());
     }
 
     /**
      * Creates a step given the selected knot, plus the same displayed and selected knots than in the previous step.
      * A knot can only be one of those, not both.
      *
-     * @param selectedKnot the knot to add to the new Step as selected or displayed
+     * @param chosenKnot the knot to add to the new Step as selected or displayed
      * @return the new Step (for undo / redo)
      */
-    public Step addKnotWithStep(final Knot selectedKnot, boolean shallSelect) {
-        Step step = new Step(this, selectedKnot, shallSelect);
-        this.setCurrentStepIndex(step.getStepIndex());
-
-        return step;
+    public Step addKnotWithStep(final Knot chosenKnot, boolean shallSelect) {
+        return new Step(this, chosenKnot, shallSelect);
     }
 
     public void addKnotsToStep(final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
@@ -120,78 +129,43 @@ public class Diagram {
         this.setCurrentStepIndex(step.getStepIndex());
     }
 
-    public void addKnotsToStepWithCopy(final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
-        Step step = Step.of(this, displayedKnots, selectedKnots);
-        this.setCurrentStepIndex(step.getStepIndex());
-    }
+    public void undoLastStep(App app, Boolean... layoutChildren) {
+        logger.info("Undo step, current step={}", app.getOptionalDotGrid().getDiagram().getCurrentStepIndex());
 
-    public void undoLastStep(App app) {
-        logger.info("Undo step, current step={}", currentStepIndex);
-
-        if (this.allSteps == null || this.allSteps.isEmpty()) {
-            return;
+        if (app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() > 0) {
+            app.getOptionalDotGrid().getDiagram().setCurrentStepIndex(app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() - 1);
         }
 
-        if (this.currentStepIndex > 1) {
-            deleteNodesFromCurrentStep(app);
-            this.currentStepIndex--;
+        if (layoutChildren.length == 0) {
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
-
-            logger.info("Undo step, new step={}", currentStepIndex);
-        } else {
-            deleteNodesFromCurrentStep(app);
-            this.currentStepIndex = 1;
-            app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
-
-            logger.info("Undo step, new step={}", currentStepIndex);
-        }
-    }
-
-    public void redoLastStep(App app) {
-        logger.info("Redo 0 step, current step={}", this.currentStepIndex);
-
-        if (this.allSteps == null || this.allSteps.isEmpty()) {
-            return;
         }
 
-        if (this.currentStepIndex < this.allSteps.stream()
-                .max(Comparator.comparing(Step::getStepIndex))
-                .get()
-                .getStepIndex()
-                .intValue()) {
-            deleteNodesFromCurrentStep(app);
-            this.currentStepIndex++;
-            app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
+        logger.info("Undo step, new step={} >= 1", app.getOptionalDotGrid().getDiagram().getCurrentStepIndex());
+    }
 
-            logger.info("Redo 2 step, new step={}", this.currentStepIndex);
-        } else {
-            deleteNodesFromCurrentStep(app);
-            app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
-            logger.info("Redo 3 step, new index={}", this.currentStepIndex);
+    public void redoLastStep(App app, Boolean... layoutChildren) {
+        logger.info("Redo 0 step, current step={}", app.getOptionalDotGrid().getDiagram().getCurrentStepIndex());
+
+        if (app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() <
+                app.getOptionalDotGrid().getDiagram().getAllSteps().size() - 1) {
+            app.getOptionalDotGrid().getDiagram().setCurrentStepIndex(app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() + 1);
         }
+
+        if (layoutChildren.length == 0) {
+            app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
+        }
+
+        logger.info("Redo 2 step, new step={} < max", app.getOptionalDotGrid().getDiagram().getCurrentStepIndex());
     }
 
-    private void deleteNodesFromCurrentStep(App app) {
-        getCurrentStep().getDisplayedKnots().forEach(knot -> {
-            app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView()); // Delete nodes from step before
-            app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
-            app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
-        });
-        getCurrentStep().getSelectedKnots().forEach(knot -> {
-            app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView()); // Delete nodes from step before
-            app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
-            app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
-        });
-    }
-
-    public void deleteNodesFromCurrentStep(App app, Knot knot) {
+    public void deleteNodesFromFollowingSteps(App app, Knot knot) {
         app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
         app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
         app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
         knot.getGuideLines().clear();
     }
 
-    public void deleteNodesFromCurrentStep(Group root) {
+    public void deleteNodesFromFollowingSteps(Group root) {
         root.getChildren().removeAll(root.getChildren().stream().filter(node ->
                 (node instanceof Line ||
                         node instanceof Rectangle ||
@@ -248,17 +222,10 @@ public class Diagram {
     }
 
     public Step getCurrentStep() {
-        if (allSteps.isEmpty() || currentStepIndex <= 0) {
-            Step newEmptyStep = new Step();
-            this.getAllSteps().add(newEmptyStep);
-            this.setCurrentStepIndex(1);
-            return newEmptyStep;
-        }
-
-        return allSteps.stream().filter(step -> step.getStepIndex().equals(currentStepIndex)).findFirst().get();
+        return this.allSteps.get(this.currentStepIndex);
     }
 
     public List<Step> getAllSteps() {
-        return allSteps;
+        return this.allSteps;
     }
 }

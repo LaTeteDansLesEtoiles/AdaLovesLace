@@ -81,13 +81,17 @@ public class App extends Application {
   public static final String DEFAULT_LOCALE_LANGUAGE = "en";
   public static final String DEFAULT_LOCALE_COUNTRY = "EN";
 
-  public static ResourceBundle resourceBundle;
+  public static ResourceBundle resourceBundle = ResourceBundle.getBundle(
+          ADA_LOVES_LACE,
+          new Locale(DEFAULT_LOCALE_LANGUAGE,
+                  DEFAULT_LOCALE_COUNTRY)
+  );
 
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   private Stage toolboxStage;
   private Diagram diagram;
-  private MainWindow mainWindow;
+  private static MainWindow mainWindow;
   private Group root;
   private Scene scene;
   public Stage primaryStage;
@@ -103,7 +107,7 @@ public class App extends Application {
 
     // If we restart the app (for language change)
     if (this.diagram == null) {
-      this.diagram = new Diagram();
+      this.diagram = new Diagram(this);
     }
 
     logger.info("Starting app: opening main window");
@@ -118,7 +122,7 @@ public class App extends Application {
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
                              double gridDotsRadius, Stage primaryStage, Diagram diagram) {
-    this.mainWindow = new MainWindow();
+    App.mainWindow = new MainWindow();
     this.diagram = diagram;
 
     var javafxVersion = SystemInfo.javafxVersion();
@@ -130,7 +134,7 @@ public class App extends Application {
 
     grid.getChildren().add(footer);
     root.getChildren().add(grid);
-    this.mainWindow.onMainWindowClicked(this, root);
+    App.mainWindow.onMainWindowClicked(this, root);
 
     scene = new Scene(root, windowWidth, windowHeight);
     scene.setFill(Color.TRANSPARENT);
@@ -156,7 +160,7 @@ public class App extends Application {
       Platform.exit();
     });
 
-    this.mainWindow.createMenuBar(root, this, primaryStage);
+    App.mainWindow.createMenuBar(root, this, primaryStage);
     this.getOptionalDotGrid().setDiagram(diagram);
     this.primaryStage = primaryStage;
 
@@ -257,15 +261,15 @@ public class App extends Application {
   }
 
   public OptionalDotGrid getOptionalDotGrid() {
-    return this.mainWindow.getOptionalDotGrid();
+    return mainWindow.getOptionalDotGrid();
   }
 
   public void setOptionalDotGrid(OptionalDotGrid grid) {
-    this.mainWindow.setOptionalDotGrid(grid);
+    App.mainWindow.setOptionalDotGrid(grid);
   }
 
   public MainWindow getMainWindow() {
-    return this.mainWindow;
+    return App.mainWindow;
   }
 
   public GeometryWindow getGeometryWindow() {
@@ -289,7 +293,7 @@ public class App extends Application {
   }
 
   public void setMainWindow(MainWindow mainWindow) {
-    this.mainWindow = mainWindow;
+    App.mainWindow = mainWindow;
   }
 
   public static void setResourceBundle(ResourceBundle resourceBundle) {

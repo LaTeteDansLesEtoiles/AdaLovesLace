@@ -89,7 +89,7 @@ public class AppFunctionalTestParent {
 
     Locale locale = new Locale("en", "EN");
     App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
-    Diagram diagram = new Diagram();
+    Diagram diagram = new Diagram(this.app);
     this.app.setDiagram(diagram);
     this.primaryStage = primaryStage;
 

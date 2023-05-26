@@ -180,8 +180,8 @@ public class FileUtil {
         }
     }
 
-    public File saveFile(File file, Diagram diagram) {
-        if (this.app != null) {
+    public File saveFile(File file, Diagram diagram, Integer currentStepIndex) {
+        if (this.app != null && app.getMainWindow() != null && this.app.getOptionalDotGrid() != null) {
             this.app.getOptionalDotGrid().layoutChildren();
         }
 
@@ -194,7 +194,7 @@ public class FileUtil {
                 file = new File(file.getAbsoluteFile().getName() + LACE_FILE_EXTENSION);
             }
 
-            writeLaceFile(file, jaxbMarshaller, diagram);
+            writeLaceFile(file, jaxbMarshaller, diagram, currentStepIndex);
             deleteXmlFile();
         } catch (JAXBException | IOException e) {
             logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
@@ -203,17 +203,17 @@ public class FileUtil {
         return file;
     }
 
-    private void writeLaceFile(File file, Marshaller jaxbMarshaller, Diagram toSave) throws JAXBException {
+    private void writeLaceFile(File file, Marshaller jaxbMarshaller, Diagram toSave, Integer currentStepIndex) throws JAXBException {
         try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(file))) {
             writePatternsToLaceFile(toSave, zipOut);
-            writeDiagramToLaceFile(jaxbMarshaller, toSave, zipOut);
+            writeDiagramToLaceFile(jaxbMarshaller, toSave, zipOut, currentStepIndex);
         } catch (IOException e) {
             logger.error("Error saving .lace file!", e);
         }
     }
 
-    private void writeDiagramToLaceFile(Marshaller jaxbMarshaller, Diagram toSave, ZipOutputStream zipOut) throws JAXBException, IOException {
-        toSave.setCurrentStepIndex(toSave.getAllSteps().get(toSave.getAllSteps().size() - 1).getStepIndex());
+    private void writeDiagramToLaceFile(Marshaller jaxbMarshaller, Diagram toSave, ZipOutputStream zipOut, Integer currentStepIndex) throws JAXBException, IOException {
+        toSave.setCurrentStepIndex(currentStepIndex); // Not -1 because of the empty step at the beginning
         File xmlFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
                 XML_FILE_TO_SAVE_IN_LACE_FILE);
         jaxbMarshaller.marshal(toSave, xmlFile);

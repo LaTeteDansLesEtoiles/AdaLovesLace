@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import static org.alienlabs.adaloveslace.business.model.Step.app;
 import static org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,7 +30,7 @@ class OptionalDotGridTest {
     knot.setZoomFactor(Integer.parseInt(settedZoomFactor));
 
     // When
-    double actualZoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot);
+    double actualZoomFactor = new OptionalDotGrid(new Diagram(app), null).zoomAndFlipKnot(knot);
 
     // Then
     assertEquals(Double.valueOf(expectedZoomFactor), actualZoomFactor);
@@ -43,7 +44,7 @@ class OptionalDotGridTest {
     knot.setZoomFactor(Integer.parseInt(initialZoomFactor));
 
     // When
-    double zoomFactor = new OptionalDotGrid(new Diagram(), null).zoomAndFlipKnot(knot);
+    double zoomFactor = new OptionalDotGrid(new Diagram(app), null).zoomAndFlipKnot(knot);
 
     // Then
     assertTrue(zoomFactor > Double.parseDouble(minZoomFactor));

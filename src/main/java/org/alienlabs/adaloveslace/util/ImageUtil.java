@@ -66,7 +66,12 @@ public class ImageUtil {
                 preview(Files.readAllBytes(previewFile.toPath())).previewContentType(EXPORT_IMAGE_CONTENT_TYPE).
                 technique(Technique.LACE).subTechnique(SubTechnique.TATTING_LACE).
                 language(Language.FRENCH).diagram(Files.readAllBytes(
-                        new FileUtil(app).saveFile(laceFilePath, new Diagram(app.getOptionalDotGrid().getDiagram())).toPath())).
+                        new FileUtil(app).saveFile(
+                                laceFilePath,
+                                new Diagram(app.getOptionalDotGrid().getDiagram(),
+                                        app),
+                                app.getOptionalDotGrid().getDiagram().getCurrentStepIndex()
+                        ).toPath())).
                 diagramContentType(LACE_FILE_MIME_TYPE).username(username).
                 clientId(UUID.fromString(clientId)).clientSecret(UUID.fromString(clientSecret));
 
