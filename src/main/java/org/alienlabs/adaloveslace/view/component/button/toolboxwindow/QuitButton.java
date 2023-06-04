@@ -16,7 +16,7 @@ public class QuitButton extends ImageButton {
   }
 
   public static void onQuitAction() {
-    logger.info("Exiting app");
+    logger.debug("Exiting app");
     Platform.exit();
   }
 

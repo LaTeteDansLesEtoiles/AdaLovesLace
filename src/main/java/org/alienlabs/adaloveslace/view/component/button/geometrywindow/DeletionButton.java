@@ -2,13 +2,16 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
-import org.alienlabs.adaloveslace.util.Events;
+import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
@@ -30,15 +33,24 @@ public class DeletionButton extends ToggleButton {
   }
 
   public static void onSetDeletionModeAction(App app, GeometryWindow window) {
-    logger.info("Setting deletion mode");
+    logger.debug("Setting deletion mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DELETION);
 
     app.getOptionalDotGrid().clearSelections();
     app.getOptionalDotGrid().clearHovered();
     app.getOptionalDotGrid().clearAllGuideLines();
-    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
 
-    app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+    Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    Set<Knot> selectedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+
+    displayedKnots.removeAll(selectedKnots);
+    selectedKnots.clear();
+
+    new Step(app,
+            app.getOptionalDotGrid().getDiagram(),
+            displayedKnots,
+            selectedKnots
+    );
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(false);

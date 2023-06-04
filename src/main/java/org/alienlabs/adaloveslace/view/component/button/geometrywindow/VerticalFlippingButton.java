@@ -4,6 +4,7 @@ import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
@@ -34,23 +35,26 @@ public class VerticalFlippingButton extends ImageButton {
   }
 
   public static void onFlipVerticallyAction(final App app) {
-    logger.info("Flipping vertically");
+    logger.debug("Flipping vertically");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MIRROR);
 
-    Set<Knot> newSelectedKnots = new TreeSet<>();
-    Set<Knot> newDisplayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    Set<Knot> selectedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    Set<Knot> selectedKnotsCopy = new TreeSet<>();
 
-    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
+    for (Knot knot : selectedKnots) {
       Knot copy = new NodeUtil().copyKnot(knot);
       copy.setFlippedVertically(!knot.isFlippedVertically());
-      newSelectedKnots.add(copy);
-      newDisplayedKnots.add(copy);
-      newDisplayedKnots.remove(knot);
+      selectedKnotsCopy.add(copy);
     }
 
-    app.getOptionalDotGrid().getDiagram().addKnotsToStep(newDisplayedKnots, newSelectedKnots);
+    displayedKnots.removeAll(selectedKnots);
 
-    app.getOptionalDotGrid().layoutChildren();
+    new Step(app,
+            app.getOptionalDotGrid().getDiagram(),
+            displayedKnots,
+            selectedKnotsCopy
+    );
   }
 
 }

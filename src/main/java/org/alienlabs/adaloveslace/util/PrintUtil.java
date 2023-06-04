@@ -43,10 +43,10 @@ public class PrintUtil {
   public void printButtonOnAction(Button printButton) {
     printButton.setOnAction(actionEvent -> {
         if (!printers.isEmpty()) {
-          logger.info("Printing attempt of diagram");
+          logger.debug("Printing attempt of diagram");
 
           Printer printer = printers.iterator().next();
-          logger.info("Printing attempt of diagram with printer {}", printer.getName());
+          logger.debug("Printing attempt of diagram with printer {}", printer.getName());
 
           PrinterJob pJ = PrinterJob.createPrinterJob(printer);
 
@@ -56,7 +56,7 @@ public class PrintUtil {
           if (proceed) {
             print(pJ);
           } else {
-            logger.info("Printing diagram aborted by user!");
+            logger.debug("Printing diagram aborted by user!");
           }
         }
     });
@@ -79,7 +79,7 @@ public class PrintUtil {
     boolean printed = job.printPage(pageLayout, app.getRoot());
 
     if(printed){
-      logger.info("Printed diagram successfully");
+      logger.debug("Printed diagram successfully");
       job.endJob();
     } else {
       logger.error("Printing diagram failed!");

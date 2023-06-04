@@ -7,13 +7,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.business.model.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.alienlabs.adaloveslace.view.window.MainWindow.MOUSE_CLICKED;
 
@@ -48,7 +46,7 @@ public class Events {
   // @see https://stackoverflow.com/questions/40982787/change-cursor-in-javafx-listview-during-drag-and-drop/40984625#40984625
   public static final EventHandler<MouseEvent> dragInitiatedOverOnHandle = event -> {
     String eType = event.getEventType().toString();
-    logger.info("Event type -> {},  current Step index {}, current mode: {}", eType,
+    logger.debug("Event type -> {},  current Step index {}, current mode: {}", eType,
             app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
             app.getOptionalDotGrid().getDiagram().getCurrentMode());
 
@@ -93,7 +91,7 @@ public class Events {
 
   public static final EventHandler<DragEvent> dragDroppedHandleWithSelectionMode = event -> {
     String eType = event.getEventType().toString();
-    logger.info("Event type -> {},  current Step index {}, current mode: {}", eType,
+    logger.debug("Event type -> {},  current Step index {}, current mode: {}", eType,
             app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
             app.getOptionalDotGrid().getDiagram().getCurrentMode());
 
@@ -104,8 +102,6 @@ public class Events {
     app.getOptionalDotGrid().clearAllKnotDecorations();
     app.getOptionalDotGrid().clearKnotHandles();
     app.getOptionalDotGrid().clearKnotSelections();
-    app.getOptionalDotGrid().getDiagram().addKnotsToStep(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots(),
-            moveDraggedAndDroppedNodesWithCopy(app, x, y, handle));
 
     Knot firstKnot = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream()
             .min(Comparator.comparing(Knot::getX)
@@ -115,9 +111,11 @@ public class Events {
             app.getOptionalDotGrid().getDragOriginKnot(),
             Color.rgb(0,0,255, 0.5), firstKnot);
 
-    logger.info("After event type -> {},  current Step index {}, current mode: {}", eType,
+    logger.debug("After event type -> {},  current Step index {}, current mode: {}", eType,
             app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
             app.getOptionalDotGrid().getDiagram().getCurrentMode());
+
+    app.getOptionalDotGrid().layoutChildren();
 
     event.consume();
   };
@@ -126,12 +124,34 @@ public class Events {
     double deltaX = handle.getCenterX() < x ? -(handle.getCenterX() - x) : (x - handle.getCenterX());
     double deltaY = handle.getCenterY() < y ? -(handle.getCenterY() - y) : (y - handle.getCenterY());
 
-    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
-      logger.debug("Knot to move");
+    Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    Set<Knot> selectedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    Set<Knot> copiedKnots = new TreeSet<>();
 
+    for (Knot knot : selectedKnots) {
       knot.setX(knot.getX() + deltaX);
       knot.setY(knot.getY() + deltaY);
+      Knot copiedKnot = new NodeUtil().copyKnot(knot);
+
+      displayedKnots.remove(knot);
+      copiedKnots.add(copiedKnot);
+
+      if (app.getOptionalDotGrid().getDragOriginKnot().equals(knot)) {
+        app.getOptionalDotGrid().setDragOriginKnot(copiedKnot);
+      }
+
+      logger.debug("Knot to move");
     }
+
+    handle.setCenterX(handle.getCenterX() + deltaX);
+    handle.setCenterY(handle.getCenterY() + deltaY);
+
+    new Step(app,
+            app.getOptionalDotGrid().getDiagram(),
+            displayedKnots,
+            copiedKnots,
+            handle
+    );
   }
 
   public static Set<Knot> moveDraggedAndDroppedNodesWithCopy(App app, double x, double y, Circle handle) {
@@ -143,7 +163,7 @@ public class Events {
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
       logger.debug("Knot to move");
 
-      Knot knotCopy = new NodeUtil().copyKnot(knot);
+      Knot knotCopy = new NodeUtil().copyKnotCloningImageView(knot);
       knotCopy.setX(knotCopy.getX() + deltaX);
       knotCopy.setY(knotCopy.getY() + deltaY);
 
@@ -169,8 +189,8 @@ public class Events {
   public static final EventHandler<MouseEvent> gridHoverEventHandler = mouseEvent -> {
     logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
-    Set<Knot> allKnots = app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots();
-    allKnots.addAll(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    Set<Knot> allKnots = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    allKnots.addAll(new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()));
 
     boolean isMouseOverAGivenKnot = false;
 
@@ -195,7 +215,7 @@ public class Events {
       knot.setHoveredKnot(isMouseOverAGivenKnot);
     }
 
-    app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(allKnots);
+    app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots());
   };
 
   public static EventHandler<MouseEvent> getGridHoverEventHandler(App app) {

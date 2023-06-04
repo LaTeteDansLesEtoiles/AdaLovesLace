@@ -17,7 +17,7 @@ public class UndoKnotButton extends ImageButton {
 
   public static void undoKnot(App app) {
     app.getOptionalDotGrid().getDiagram().undoLastStep(app);
-    logger.info("Undo knot event");
+    logger.debug("Undo knot event");
   }
 
 }

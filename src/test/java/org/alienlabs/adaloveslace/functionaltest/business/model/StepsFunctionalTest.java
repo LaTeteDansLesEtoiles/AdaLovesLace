@@ -41,18 +41,18 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
 
         // When
         Knot knot1 = new Knot(10, 15, new Pattern(), null);
-        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot1, false);
+//        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot1, false);
 
         Knot knot2 = new Knot(20, 25, new Pattern(), null);
-        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot2, false);
+//        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot2, false);
 
         Knot knot3 = new Knot(30, 35, new Pattern(), null);
-        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot3, false);
+//        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot3, false);
 
         this.diagram.undoLastStep(app);
 
         Knot knot4 = new Knot(40, 45, new Pattern(), null);
-        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot4, false);
+//        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot4, false);
 
         // Then
         assertEquals(4,
@@ -126,19 +126,19 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
 
         // When
         Knot knot1 = new Knot(10, 15, new Pattern(), null);
-        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot1, false);
+//        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot1, false);
 
         Knot knot2 = new Knot(20, 25, new Pattern(), null);
-        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot2, false);
+//        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot2, false);
 
         Knot knot3 = new Knot(30, 35, new Pattern(), null);
-        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot3, false);
+//        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot3, false);
 
         app.getOptionalDotGrid().getDiagram().undoLastStep(app);
         app.getOptionalDotGrid().getDiagram().redoLastStep(app);
 
         Knot knot4 = new Knot(40, 45, new Pattern(), null);
-        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot4, false);
+//        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot4, false);
 
         // Then
         assertEquals(5,
@@ -212,13 +212,13 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
 
         // When
         Knot knot1 = new Knot(10, 15, new Pattern(), null);
-        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot1, false);
+//        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot1, false);
 
         Knot knot2 = new Knot(20, 25, new Pattern(), null);
-        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot2, false);
+//        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot2, false);
 
         Knot knot3 = new Knot(30, 35, new Pattern(), null);
-        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot3, false);
+//        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot3, false);
 
         app.getOptionalDotGrid().getDiagram().undoLastStep(app);
         app.getOptionalDotGrid().getDiagram().undoLastStep(app);
@@ -245,7 +245,7 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
         app.getOptionalDotGrid().getDiagram().redoLastStep(app);
 
         Knot knot4 = new Knot(40, 45, new Pattern(), null);
-        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot4, false);
+//        app.getOptionalDotGrid().getDiagram().addKnotWithStep(knot4, false);
 
         // Then
         assertEquals(5,

@@ -30,12 +30,12 @@ public class DrawingButton extends ToggleButton {
   }
 
   public static void onSetDrawModeAction(App app, GeometryWindow window) {
-    logger.info("Setting draw mode");
+    logger.debug("Setting draw mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
     app.getOptionalDotGrid().clearSelections();
     app.getOptionalDotGrid().clearHovered();
     app.getOptionalDotGrid().clearAllGuideLines();
-    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
+//    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
 
     if (Events.getGridHoverEventHandler(app) != null) {
       app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));

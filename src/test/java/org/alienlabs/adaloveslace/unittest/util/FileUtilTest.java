@@ -4,7 +4,6 @@ import jakarta.xml.bind.JAXBException;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Pattern;
-import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
@@ -51,10 +50,10 @@ class FileUtilTest {
         diagramToSave = new Diagram();
         this.app.setDiagram(diagramToSave);
         fileUtil = new FileUtil(app);
-        Step step1 = new Step(diagramToSave, 1, app);
-        diagramToSave.getAllSteps().add(step1);
-        Step step2 = new Step(diagramToSave, 2, app);
-        diagramToSave.getAllSteps().add(step2);
+//        Step step1 = new Step(diagramToSave, 1, app);
+//        diagramToSave.getAllSteps().add(step1);
+//        Step step2 = new Step(diagramToSave, 2, app);
+//        diagramToSave.getAllSteps().add(step2);
         diagramToSave.setCurrentStepIndex(2);
 
         Pattern pattern = new Pattern();
@@ -157,7 +156,7 @@ class FileUtilTest {
         resourceBundle = ResourceBundle.getBundle(ADA_LOVES_LACE, locale);
         App.setResourceBundle(resourceBundle);
 
-        OptionalDotGrid grid = new OptionalDotGrid(diagramToSave, null);
+        OptionalDotGrid grid = new OptionalDotGrid(app, diagramToSave, null);
         MainWindow mainWindow = new MainWindow();
         mainWindow.setOptionalDotGrid(grid);
         app.setMainWindow(mainWindow);

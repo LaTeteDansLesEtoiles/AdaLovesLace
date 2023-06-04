@@ -49,7 +49,7 @@ public class CreatePatternWindow {
     Optional<ButtonType> result = alert.showAndWait();
 
     if (result.isPresent() && result.get() == createPatternButton) {
-      logger.info("Accepted pattern creation");
+      logger.debug("Accepted pattern creation");
 
       app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, CreatePatternButton.getMouseMovedListener());
       app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_CLICKED, CreatePatternButton.getMouseClickedListener());
@@ -61,7 +61,7 @@ public class CreatePatternWindow {
       app.getGeometryStage().close();
       app.showGeometryWindow(app);
     } else {
-      logger.info("Pattern creation cancelled");
+      logger.debug("Pattern creation cancelled");
 
       try {
         Files.delete(previewFile.toPath());

@@ -30,7 +30,7 @@ class OptionalDotGridTest {
     knot.setZoomFactor(Integer.parseInt(settedZoomFactor));
 
     // When
-    double actualZoomFactor = new OptionalDotGrid(new Diagram(app), null).zoomAndFlipKnot(knot);
+    double actualZoomFactor = new OptionalDotGrid(app, new Diagram(app), null).zoomAndFlipKnot(knot);
 
     // Then
     assertEquals(Double.valueOf(expectedZoomFactor), actualZoomFactor);
@@ -44,7 +44,7 @@ class OptionalDotGridTest {
     knot.setZoomFactor(Integer.parseInt(initialZoomFactor));
 
     // When
-    double zoomFactor = new OptionalDotGrid(new Diagram(app), null).zoomAndFlipKnot(knot);
+    double zoomFactor = new OptionalDotGrid(app, new Diagram(app), null).zoomAndFlipKnot(knot);
 
     // Then
     assertTrue(zoomFactor > Double.parseDouble(minZoomFactor));

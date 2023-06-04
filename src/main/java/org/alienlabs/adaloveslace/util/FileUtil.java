@@ -62,12 +62,12 @@ public class FileUtil {
         app.getPrimaryStage().close();
         app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
             app.getPrimaryStage(), diagram);
-        app.getOptionalDotGrid().getDiagramProperty().set(diagram);
         app.getOptionalDotGrid().setDiagram(diagram);
         app.initializeKeyboardShorcuts();
         app.getToolboxStage().close();
         app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
 
+        diagram.setApp(app);
         app.getOptionalDotGrid().layoutChildren();
         DrawingButton.onSetDrawModeAction(app, app.getGeometryWindow());
     }
@@ -83,14 +83,14 @@ public class FileUtil {
 
                 if (XML_FILE_TO_SAVE_IN_LACE_FILE.equals(entry.getName())) {
                     diagram = buildDiagram(zipFile, entry);
-                    app.setDiagram(diagram);
+                    app.getOptionalDotGrid().setDiagram(diagram);
                 } else {
                     copyPattern(file, zipFile, entry);
                 }
             }
 
             if (null != diagram) {
-                buildKnotsImageViews(app, diagram);
+                buildKnotsImageViews(diagram);
             }
         } catch (JAXBException | IOException e) {
             logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
@@ -99,14 +99,12 @@ public class FileUtil {
         return diagram;
     }
 
-    private void buildKnotsImageViews(App app, Diagram diagram) {
-        Collections.sort(diagram.getAllSteps());
-
+    private void buildKnotsImageViews(Diagram diagram) {
         for (Step step : diagram.getAllSteps()) {
             for (Knot knot : step.getDisplayedKnots()) {
                 try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
                     + knot.getPattern().getFilename())) {
-                    buildKnotImageView(app, knot, fis);
+                    buildKnotImageView(knot, fis);
                 } catch (IOException e) {
                     logger.error("Problem with pattern resource file!", e);
                 }
@@ -115,7 +113,7 @@ public class FileUtil {
             for (Knot knot : step.getSelectedKnots()) {
                 try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
                     + knot.getPattern().getFilename())) {
-                    buildKnotImageView(app, knot, fis);
+                    buildKnotImageView(knot, fis);
                 } catch (IOException e) {
                     logger.error("Problem with pattern resource file!", e);
                 }
@@ -123,15 +121,15 @@ public class FileUtil {
         }
     }
 
-    public void buildKnotImageView(App app, Knot knot, FileInputStream fis) {
+    public void buildKnotImageView(Knot knot, FileInputStream fis) {
         Image image = new Image(fis);
         ImageView iv = new ImageView(image);
 
         iv.setX(knot.getX());
         iv.setY(knot.getY());
+        iv.setFitHeight(knot.getPattern().getHeight());
+        iv.setFitWidth(knot.getPattern().getWidth());
 
-        iv.setScaleX(app.getOptionalDotGrid().computeZoomFactor(knot));
-        iv.setScaleY(app.getOptionalDotGrid().computeZoomFactor(knot));
         iv.setRotate(knot.getRotationAngle());
 
         knot.setImageView(iv);
@@ -291,7 +289,7 @@ public class FileUtil {
             image.getXObject().getPdfObject().setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
             doc.add(image);
 
-            logger.info("PDF file generated successfully!");
+            logger.debug("PDF file generated successfully!");
         } catch (IOException e){
             logger.error("Error generating PDF document!", e);
         }

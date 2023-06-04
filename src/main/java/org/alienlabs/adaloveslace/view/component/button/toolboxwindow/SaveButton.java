@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
@@ -29,7 +30,7 @@ public class SaveButton extends ImageButton {
     }
 
     public static void onSaveAction(App app) {
-        logger.info("Saving file");
+        logger.debug("Saving file");
 
         File file;
 
@@ -63,6 +64,11 @@ public class SaveButton extends ImageButton {
             preferences.setPathWithFileValue(file, SAVED_LACE_FILE);
             preferences.setPathWithFileValue(file.getParentFile(), LACE_FILE_FOLDER_SAVE_PATH);
 
+            for (Step step : app.getOptionalDotGrid().getDiagram().getAllSteps()) {
+                step.getDisplayedKnots().removeAll(
+                        step.getSelectedKnots()
+                );
+            }
             new FileUtil(app).saveFile(file,
                     app.getOptionalDotGrid().getDiagram(),
                     app.getOptionalDotGrid().getDiagram().getCurrentStepIndex()

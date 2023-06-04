@@ -110,13 +110,13 @@ public class App extends Application {
       this.diagram = new Diagram(this);
     }
 
-    logger.info("Starting app: opening main window");
+    logger.debug("Starting app: opening main window");
     showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage, diagram);
 
-    logger.info("Opening toolbox window");
+    logger.debug("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
 
-    logger.info("Opening geometry window");
+    logger.debug("Opening geometry window");
     showGeometryWindow(this);
   }
 
@@ -130,7 +130,7 @@ public class App extends Application {
 
     root                      = new Group();
     TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
-    StackPane grid            = mainWindow.createGrid(gridWidth, gridHeight, gridDotsRadius, this.diagram, root);
+    StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, gridDotsRadius, this.diagram, root);
 
     grid.getChildren().add(footer);
     root.getChildren().add(grid);
@@ -156,7 +156,7 @@ public class App extends Application {
     primaryStage.setTitle(resourceBundle.getString(MAIN_WINDOW_TITLE));
 
     primaryStage.setOnCloseRequest(windowEvent -> {
-      logger.info("You shall close the app by closing this window!");
+      logger.debug("You shall close the app by closing this window!");
       Platform.exit();
     });
 

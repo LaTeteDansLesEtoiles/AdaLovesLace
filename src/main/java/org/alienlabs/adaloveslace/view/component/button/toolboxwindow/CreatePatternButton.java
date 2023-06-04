@@ -47,7 +47,7 @@ public class CreatePatternButton extends ImageButton {
     }
 
     public static void onCreatePatternModeAction(App app) {
-        logger.info("Setting create pattern mode");
+        logger.debug("Setting create pattern mode");
         app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.CREATE_PATTERN);
 
         app.getGeometryWindow().getDrawingButton().setSelected(false);
@@ -88,7 +88,7 @@ public class CreatePatternButton extends ImageButton {
             };
 
             mouseClickedListener = mouseEvent -> {
-                logger.info("Create Pattern => MouseEvent pressed: X= {}, Y= {}", mouseEvent.getX(), mouseEvent.getY());
+                logger.debug("Create Pattern => MouseEvent pressed: X= {}, Y= {}", mouseEvent.getX(), mouseEvent.getY());
 
                 mouseClicks++;
 

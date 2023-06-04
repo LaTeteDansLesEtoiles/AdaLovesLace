@@ -5,13 +5,14 @@ import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.NEW_KNOT_GAP;
@@ -34,25 +35,31 @@ public class DuplicationButton extends ToggleButton {
   }
 
   public static void onSetDuplicationModeAction(final App app, final GeometryWindow window) {
-    logger.info("Duplicating");
+    logger.debug("Duplicating");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DUPLICATION);
 
-    Set<Knot> copiedKnots = new HashSet<>();
-    Set<Knot> newDisplayedKnots = new HashSet<>();
+    Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    Set<Knot> selectedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    Set<Knot> selectedKnotsCopy = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
-    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
+    for (Knot knot : selectedKnots) {
       Knot copiedKnot = new NodeUtil().copyKnotCloningImageView(knot);
-      copiedKnot.setX(knot.getX() + NEW_KNOT_GAP);
-      copiedKnot.setY(knot.getY() + NEW_KNOT_GAP);
+      copiedKnot.setX(knot.getX() + (NEW_KNOT_GAP * selectedKnots.size()));
+      copiedKnot.setY(knot.getY() + (NEW_KNOT_GAP * selectedKnots.size()));
+      copiedKnot.getImageView().setX(knot.getX() + (NEW_KNOT_GAP * selectedKnots.size()));
+      copiedKnot.getImageView().setY(knot.getY() + (NEW_KNOT_GAP * selectedKnots.size()));
 
-      copiedKnots.add(copiedKnot);
+      displayedKnots.remove(knot);
+      displayedKnots.remove(copiedKnot);
+
+      selectedKnotsCopy.add(copiedKnot);
     }
 
-    newDisplayedKnots.addAll(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-    newDisplayedKnots.addAll(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-
-    app.getOptionalDotGrid().getDiagram().addKnotsToStep(newDisplayedKnots, copiedKnots);
-    app.getOptionalDotGrid().layoutChildren();
+    new Step(app,
+            app.getOptionalDotGrid().getDiagram(),
+            displayedKnots,
+            selectedKnotsCopy
+    );
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(false);

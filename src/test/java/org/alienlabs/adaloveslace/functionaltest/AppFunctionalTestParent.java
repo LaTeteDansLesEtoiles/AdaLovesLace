@@ -243,7 +243,7 @@ public class AppFunctionalTestParent {
     int y = Double.valueOf(pointToMoveTo.getY() - this.primaryStage.getY()).intValue();
 
     this.foundColorOnGrid = pr.getColor(x, y);
-    logger.info("# argb: {} at ({}, {}), with stage at ({}, {})", this.foundColorOnGrid, x, y, this.primaryStage.getX(), this.primaryStage.getY());
+    logger.debug("# argb: {} at ({}, {}), with stage at ({}, {})", this.foundColorOnGrid, x, y, this.primaryStage.getX(), this.primaryStage.getY());
   }
 
   protected Point2D newPointOnGrid(double pixelX, double pixelY) {

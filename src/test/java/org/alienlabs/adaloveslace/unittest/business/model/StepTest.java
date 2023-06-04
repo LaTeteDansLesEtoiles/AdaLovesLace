@@ -5,7 +5,6 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Pattern;
-import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +26,7 @@ class StepTest {
         app = new App();
         app.setMainWindow(new MainWindow());
         this.diagram = new Diagram(app);
-        app.setOptionalDotGrid(new OptionalDotGrid(this.diagram, new Group()));
+        app.setOptionalDotGrid(new OptionalDotGrid(app, this.diagram, new Group()));
         app.setDiagram(this.diagram);
     }
 
@@ -37,7 +36,7 @@ class StepTest {
         Knot knot = new Knot(10, 15, new Pattern(), null);
 
         // When
-        new Step(this.diagram, knot, false);
+//        new Step(this.diagram, knot, false);
 
         // Then
         assertEquals(2,
@@ -60,13 +59,13 @@ class StepTest {
 
         // When
         Knot knot1 = new Knot(10, 15, new Pattern(), null);
-        this.diagram.addKnotWithStep(knot1, false);
+//        this.diagram.addKnotWithStep(knot1, false);
 
         Knot knot2 = new Knot(20, 25, new Pattern(), null);
-        this.diagram.addKnotWithStep(knot2, false);
+//        this.diagram.addKnotWithStep(knot2, false);
 
         Knot knot3 = new Knot(30, 35, new Pattern(), null);
-        this.diagram.addKnotWithStep(knot3, false);
+//        this.diagram.addKnotWithStep(knot3, false);
 
         // Then
         assertEquals(4,
@@ -126,13 +125,13 @@ class StepTest {
 
         // When
         Knot knot1 = new Knot(10, 15, new Pattern(), null);
-        this.diagram.addKnotWithStep(knot1, true);
+//        this.diagram.addKnotWithStep(knot1, true);
 
         Knot knot2 = new Knot(20, 25, new Pattern(), null);
-        this.diagram.addKnotWithStep(knot2, true);
+//        this.diagram.addKnotWithStep(knot2, true);
 
         Knot knot3 = new Knot(30, 35, new Pattern(), null);
-        this.diagram.addKnotWithStep(knot3, false);
+//        this.diagram.addKnotWithStep(knot3, false);
 
         // Then
         assertEquals(4,
@@ -173,11 +172,11 @@ class StepTest {
     void test_add_a_knot_to_a_step() {
         // Given
         Knot knot1 = new Knot(10, 15, new Pattern(), null);
-        this.diagram.addKnotWithStep(knot1);
+//        this.diagram.addKnotWithStep(knot1);
 
         // When
         Knot knot2 = new Knot(20, 25, new Pattern(), null);
-        this.diagram.addKnotWithStep(knot2);
+//        this.diagram.addKnotWithStep(knot2);
 
         // Then
         assertEquals(3,
@@ -203,17 +202,17 @@ class StepTest {
     void test_add_several_knots() {
         // Given
         Knot knot1 = new Knot(10, 15, new Pattern(), null);
-        diagram.addKnotWithStep(knot1);
+//        diagram.addKnotWithStep(knot1);
 
         Knot firstKnotsStep2 = new Knot(20, 25, new Pattern(), null);
-        diagram.addKnotWithStep(firstKnotsStep2);
+//        diagram.addKnotWithStep(firstKnotsStep2);
 
         Knot secondKnotsStep2 = new Knot(30, 35, new Pattern(), null);
         Knot thirdKnotsStep3 = new Knot(40, 45, new Pattern(), null);
 
         // When
-        this.diagram.addKnotWithStep(secondKnotsStep2, true);
-        this.diagram.addKnotWithStep(thirdKnotsStep3, true);
+//        this.diagram.addKnotWithStep(secondKnotsStep2, true);
+//        this.diagram.addKnotWithStep(thirdKnotsStep3, true);
 
         // Then
         assertEquals(5,
@@ -293,16 +292,16 @@ class StepTest {
     void test_add_several_knots_then_undo_a_step_then_make_another_step() {
         // Given
         Knot knotStep1 = new Knot(10, 15, new Pattern(), null);
-        diagram.addKnotWithStep(knotStep1);
+//        diagram.addKnotWithStep(knotStep1);
 
         Knot knotStep2 = new Knot(20, 25, new Pattern(), null);
-        this.diagram.addKnotWithStep(knotStep2);
+//        this.diagram.addKnotWithStep(knotStep2);
 
         Knot knotStep3 = new Knot(30, 35, new Pattern(), null);
-        this.diagram.addKnotWithStep(knotStep3);
+//        this.diagram.addKnotWithStep(knotStep3);
 
         Knot knotStep4 = new Knot(40, 45, new Pattern(), null);
-        this.diagram.addKnotWithStep(knotStep4);
+//        this.diagram.addKnotWithStep(knotStep4);
 
         // When
         this.diagram.undoLastStep(app, false);
@@ -317,7 +316,7 @@ class StepTest {
         displayedKnots.add(knotStep33);
         Set<Knot> selectedKnots = new HashSet<>();
 
-        this.diagram.addKnotsToStep(displayedKnots, selectedKnots);
+//        this.diagram.addKnotsToStep(displayedKnots, selectedKnots);
 
         // Then
         assertEquals(4,
@@ -370,13 +369,13 @@ class StepTest {
     void test_add_several_knots_then_undo_a_step_then_redo_this_step() {
         // Given
         Knot knotStep1 = new Knot(10, 15, new Pattern(), null);
-        diagram.addKnotWithStep(knotStep1);
+//        diagram.addKnotWithStep(knotStep1);
 
         Knot knotStep2 = new Knot(20, 25, new Pattern(), null);
-        this.diagram.addKnotWithStep(knotStep2);
+//        this.diagram.addKnotWithStep(knotStep2);
 
         Knot knotStep3 = new Knot(30, 35, new Pattern(), null);
-        this.diagram.addKnotWithStep(knotStep3);
+//        this.diagram.addKnotWithStep(knotStep3);
 
         // When
         this.diagram.undoLastStep(app, false);

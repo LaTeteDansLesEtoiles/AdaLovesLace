@@ -2,7 +2,6 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
@@ -31,7 +30,7 @@ public class SaveAsButton extends ImageButton {
   }
 
   public static void onSaveAsAction(App app) {
-    logger.info("Saving file as");
+    logger.debug("Saving file as");
 
     FileChooser saveAs = new FileChooser();
     saveAs.setTitle(SAVE_FILE_AS_DIALOG_TITLE);
@@ -57,7 +56,7 @@ public class SaveAsButton extends ImageButton {
 
       new FileUtil(app).saveFile(
               file,
-              new Diagram(app),
+              app.getOptionalDotGrid().getDiagram(),
               app.getOptionalDotGrid().getDiagram().getCurrentStepIndex()
       );
     }

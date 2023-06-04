@@ -4,11 +4,13 @@ import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -34,23 +36,26 @@ public class HorizontalFlippingButton extends ImageButton {
   }
 
   public static void onFlipHorizontallyAction(final App app) {
-    logger.info("Flipping horizontally");
+    logger.debug("Flipping horizontally");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MIRROR);
 
-    Set<Knot> newSelectedKnots = new TreeSet<>();
-    Set<Knot> newDisplayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    Set<Knot> selectedKnots = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    Set<Knot> selectedKnotsCopy = new TreeSet<>();
 
-    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
-      Knot copy = new NodeUtil().copyKnot(knot);
-      copy.setFlippedHorizontally(!knot.isFlippedHorizontally());
-      newSelectedKnots.add(copy);
-      newDisplayedKnots.add(copy);
-      newDisplayedKnots.remove(knot);
+    for (Knot knot : selectedKnots) {
+        Knot copy = new NodeUtil().copyKnot(knot);
+        copy.setFlippedHorizontally(!knot.isFlippedHorizontally());
+        selectedKnotsCopy.add(copy);
     }
 
-    app.getOptionalDotGrid().getDiagram().addKnotsToStep(newDisplayedKnots, newSelectedKnots);
+    displayedKnots.removeAll(selectedKnots);
 
-    app.getOptionalDotGrid().layoutChildren();
+    new Step(app,
+            app.getOptionalDotGrid().getDiagram(),
+            displayedKnots,
+            selectedKnotsCopy
+    );
   }
 
 }

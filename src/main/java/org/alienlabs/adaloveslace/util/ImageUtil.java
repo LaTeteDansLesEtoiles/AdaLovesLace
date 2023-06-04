@@ -43,14 +43,14 @@ public class ImageUtil {
         File image = buildImage(pathname);
 
         this.showTechnicalElementsFromRootGroup();
-        logger.info("Snapshot done!");
+        logger.debug("Snapshot done!");
 
         return image;
     }
 
     public WritableImage buildWritableImageWithTechnicalElements(String pathname) {
         WritableImage snapshot = buildWritableImage(pathname);
-        logger.info("Snapshot done!");
+        logger.debug("Snapshot done!");
 
         return snapshot;
     }
@@ -118,7 +118,6 @@ public class ImageUtil {
         }
 
         Platform.runLater(() -> {
-
             try {
                 WritableImage snapshot = app.getPrimaryStage().getScene().snapshot(null);
                 WritableImage croppedImage = new WritableImage(snapshot.getPixelReader(),
