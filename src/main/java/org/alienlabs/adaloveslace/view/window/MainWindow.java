@@ -18,7 +18,6 @@ import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
@@ -31,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.util.Events.moveDraggedAndDroppedNodes;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
@@ -274,11 +274,7 @@ public class MainWindow {
           displayedKnots.remove(knot);
           app.getOptionalDotGrid().getAllHoveredKnots().add(copiedKnot);
 
-          new Step(app,
-                  app.getOptionalDotGrid().getDiagram(),
-                  displayedKnots,
-                  selectedKnots
-          );
+          newStep(displayedKnots, selectedKnots);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
         } else {
           app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
@@ -293,11 +289,7 @@ public class MainWindow {
           // But we don't want it selected!
           selectedKnots.remove(knot);
 
-          new Step(app,
-                  app.getOptionalDotGrid().getDiagram(),
-                  displayedKnots,
-                  selectedKnots
-          );
+          newStep(displayedKnots, selectedKnots);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
         }
 
@@ -319,11 +311,7 @@ public class MainWindow {
           selectedKnots.clear();
           selectedKnots.add(copiedKnot);
 
-          new Step(app,
-                  app.getOptionalDotGrid().getDiagram(),
-                  displayedKnots,
-                  selectedKnots
-          );
+          newStep(displayedKnots, selectedKnots);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
 
           break;
@@ -332,11 +320,7 @@ public class MainWindow {
           selectedKnots.remove(knot);
           displayedKnots.removeAll(new HashSet<>(selectedKnots));
 
-          new Step(app,
-                  app.getOptionalDotGrid().getDiagram(),
-                  displayedKnots,
-                  selectedKnots
-          );
+          newStep(displayedKnots, selectedKnots);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
         }
 
@@ -349,11 +333,7 @@ public class MainWindow {
       displayedKnots.addAll(new HashSet<>(selectedKnots));
       selectedKnots.clear();
 
-      new Step(app,
-              app.getOptionalDotGrid().getDiagram(),
-              displayedKnots,
-              selectedKnots
-      );
+      newStep(displayedKnots, selectedKnots);
     }
   }
 
@@ -375,11 +355,7 @@ public class MainWindow {
     Set<Knot> selectedKnotsToFilterOut = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
     selectedKnotsToFilterOut.remove(knot);
 
-    new Step(app,
-            app.getOptionalDotGrid().getDiagram(),
-            displayedKnotsToFilterOut,
-            selectedKnotsToFilterOut
-    );
+    newStep(displayedKnotsToFilterOut, selectedKnotsToFilterOut);
 
     logger.debug("Removing Knot {}, current index = {}", knot, diagram.getCurrentStepIndex());
   }

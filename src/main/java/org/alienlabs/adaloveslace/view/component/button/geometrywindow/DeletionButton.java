@@ -5,7 +5,6 @@ import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
-import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class DeletionButton extends ToggleButton {
@@ -46,11 +46,7 @@ public class DeletionButton extends ToggleButton {
     displayedKnots.removeAll(selectedKnots);
     selectedKnots.clear();
 
-    new Step(app,
-            app.getOptionalDotGrid().getDiagram(),
-            displayedKnots,
-            selectedKnots
-    );
+    newStep(displayedKnots, selectedKnots);
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(false);

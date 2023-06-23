@@ -6,12 +6,12 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 
 import java.util.Set;
 import java.util.TreeSet;
 
+import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class RotationSpinner {
@@ -43,11 +43,7 @@ public class RotationSpinner {
           copiedKnots.add(copiedKnot);
         }
 
-        new Step(app,
-                app.getOptionalDotGrid().getDiagram(),
-                displayedKnots,
-                copiedKnots
-        );
+        newStep(displayedKnots, copiedKnots);
       }
 
       if (numberOfUpdates > 2) {

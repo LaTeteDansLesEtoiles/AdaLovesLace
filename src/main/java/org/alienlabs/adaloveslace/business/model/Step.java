@@ -41,10 +41,9 @@ public class Step implements Comparable<Step> {
     /**
      * Creates a step given the displayed knots and the selected knots. A knot can only be in one of those, not both.
      *
-     * @param app the main App
-     * @param diagram the diagram onto which to work
+     * @param diagram        the diagram onto which to work
      * @param displayedKnots the knots to add to the new Step as displayed
-     * @param selectedKnots the knots to add to the new Step as selected
+     * @param selectedKnots  the knots to add to the new Step as selected
      */
 
     public Step(App app,

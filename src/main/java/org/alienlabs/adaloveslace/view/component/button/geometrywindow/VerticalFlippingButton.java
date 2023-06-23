@@ -4,7 +4,6 @@ import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
-import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
@@ -13,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class VerticalFlippingButton extends ImageButton {
@@ -50,11 +50,7 @@ public class VerticalFlippingButton extends ImageButton {
 
     displayedKnots.removeAll(selectedKnots);
 
-    new Step(app,
-            app.getOptionalDotGrid().getDiagram(),
-            displayedKnots,
-            selectedKnotsCopy
-    );
+    newStep(displayedKnots, selectedKnotsCopy);
   }
 
 }

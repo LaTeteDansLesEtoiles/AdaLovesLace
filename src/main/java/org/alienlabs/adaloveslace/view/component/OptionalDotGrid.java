@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
+import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 import static org.alienlabs.adaloveslace.util.NodeUtil.HANDLE_SIZE;
 
@@ -487,8 +488,6 @@ public class OptionalDotGrid extends Pane {
   }
 
   public void drawKnot(double x, double y) {
-//    clearStepsGreaterThanPresentStep(this.diagram);
-
     Pattern currentPattern = this.diagram.getCurrentPattern();
     logger.debug("Current pattern  -> {}", currentPattern);
     Knot currentKnot = null;
@@ -510,11 +509,7 @@ public class OptionalDotGrid extends Pane {
       Set<Knot> displayed = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
       displayed.add(currentKnot);
 
-      new Step(app,
-              this.getDiagram(),
-              displayed,
-              app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()
-      );
+      newStep(displayed, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
     } catch (IOException e) {
       logger.error("Problem with pattern resource file!", e);
     }

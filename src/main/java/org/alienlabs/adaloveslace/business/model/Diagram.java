@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * What is drawn on a Canvas: the Diagram is the desired, final business object consisting of Knots drawn with Patterns.
@@ -44,7 +45,7 @@ public class Diagram {
     private boolean             isKnotSelected;
 
     @XmlTransient
-    private App                 app;
+    private static App          app;
 
     @XmlTransient
     private MouseMode           currentMode;
@@ -65,8 +66,8 @@ public class Diagram {
         this.knots              = new ArrayList<>();
         this.currentMode        = MouseMode.DRAWING;
         this.currentStepIndex   = 0;
+        Diagram.app             = app;
         this.allSteps.add(new Step());
-        this.app = app;
     }
 
     public Diagram(final Diagram diagram, App app) {
@@ -79,8 +80,8 @@ public class Diagram {
         this.isKnotSelected         = diagram.isKnotSelected();
         this.setCurrentPattern(diagram.getCurrentPattern());
         this.currentStepIndex       = 0;
+        Diagram.app                 = app;
         this.allSteps.add(new Step());
-        this.app = app;
     }
 
     public List<Pattern> getPatterns() {
@@ -122,6 +123,15 @@ public class Diagram {
         }
 
         logger.info("Redo 2 step, new step={} < max", this.getCurrentStepIndex());
+    }
+
+    public static void newStep(Set<Knot> displayedKnots, Set<Knot> selectedKnots, Circle... handle) {
+        new Step(app,
+                app.getOptionalDotGrid().getDiagram(),
+                displayedKnots,
+                selectedKnots,
+                handle
+        );
     }
 
     public void deleteNodesFromFollowingSteps(App app, Knot knot) {

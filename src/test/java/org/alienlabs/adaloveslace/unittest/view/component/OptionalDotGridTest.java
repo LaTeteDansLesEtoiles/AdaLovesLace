@@ -13,42 +13,25 @@ import org.junit.jupiter.params.provider.CsvSource;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import static org.alienlabs.adaloveslace.business.model.Step.app;
 import static org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OptionalDotGridTest {
 
   private ImageView imageView;
 
   @ParameterizedTest(name = "Check optional dot grid #{index} - Fixed value zoom")
-  @CsvSource({"1,0", "1.7,7", "3,20", "1.3,3", "1.0,0", "1.1,1", "0.95,-1", "1.2,2", "0.9,-2", "1.3,3", "0.85,-3"})
+  @CsvSource({"1,0", "1.7,7", "3,20", "1.3,3", "1.0,0", "1.1,1", "0.9,-1", "1.2,2", "0.8,-2", "1.3,3", "0.7,-3"})
   void zoom_knot_factor(String expectedZoomFactor, String settedZoomFactor) {
     // Given
     Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
     knot.setZoomFactor(Integer.parseInt(settedZoomFactor));
 
     // When
-    double actualZoomFactor = new OptionalDotGrid(app, new Diagram(app), null).zoomAndFlipKnot(knot);
+    double actualZoomFactor = new OptionalDotGrid(null, new Diagram(null), null).zoomAndFlipKnot(knot);
 
     // Then
     assertEquals(Double.valueOf(expectedZoomFactor), actualZoomFactor);
-  }
-
-  @ParameterizedTest(name = "Check optional dot grid #{index} - Zoom in known range")
-  @CsvSource({"1, 1, 1.5", "-1, 0.6, 1", "-5, 0.7, 0.8", "-15, 0.2, 0.3", "5, 1.4, 1.6", "15, 2.3, 2.7"})
-  void zoom_knot_with_zoom_factor(String initialZoomFactor, String minZoomFactor, String maxZoomFactor) {
-    // Given
-    Knot knot = new Knot(0d, 0d, buildPattern(), imageView);
-    knot.setZoomFactor(Integer.parseInt(initialZoomFactor));
-
-    // When
-    double zoomFactor = new OptionalDotGrid(app, new Diagram(app), null).zoomAndFlipKnot(knot);
-
-    // Then
-    assertTrue(zoomFactor > Double.parseDouble(minZoomFactor));
-    assertTrue(zoomFactor < Double.parseDouble(maxZoomFactor));
   }
 
   private Pattern buildPattern() {

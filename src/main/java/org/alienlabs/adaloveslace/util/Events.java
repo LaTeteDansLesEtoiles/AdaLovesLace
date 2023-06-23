@@ -7,12 +7,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.MOUSE_CLICKED;
 
 public class Events {
@@ -98,7 +98,6 @@ public class Events {
     double x          = event.getSceneX();
     double y          = event.getSceneY();
 
-    Circle handle = (Circle)app.getOptionalDotGrid().getDragOriginKnot().getHandle();
     app.getOptionalDotGrid().clearAllKnotDecorations();
     app.getOptionalDotGrid().clearKnotHandles();
     app.getOptionalDotGrid().clearKnotSelections();
@@ -146,12 +145,7 @@ public class Events {
     handle.setCenterX(handle.getCenterX() + deltaX);
     handle.setCenterY(handle.getCenterY() + deltaY);
 
-    new Step(app,
-            app.getOptionalDotGrid().getDiagram(),
-            displayedKnots,
-            copiedKnots,
-            handle
-    );
+    newStep(displayedKnots, copiedKnots, handle);
   }
 
   public static Set<Knot> moveDraggedAndDroppedNodesWithCopy(App app, double x, double y, Circle handle) {
