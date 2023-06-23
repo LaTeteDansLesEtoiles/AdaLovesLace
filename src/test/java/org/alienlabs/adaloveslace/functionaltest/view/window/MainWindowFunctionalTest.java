@@ -8,8 +8,6 @@ import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotBu
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ResetDiagramButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
@@ -23,10 +21,6 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   public static final double  WHITE_PIXEL_X               = 86d;
   public static final long    WHITE_PIXEL_Y               = 75L;
   public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xccccccff");
-
-  private Stage primaryStage;
-
-  private static final Logger logger                      = LoggerFactory.getLogger(MainWindowFunctionalTest.class);
 
   /**
    * Init method called before each test
@@ -56,13 +50,14 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testDrawSnowflake(FxRobot robot) {
     // Given
-    selectAndClickOnSnowflakePatternButton(robot);
-    drawFirstSnowflake(robot);
+    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+    synchronizeTask(() -> drawASnowflake(robot));
+    sleepMainThread();
 
     // When
     // Move mouse and get the color of the pixel under the pointer
     Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
-    robot.moveTo(pointToCheck);
+    synchronizeTask(() -> robot.moveTo(pointToCheck));
 
     // Then
     foundColorOnGrid = getColor(pointToCheck);
@@ -129,8 +124,8 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testUndoSnowflake(FxRobot robot) {
     // Given
-    selectAndClickOnSnowflakePatternButton(robot);
-    drawFirstSnowflake(robot);
+    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+    synchronizeTask(() -> drawASnowflake(robot));
 
     Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
 
@@ -158,8 +153,8 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testRedoSnowflake(FxRobot robot) {
     // Given
-    selectAndClickOnSnowflakePatternButton(robot);
-    drawFirstSnowflake(robot);
+    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+    synchronizeTask(() -> drawASnowflake(robot));
 
     Point2D snowflakePoint = new Point2D(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
 
@@ -188,10 +183,10 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
    * @param robot The injected FxRobot
    */
   @Test
-  void testResetSnowflake(FxRobot robot) {
+  void testResetGrid(FxRobot robot) {
     // Given
-    selectAndClickOnSnowflakePatternButton(robot);
-    drawFirstSnowflake(robot);
+    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+    synchronizeTask(() -> drawASnowflake(robot));
 
     // Move mouse and get the color of the pixel under the pointer
     Point2D pointToCheck = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);

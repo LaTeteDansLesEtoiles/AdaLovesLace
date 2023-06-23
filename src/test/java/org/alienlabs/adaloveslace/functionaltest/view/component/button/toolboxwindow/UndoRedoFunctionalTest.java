@@ -29,7 +29,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     void test_add_a_knot_then_undo_step_then_redo_step(final FxRobot robot) {
         // Given
         synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-        synchronizeTask(() -> drawFirstSnowflake(robot));
+        synchronizeTask(() -> drawASnowflake(robot));
 
         Point2D pointToCheck = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
         robot.moveTo(pointToCheck);
@@ -67,7 +67,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     void test_add_2_knots_then_undo_a_step_then_make_another_step(final FxRobot robot) {
         // Given
         synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-        synchronizeTask(() -> drawFirstSnowflake(robot));
+        synchronizeTask(() -> drawASnowflake(robot));
         synchronizeTask(() -> drawSecondSnowflakeWithoutFocusClick(robot));
 
         Point2D snowflakePoint = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);

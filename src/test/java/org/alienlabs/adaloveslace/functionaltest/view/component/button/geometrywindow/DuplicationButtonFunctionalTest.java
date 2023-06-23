@@ -31,7 +31,7 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
     // Given
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawSecondSnowflake(robot));
-    synchronizeTask(() -> drawFirstSnowflake(robot));
+    synchronizeTask(() -> drawASnowflake(robot));
     synchronizeTask(() -> clickSelectButton(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
 
@@ -40,12 +40,26 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     this.sleepMainThread();
+    // 2 selected knots: the original and the copy
+    assertEquals(2, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size());
+    assertEquals(1, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().size());
+
+    assertEquals(215d,
+            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+                    sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).
+                    findFirst().get().getX());
     assertEquals(230d,
-            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getX());
+            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+                    sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).
+                    toList().get(1).getX());
+    assertEquals(135d,
+            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+                    sorted(Comparator.comparing(knot -> Double.valueOf(knot.getY()))).
+                    findFirst().get().getY());
     assertEquals(150d,
-            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().findFirst().get().getY());
-    assertEquals(1, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size());
-    assertEquals(2, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().size());
+            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+                    sorted(Comparator.comparing(knot -> Double.valueOf(knot.getY()))).
+                    toList().get(1).getY());
   }
 
   /**
@@ -58,7 +72,7 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
     // Given
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawSecondSnowflake(robot));
-    synchronizeTask(() -> drawFirstSnowflake(robot));
+    synchronizeTask(() -> drawASnowflake(robot));
     synchronizeTask(() -> clickSelectButton(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
 
@@ -85,37 +99,52 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
     // Given
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawOtherSnowflake(robot)); // Not to be duplicated
-    synchronizeTask(() -> drawFirstSnowflake(robot)); // To duplicate
+    synchronizeTask(() -> drawASnowflake(robot)); // To duplicate
     synchronizeTask(() -> drawSecondSnowflake(robot)); // To duplicate
     this.sleepMainThread();
+
     synchronizeTask(() -> clickSelectButton(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
     this.sleepMainThread();
+
     synchronizeTask(() -> selectSecondKnotWithControlKeyPressed(robot)); // The first 2 snowflakes shall be selected, ready to be copied
     this.sleepMainThread();
-    synchronizeTask(() -> unselectControlKey(robot)); // The first 2 snowflakes shall be selected, ready to be copied
 
     // When
     this.sleepMainThread();
     synchronizeTask(() -> duplicateKnots(robot)); // Copy the first 2 snowflakes
+    this.sleepMainThread();
 
     // Then
-    this.sleepMainThread();
-    // First copied knot
-    assertEquals(230d,
-            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
-                    min(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).get().getX());
-    assertEquals(150d,
-            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
-                    min(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).get().getY());
+    assertEquals(4,
+            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size(),
+            "We shall have 4 selected knots!");
 
-    // Second copied knot
-    assertEquals(330d,
+    assertEquals(215d,
+            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+                    sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).toList().get(0).getX());
+    assertEquals(245d,
             this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
                     sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).toList().get(1).getX());
-    assertEquals(150d,
+    assertEquals(315d,
             this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
-                    sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).toList().get(1).getY());
+                    sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).toList().get(2).getX());
+    assertEquals(345d,
+            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+                    sorted(Comparator.comparing(knot -> Double.valueOf(knot.getX()))).toList().get(3).getX());
+
+    assertEquals(135d,
+            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+                    sorted(Comparator.comparing(knot -> Double.valueOf(knot.getY()))).toList().get(0).getY());
+    assertEquals(135d,
+            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+                    sorted(Comparator.comparing(knot -> Double.valueOf(knot.getY()))).toList().get(1).getY());
+    assertEquals(165d,
+            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+                    sorted(Comparator.comparing(knot -> Double.valueOf(knot.getY()))).toList().get(2).getY());
+    assertEquals(165d,
+            this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
+                    sorted(Comparator.comparing(knot -> Double.valueOf(knot.getY()))).toList().get(3).getY());
   }
 
   /**
@@ -129,7 +158,7 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawOtherSnowflake(robot)); // Not to be duplicated
     synchronizeTask(() -> drawSecondSnowflake(robot)); // To duplicate
-    synchronizeTask(() -> drawFirstSnowflake(robot)); // To duplicate
+    synchronizeTask(() -> drawASnowflake(robot)); // To duplicate
     synchronizeTask(() -> clickSelectButton(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
     synchronizeTask(() -> selectSecondKnotWithControlKeyPressed(robot)); // The first 2 snowflakes shall be selected, ready to be copied

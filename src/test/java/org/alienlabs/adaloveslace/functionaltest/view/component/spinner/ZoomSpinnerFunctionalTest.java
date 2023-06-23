@@ -40,7 +40,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    *
    */
   @ParameterizedTest(name = "Check changing first zoom value #{index}")
-  @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.95", "-2, 0.9", "-3, 0.85", "0, 1"})
+  @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.9", "-2, 0.8", "-3, 0.7", "0, 1"})
   void should_react_to_first_zoom_value(int spinnerValue, double expectedZoomFactor) {
     // Given
     initDrawAndSelectSnowFlake(new FxRobot());
@@ -58,7 +58,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    *
    */
   @ParameterizedTest(name = "Check changing second zoom value #{index}")
-  @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.95", "-2, 0.9", "-3, 0.85", "0, 1"})
+  @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.9", "-2, 0.8", "-3, 0.7", "0, 1"})
   void should_react_to_second_zoom_value(int spinnerValue, double expectedZoomFactor) {
     // Given
     initDrawAndSelectSnowFlake(new FxRobot());
@@ -75,7 +75,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    *
    */
   @ParameterizedTest(name = "Check changing third zoom value #{index}")
-  @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.95", "-2, 0.9", "-3, 0.85", "0, 1"})
+  @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.9", "-2, 0.8", "-3, 0.7", "0, 1"})
   void should_react_to_third_zoom_value(int spinnerValue, double expectedZoomFactor) {
     // Given
     initDrawAndSelectSnowFlake(new FxRobot());

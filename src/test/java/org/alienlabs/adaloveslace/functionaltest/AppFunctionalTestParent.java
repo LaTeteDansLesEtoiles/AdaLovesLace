@@ -10,11 +10,11 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
@@ -115,7 +115,7 @@ public class AppFunctionalTestParent {
   }
 
   // Click on the grid with the snowflake selected in order to draw a snowflake on the grid
-  protected void drawFirstSnowflake(FxRobot robot) {
+  protected void drawASnowflake(FxRobot robot) {
     Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     app.getMainWindow().getOptionalDotGrid().requestFocus();
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
@@ -257,10 +257,21 @@ public class AppFunctionalTestParent {
       this.primaryStage.getY() + imageView.getBoundsInParent().getCenterY() + 10d);
   }
 
+  // @see https://stackoverflow.com/questions/23741574/how-to-get-the-absolute-rotation-of-a-node-in-javafx
   protected double getSnowFlakeRotationAngle() {
-    return ((Rotate) (this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-      stream().findFirst().get().getImageView().getTransforms().stream().filter(transform -> transform instanceof Rotate).findFirst()
-      .get())).getAngle();
+    for (Knot k :  this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
+      double angle = Math.toDegrees(
+              Math.atan2(
+                      -k.getImageView().getLocalToSceneTransform().getMxy(),
+                      k.getImageView().getLocalToSceneTransform().getMxx()
+              )
+      );
+      if (angle != 0) {
+        return (double)Math.round(angle);
+      }
+    }
+
+    return 0;
   }
 
   protected double getSnowFlakeZoomFactor() {
@@ -271,10 +282,17 @@ public class AppFunctionalTestParent {
 
   protected void initDrawAndSelectSnowFlake(FxRobot robot) {
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-    synchronizeTask(() -> drawFirstSnowflake(robot));
+    synchronizeTask(() -> drawASnowflake(robot));
     synchronizeTask(() -> clickSelectButton(robot));
     synchronizeTask(() -> selectFirstSnowflake(robot));
   }
+
+  protected void drawSnowFlake(FxRobot robot, double x, double y) {
+    Point2D snowflakeOnTheGrid = newPointOnGrid(x, y);
+    app.getMainWindow().getOptionalDotGrid().requestFocus();
+    robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
+  }
+
   protected void initDrawAndSelectColorWheel(FxRobot robot) {
     synchronizeTask(() -> selectAndClickOnColorWheelPatternButton(robot));
     synchronizeTask(() -> drawFirstColorWheel(robot));
@@ -284,6 +302,7 @@ public class AppFunctionalTestParent {
 
   protected void duplicateKnots(FxRobot robot) {
     this.geometryWindow.getDuplicationButton().requestFocus();
+    this.sleepMainThread();
     robot.clickOn(this.geometryWindow.getDuplicationButton(), Motion.DEFAULT, MouseButton.PRIMARY);
   }
 

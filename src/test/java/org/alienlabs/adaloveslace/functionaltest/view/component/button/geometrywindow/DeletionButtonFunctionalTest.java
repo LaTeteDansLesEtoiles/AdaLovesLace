@@ -31,7 +31,7 @@ class DeletionButtonFunctionalTest extends AppFunctionalTestParent {
     // Given
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawSecondSnowflake(robot));
-    synchronizeTask(() -> drawFirstSnowflake(robot));
+    synchronizeTask(() -> drawASnowflake(robot));
 
     // When
     synchronizeTask(() -> selectDeleteMode(robot));
@@ -60,7 +60,7 @@ class DeletionButtonFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawOtherSnowflake(robot)); // Not to be duplicated
     synchronizeTask(() -> drawSecondSnowflake(robot));
-    synchronizeTask(() -> drawFirstSnowflake(robot));
+    synchronizeTask(() -> drawASnowflake(robot));
 
     // When
     synchronizeTask(() -> selectDeleteMode(robot));

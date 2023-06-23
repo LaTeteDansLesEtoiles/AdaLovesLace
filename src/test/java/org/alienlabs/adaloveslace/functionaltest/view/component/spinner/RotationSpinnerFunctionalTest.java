@@ -52,7 +52,8 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     synchronizeTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner1()));
 
     // Then
-    assertRotationAnglesEqual(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle());
+    synchronizeTask(() -> assertRotationAnglesEqual(
+            DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle()));
   }
 
   /**
@@ -148,9 +149,9 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
    */
   @ParameterizedTest(name = "Check changing first rotation value #{index}")
   @CsvSource({"1", "20", "50", "100", "200", "-1", "-20", "-50", "-100", "-200", "0"})
-  void any_rotation_spinner_should_react_to_the_first_rotation_value_change(int spinnerValue) {
+  void any_rotation_spinner_should_react_to_the_first_rotation_value_change(int spinnerValue, FxRobot robot) {
     // Given
-    initDrawAndSelectSnowFlake(new FxRobot());
+    initDrawAndSelectSnowFlake(robot);
 
     // When
     synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getRotationSpinner1(), spinnerValue));
@@ -166,11 +167,11 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
    * contain the right value when choosing a value in the second one
    *
    */
-  @ParameterizedTest(name = "Check changing second zoom value #{index}")
+  @ParameterizedTest(name = "Check changing second rotation value #{index}")
   @CsvSource({"1", "20", "50", "100", "200", "-1", "-20", "-50", "-100", "-200", "0"})
-  void any_rotation_spinner_should_react_to_the_second_rotation_value_change(int spinnerValue) {
+  void any_rotation_spinner_should_react_to_the_second_rotation_value_change(int spinnerValue, FxRobot robot) {
     // Given
-    initDrawAndSelectSnowFlake(new FxRobot());
+    initDrawAndSelectSnowFlake(robot);
 
     // When
     synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getRotationSpinner2(), spinnerValue));
@@ -188,10 +189,9 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
    */
   @ParameterizedTest(name = "Check changing third zoom value #{index}")
   @CsvSource({"1", "20", "50", "100", "200", "-1", "-20", "-50", "-100", "-200", "0"})
-  void any_rotation_spinner_should_react_to_third_rotation_value_change(int spinnerValue) {
+  void any_rotation_spinner_should_react_to_third_rotation_value_change(int spinnerValue, FxRobot robot) {
     // Given
-    initDrawAndSelectSnowFlake(new FxRobot());
-
+    initDrawAndSelectSnowFlake(robot);
     // When
     synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getRotationSpinner3(), spinnerValue));
 
