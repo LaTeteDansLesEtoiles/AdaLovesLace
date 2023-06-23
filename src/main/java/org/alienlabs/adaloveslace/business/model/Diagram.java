@@ -125,12 +125,12 @@ public class Diagram {
         logger.info("Redo 2 step, new step={} < max", this.getCurrentStepIndex());
     }
 
-    public static void newStep(Set<Knot> displayedKnots, Set<Knot> selectedKnots, Circle... handle) {
+    public static void newStep(Set<Knot> displayedKnots, Set<Knot> selectedKnots, boolean layoutChildren, Circle... handle) {
         new Step(app,
                 app.getOptionalDotGrid().getDiagram(),
                 displayedKnots,
                 selectedKnots,
-                handle
+                layoutChildren, handle
         );
     }
 
@@ -210,7 +210,7 @@ public class Diagram {
     }
 
     public void setApp(App app) {
-        this.app = app;
+        Diagram.app = app;
     }
 
 }

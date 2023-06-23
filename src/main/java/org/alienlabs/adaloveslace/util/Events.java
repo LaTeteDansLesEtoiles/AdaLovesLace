@@ -145,7 +145,7 @@ public class Events {
     handle.setCenterX(handle.getCenterX() + deltaX);
     handle.setCenterY(handle.getCenterY() + deltaY);
 
-    newStep(displayedKnots, copiedKnots, handle);
+    newStep(displayedKnots, copiedKnots, true, handle);
   }
 
   public static Set<Knot> moveDraggedAndDroppedNodesWithCopy(App app, double x, double y, Circle handle) {

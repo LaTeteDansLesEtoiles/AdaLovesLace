@@ -40,7 +40,7 @@ public class DownButton extends Button {
       logger.debug("Moving down knot {}", knot);
     }
 
-    newStep(displayedKnots, copiedKnots);
+    newStep(displayedKnots, copiedKnots, true);
   }
 
 }

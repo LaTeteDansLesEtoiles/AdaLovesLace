@@ -51,7 +51,7 @@ public class HorizontalFlippingButton extends ImageButton {
 
     displayedKnots.removeAll(selectedKnots);
 
-    newStep(displayedKnots, selectedKnotsCopy);
+    newStep(displayedKnots, selectedKnotsCopy, true);
   }
 
 }

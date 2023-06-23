@@ -44,7 +44,7 @@ public class ZoomSpinner {
           copiedKnots.add(copiedKnot);
         }
 
-        newStep(displayedKnots, copiedKnots);
+        newStep(displayedKnots, copiedKnots, true);
       }
 
       if (numberOfUpdates > 2) {

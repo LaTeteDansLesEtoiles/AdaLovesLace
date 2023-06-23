@@ -41,7 +41,7 @@ public class UpRightButton extends Button {
       logger.debug("Moving up right knot {}", copiedKnot);
     }
 
-    newStep(displayedKnots, copiedKnots);
+    newStep(displayedKnots, copiedKnots, true);
   }
 
 }

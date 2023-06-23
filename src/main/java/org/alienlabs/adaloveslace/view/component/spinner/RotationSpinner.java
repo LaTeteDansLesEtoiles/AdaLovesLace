@@ -43,7 +43,7 @@ public class RotationSpinner {
           copiedKnots.add(copiedKnot);
         }
 
-        newStep(displayedKnots, copiedKnots);
+        newStep(displayedKnots, copiedKnots, true);
       }
 
       if (numberOfUpdates > 2) {

@@ -274,7 +274,7 @@ public class MainWindow {
           displayedKnots.remove(knot);
           app.getOptionalDotGrid().getAllHoveredKnots().add(copiedKnot);
 
-          newStep(displayedKnots, selectedKnots);
+          newStep(displayedKnots, selectedKnots, true);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
         } else {
           app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
@@ -289,7 +289,7 @@ public class MainWindow {
           // But we don't want it selected!
           selectedKnots.remove(knot);
 
-          newStep(displayedKnots, selectedKnots);
+          newStep(displayedKnots, selectedKnots, true);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
         }
 
@@ -311,7 +311,7 @@ public class MainWindow {
           selectedKnots.clear();
           selectedKnots.add(copiedKnot);
 
-          newStep(displayedKnots, selectedKnots);
+          newStep(displayedKnots, selectedKnots, true);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
 
           break;
@@ -320,7 +320,7 @@ public class MainWindow {
           selectedKnots.remove(knot);
           displayedKnots.removeAll(new HashSet<>(selectedKnots));
 
-          newStep(displayedKnots, selectedKnots);
+          newStep(displayedKnots, selectedKnots, true);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
         }
 
@@ -333,7 +333,7 @@ public class MainWindow {
       displayedKnots.addAll(new HashSet<>(selectedKnots));
       selectedKnots.clear();
 
-      newStep(displayedKnots, selectedKnots);
+      newStep(displayedKnots, selectedKnots, true);
     }
   }
 
@@ -355,7 +355,7 @@ public class MainWindow {
     Set<Knot> selectedKnotsToFilterOut = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
     selectedKnotsToFilterOut.remove(knot);
 
-    newStep(displayedKnotsToFilterOut, selectedKnotsToFilterOut);
+    newStep(displayedKnotsToFilterOut, selectedKnotsToFilterOut, true);
 
     logger.debug("Removing Knot {}, current index = {}", knot, diagram.getCurrentStepIndex());
   }

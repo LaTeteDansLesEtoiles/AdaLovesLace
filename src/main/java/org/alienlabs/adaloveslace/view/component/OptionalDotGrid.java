@@ -509,7 +509,7 @@ public class OptionalDotGrid extends Pane {
       Set<Knot> displayed = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
       displayed.add(currentKnot);
 
-      newStep(displayed, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+      newStep(displayed, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots(), true);
     } catch (IOException e) {
       logger.error("Problem with pattern resource file!", e);
     }

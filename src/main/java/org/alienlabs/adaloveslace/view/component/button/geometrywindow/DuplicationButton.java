@@ -55,7 +55,7 @@ public class DuplicationButton extends ToggleButton {
       selectedKnotsCopy.add(copiedKnot);
     }
 
-    newStep(displayedKnots, selectedKnotsCopy);
+    newStep(displayedKnots, selectedKnotsCopy, true);
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(false);

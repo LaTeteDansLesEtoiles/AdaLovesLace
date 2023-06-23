@@ -41,7 +41,7 @@ public class DownRightButton extends Button {
       logger.debug("Moving down right knot {}", knot);
     }
 
-    newStep(displayedKnots, copiedKnots);
+    newStep(displayedKnots, copiedKnots, true);
   }
 
 }

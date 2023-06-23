@@ -42,7 +42,7 @@ public class UpLeftButton extends Button {
 
     }
 
-    newStep(displayedKnots, copiedKnots);
+    newStep(displayedKnots, copiedKnots, true);
   }
 
 }

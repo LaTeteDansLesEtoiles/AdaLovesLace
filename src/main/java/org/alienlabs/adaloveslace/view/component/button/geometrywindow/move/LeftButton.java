@@ -40,7 +40,7 @@ public class LeftButton extends Button {
       logger.debug("Moving left knot {}", knot);
     }
 
-    newStep(displayedKnots, copiedKnots);
+    newStep(displayedKnots, copiedKnots, true);
   }
 
 }

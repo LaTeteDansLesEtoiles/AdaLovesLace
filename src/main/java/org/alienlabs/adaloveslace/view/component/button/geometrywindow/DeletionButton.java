@@ -46,7 +46,7 @@ public class DeletionButton extends ToggleButton {
     displayedKnots.removeAll(selectedKnots);
     selectedKnots.clear();
 
-    newStep(displayedKnots, selectedKnots);
+    newStep(displayedKnots, selectedKnots, true);
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(false);

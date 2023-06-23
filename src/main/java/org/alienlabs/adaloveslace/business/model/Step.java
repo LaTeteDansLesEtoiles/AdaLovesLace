@@ -44,12 +44,13 @@ public class Step implements Comparable<Step> {
      * @param diagram        the diagram onto which to work
      * @param displayedKnots the knots to add to the new Step as displayed
      * @param selectedKnots  the knots to add to the new Step as selected
+     * @param layoutChildren
      */
-
     public Step(App app,
                 Diagram diagram,
                 Set<Knot> displayedKnots,
                 Set<Knot> selectedKnots,
+                boolean layoutChildren,
                 Circle... handle
     ) {
         this.app = app;
@@ -62,18 +63,22 @@ public class Step implements Comparable<Step> {
         this.selectedKnots.removeAll(this.displayedKnots);
 
         this.stepIndex = diagram.getCurrentStepIndex() + 1;
+        clearStepsGreaterThanPresentStep(app.getOptionalDotGrid().getDiagram());
 
         diagram.setCurrentStepIndex(this.stepIndex);
         diagram.getAllSteps().add(this);
 
         this.handle = handle;
 
-        app.getOptionalDotGrid().layoutChildren();
+        // For testability
+        if (layoutChildren) {
+            app.getOptionalDotGrid().layoutChildren();
+        }
     }
 
-    public static void clearStepsGreaterThanPresentStep(Diagram diagram) {
+    private void clearStepsGreaterThanPresentStep(Diagram diagram) {
         List<Step> stepsToRemove = new ArrayList<>(diagram.getAllSteps().stream()
-                .filter(step1 -> (step1.stepIndex > diagram
+                .filter(step1 -> (step1.getStepIndex() > diagram
                         .getCurrentStepIndex()))
                 .toList());
         diagram.getAllSteps().removeAll(stepsToRemove);
