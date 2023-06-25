@@ -7,12 +7,10 @@ import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
@@ -30,7 +28,6 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
-import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 import static org.alienlabs.adaloveslace.util.NodeUtil.HANDLE_SIZE;
 
@@ -39,14 +36,10 @@ import static org.alienlabs.adaloveslace.util.NodeUtil.HANDLE_SIZE;
  */
 public class OptionalDotGrid extends Pane {
 
-  public static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
   private static final double RADIUS    = 0.5d; // The dots are ellipses, this is their radius
   double GRID_WIDTH                     = 1240d;
   double GRID_HEIGHT                    = 600d;
   public static final double TOP_MARGIN = 10d;
-
-  private static final double SPACING_X = 25d; // The X space between the dots
-  private static final double SPACING_Y = 10d; // The Y space between the dots
 
   private final SimpleBooleanProperty   showHideGridProperty;
   private final SimpleObjectProperty<Pattern> currentPatternProperty;
@@ -76,11 +69,7 @@ public class OptionalDotGrid extends Pane {
   public OptionalDotGrid(App app, Diagram diagram, Group root) {
     this.app = app;
     this.root = root;
-    if (diagram != null) {
-      this.diagram = diagram;
-    } else {
-      this.diagram = new Diagram(app);
-    }
+    this.diagram = Objects.requireNonNullElseGet(diagram, () -> new Diagram(app));
 
     this.desiredRadius = RADIUS;
 
@@ -457,7 +446,7 @@ public class OptionalDotGrid extends Pane {
     root.setLayoutY(top);
 
     if (this.showHideGrid && this.gridNeedsToBeRedrawn) {
-      drawGrid(width, height);
+      this.diagram.drawGrid(width, height, desiredRadius, grid);
     } else {
       hideGrid();
     }
@@ -465,53 +454,9 @@ public class OptionalDotGrid extends Pane {
     this.gridNeedsToBeRedrawn = false;
   }
 
-  private void hideGrid() {
+  public void hideGrid() {
     for (Shape shape : grid) {
       root.getChildren().remove(shape);
-    }
-  }
-
-  private void drawGrid(double w, double h) {
-    hideGrid();
-
-    for (double x = 40d; x < (w - 185d); x += SPACING_X) {
-      for (double y = 60d; y < (h - 50d); y += SPACING_Y) {
-        double offsetY = (y % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
-        Ellipse ell = new Ellipse(x - this.desiredRadius + offsetY,y - this.desiredRadius,this.desiredRadius,this.desiredRadius); // A dot
-        ell.setFill(GRID_COLOR);
-        ell.toFront();
-
-        grid.add(ell);
-        root.getChildren().add(ell);
-      }
-    }
-  }
-
-  public void drawKnot(double x, double y) {
-    Pattern currentPattern = this.diagram.getCurrentPattern();
-    logger.debug("Current pattern  -> {}", currentPattern);
-    Knot currentKnot = null;
-
-    try (FileInputStream fis = new FileInputStream(new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, currentPattern.getFilename()))) {
-      Image image = new Image(fis);
-      ImageView iv = new ImageView(image);
-
-      iv.setX(x);
-      iv.setY(y);
-      iv.setRotate(0d);
-
-      logger.debug("Top left corner of the knot {} is ({},{})", currentPattern.getFilename(), x, y);
-
-      root.getChildren().add(iv);
-      currentKnot = new Knot(x, y, currentPattern, iv);
-      diagram.setCurrentKnot(currentKnot);
-
-      Set<Knot> displayed = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-      displayed.add(currentKnot);
-
-      newStep(displayed, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots(), true);
-    } catch (IOException e) {
-      logger.error("Problem with pattern resource file!", e);
     }
   }
 

@@ -5,16 +5,24 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import javafx.scene.Group;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
 import org.alienlabs.adaloveslace.App;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
+import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 
 /**
  * What is drawn on a Canvas: the Diagram is the desired, final business object consisting of Knots drawn with Patterns.
@@ -52,6 +60,15 @@ public class Diagram {
 
     @XmlTransient
     private static final Logger logger = LoggerFactory.getLogger(Diagram.class);
+
+    @XmlTransient
+    private static final double SPACING_X = 25d; // The X space between the dots
+
+    @XmlTransient
+    private static final double SPACING_Y = 10d; // The Y space between the dots
+
+    @XmlTransient
+    private static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
 
     // For JAXB
     public Diagram() {
@@ -132,6 +149,47 @@ public class Diagram {
                 selectedKnots,
                 layoutChildren, handle
         );
+    }
+    public void drawGrid(double w, double h, double desiredRadius, Set<Shape> grid) {
+        app.getOptionalDotGrid().hideGrid();
+
+        for (double x = 40d; x < (w - 185d); x += SPACING_X) {
+            for (double y = 60d; y < (h - 50d); y += SPACING_Y) {
+                double offsetY = (y % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
+                Ellipse ell = new Ellipse(x - desiredRadius + offsetY,y - desiredRadius, desiredRadius, desiredRadius); // A dot
+                ell.setFill(GRID_COLOR);
+                ell.toFront();
+
+                grid.add(ell);
+                app.getOptionalDotGrid().getRoot().getChildren().add(ell);
+            }
+        }
+    }
+
+    public void drawKnot(double x, double y) {
+        logger.debug("Current pattern  -> {}", this.getCurrentPattern());
+
+        try (FileInputStream fis = new FileInputStream(new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, this.getCurrentPattern().getFilename()))) {
+            Image image = new Image(fis);
+            ImageView iv = new ImageView(image);
+
+            iv.setX(x);
+            iv.setY(y);
+            iv.setRotate(0d);
+
+            logger.debug("Top left corner of the knot {} is ({},{})", this.getCurrentPattern().getFilename(), x, y);
+
+            app.getOptionalDotGrid().getRoot().getChildren().add(iv);
+            currentKnot = new Knot(x, y, this.getCurrentPattern(), iv);
+            this.setCurrentKnot(currentKnot);
+
+            Set<Knot> displayed = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+            displayed.add(currentKnot);
+
+            newStep(displayed, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots(), true);
+        } catch (IOException e) {
+            logger.error("Problem with pattern resource file!", e);
+        }
     }
 
     public void deleteNodesFromFollowingSteps(App app, Knot knot) {

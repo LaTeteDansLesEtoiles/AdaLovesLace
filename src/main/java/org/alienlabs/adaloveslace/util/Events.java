@@ -95,9 +95,6 @@ public class Events {
             app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
             app.getOptionalDotGrid().getDiagram().getCurrentMode());
 
-    double x          = event.getSceneX();
-    double y          = event.getSceneY();
-
     app.getOptionalDotGrid().clearAllKnotDecorations();
     app.getOptionalDotGrid().clearKnotHandles();
     app.getOptionalDotGrid().clearKnotSelections();
@@ -148,28 +145,9 @@ public class Events {
     newStep(displayedKnots, copiedKnots, true, handle);
   }
 
-  public static Set<Knot> moveDraggedAndDroppedNodesWithCopy(App app, double x, double y, Circle handle) {
-    double deltaX = handle.getCenterX() < x ? -(handle.getCenterX() - x) : (x - handle.getCenterX());
-    double deltaY = handle.getCenterY() < y ? -(handle.getCenterY() - y) : (y - handle.getCenterY());
-
-    Set<Knot> copy = new HashSet<>();
-
-    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
-      logger.debug("Knot to move");
-
-      Knot knotCopy = new NodeUtil().copyKnotCloningImageView(knot);
-      knotCopy.setX(knotCopy.getX() + deltaX);
-      knotCopy.setY(knotCopy.getY() + deltaY);
-
-      copy.add(knotCopy);
-    }
-
-    return copy;
-  }
-
   private static void processMouseClick(double x, double y) {
     switch (app.getOptionalDotGrid().getDiagram().getCurrentMode()) {
-      case DRAWING          -> app.getOptionalDotGrid().drawKnot(x, y);
+      case DRAWING          -> app.getOptionalDotGrid().getDiagram().drawKnot(x, y);
       case SELECTION, MOVE  -> app.getMainWindow().onClickWithSelectionMode(app, x, y);
       case DELETION         -> app.getMainWindow().onClickWithDeletionMode(app, app.getOptionalDotGrid().getDiagram(), x, y) ;
       case DUPLICATION      -> {}
