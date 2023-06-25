@@ -293,13 +293,6 @@ public class AppFunctionalTestParent {
     robot.clickOn(snowflakeOnTheGrid, Motion.DEFAULT, MouseButton.PRIMARY);
   }
 
-  protected void initDrawAndSelectColorWheel(FxRobot robot) {
-    synchronizeTask(() -> selectAndClickOnColorWheelPatternButton(robot));
-    synchronizeTask(() -> drawFirstColorWheel(robot));
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectFirstColorWheel(robot));
-  }
-
   protected void duplicateKnots(FxRobot robot) {
     this.geometryWindow.getDuplicationButton().requestFocus();
     this.sleepMainThread();
