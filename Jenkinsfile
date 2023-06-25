@@ -25,7 +25,7 @@ node {
         }
     }
 
-    wrap([$class: 'Xvfb']) {
+    wrap([$class: 'Xvfb', screen: '1920x1080x24', timeout: 25]) {
 
         stage('functional tests') {
           try {
