@@ -13,10 +13,11 @@
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <test-plugins.version>3.0.0-M8</test-plugins.version>
     <javafx.version>19</javafx.version>
-    <itext.version>7.2.2</itext.version>
+    <itext.version>8.0.0</itext.version>
     <testfx.version>4.0.16-alpha</testfx.version>
     <junit.version>5.8.2</junit.version>
     <logback.version>1.3.0-alpha16</logback.version>
+    <dependency-check-maven.version>8.3.1</dependency-check-maven.version>
   </properties>
 
   <dependencies>
@@ -224,6 +225,21 @@
           </excludes>
           <argLine>@{argLine} --add-exports javafx.graphics/com.sun.javafx.application=org.testfx</argLine>
           <skipITs>${skipFTs}</skipITs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>${dependency-check-maven.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <failBuildOnCVSS>7</failBuildOnCVSS>
         </configuration>
       </plugin>
 

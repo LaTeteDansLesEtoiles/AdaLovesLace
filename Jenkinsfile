@@ -93,10 +93,22 @@ node {
                 issues: [spotBugs_report]
             )
         }
-
-        stage('packaging') {
-            sh "./mvnw package -P linux -DskipUTs=true -DskipFTs=true"
-            archiveArtifacts artifacts: '**/target/artifacts/*.deb,**/target/artifacts/*.rpm,**/target/artifacts/*.AppImage', fingerprint: true
-        }
     }
+
+    stage ('OWASP Check') {
+
+        dependencyCheck additionalArguments: '''
+            -o "./"
+            -s "./"
+            -f "ALL"
+            --prettyPrint''', odcInstallation: 'OWASP-DC'
+
+        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+    }
+
+    stage('packaging') {
+        sh "./mvnw package -P linux -DskipUTs=true -DskipFTs=true"
+        archiveArtifacts artifacts: '**/target/artifacts/*.deb,**/target/artifacts/*.rpm,**/target/artifacts/*.AppImage', fingerprint: true
+    }
+
 }
