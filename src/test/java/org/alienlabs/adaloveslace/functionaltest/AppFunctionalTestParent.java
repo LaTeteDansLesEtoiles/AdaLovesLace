@@ -42,7 +42,7 @@ public class AppFunctionalTestParent {
   public App app;
 
   // For tests:
-  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME", 2500L);
+  public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME", 2_500L);
   public static final long   WAIT_TIME                    = Long.getLong("WAIT_TIME", 5_000L);
   public static final double GRID_WIDTH                   = 600d;
   public static final double GRID_HEIGHT                  = 420d;

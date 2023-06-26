@@ -268,14 +268,12 @@ public class MainWindow {
           app.getOptionalDotGrid().getAllHoveredKnots().clear();
 
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
-          displayedKnots.addAll(new HashSet<>(selectedKnots));
           selectedKnots.clear();
           selectedKnots.add(copiedKnot);
           displayedKnots.remove(knot);
-          app.getOptionalDotGrid().getAllHoveredKnots().add(copiedKnot);
 
-          newStep(displayedKnots, selectedKnots, true);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          newStep(displayedKnots, selectedKnots, true);
         } else {
           app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
 
@@ -289,8 +287,8 @@ public class MainWindow {
           // But we don't want it selected!
           selectedKnots.remove(knot);
 
-          newStep(displayedKnots, selectedKnots, true);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          newStep(displayedKnots, selectedKnots, true);
         }
 
         break;
@@ -311,8 +309,8 @@ public class MainWindow {
           selectedKnots.clear();
           selectedKnots.add(copiedKnot);
 
-          newStep(displayedKnots, selectedKnots, true);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          newStep(displayedKnots, selectedKnots, true);
 
           break;
         } else {
@@ -320,8 +318,8 @@ public class MainWindow {
           selectedKnots.remove(knot);
           displayedKnots.removeAll(new HashSet<>(selectedKnots));
 
-          newStep(displayedKnots, selectedKnots, true);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          newStep(displayedKnots, selectedKnots, true);
         }
 
         break;

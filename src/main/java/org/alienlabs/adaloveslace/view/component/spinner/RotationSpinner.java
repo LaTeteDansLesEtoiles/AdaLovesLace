@@ -36,10 +36,8 @@ public class RotationSpinner {
         Set<Knot> copiedKnots = new TreeSet<>();
 
         for (Knot knot : selectedKnots) {
-          knot.setRotationAngle(newValue);
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
-
-          displayedKnots.remove(knot);
+          copiedKnot.setRotationAngle(newValue);
           copiedKnots.add(copiedKnot);
         }
 

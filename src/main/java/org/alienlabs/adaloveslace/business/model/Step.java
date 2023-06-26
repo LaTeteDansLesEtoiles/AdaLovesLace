@@ -51,8 +51,7 @@ public class Step implements Comparable<Step> {
                 Set<Knot> displayedKnots,
                 Set<Knot> selectedKnots,
                 boolean layoutChildren,
-                Circle... handle
-    ) {
+                Circle... handle) {
         this.app = app;
 
         this.displayedKnots = displayedKnots;

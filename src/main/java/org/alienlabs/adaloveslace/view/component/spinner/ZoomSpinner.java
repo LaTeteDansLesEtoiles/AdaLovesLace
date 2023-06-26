@@ -37,8 +37,8 @@ public class ZoomSpinner {
         Set<Knot> copiedKnots = new TreeSet<>();
 
         for (Knot knot : selectedKnots) {
-          knot.setZoomFactor(newValue);
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          copiedKnot.setZoomFactor(newValue);
 
           displayedKnots.remove(knot);
           copiedKnots.add(copiedKnot);
