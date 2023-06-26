@@ -29,7 +29,7 @@ node {
 
         stage('functional tests') {
           try {
-            sh "./mvnw clean integration-test -P linux -DskipUTs=true -Dtestfx.launch.timeout=5000 -Dtestfx.setup.timeout=5000 -DSLEEP_TIME=5000 -DWAIT_TIME=15000"
+            sh "./mvnw clean integration-test -P linux -DskipUTs=true -Dtestfx.launch.timeout=5000 -Dtestfx.setup.timeout=5000 -DSLEEP_TIME=15000 -DWAIT_TIME=5000"
             } catch(err) {
             throw err
           } finally {

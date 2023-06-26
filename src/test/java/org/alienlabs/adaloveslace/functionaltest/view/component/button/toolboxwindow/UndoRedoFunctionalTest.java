@@ -37,17 +37,23 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> drawOtherSnowflake(robot)); // Not to be duplicated
         synchronizeTask(() -> drawASnowflake(robot)); // To duplicate
         synchronizeTask(() -> drawSecondSnowflake(robot)); // To duplicate
+        this.sleepMainThread();
         synchronizeTask(() -> clickSelectButton(robot));
         synchronizeTask(() -> selectFirstSnowflake(robot));
+        this.sleepMainThread();
         synchronizeTask(() -> selectSecondKnotWithControlKeyPressed(robot)); // The first 2 snowflakes shall be selected, ready to be copied
+        this.sleepMainThread();
         synchronizeTask(() -> unselectControlKey(robot)); // The first 2 snowflakes shall be selected, ready to be copied
 
         // When
+        this.sleepMainThread();
         synchronizeTask(() -> clickOnButton(robot, app.getGeometryWindow().getDuplicationButton())); // Copy the first 2 snowflakes
+        this.sleepMainThread();
 
         // Then
         assertEquals(4, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size(),
                 "We should have 4 selected knots");
+
         // First copied knot
         assertEquals(215d,
                 this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().
@@ -76,15 +82,21 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> drawOtherSnowflake(robot)); // Not to be duplicated
         synchronizeTask(() -> drawASnowflake(robot)); // To duplicate
         synchronizeTask(() -> drawSecondSnowflake(robot)); // To duplicate
+        this.sleepMainThread();
         synchronizeTask(() -> clickSelectButton(robot));
         synchronizeTask(() -> selectFirstSnowflake(robot));
+        this.sleepMainThread();
         synchronizeTask(() -> selectSecondKnotWithControlKeyPressed(robot)); // The first 2 snowflakes shall be selected, ready to be copied
+        this.sleepMainThread();
         synchronizeTask(() -> unselectControlKey(robot)); // The first 2 snowflakes shall be selected, ready to be copied
 
+        this.sleepMainThread();
         synchronizeTask(() -> clickOnButton(robot, app.getGeometryWindow().getDuplicationButton())); // Copy the first 2 snowflakes
+        this.sleepMainThread();
 
         // When
         synchronizeTask(() -> clickOnButton(robot, app.getToolboxWindow().getUndoKnotButton()));
+
 
         // Then
         // First copied knot
@@ -107,12 +119,14 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
         Point2D pointToCheck = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
         robot.moveTo(pointToCheck);
+        this.sleepMainThread();
         Color foundColorOnGridBeforeUndo = getColor(pointToCheck);
 
         // When
         synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
         // Then
+        this.sleepMainThread();
         Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
 
         robot.moveTo(snowflakeOnTheGrid);
@@ -124,8 +138,10 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> RedoKnotButton.redoKnot(app));
 
         // Then
+        this.sleepMainThread();
         pointToCheck = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
         robot.moveTo(pointToCheck);
+        this.sleepMainThread();
 
         Color foundColorOnGridAfterRedo = getColor(pointToCheck);
         // If we choose a point in the snowflake it must be of the right color
@@ -142,14 +158,17 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
         Point2D snowflakePoint = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
         robot.moveTo(snowflakePoint);
+        this.sleepMainThread();
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
         // When
         synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+        this.sleepMainThread();
 
         // Then
         Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
         robot.moveTo(snowflakeOnTheGrid);
+        this.sleepMainThread();
 
         foundColorOnGrid = getColor(snowflakeOnTheGrid);
         assertNotEquals(foundColorOnGridBeforeUndo, foundColorOnGrid);
@@ -158,6 +177,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> RedoKnotButton.redoKnot(app));
 
         // Then
+        this.sleepMainThread();
         snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
         robot.moveTo(snowflakeOnTheGrid);
         this.sleepMainThread();
@@ -180,11 +200,14 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 38d, FIRST_SNOWFLAKE_PIXEL_Y + 38d);
         synchronizeTask(() -> robot.moveTo(snowflakePoint));
+        this.sleepMainThread();
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
         synchronizeTask(() -> clickOnButton(robot, app.getToolboxWindow().getUndoKnotButton()));
 
         // Then
+        this.sleepMainThread();
         synchronizeTask(() -> robot.moveTo(snowflakePoint));
+        this.sleepMainThread();
 
         Color foundColorOnGridAfterUndo = getColor(snowflakePoint);
         assertFalse(ColorMatchers.isColor(foundColorOnGridBeforeUndo).matches(foundColorOnGridAfterUndo),
@@ -204,12 +227,15 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 38d, FIRST_SNOWFLAKE_PIXEL_Y  + 38d);
         synchronizeTask(() -> robot.moveTo(snowflakePoint));
+        this.sleepMainThread();
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
         synchronizeTask(() -> clickOnButton(robot, app.getToolboxWindow().getUndoKnotButton()));
 
         // Then
+        this.sleepMainThread();
         robot.moveTo(snowflakePoint);
+        this.sleepMainThread();
 
         Color foundColorOnGridAfterUndo = getColor(snowflakePoint);
         assertFalse(ColorMatchers.isColor(foundColorOnGridBeforeUndo).matches(foundColorOnGridAfterUndo),

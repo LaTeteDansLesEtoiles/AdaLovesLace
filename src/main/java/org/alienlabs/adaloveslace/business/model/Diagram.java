@@ -124,7 +124,7 @@ public class Diagram {
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
         }
 
-        logger.info("Undo step, new step={} >= 1", this.getCurrentStepIndex());
+        logger.info("Undo step, new step={}", this.getCurrentStepIndex());
     }
 
     public void redoLastStep(App app, Boolean... layoutChildren) {
@@ -139,7 +139,7 @@ public class Diagram {
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
         }
 
-        logger.info("Redo 2 step, new step={} < max", this.getCurrentStepIndex());
+        logger.info("Redo 2 step, new step={}", this.getCurrentStepIndex());
     }
 
     public static void newStep(Set<Knot> displayedKnots, Set<Knot> selectedKnots, boolean layoutChildren, Circle... handle) {
