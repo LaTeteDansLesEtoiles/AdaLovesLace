@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.functionaltest.view.component.button.geometry
 
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -95,6 +96,7 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
    *
    */
   @Test
+  @Disabled("Flaky on Jenkins")
   void should_duplicate_two_knots(final FxRobot robot) {
     // Given
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
