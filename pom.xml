@@ -11,7 +11,7 @@
     <java.version>20</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
-    <test-plugins.version>3.0.0-M8</test-plugins.version>
+    <test-plugins.version>3.1.2</test-plugins.version>
     <javafx.version>20</javafx.version>
     <itext.version>8.0.0</itext.version>
     <testfx.version>4.0.16-alpha</testfx.version>
@@ -152,7 +152,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.1</version>
+        <version>3.11.0</version>
           <configuration>
               <source>${java.version}</source>
               <target>${java.version}</target>
@@ -177,7 +177,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0</version>
         <configuration>
           <archive>
             <manifest>
@@ -251,7 +251,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.8</version>
+        <version>0.8.10</version>
         <configuration>
           <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
           <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
@@ -308,7 +308,7 @@
           <plugin>
             <groupId>io.github.fvarrui</groupId>
             <artifactId>javapackager</artifactId>
-            <version>1.6.7</version>
+            <version>1.7.2</version>
             <executions>
               <execution>
                 <phase>package</phase>
