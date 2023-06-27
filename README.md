@@ -51,11 +51,11 @@ Feel free to run the Maven wrapper generation command again if Java version used
 then:
 
     
-    export JAVA_HOME=/usr/lib/jvm/jdk-19
+    export JAVA_HOME=/usr/lib/jvm/jdk-20
 
     Windows:
-    export JAVA_HOME=/C/Program\ Files/Java/jdk-19/
-    /C/Program\ Files/Java/jdk-19/bin/java -jar target/adaloveslace-0.2.6.jar
+    export JAVA_HOME=/C/Program\ Files/Java/jdk-20/
+    /C/Program\ Files/Java/jdk-19/bin/java -jar target/adaloveslace-0.4.0.jar
     ./mvnw clean install -Pwindows          -DskipUTs=true -DskipFTs=true
 
     Linux:
@@ -73,6 +73,15 @@ or:
     ./mvnw clean jacoco:prepare-agent package jacoco:report pmd:pmd pmd:cpd-check spotbugs:spotbugs
 
 from the project root directory
+
+
+- To know your outdated dependencies:
+
+
+    ./mvnw versions:display-dependency-updates
+
+from the project root directory
+
 
 - You may use this when generating an executable / installer on Winows: https://github.com/fvarrui/JavaPackager/issues/129
 

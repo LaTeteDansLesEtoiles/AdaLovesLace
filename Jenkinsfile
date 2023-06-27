@@ -107,7 +107,7 @@ node {
     }
 
     stage('packaging') {
-        sh "./mvnw package -P linux -DskipUTs=true -DskipFTs=true"
+        sh "./mvnw install -P linux -DskipUTs=true -DskipFTs=true"
         archiveArtifacts artifacts: '**/target/artifacts/*.deb,**/target/artifacts/*.rpm,**/target/artifacts/*.AppImage', fingerprint: true
     }
 
