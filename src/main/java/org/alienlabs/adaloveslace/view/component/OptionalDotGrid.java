@@ -221,7 +221,7 @@ public class OptionalDotGrid extends Pane {
     if (firstKnot.equals(knot)) {
       getDiagram().deleteHandlesFromCurrentStep(getRoot());
 
-      Circle handle = newHandle(knot, Color.rgb(0,0,255, 0.1), rec);
+      Circle handle = newHandle(knot, Color.rgb(0,0,255, 0.3), rec);
       knot.setHandle(handle);
       root.getChildren().add(handle);
 
