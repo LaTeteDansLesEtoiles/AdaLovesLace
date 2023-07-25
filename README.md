@@ -40,6 +40,12 @@ of the branch "23-frenchuserguide".
 Feel free to run the Maven wrapper generation command again if Java version used changes
 
 
+- Linux => don't forget to install package: 
+
+
+    xapp-gtk3-module
+
+
 --------------------------------------------------------------------------------------------
 
 - Build project with:
