@@ -154,9 +154,6 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.11.0</version>
         <configuration>
-          <fork>true</fork>
-          <executable>${env.JAVA_HOME}/bin/javac</executable>
-          <compilerVersion>20</compilerVersion>
           <source>20</source>
           <target>20</target>
         </configuration>
