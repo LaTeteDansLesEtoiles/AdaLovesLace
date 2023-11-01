@@ -247,7 +247,7 @@ public class MainWindow {
   }
 
   public void onClickWithSelectionMode(App app, double x, double y) {
-    Iterator<Knot> it = optionalDotGrid.getDiagram().getCurrentStep().getDisplayedKnots().iterator();
+    Iterator<Knot> it = optionalDotGrid.getDiagram().getCurrentStep().getAllVisibleKnots().iterator();
     boolean hasClickedOnAGivenKnot = false;
     app.getOptionalDotGrid().clearHovered();
     Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
@@ -301,14 +301,14 @@ public class MainWindow {
 
           break;
         } else {
-          displayedKnots.add(knot);
+          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          displayedKnots.add(copiedKnot);
           selectedKnots.remove(knot);
 
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
           newStep(displayedKnots, selectedKnots, true);
+          break;
         }
-
-        break;
       }
     }
 

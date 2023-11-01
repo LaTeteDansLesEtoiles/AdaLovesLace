@@ -50,6 +50,14 @@ public class NodeUtil {
     copy.getImageView().setFitHeight(knot.getPattern().getHeight());
     copy.getImageView().setFitWidth(knot.getPattern().getWidth());
 
+    if (knot.getHovered() != null) {
+      copy.setHovered(knot.getHovered());
+      knot.setHovered(null);
+    }
+    if (knot.getSelection() != null) {
+      copy.setSelection(knot.getSelection());
+      knot.setSelection(null);
+    }
     if (knot.getHandle() != null) {
       copy.setHandle(knot.getHandle());
       knot.setHandle(null);
