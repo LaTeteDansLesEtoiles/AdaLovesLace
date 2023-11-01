@@ -265,8 +265,6 @@ public class MainWindow {
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
-          app.getOptionalDotGrid().getAllHoveredKnots().clear();
-
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
           selectedKnots.clear();
           selectedKnots.add(copiedKnot);
@@ -275,8 +273,6 @@ public class MainWindow {
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
           newStep(displayedKnots, selectedKnots, true);
         } else {
-          app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
-
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
           selectedKnots.add(copiedKnot);
 

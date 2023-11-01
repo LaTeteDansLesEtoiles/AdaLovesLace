@@ -165,6 +165,7 @@ public class Events {
     allKnots.addAll(new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()));
 
     boolean isMouseOverAGivenKnot = false;
+    allKnots.forEach(knot -> knot.setHoveredKnot(false));
 
     for (Knot knot : allKnots) {
       // If a knot is already selected, we must still hover over it because we may want to unselect it afterwards
@@ -172,22 +173,16 @@ public class Events {
       isMouseOverAGivenKnot = new NodeUtil().isMouseOverKnot(knot, mouseEvent.getSceneX(), mouseEvent.getSceneY());
       app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
 
-      if (knot.isVisible() && isMouseOverAGivenKnot && !app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
+      if (knot.isVisible() && isMouseOverAGivenKnot) {
         logger.debug("Hover over not already an hovered over knot: {}", knot);
 
         // We can have only one hovered over knot at once
-        app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
-      } else if(knot.isVisible() && isMouseOverAGivenKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
-        logger.debug("Hover over an already hovered over knot: {}", knot);
-      } else if(!isMouseOverAGivenKnot && app.getOptionalDotGrid().getAllHoveredKnots().contains(knot)) {
-        logger.debug("Don't hover over knot: {}", knot);
-        app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
+        knot.setHoveredKnot(true);
+        break;
       }
-
-      knot.setHoveredKnot(isMouseOverAGivenKnot);
     }
 
-    app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots());
+    app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(allKnots);
   };
 
   public static EventHandler<MouseEvent> getGridHoverEventHandler(App app) {

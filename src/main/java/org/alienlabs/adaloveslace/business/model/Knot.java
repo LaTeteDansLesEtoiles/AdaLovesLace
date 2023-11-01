@@ -209,7 +209,7 @@ public class Knot implements Comparable<Knot> {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Knot knot)) return false;
+    if (!(o instanceof Knot)) return false;
 
     return uuid.equals(((Knot)o).uuid);
   }
@@ -222,7 +222,8 @@ public class Knot implements Comparable<Knot> {
   @Override
   public String toString() {
     return "Knot{" +
-      "x=" + x +
+      "uuid=" + uuid +
+      ", x=" + x +
       ", y=" + y +
       ", pattern=" + pattern.getFilename() +
       ", visible=" + visible +
