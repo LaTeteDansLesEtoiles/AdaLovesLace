@@ -165,10 +165,6 @@ public class Knot implements Comparable<Knot> {
     return guideLines;
   }
 
-  public void setGuideLines(List<Node> guideLines) {
-    this.guideLines = guideLines;
-  }
-
   public boolean isVisible() {
     return visible;
   }
@@ -199,11 +195,6 @@ public class Knot implements Comparable<Knot> {
 
   public void setHoveredKnot(boolean hoveredKnot) {
     this.hoveredKnot = hoveredKnot;
-  }
-
-  public boolean coincide(Knot other) {
-    return this.x == other.x && this.y == other.y &&
-      this.pattern.getAbsoluteFilename().equals(other.getPattern().getAbsoluteFilename());
   }
 
   @Override
