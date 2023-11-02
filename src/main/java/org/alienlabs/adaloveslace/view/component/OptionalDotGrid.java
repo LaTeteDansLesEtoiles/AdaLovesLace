@@ -8,6 +8,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -162,14 +163,15 @@ public class OptionalDotGrid extends Pane {
                 .min(Comparator.comparing(Knot::getX)
                         .thenComparing(Knot::getY))
                 .get();
+        logger.debug("Adding red rectangle for Knot {}", knot);
         addSelectionAndHandleToAKnot(knot, Color.rgb(255, 0, 0, 0.5), firstKnot);
       } else if (knot.isHoveredKnot()) {
         // If hovered & not selected: gray
         Rectangle rec = newRectangle(knot, Color.GRAY);
-
         knot.setHovered(rec);
-        logger.info("Adding hover {} for Knot {}", rec, knot);
+        logger.debug("Adding hover {} for Knot {}", rec, knot);
         root.getChildren().add(rec);
+        rec.addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
 
         if (knot.getHandle() != null) {
           root.getChildren().remove(knot.getHandle());
@@ -185,7 +187,7 @@ public class OptionalDotGrid extends Pane {
         addSelectionAndHandleToAKnot(knot, Color.rgb(0,0,255, 0.5), firstKnot);
       } else if (!knot.isHoveredKnot() && knot.getHovered() != null) {
         Platform.runLater(() -> {
-          logger.info("Removing node {} and hover {} from hovered {}", knot, knot.getHovered(), root.getChildren().remove(knot.getHovered()));
+          logger.debug("Removing node {} and hover {} from hovered {}", knot, knot.getHovered(), root.getChildren().remove(knot.getHovered()));
           knot.setHovered(null);
           layoutChildren();
         });
@@ -195,6 +197,7 @@ public class OptionalDotGrid extends Pane {
 
   public void addSelectionAndHandleToAKnot(Knot knot, Color rgba, Knot firstKnot) {
     Rectangle rec = newRectangle(knot, rgba);
+    rec.addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
 
     knot.setHovered(rec);
     knot.setSelection(rec);
@@ -235,10 +238,10 @@ public class OptionalDotGrid extends Pane {
     return circle;
   }
 
-  private Rectangle newRectangle(Knot knot, Color notHoveredAndSelected) {
+  private Rectangle newRectangle(Knot knot, Color color) {
     Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
     rec.setId(UUID.randomUUID().toString());
-    rec.setStroke(notHoveredAndSelected);
+    rec.setStroke(color);
     rec.setStrokeWidth(2d);
     rec.setFill(Color.TRANSPARENT);
     rec.setScaleX(computeZoomFactor(knot));
@@ -260,7 +263,7 @@ public class OptionalDotGrid extends Pane {
 
         for (Knot otherKnot : step.getAllVisibleKnots()) {
           if (!otherKnot.equals(knot) && otherKnot.isVisible()) {
-            new GuideLinesUtil(knot, otherKnot, root);
+            new GuideLinesUtil(app, knot, otherKnot, root);
           }
         }
       }

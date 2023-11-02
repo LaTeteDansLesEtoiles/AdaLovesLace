@@ -114,7 +114,7 @@ public class Diagram {
     }
 
     public void undoLastStep(App app, Boolean... layoutChildren) {
-        logger.info("Undo step, current step={}", this.getCurrentStepIndex());
+        logger.debug("Undo step, current step={}", this.getCurrentStepIndex());
 
         if (this.getCurrentStepIndex() > 0) {
             this.setCurrentStepIndex(this.getCurrentStepIndex() - 1);
@@ -124,11 +124,11 @@ public class Diagram {
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
         }
 
-        logger.info("Undo step, new step={}", this.getCurrentStepIndex());
+        logger.debug("Undo step, new step={}", this.getCurrentStepIndex());
     }
 
     public void redoLastStep(App app, Boolean... layoutChildren) {
-        logger.info("Redo 0 step, current step={}", this.getCurrentStepIndex());
+        logger.debug("Redo 0 step, current step={}", this.getCurrentStepIndex());
 
         if (this.getCurrentStepIndex() <
                 this.getAllSteps().size() - 1) {
@@ -139,7 +139,7 @@ public class Diagram {
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
         }
 
-        logger.info("Redo 2 step, new step={}", this.getCurrentStepIndex());
+        logger.debug("Redo 2 step, new step={}", this.getCurrentStepIndex());
     }
 
     public static void newStep(Set<Knot> displayedKnots, Set<Knot> selectedKnots, boolean layoutChildren, Circle... handle) {
