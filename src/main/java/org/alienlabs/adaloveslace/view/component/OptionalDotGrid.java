@@ -15,7 +15,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.*;
 import org.alienlabs.adaloveslace.util.Events;
@@ -196,25 +195,27 @@ public class OptionalDotGrid extends Pane {
   }
 
   public void addSelectionAndHandleToAKnot(Knot knot, Color rgba, Knot firstKnot) {
-    Rectangle rec = newRectangle(knot, rgba);
-    rec.addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+    Platform.runLater(() -> {
+      Rectangle rec = newRectangle(knot, rgba);
+      rec.addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
 
-    knot.setHovered(rec);
-    knot.setSelection(rec);
-    root.getChildren().add(rec);
+      knot.setHovered(rec);
+      knot.setSelection(rec);
+      root.getChildren().add(rec);
 
-    // Only the first knot of a multi-selection has a handle
-    if (firstKnot.equals(knot)) {
-      getDiagram().deleteHandlesFromCurrentStep(getRoot());
+      // Only the first knot of a multi-selection has a handle
+      if (firstKnot.equals(knot)) {
+        getDiagram().deleteHandlesFromCurrentStep(getRoot());
 
-      Circle handle = newHandle(knot, Color.rgb(0,0,255, 0.3), rec);
-      knot.setHandle(handle);
-      root.getChildren().add(handle);
+        Circle handle = newHandle(knot, Color.rgb(0,0,255, 0.3), rec);
+        knot.setHandle(handle);
+        root.getChildren().add(handle);
 
-      handle.setOnDragDetected(Events.getDragInitiatedOverHandleEventHandler());
-      handle.setOnDragOver(Events.getMouseDragOverHandleEventHandler());
-      handle.setOnDragDropped(Events.getMouseDragDroppedHandleEventHandler());
-    }
+        handle.setOnDragDetected(Events.getDragInitiatedOverHandleEventHandler());
+        handle.setOnDragOver(Events.getMouseDragOverHandleEventHandler());
+        handle.setOnDragDropped(Events.getMouseDragDroppedHandleEventHandler());
+      }
+    });
   }
 
   // The handle is the top left corner of the rectangle of the zoomed, rotated knot
@@ -239,7 +240,12 @@ public class OptionalDotGrid extends Pane {
   }
 
   private Rectangle newRectangle(Knot knot, Color color) {
-    Rectangle rec = new Rectangle(knot.getX(), knot.getY(), knot.getPattern().getWidth(), knot.getPattern().getHeight());
+    Rectangle rec = new Rectangle(
+            knot.getX(),
+            knot.getY(),
+            knot.getPattern().getWidth(),
+            knot.getPattern().getHeight()
+    );
     rec.setId(UUID.randomUUID().toString());
     rec.setStroke(color);
     rec.setStrokeWidth(2d);
@@ -361,12 +367,8 @@ public class OptionalDotGrid extends Pane {
 
   private double zoom(Knot knot) {
     double scaleFactor = computeZoomFactor(knot);
-
-    Scale scale = new Scale(scaleFactor, scaleFactor);
-    scale.setPivotX(knot.getImageView().getX() + knot.getPattern().getCenterX());
-    scale.setPivotY(knot.getImageView().getY() + knot.getPattern().getCenterY());
-
-    knot.getImageView().getTransforms().add(scale);
+    knot.getImageView().setScaleX(scaleFactor);
+    knot.getImageView().setScaleY(scaleFactor);
 
     logger.debug("zoomed knot {} at zoom factor {} and scale factor {}",
             knot.getPattern().getFilename(), knot.getZoomFactor(), scaleFactor);
