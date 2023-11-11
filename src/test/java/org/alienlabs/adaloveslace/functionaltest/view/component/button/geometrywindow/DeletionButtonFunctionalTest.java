@@ -69,6 +69,10 @@ class DeletionButtonFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     this.sleepMainThread();
+    this.sleepMainThread();
+    this.sleepMainThread();
+    this.sleepMainThread();
+    this.sleepMainThread();
     assertEquals(1, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().size());
     assertTrue(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().toList().isEmpty());
 

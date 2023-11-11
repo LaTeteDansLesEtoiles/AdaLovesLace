@@ -224,6 +224,29 @@ public class AppFunctionalTestParent {
     }
   }
 
+  public void synchronizeLongTask(Runnable runnable) {
+    final CountDownLatch lock  = new CountDownLatch(1);
+    Platform.runLater(() -> {
+      runnable.run();
+      lock.countDown();
+    });
+
+    // We block the main thread to let the runnable (JavaFX application thread) work
+    this.sleepMainThread();
+    this.sleepMainThread();
+    this.sleepMainThread();
+    this.sleepMainThread();
+    this.sleepMainThread();
+
+    try {
+      // And when the runnable has returned we can continue,
+      // but we must let it as much time as it needs to complete, lest the assertion which comes after will be wrong
+      lock.await(WAIT_TIME, TimeUnit.MILLISECONDS);
+    } catch (InterruptedException e) {
+      logger.error("Interrupted!", e);
+    }
+  }
+
   public void sleepMainThread() {
     try {
       Thread.sleep(SLEEP_TIME);

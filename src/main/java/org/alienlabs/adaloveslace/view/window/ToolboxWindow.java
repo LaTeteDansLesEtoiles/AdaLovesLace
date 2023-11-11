@@ -228,7 +228,7 @@ public class ToolboxWindow {
         return 900;
       }
 
-      return app.getOptionalDotGrid().getDiagram().getPatterns().size() * 60;
+      return app.getOptionalDotGrid().getDiagram().getPatterns().size() * 200;
     }
   }
 
