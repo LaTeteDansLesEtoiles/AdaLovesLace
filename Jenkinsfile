@@ -6,7 +6,7 @@ node {
     }
 
     stage('check java') {
-        env.PATH="/usr/lib/jvm/temurin-20-jdk-amd64/bin:${env.PATH}"
+        env.PATH="/usr/lib/jvm/temurin-21-jdk-amd64/bin:${env.PATH}"
         sh "java -version"
     }
 

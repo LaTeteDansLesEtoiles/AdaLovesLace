@@ -26,7 +26,7 @@ of the branch "23-frenchuserguide".
     mvn archetype:generate -DarchetypeGroupId=org.openjfx -DarchetypeArtifactId=javafx-archetype-simple -DarchetypeVersion=0.0.3 -DgroupId=org.alienlabs.adaloveslace -DartifactId=adaloveslace -Dversion=0.0.1 -Djavafx-version=11
 
 
-- for mvnw (see below) to run OK, you need to set JAVA_HOME to a JDK 20 modified according to:
+- for mvnw (see below) to run OK, you need to set JAVA_HOME to a JDK 21 modified according to:
 
 
     https://github.com/jgneff/javafx-graphics
