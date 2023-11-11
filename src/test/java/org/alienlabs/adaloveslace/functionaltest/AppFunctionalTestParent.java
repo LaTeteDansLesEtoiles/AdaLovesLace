@@ -10,11 +10,9 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
-import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
@@ -259,25 +257,15 @@ public class AppFunctionalTestParent {
 
   // @see https://stackoverflow.com/questions/23741574/how-to-get-the-absolute-rotation-of-a-node-in-javafx
   protected double getSnowFlakeRotationAngle() {
-    for (Knot k :  this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
-      double angle = Math.toDegrees(
-              Math.atan2(
-                      -k.getImageView().getLocalToSceneTransform().getMxy(),
-                      k.getImageView().getLocalToSceneTransform().getMxx()
-              )
-      );
-      if (angle != 0) {
-        return (double)Math.round(angle);
-      }
-    }
-
-    return 0;
+    return this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
+            stream().findFirst().get().getImageView().
+            getRotate();
   }
 
   protected double getSnowFlakeZoomFactor() {
-    return ((Scale) (this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-      stream().findFirst().get().getImageView().getTransforms().stream().filter(transform -> transform instanceof Scale).findFirst()
-      .get())).getX();
+    return this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
+      stream().findFirst().get().getImageView().
+            getScaleX();
   }
 
   protected void initDrawAndSelectSnowFlake(FxRobot robot) {

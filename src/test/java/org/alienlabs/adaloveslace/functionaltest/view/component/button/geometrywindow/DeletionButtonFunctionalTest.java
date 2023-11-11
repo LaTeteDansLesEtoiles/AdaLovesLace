@@ -69,13 +69,10 @@ class DeletionButtonFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     this.sleepMainThread();
-    assertEquals(1, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().
-            stream().toList().size());
+    assertEquals(1, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().size());
     assertTrue(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().toList().isEmpty());
 
     assertEquals(OTHER_SNOWFLAKE_PIXEL_X, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().
-            stream().findFirst().get().getX());
-    assertEquals(115d, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().
             stream().findFirst().get().getX());
   }
 
