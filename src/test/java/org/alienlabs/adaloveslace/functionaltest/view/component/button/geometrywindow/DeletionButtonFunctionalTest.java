@@ -58,9 +58,9 @@ class DeletionButtonFunctionalTest extends AppFunctionalTestParent {
   void should_delete_two_knots_leaving_other_knot_untouched(final FxRobot robot) {
     // Given
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-    synchronizeTask(() -> drawOtherSnowflake(robot)); // Not to be duplicated
-    synchronizeTask(() -> drawSecondSnowflake(robot));
     synchronizeTask(() -> drawASnowflake(robot));
+    synchronizeTask(() -> drawSecondSnowflake(robot));
+    synchronizeTask(() -> drawOtherSnowflake(robot)); // Not to be duplicated
 
     // When
     synchronizeTask(() -> selectDeleteMode(robot));

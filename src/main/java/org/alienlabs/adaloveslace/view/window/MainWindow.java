@@ -327,7 +327,7 @@ public class MainWindow {
   }
 
   public void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
-    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots()) {
+    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
       if (new NodeUtil().isMouseOverKnot(knot, x, y)) {
         removeKnotIfClicked(app, diagram, knot);
         break;
@@ -339,9 +339,9 @@ public class MainWindow {
     app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView());
     app.getOptionalDotGrid().getDiagram().deleteNodesFromFollowingSteps(app, knot);
 
-    Set<Knot> displayedKnotsToFilterOut = app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots();
+    Set<Knot> displayedKnotsToFilterOut = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
     displayedKnotsToFilterOut.remove(knot);
-    Set<Knot> selectedKnotsToFilterOut = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
+    Set<Knot> selectedKnotsToFilterOut = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
     selectedKnotsToFilterOut.remove(knot);
 
     newStep(displayedKnotsToFilterOut, selectedKnotsToFilterOut, true);
