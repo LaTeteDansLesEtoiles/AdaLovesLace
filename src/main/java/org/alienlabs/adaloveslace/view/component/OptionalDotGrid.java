@@ -130,7 +130,7 @@ public class OptionalDotGrid extends Pane {
   // We shall not display the undone knots => delete them from canvas, then draw the grid again
   public void deleteKnotsFromCanvas() {
     this.diagram.deleteNodesFromFollowingSteps(root);
-    ArrayList<Node> nodeListToRemove = new ArrayList<>();
+    List<Node> nodeListToRemove = new ArrayList<>();
     Step step = this.diagram.getCurrentStep();
 
     for (Knot k : step.getSelectedKnots()) {
@@ -145,12 +145,9 @@ public class OptionalDotGrid extends Pane {
       }
     }
 
-    for (Step s : this.diagram.getAllSteps().subList(
-            this.diagram.getCurrentStep().getStepIndex(),
-            this.diagram.getAllSteps().size())) {
-      for (Knot k : s.getAllVisibleKnots()) {
-        nodeListToRemove.add(k.getImageView());
-      }
+    Step s = this.diagram.getCurrentStep();
+    for (Knot k : s.getAllVisibleKnots()) {
+      nodeListToRemove.add(k.getImageView());
     }
 
     root.getChildren().removeAll(nodeListToRemove);
