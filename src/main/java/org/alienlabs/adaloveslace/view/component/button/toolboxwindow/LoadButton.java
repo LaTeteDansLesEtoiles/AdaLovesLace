@@ -34,8 +34,6 @@ public class LoadButton extends ImageButton {
     File file = load.showOpenDialog(app.getScene().getWindow());
 
     if (file != null) {
-      /*app.getOptionalDotGrid().clearSelections();
-      app.getOptionalDotGrid().clearAllGuideLines();*/
       new FileUtil().buildUiFromLaceFile(app, file);
     }
   }
