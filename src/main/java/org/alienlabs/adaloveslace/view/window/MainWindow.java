@@ -1,143 +1,231 @@
 package org.alienlabs.adaloveslace.view.window;
 
+import javafx.collections.ObservableSet;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.print.Printer;
+import javafx.print.PrinterJob;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.util.FileUtil;
+import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
+import org.alienlabs.adaloveslace.util.Preferences;
+import org.alienlabs.adaloveslace.util.PrintUtil;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Iterator;
+import java.util.*;
 
-import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
-import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
+import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
+import static org.alienlabs.adaloveslace.util.Events.moveDraggedAndDroppedNodes;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
 
-  private static final double FOOTER_X      = 60d;
+  private static final double FOOTER_X      = Double.parseDouble(resourceBundle.getString("FOOTER_X"));
   public static final double MENU_BAR_Y     = -10d;
   public static final double  NEW_KNOT_GAP  = 15d;
-  public final MenuBar menuBar;
+  public static final String LANGUAGE = "Language";
+  public static final String TOOL = "Tool";
+  public static final String EDIT = "Edit";
+  public static final String FILE = "File";
+
+  public MenuBar menuBar;
   private OptionalDotGrid optionalDotGrid;
   private TilePane footer;
 
   public static final String SAVE_FILE      = "Save";
 
-  public static final String SAVE_FILE_AS   = "Save as";
+  public static final String SAVE_FILE_AS   = "SaveAs";
+
+  public static final String FRENCH         = "Français";
+
+  public static final String ENGLISH        = "English";
 
   public static final String LOAD_FILE      = "Load";
 
-  public static final String EXPORT_IMAGE   = "Export an image";
+  public static final String EXPORT_IMAGE   = "ExportAnImage";
 
   public static final String QUIT_APP       = "Quit";
 
-  public static final String UNDO_KNOT      = "Undo knot";
+  public static final String UNDO_KNOT      = "UndoKnot";
 
-  public static final String REDO_KNOT      = "Redo knot";
+  public static final String REDO_KNOT      = "RedoKnot";
 
-  public static final String RESET_DIAGRAM  = "Reset diagram";
+  public static final String RESET_DIAGRAM  = "ResetDiagram";
 
   public static final String MOUSE_CLICKED  = "MOUSE_CLICKED";
 
   public static final KeyCodeCombination SAVE_AS_KEY_COMBINATION = new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN);
 
+  private ObservableSet<Printer> printers;
+  private StackPane grid;
+
   private static final Logger logger        = LoggerFactory.getLogger(MainWindow.class);
 
   public MainWindow() {
-    menuBar = new MenuBar();
+    // Just to be able to unit test code using the UI without effectively instantiating the UI
   }
 
-  public void createMenuBar(Group root, App app) {
-    Menu fileMenu = new Menu("File");
-    Menu editMenu = new Menu("Edit");
-    Menu toolMenu = new Menu("Tool");
+  public void createMenuBar(Group root, App app, Stage primaryStage) {
+    menuBar = new MenuBar();
 
-    MenuItem saveItem = new MenuItem(SAVE_FILE);
+    Menu fileMenu     = new Menu(resourceBundle.getString(FILE));
+    Menu editMenu     = new Menu(resourceBundle.getString(EDIT));
+    Menu toolMenu     = new Menu(resourceBundle.getString(TOOL));
+    Menu languageMenu = new Menu(resourceBundle.getString(LANGUAGE));
+
+    MenuItem saveItem = new MenuItem(resourceBundle.getString(SAVE_FILE));
     saveItem.setOnAction(actionEvent -> SaveButton.onSaveAction(app));
     saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
 
-    MenuItem saveAsItem = new MenuItem(SAVE_FILE_AS);
+    MenuItem saveAsItem = new MenuItem(resourceBundle.getString(SAVE_FILE_AS));
     saveAsItem.setOnAction(actionEvent -> SaveAsButton.onSaveAsAction(app));
     saveAsItem.setAccelerator(SAVE_AS_KEY_COMBINATION);
 
-    MenuItem loadItem = new MenuItem(LOAD_FILE);
+    MenuItem loadItem = new MenuItem(resourceBundle.getString(LOAD_FILE));
     loadItem.setOnAction(actionEvent -> LoadButton.onLoadAction(app));
     loadItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
 
-    MenuItem exportImageItem = new MenuItem(EXPORT_IMAGE);
+    MenuItem exportImageItem = new MenuItem(resourceBundle.getString(EXPORT_IMAGE));
     exportImageItem.setOnAction(actionEvent -> ExportImageButton.onExportAction(app));
     exportImageItem.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN));
 
     SeparatorMenuItem separator1 = new SeparatorMenuItem();
 
-    MenuItem quitItem = new MenuItem(QUIT_APP);
+    MenuItem quitItem = new MenuItem(resourceBundle.getString(QUIT_APP));
     quitItem.setOnAction(actionEvent -> QuitButton.onQuitAction());
     quitItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
 
-    MenuItem undoKnotItem = new MenuItem(UNDO_KNOT);
+    MenuItem undoKnotItem = new MenuItem(resourceBundle.getString(UNDO_KNOT));
     undoKnotItem.setOnAction(actionEvent -> UndoKnotButton.undoKnot(app));
     undoKnotItem.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
 
-    MenuItem redoKnotItem = new MenuItem(REDO_KNOT);
+    MenuItem redoKnotItem = new MenuItem(resourceBundle.getString(REDO_KNOT));
     redoKnotItem.setOnAction(actionEvent -> RedoKnotButton.redoKnot(app));
     redoKnotItem.setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
 
     SeparatorMenuItem separator2 = new SeparatorMenuItem();
 
-    MenuItem resetDiagramItem = new MenuItem(RESET_DIAGRAM);
+    MenuItem resetDiagramItem = new MenuItem(resourceBundle.getString(RESET_DIAGRAM));
     resetDiagramItem.setOnAction(actionEvent -> ResetDiagramButton.resetDiagram(app));
     resetDiagramItem.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
 
-    MenuItem showHideGridItem = new MenuItem(SHOW_HIDE_GRID_BUTTON_NAME);
+    MenuItem showHideGridItem = new MenuItem(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME));
     showHideGridItem.setOnAction(actionEvent -> ShowHideGridButton.showHideGrid(app));
     showHideGridItem.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
 
+    SeparatorMenuItem separator3 = new SeparatorMenuItem();
+
+    MenuItem getPrintersItem = new MenuItem(resourceBundle.getString(GET_PRINTERS_BUTTON_NAME));
+    getPrintersItem.setOnAction(event -> {
+      printers = Printer.getAllPrinters();
+
+      for (Printer printer : printers) {
+        app.getToolboxWindow().getPrintersTextArea().appendText(printer.getName() + "\n");
+      }
+    });
+    getPrintersItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
+
+    MenuItem printItem = new MenuItem(resourceBundle.getString(PRINT_BUTTON_NAME));
+    printItem.setOnAction(actionEvent -> {
+      if (!printers.isEmpty()) {
+        logger.debug("Printing attempt of diagram");
+
+        Printer printer = printers.iterator().next();
+        logger.debug("Printing attempt of diagram with printer {}", printer.getName());
+
+        PrinterJob pJ = PrinterJob.createPrinterJob(printer);
+
+        // Show the print setup dialog
+        boolean proceed = pJ.showPrintDialog(app.getPrimaryStage());
+
+        if (proceed) {
+          new PrintUtil(app).print(pJ);
+        } else {
+          logger.debug("Printing diagram aborted by user!");
+        }
+      }
+    });
+    printItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN));
+
+    MenuItem frenchItem = new MenuItem(FRENCH);
+    frenchItem.setOnAction(actionEvent -> {
+      Locale locale = new Locale("fr", "FR");
+      App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
+
+      Preferences prefs = new Preferences();
+      prefs.setStringValue(LOCALE_LANGUAGE, "fr");
+      prefs.setStringValue(LOCALE_COUNTRY, "FR");
+
+      restartApp(app, primaryStage);
+    } );
+    frenchItem.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN));
+
+    MenuItem englishItem = new MenuItem(ENGLISH);
+    englishItem.setOnAction(actionEvent -> {
+      Locale locale = new Locale("en", "EN");
+      App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
+
+      Preferences prefs = new Preferences();
+      prefs.setStringValue(LOCALE_LANGUAGE, "en");
+      prefs.setStringValue(LOCALE_COUNTRY, "EN");
+
+      restartApp(app, primaryStage);
+    });
+    englishItem.setAccelerator(new KeyCodeCombination(KeyCode.U, KeyCombination.CONTROL_DOWN));
 
     fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, exportImageItem, separator1, quitItem);
     editMenu.getItems().addAll(undoKnotItem, redoKnotItem, separator2, resetDiagramItem);
-    toolMenu.getItems().addAll(showHideGridItem);
+    toolMenu.getItems().addAll(showHideGridItem, separator3, getPrintersItem, printItem);
+    languageMenu.getItems().addAll(frenchItem, englishItem);
 
-    menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu);
+    menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu, languageMenu);
     menuBar.setTranslateY(MENU_BAR_Y);
     root.getChildren().addAll(menuBar);
   }
 
+  private void restartApp(App app, Stage primaryStage) {
+    app.getGeometryWindow().getGeometryStage().close();
+    app.getToolboxWindow().getToolboxStage().close();
+    app.getPrimaryStage().close();
+    app.start(primaryStage);
+  }
+
   public TilePane createFooter(String javafxVersion, String javaVersion) {
     footer = new TilePane(Orientation.VERTICAL);
-    footer.getChildren().addAll(new Label("Ada Loves Lace - A tatting lace patterns creation software"));
-    footer.getChildren().addAll(new Label("© 2022 AlienLabs"));
-    footer.getChildren().addAll(new Label("This is Free Software under GPL license"));
-    footer.getChildren().addAll(new Label("JavaFX " + javafxVersion + ", running on Java " + javaVersion));
+    footer.getChildren().addAll(new Label(resourceBundle.getString("Pitch")));
+    footer.getChildren().addAll(new Label(resourceBundle.getString("Copyright")));
+    footer.getChildren().addAll(new Label(resourceBundle.getString("License")));
+    footer.getChildren().addAll(new Label("JavaFX " + javafxVersion + resourceBundle.getString("RunningWith") + javaVersion));
     footer.setAlignment(Pos.BOTTOM_LEFT);
     footer.setTranslateX(FOOTER_X);
     return footer;
   }
 
-  public StackPane createGrid(final double width, final double height, final double radius,
+  public StackPane createGrid(App app, final double width, final double height, final double radius,
                               final Diagram diagram, final Group root) {
     if (width == 0d || height == 0d) {
-      this.optionalDotGrid = new OptionalDotGrid(diagram, root);
+      this.optionalDotGrid = new OptionalDotGrid(app, diagram, root);
     } else {
-      this.optionalDotGrid = new OptionalDotGrid(width, height, radius, diagram, root);
+      this.optionalDotGrid = new OptionalDotGrid(app, width, height, radius, diagram, root);
     }
 
-    StackPane grid = new StackPane(this.optionalDotGrid);
+    grid = new StackPane(this.optionalDotGrid);
 
     if (width != 0d && height != 0d) {
       grid.setPrefWidth(width);
@@ -150,148 +238,115 @@ public class MainWindow {
   }
 
   public void onMainWindowClicked(final App app, final Group root) {
-    root.setOnMouseClicked(event -> {
-      String eType = event.getEventType().toString();
-      logger.info("Event type -> {},  current Knot index {}, current mode: {}", eType,
-        this.getOptionalDotGrid().getDiagram().getCurrentKnotIndex(),
-        this.getOptionalDotGrid().getDiagram().getCurrentMode());
-
-      if (eType.equals(MOUSE_CLICKED)) {
-        double x          = event.getX();
-        double y          = event.getY();
-        double yMinusTop  = y - OptionalDotGrid.TOP_MARGIN;
-
-        logger.info("Coordinate X     -> {}", x);
-        logger.info("Coordinate Y     -> {}, Y - TOP -> {}", y, yMinusTop);
-
-        processMouseClick(app, x, y);
-      }
-    });
+    root.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
   }
 
-  private void processMouseClick(App app, double x, double y) {
-    switch (this.getOptionalDotGrid().getDiagram().getCurrentMode()) {
-      case DRAWING      -> onClickWithDrawMode(app, this.getOptionalDotGrid().getDiagram(),
-        optionalDotGrid.addKnot(x, y));
-      case SELECTION    -> onClickWithSelectionMode(app, x, y);
-      case DELETION     -> onClickWithDeletionMode(app, this.getOptionalDotGrid().getDiagram(), x, y) ;
-      case DUPLICATION  -> onClickWithDuplicationMode(this.getOptionalDotGrid().getDiagram(), x, y);
-    }
+  public void onDragOverHandleWithSelectionMode(App app, double x, double y) {
+    Circle handle = (Circle)app.getOptionalDotGrid().getDragOriginKnot().getHandle();
+    moveDraggedAndDroppedNodes(app, x, y, handle);
   }
 
-  private void onClickWithDrawMode(App app, Diagram diagram, Knot knot) {
-    diagram.setCurrentKnot(knot);
-    diagram.setKnotSelected(false);
-    app.getOptionalDotGrid().layoutChildren();
-  }
-
-  private void onClickWithSelectionMode(App app, double x, double y) {
-    Iterator<Knot> it = optionalDotGrid.getDiagram().getKnots().iterator();
-    boolean hasClickedOnAKnot = false;
+  public void onClickWithSelectionMode(App app, double x, double y) {
+    Iterator<Knot> it = optionalDotGrid.getDiagram().getCurrentStep().getAllVisibleKnots().iterator();
+    boolean hasClickedOnAGivenKnot = false;
+    app.getOptionalDotGrid().clearHovered();
+    Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    Set<Knot> selectedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
     // We iterate on the Knots as long as they are still Knots left to iterate
     // And we stop at the first clicked Knot
-    while (it.hasNext() && !hasClickedOnAKnot) {
+    while (it.hasNext()) {
       Knot knot = it.next();
-      try {
-        hasClickedOnAKnot = new NodeUtil().isClicked(knot, x, y);
 
-        if (hasClickedOnAKnot) {
-          logger.info("Clicked Knot index {}", this.getOptionalDotGrid().getDiagram().getKnots().indexOf(knot));
+      hasClickedOnAGivenKnot = new NodeUtil().isMouseOverKnot(knot, x, y);
 
-          // If there is a current knot and we have clicked somewhere else than on a knot,
-          // we shall restore the zoom & rotation spinners values with the values from the knot
-          this.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
-          app.getGeometryWindow().getRotationSpinnerObject1().restoreRotationSpinnersState(knot);
-          app.getGeometryWindow().getZoomSpinnerObject1().restoreZoomSpinnersState(knot);
+      if (hasClickedOnAGivenKnot && (knot.getSelection() == null)) {
+        logger.debug("Clicked Knot {} in order to select it", knot.getPattern().getFilename());
+
+        // If the "Control" key is pressed, we are in multi-selection mode
+        if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
+          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          selectedKnots.clear();
+          selectedKnots.add(copiedKnot);
+          displayedKnots.remove(knot);
+
+          app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          newStep(displayedKnots, selectedKnots, true);
+        } else {
+          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          selectedKnots.add(copiedKnot);
+          displayedKnots.remove(knot);
+
+          app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          newStep(displayedKnots, selectedKnots, true);
         }
-      } catch (MalformedURLException e) {
-        throw new RuntimeException(e);
-      }
-    }
 
-    // If there is a current knot and we have clicked somewhere else than on a knot,
-    // we shall move the current knot
-    if (!hasClickedOnAKnot) {
-      moveKnot(this.getOptionalDotGrid().getDiagram().getCurrentKnot(), x, y);
-    }
+        break;
+      } else if (hasClickedOnAGivenKnot) {
+        logger.debug("Clicked Knot displayed {}, pattern {} in order to unselect it",
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot), knot.getPattern().getFilename());
+        logger.debug("Clicked Knot selected {}, pattern {} in order to unselect it",
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot), knot.getPattern().getFilename());
 
-  }
+        app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
 
-  private void moveKnot(Knot toMove, double x, double y) {
-    toMove.setX(x);
-    toMove.setY(y);
-    toMove.getImageView().setX(x);
-    toMove.getImageView().setY(y);
-    toMove.getImageView().setOpacity(1.0d);
+        // If the "Control" key is pressed, we are in multi-selection mode
+        if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
 
-    optionalDotGrid.layoutChildren();
-  }
+          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          displayedKnots.addAll(new HashSet<>(selectedKnots));
+          selectedKnots.clear();
+          selectedKnots.add(copiedKnot);
+          displayedKnots.remove(knot);
 
-  private void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
-    for (Knot knot : diagram.getKnots()) {
-      try {
-        if (removeKnotIfClicked(diagram, x, y, knot)) {
-          app.getOptionalDotGrid().layoutChildren();
-          return;
-        }
-      } catch (MalformedURLException e) {
-        throw new RuntimeException(e);
-      }
-    }
-  }
+          app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          newStep(displayedKnots, selectedKnots, true);
 
-  private void onClickWithDuplicationMode(Diagram diagram, double x, double y) {
-    for (Knot knot : diagram.getKnots()) {
-      try {
-        if ((new NodeUtil().isClicked(knot, x, y)) && (duplicateKnot(diagram, x, y, knot))) {
+          break;
+        } else {
+          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          displayedKnots.add(copiedKnot);
+          selectedKnots.remove(knot);
+
+          app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          newStep(displayedKnots, selectedKnots, true);
           break;
         }
-      } catch (MalformedURLException e) {
-        throw new RuntimeException(e);
+      }
+    }
+
+    // If we have clicked elsewhere, we deselect all knots
+    if (!hasClickedOnAGivenKnot) {
+      displayedKnots.addAll(new HashSet<>(selectedKnots));
+      selectedKnots.clear();
+
+      newStep(displayedKnots, selectedKnots, true);
+    }
+
+    app.getOptionalDotGrid().layoutChildren();
+  }
+
+  public void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
+    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
+      if (new NodeUtil().isMouseOverKnot(knot, x, y)) {
+        removeKnotIfClicked(app, diagram, knot);
+        break;
       }
     }
   }
 
-  private boolean duplicateKnot(Diagram diagram, double x, double y, Knot knot) {
-    logger.info("Duplicating Knot {}", knot);
+  private void removeKnotIfClicked(App app, Diagram diagram, Knot knot) {
+    app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView());
+    app.getOptionalDotGrid().getDiagram().deleteNodesFromFollowingSteps(app, knot);
 
-    try (FileInputStream fis = new FileInputStream(knot.getPattern().getAbsoluteFilename())) {
-      Knot newKnot = newKnot(x, y, knot, fis);
-      newKnot.setRotationAngle(knot.getRotationAngle());
-      newKnot.setZoomFactor(knot.getZoomFactor());
-      diagram.addKnot(newKnot);
-      optionalDotGrid.layoutChildren();
+    Set<Knot> displayedKnotsToFilterOut = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    displayedKnotsToFilterOut.remove(knot);
+    Set<Knot> selectedKnotsToFilterOut = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    selectedKnotsToFilterOut.remove(knot);
 
-      return true;
-    } catch (IOException e) {
-      logger.error("Problem with pattern resource file!", e);
-    }
-    return false;
-  }
+    newStep(displayedKnotsToFilterOut, selectedKnotsToFilterOut, true);
 
-  private Knot newKnot(double x, double y, Knot knot, FileInputStream fis) {
-    Knot newKnot = new Knot();
-    newKnot.setX(x + NEW_KNOT_GAP);
-    newKnot.setY(y + NEW_KNOT_GAP);
-    newKnot.setPattern(knot.getPattern());
-    newKnot.setRotationAngle(DEFAULT_ROTATION);
-    newKnot.setZoomFactor(DEFAULT_ZOOM);
-    newKnot.setVisible(true);
-
-    new FileUtil().buildKnotImageView(newKnot, fis);
-    return newKnot;
-  }
-
-  private boolean removeKnotIfClicked(Diagram diagram, double x, double y, Knot knot) throws MalformedURLException {
-    if (new NodeUtil().isClicked(knot, x, y)) {
-      knot.setVisible(false);
-      logger.info("Removing Knot {}, current index = {}", knot, diagram.getCurrentKnotIndex());
-
-      return true;
-    }
-
-    return false;
+    logger.debug("Removing Knot {}, current index = {}", knot, diagram.getCurrentStepIndex());
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
@@ -306,7 +361,15 @@ public class MainWindow {
   }
 
   public TilePane getFooter() {
-    return footer;
+    return this.footer;
+  }
+
+  public StackPane getGrid() {
+    return this.grid;
+  }
+
+  public void setOptionalDotGrid(OptionalDotGrid optionalDotGrid) {
+    this.optionalDotGrid = optionalDotGrid;
   }
 
 }

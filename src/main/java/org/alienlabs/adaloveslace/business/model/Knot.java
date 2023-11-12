@@ -4,13 +4,16 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Something drawn on a Canvas, like with a brush (which is a lace Pattern), at certain x & y coordinates.
+ * Something drawn on a Canvas, like with a brush (which is a lace Pattern), at given x & y coordinates.
  *
  * @see Pattern
  * @see javafx.scene.canvas.Canvas
@@ -18,10 +21,12 @@ import java.util.UUID;
   */
 @XmlType(name = "Knot")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Knot {
+public class Knot implements Comparable<Knot> {
 
+  @XmlTransient
   public static final int DEFAULT_ROTATION  = 0;
-  public static final int DEFAULT_ZOOM      = 1;
+  @XmlTransient
+  public static final int DEFAULT_ZOOM      = 0;
 
   // Two coinciding Knots can be different
   private final UUID uuid;
@@ -37,24 +42,47 @@ public class Knot {
 
   private boolean visible;
 
+  private boolean flippedVertically;
+
+  private boolean flippedHorizontally;
+
   @XmlTransient
   private ImageView imageView;
 
+  @XmlTransient
+  private Node selection;
+
+  @XmlTransient
+  private Node hovered;
+
+  @XmlTransient
+  private boolean hoveredKnot = false;
+
+  @XmlTransient
+  private Node handle;
+
+  @XmlTransient
+  private List<Node> guideLines = new ArrayList<>();
+
   public Knot() {
-    this.uuid = UUID.randomUUID();
-    this.visible = true;
+    this.uuid                 = UUID.randomUUID();
+    this.visible              = true;
+    this.flippedVertically    = false;
+    this.flippedHorizontally  = false;
   }
 
   public Knot(final double x, final double y, final Pattern pattern, final ImageView imageView) {
-    this.x              = x;
-    this.y              = y;
-    this.pattern        = pattern;
-    this.imageView      = imageView;
+    this.x                    = x;
+    this.y                    = y;
+    this.pattern              = pattern;
+    this.imageView            = imageView;
 
-    this.uuid           = UUID.randomUUID();
-    this.rotationAngle  = DEFAULT_ROTATION;
-    this.zoomFactor     = DEFAULT_ZOOM;
-    this.visible        = true;
+    this.uuid                 = UUID.randomUUID();
+    this.rotationAngle        = DEFAULT_ROTATION;
+    this.zoomFactor           = DEFAULT_ZOOM;
+    this.visible              = true;
+    this.flippedVertically    = false;
+    this.flippedHorizontally  = false;
   }
 
   public UUID getUuid() {
@@ -109,6 +137,34 @@ public class Knot {
     this.imageView = imageView;
   }
 
+  public Node getSelection() {
+    return selection;
+  }
+
+  public void setSelection(Node selection) {
+    this.selection = selection;
+  }
+
+  public Node getHovered() {
+    return hovered;
+  }
+
+  public void setHovered(Node hovered) {
+    this.hovered = hovered;
+  }
+
+  public Node getHandle() {
+    return handle;
+  }
+
+  public void setHandle(Node handle) {
+    this.handle = handle;
+  }
+
+  public List<Node> getGuideLines() {
+    return guideLines;
+  }
+
   public boolean isVisible() {
     return visible;
   }
@@ -117,17 +173,36 @@ public class Knot {
     this.visible = visible;
   }
 
-  public boolean coincide(Knot other) {
-    return this.x == other.x && this.y == other.y &&
-      this.pattern.getAbsoluteFilename().equals(other.getPattern().getAbsoluteFilename());
+  public boolean isFlippedVertically() {
+    return flippedVertically;
+  }
+
+  public void setFlippedVertically(boolean flippedVertically) {
+    this.flippedVertically = flippedVertically;
+  }
+
+  public boolean isFlippedHorizontally() {
+    return flippedHorizontally;
+  }
+
+  public void setFlippedHorizontally(boolean flippedHorizontally) {
+    this.flippedHorizontally = flippedHorizontally;
+  }
+
+  public boolean isHoveredKnot() {
+    return this.hoveredKnot;
+  }
+
+  public void setHoveredKnot(boolean hoveredKnot) {
+    this.hoveredKnot = hoveredKnot;
   }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Knot knot)) return false;
+    if (!(o instanceof Knot)) return false;
 
-    return uuid.equals(knot.uuid);
+    return uuid.equals(((Knot)o).uuid);
   }
 
   @Override
@@ -138,14 +213,17 @@ public class Knot {
   @Override
   public String toString() {
     return "Knot{" +
-      "uuid=" + uuid +
+      "pattern=" + pattern.getFilename() +
+      ", isHovered=" + hoveredKnot +
+      ", uuid=" + uuid +
       ", x=" + x +
       ", y=" + y +
-      ", rotationAngle=" + rotationAngle +
-      ", zoomFactor=" + zoomFactor +
-      ", pattern=" + pattern +
       ", visible=" + visible +
       '}';
   }
 
+  @Override
+  public int compareTo(Knot knot) {
+    return uuid.compareTo(knot.getUuid());
+  }
 }

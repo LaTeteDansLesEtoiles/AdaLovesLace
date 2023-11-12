@@ -1,36 +1,26 @@
-package org.alienlabs.adaloveslace.test.view;
+package org.alienlabs.adaloveslace.functionaltest.view.window;
 
-import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.alienlabs.adaloveslace.test.AppTestParent;
+import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ResetDiagramButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.api.FxAssert.verifyThat;
 
-class MainWindowComponentTest extends AppTestParent {
+class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
   public static final double  WHITE_PIXEL_X               = 86d;
   public static final long    WHITE_PIXEL_Y               = 75L;
   public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xccccccff");
-
-  private Stage primaryStage;
-
-  private static final Logger logger                      = LoggerFactory.getLogger(MainWindowComponentTest.class);
 
   /**
    * Init method called before each test
@@ -39,8 +29,7 @@ class MainWindowComponentTest extends AppTestParent {
    */
   @Start
   public void start(Stage primaryStage) {
-    this.primaryStage = primaryStage;
-    super.start(this.primaryStage);
+    super.start(primaryStage);
   }
 
   @Test
@@ -60,17 +49,17 @@ class MainWindowComponentTest extends AppTestParent {
    */
   @Test
   void testDrawSnowflake(FxRobot robot) {
-    // Init
-    selectAndClickOnSnowflake(robot);
-    drawSnowflake(robot);
+    // Given
+    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+    synchronizeTask(() -> drawASnowflake(robot));
+    sleepMainThread();
 
-
-    // Run
+    // When
     // Move mouse and get the color of the pixel under the pointer
     Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
-    robot.moveTo(pointToCheck);
+    synchronizeTask(() -> robot.moveTo(pointToCheck));
 
-    // Verify
+    // Then
     foundColorOnGrid = getColor(pointToCheck);
 
     // If we choose a point in the snowflake it must not be of the same color than the grid dots
@@ -92,16 +81,16 @@ class MainWindowComponentTest extends AppTestParent {
    */
   @Test
   void testClickOutsideOfAGridDot(FxRobot robot) {
-    // Init
+    // Given
     // Move mouse and get the color of the pixel under the pointer
     Point2D pointToMoveTo = newPointOnGrid(WHITE_PIXEL_X, app.getRoot().getLayoutY() + WHITE_PIXEL_Y);
 
-    // Run
+    // When
     robot.moveTo(pointToMoveTo);
     Point2D pointToCheck = new Point2D(WHITE_PIXEL_X, WHITE_PIXEL_Y);
     foundColorOnGrid = getColor(pointToCheck);
 
-    // Verify
+    // Then
     verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.WHITE));
   }
 
@@ -113,15 +102,15 @@ class MainWindowComponentTest extends AppTestParent {
    */
   @Test
   void testClickOnTheGrid(FxRobot robot) {
-    // Init
+    // Given
     // Move mouse and get the color of the pixel under the pointer
     Point2D pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
 
-    // Run
+    // When
     robot.moveTo(pointToCheck);
     foundColorOnGrid = getColor(pointToCheck);
 
-    // Verify
+    // Then
     // If we click on a grid dot, it is gray
     assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
   }
@@ -134,23 +123,22 @@ class MainWindowComponentTest extends AppTestParent {
    */
   @Test
   void testUndoSnowflake(FxRobot robot) {
-    // Init
-    selectAndClickOnSnowflake(robot);
-    drawSnowflake(robot);
+    // Given
+    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+    synchronizeTask(() -> drawASnowflake(robot));
 
-    Point2D snowflakePoint = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
 
     // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
     // have access to the UI thread for the copy without "Platform.runLater()"
     Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
-    // Run: issue an "Undo knot" command
-    lock = new CountDownLatch(1);
-    selectAndClickUndoKnot();
+    // When: issue an "Undo knot" command
+    synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
-    // Verify
+    // Then
     // Move mouse and get the color of the pixel under the pointer
-    snowflakePoint = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     Color foundColorOnGridAfterUndo = getColor(snowflakePoint);
 
     assertNotEquals(foundColorOnGridAfterUndo, foundColorOnGridBeforeUndo,
@@ -164,27 +152,25 @@ class MainWindowComponentTest extends AppTestParent {
    */
   @Test
   void testRedoSnowflake(FxRobot robot) {
-    // Init
-    selectAndClickOnSnowflake(robot);
-    drawSnowflake(robot);
+    // Given
+    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+    synchronizeTask(() -> drawASnowflake(robot));
 
-    Point2D snowflakePoint = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    Point2D snowflakePoint = new Point2D(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
 
     // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
     // have access to the UI thread for the copy without "Platform.runLater()"
     Color foundColorOnGridBeforeRedo = getColor(snowflakePoint);
 
     // Issue an "Undo knot" command
-    lock = new CountDownLatch(1);
-    selectAndClickUndoKnot();
+    synchronizeTask(() -> UndoKnotButton.undoKnot(app));
 
-    // Run: Issue a "Redo knot" command
-    lock = new CountDownLatch(1);
-    selectAndClickRedoKnot();
+    // When: Issue a "Redo knot" command
+    synchronizeTask(() -> RedoKnotButton.redoKnot(app));
 
-    // Verify
+    // Then
     // Move mouse and get the color of the pixel under the pointer
-    snowflakePoint = new Point2D(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    snowflakePoint = new Point2D(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     Color foundColorOnGridAfterRedo = getColor(snowflakePoint);
 
     assertEquals(foundColorOnGridAfterRedo, foundColorOnGridBeforeRedo,
@@ -197,24 +183,23 @@ class MainWindowComponentTest extends AppTestParent {
    * @param robot The injected FxRobot
    */
   @Test
-  void testResetSnowflake(FxRobot robot) {
-    // Init
-    selectAndClickOnSnowflake(robot);
-    drawSnowflake(robot);
+  void testResetGrid(FxRobot robot) {
+    // Given
+    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+    synchronizeTask(() -> drawASnowflake(robot));
 
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToCheck = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    Point2D pointToCheck = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     robot.moveTo(pointToCheck);
 
     Color foundColorOnGridBeforeReset = getColor(pointToCheck);
 
-    // Run: issue a "Reset diagram" command
-    lock = new CountDownLatch(1);
-    selectAndClickResetDiagramButton();
+    // When: issue a "Reset diagram" command
+    synchronizeTask(() -> ResetDiagramButton.resetDiagram(app));
 
-    // Verify
+    // Then
     // Move mouse and get the color of the pixel under the pointer
-    pointToCheck = newPointOnGrid(SNOWFLAKE_PIXEL_X, SNOWFLAKE_PIXEL_Y);
+    pointToCheck = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     robot.moveTo(pointToCheck);
     Color foundColorOnGridAfterReset = getColor(pointToCheck);
 
@@ -222,54 +207,12 @@ class MainWindowComponentTest extends AppTestParent {
       "The color before and after 'reset diagram' must not be the same!");
   }
 
-  // Click on the 'undo knot' in the toolbox
-  private void selectAndClickUndoKnot() {
-    Platform.runLater(() -> {
-      UndoKnotButton.undoKnot(app);
-      lock.countDown();
-    });
-
-    try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
-  }
-
-  // Click on the 'redo knot' in the toolbox
-  private void selectAndClickRedoKnot() {
-    Platform.runLater(() -> {
-      RedoKnotButton.redoKnot(app);
-      lock.countDown();
-    });
-
-    try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
-  }
-
-  // Click on the 'reset diagram' in the toolbox
-  private void selectAndClickResetDiagramButton() {
-    Platform.runLater(() -> {
-      ResetDiagramButton.resetDiagram(app);
-      lock.countDown();
-    });
-
-    try {
-      lock.await(SLEEP_BETWEEN_ACTIONS_TIME, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      logger.error("Interrupted!", e);
-    }
-  }
-
   private String getMainWindowTitle() {
-    return this.primaryStage.getTitle();
+    return this.app.primaryStage.getTitle();
   }
 
   private boolean isMainWindowDisplayed() {
-    return this.primaryStage.getScene().getWindow().isShowing();
+    return this.app.primaryStage.getScene().getWindow().isShowing();
   }
 
 }

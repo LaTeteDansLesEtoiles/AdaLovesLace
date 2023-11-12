@@ -12,12 +12,13 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.util.ImageUtil.PATH_NAME;
 import static org.alienlabs.adaloveslace.util.Preferences.LACE_FILE_FOLDER_SAVE_PATH;
 import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
 public class ExportPdfButton extends ImageButton {
 
-  public static final String EXPORT_PDF_BUTTON_NAME     = "   Export as PDF  ";
+  public static final String EXPORT_PDF_BUTTON_NAME     = "EXPORT_PDF_BUTTON_NAME";
 
   public static final String EXPORT_PDF_DIALOG_TITLE    = "Export a diagram as PDF";
 
@@ -35,7 +36,7 @@ public class ExportPdfButton extends ImageButton {
   }
 
   public static void onExportAction(App app) {
-    logger.info("Exporting image file");
+    logger.debug("Exporting image file");
 
     FileChooser export = new FileChooserUtil().getFileChooser(EXPORT_PDF_DIALOG_TITLE, SAVED_LACE_FILE, LACE_FILE_FOLDER_SAVE_PATH, EXPORTED_FILES, EXPORT_PDF_FILE_FILTER);
     File file = export.showSaveDialog(app.getScene().getWindow());
@@ -45,11 +46,10 @@ public class ExportPdfButton extends ImageButton {
         file.getAbsolutePath() :
         file.getAbsolutePath() + EXPORT_PDF_FILE_TYPE;
 
-      String imageFilename = System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator +
-        PATTERNS_DIRECTORY_NAME + File.separator + OUTPUT_TEMPORARY_IMAGE;
+      String imageFilename = System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator + OUTPUT_TEMPORARY_IMAGE;
 
       new ImageUtil(app).buildWritableImageWithoutTechnicalElements(imageFilename);
-      new FileUtil().generatePdf(pdfFilename, imageFilename);
+      new FileUtil().generatePdf(pdfFilename, PATH_NAME.getAbsolutePath());
     }
   }
 

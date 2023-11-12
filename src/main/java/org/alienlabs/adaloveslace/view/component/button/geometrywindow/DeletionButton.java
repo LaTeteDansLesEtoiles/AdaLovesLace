@@ -12,14 +12,14 @@ import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUT
 
 public class DeletionButton extends ToggleButton {
 
-  public static final String DELETION_BUTTON_NAME     = "Delete ";
+  public static final String DELETION_BUTTON_NAME     = "DELETION_BUTTON_NAME";
   public static final String BUTTON_TOOLTIP           = "Select this button then click on a\nknot in the canvas to delete it\n";
 
   private static final Logger logger                  = LoggerFactory.getLogger(DeletionButton.class);
 
   public DeletionButton(App app, GeometryWindow window, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onSetSelectionModeAction(app, window));
+    this.setOnMouseClicked(event -> onSetDeletionModeAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
@@ -27,8 +27,8 @@ public class DeletionButton extends ToggleButton {
     this.setTooltip(tooltip);
   }
 
-  public static void onSetSelectionModeAction(App app, GeometryWindow window) {
-    logger.info("Setting deletion mode");
+  public static void onSetDeletionModeAction(App app, GeometryWindow window) {
+    logger.debug("Setting deletion mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DELETION);
 
     window.getDrawingButton()     .setSelected(false);

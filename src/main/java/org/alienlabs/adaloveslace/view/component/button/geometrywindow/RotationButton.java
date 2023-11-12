@@ -9,7 +9,7 @@ import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUT
 
 public class RotationButton extends Button {
 
-  public static final String ROTATION_BUTTON_NAME     = "Rotate";
+  public static final String ROTATION_BUTTON_NAME     = "ROTATION_BUTTON_NAME";
   public static final String BUTTON_TOOLTIP           = "Use the fields above to rotate\nthe currently selected knot\n";
 
   public RotationButton(App app, GeometryWindow window, String buttonLabel) {

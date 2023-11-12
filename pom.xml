@@ -3,19 +3,19 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.alienlabs.adaloveslace</groupId>
   <artifactId>adaloveslace</artifactId>
-  <version>0.1.1</version>
+  <version>0.5.0</version>
   <description>A tatting lace patterns creation software</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>17</java.version>
-    <maven.compiler.source>${java.version}</maven.compiler.source>
-    <maven.compiler.target>${java.version}</maven.compiler.target>
-    <test-plugins.version>3.0.0-M5</test-plugins.version>
-    <javafx.version>17.0.2</javafx.version>
-    <itext.version>7.2.2</itext.version>
-    <testfx.version>4.0.16-alpha</testfx.version>
-    <logback.version>1.3.0-alpha16</logback.version>
+    <java.version>21</java.version>
+    <javafx.version>21</javafx.version>
+    <test-plugins.version>3.1.2</test-plugins.version>
+    <itext.version>8.0.2</itext.version>
+    <testfx.version>4.0.17</testfx.version>
+    <junit.version>5.10.1</junit.version>
+    <logback.version>1.4.11</logback.version>
+    <dependency-check-maven.version>8.4.0</dependency-check-maven.version>
   </properties>
 
   <dependencies>
@@ -64,23 +64,21 @@
       <version>${itext.version}</version>
     </dependency>
 
-    <!-- JAXB API v4.0.0 -->
     <dependency>
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>4.0.0</version>
-      <exclusions>
-        <exclusion>
-          <groupId>jakarta.activation</groupId>
-          <artifactId>jakarta.activation-api</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>4.0.1</version>
     </dependency>
-    <!-- JAXB v3.0.2 reference implementation (curiously with com.sun coordinates) -->
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
-      <version>3.0.2</version>
+      <version>4.0.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.10.1</version>
     </dependency>
 
     <dependency>
@@ -96,20 +94,26 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>2.0.0-alpha7</version>
+      <version>2.0.9</version>
     </dependency>
 
     <dependency>
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
-      <version>4.7.0</version>
+      <version>4.8.1</version>
       <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>5.8.2</version>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -134,21 +138,22 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>4.3.1</version>
+      <version>5.7.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
   <build>
-    <finalName>adaloveslace</finalName>
+    <finalName>AdaLovesLace</finalName>
 
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.9.0</version>
+        <version>3.11.0</version>
         <configuration>
-          <release>${java.version}</release>
+          <source>21</source>
+          <target>21</target>
         </configuration>
       </plugin>
 
@@ -157,63 +162,27 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
-          <mainClass>org.alienlabs.adaloveslace.App</mainClass>
+            <mainClass>org.alienlabs.adaloveslace/org.alienlabs.adaloveslace.App</mainClass>
+            <launcher>AdaLovesLace</launcher>
+            <jlinkZipName>AdaLovesLace</jlinkZipName>
+            <jlinkImageName>AdaLovesLace</jlinkImageName>
+            <noManPages>true</noManPages>
+            <stripDebug>true</stripDebug>
+            <noHeaderFiles>true</noHeaderFiles>
         </configuration>
       </plugin>
 
       <plugin>
-        <groupId>io.github.fvarrui</groupId>
-        <artifactId>javapackager</artifactId>
-        <version>1.6.2</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>package</goal>
-            </goals>
-            <configuration>
-              <name>adaloveslace</name>
-              <mainClass>org.alienlabs.adaloveslace.App</mainClass>
-              <generateInstaller>true</generateInstaller>
-              <administratorRequired>false</administratorRequired>
-              <bundleJre>true</bundleJre>
-              <!--
-                customizedJre = false because of iText (which is not modular yet)
-                See: https://github.com/fvarrui/JavaPackager/issues/126
-              -->
-              <customizedJre>false</customizedJre>
-              <organizationName>AlienLabs</organizationName>
-              <organizationEmail>goupilpierre@gmail.com</organizationEmail>
-              <assetsDir>${basedir}/src/main/resources/assets</assetsDir>
-              <outputDirectory>${project.build.directory}/artifacts</outputDirectory>
-              <platform>auto</platform>
-              <copyDependencies>true</copyDependencies>
-              <winConfig>
-                <headerType>console</headerType>
-                <setupLanguages>
-                  <french>compiler:Languages\French.isl</french>
-                  <english>compiler:Languages\English.isl</english>
-                </setupLanguages>
-              </winConfig>
-              <vmArgs>
-                <vmArg>--module-path libs</vmArg>
-                <vmArg>-Dsun.java2d.uiScale=2.0</vmArg>
-                <vmArg>--add-modules io,kernel,layout,javafx.base,javafx.controls,javafx.graphics,javafx.swing,org.slf4j</vmArg>
-              </vmArgs>
-              <additionalResources>
-                <additionalResource>${basedir}/target/classes/org/</additionalResource>
-                <additionalResource>${basedir}/target/classes/assets/</additionalResource>
-              </additionalResources>
-              <fileAssociations>
-                <fileAssociation>
-                  <description>Ada Loves Lace file</description>
-                  <extension>lace</extension>
-                  <mimeType>application/lace</mimeType>
-                </fileAssociation>
-              </fileAssociations>
-            </configuration>
-          </execution>
-        </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.alienlabs.adaloveslace.NewMain</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -222,22 +191,65 @@
         <!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
         <version>${test-plugins.version}</version>
         <configuration>
-          <argLine>@{argLine} --add-exports javafx.graphics/com.sun.javafx.application=org.testfx</argLine>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
-          </additionalClasspathElements>
+          <skipTests>${skipUTs}</skipTests>
+          <includes>
+            <include>**/unittest/**</include>
+          </includes>
+          <excludes>
+            <exclude>**/functionaltest/**</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${test-plugins.version}</version>
+        <executions>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <forkCount>1</forkCount>
+          <useSystemClassLoader>true</useSystemClassLoader>
+          <includes>
+            <include>**/functionaltest/**</include>
+          </includes>
+          <excludes>
+            <exclude>**/unittest/**</exclude>
+          </excludes>
+          <argLine>@{argLine} --add-opens javafx.graphics/com.sun.javafx.application=testfx.core</argLine>
+          <skipITs>${skipFTs}</skipITs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>${dependency-check-maven.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <failBuildOnCVSS>7</failBuildOnCVSS>
         </configuration>
       </plugin>
 
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.5.3.0</version>
+        <version>4.8.1.0</version>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.7</version>
+        <version>0.8.10</version>
         <configuration>
           <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
           <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
@@ -265,7 +277,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pmd-plugin</artifactId>
-          <version>3.16.0</version>
+          <version>3.21.2</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -276,13 +288,93 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.16.0</version>
+        <version>3.20.0</version>
       </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+    <profile>
+      <id>linux</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.github.fvarrui</groupId>
+            <artifactId>javapackager</artifactId>
+            <version>1.7.5</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>package</goal>
+                </goals>
+                <configuration>
+                  <!-- mandatory -->
+                  <mainClass>org.alienlabs.adaloveslace.NewMain</mainClass>
+                  <outputDirectory>${project.build.directory}/artifacts</outputDirectory>
+                  <!-- optional -->
+                  <bundleJre>true</bundleJre>
+                  <generateInstaller>true</generateInstaller>
+                  <generateMsi>false</generateMsi>
+                  <generateMsm>false</generateMsm>
+                  <administratorRequired>false</administratorRequired>
+                  <platform>linux</platform>
+                  <jrePath>${env.JAVA_HOME}</jrePath>
+                  <additionalResources>
+                  </additionalResources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>windows</id>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>io.github.fvarrui</groupId>
+              <artifactId>javapackager</artifactId>
+              <version>1.6.7</version>
+              <executions>
+                <execution>
+                  <phase>package</phase>
+                  <goals>
+                    <goal>package</goal>
+                  </goals>
+                  <configuration>
+                    <!-- mandatory -->
+                    <mainClass>org.alienlabs.adaloveslace.NewMain</mainClass>
+                    <outputDirectory>${project.build.directory}/artifacts</outputDirectory>
+                    <!-- optional -->
+                    <bundleJre>true</bundleJre>
+                    <generateInstaller>true</generateInstaller>
+                    <generateMsi>true</generateMsi>
+                    <generateMsm>true</generateMsm>
+                    <administratorRequired>false</administratorRequired>
+                    <platform>windows</platform>
+                    <jrePath>${env.JAVA_HOME}</jrePath>
+                    <winConfig>
+                      <headerType>console</headerType>
+                      <setupLanguages>
+                        <french>compiler:Languages\French.isl</french>
+                        <english>compiler:Languages\English.isl</english>
+                      </setupLanguages>
+                    </winConfig>
+                    <additionalResources>
+                    </additionalResources>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+    </profile>
+  </profiles>
 </project>

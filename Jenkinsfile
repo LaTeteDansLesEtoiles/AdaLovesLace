@@ -6,8 +6,7 @@ node {
     }
 
     stage('check java') {
-        env.JAVA_HOME="${tool 'OpenJDK_17'}"
-        env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
+        env.PATH="/usr/lib/jvm/temurin-21-jdk-amd64/bin:${env.PATH}"
         sh "java -version"
     }
 
@@ -16,15 +15,26 @@ node {
         sh "./mvnw clean"
     }
 
-    wrap([$class: 'Xvfb']) {
-        stage('automated tests') {
-            try {
-                sh "./mvnw test -Dtestfx.launch.timeout=120000 -Dtestfx.setup.timeout=120000 -DSLEEP_BETWEEN_ACTIONS_TIME=5000"
+    stage('unit tests') {
+        try {
+            sh "./mvnw clean test -DskipFTs=true"
+        } catch(err) {
+            throw err
+        } finally {
+            junit '**/target/surefire-reports/*.xml'
+        }
+    }
+
+    wrap([$class: 'Xvfb', screen: '1920x1080x24', timeout: 25]) {
+
+        stage('functional tests') {
+          try {
+            sh "./mvnw clean integration-test -P linux -DskipUTs=true -Dtestfx.launch.timeout=5000 -Dtestfx.setup.timeout=5000 -DSLEEP_TIME=1000 -DWAIT_TIME=5000"
             } catch(err) {
-                throw err
-            } finally {
-                junit '**/target/surefire-reports/TEST-*.xml'
-            }
+            throw err
+          } finally {
+            junit '**/target/failsafe-reports/TEST-*.xml'
+          }
         }
 
         stage('test coverage') {
@@ -83,10 +93,22 @@ node {
                 issues: [spotBugs_report]
             )
         }
-
-        stage('packaging') {
-            sh "./mvnw package -DskipTests"
-            archiveArtifacts artifacts: '**/target/artifacts/adaloveslace-*,**/target/artifacts/adaloveslace_*', fingerprint: true
-        }
     }
+
+    stage ('OWASP Check') {
+
+        dependencyCheck additionalArguments: '''
+            -o "./"
+            -s "./"
+            -f "ALL"
+            --prettyPrint''', odcInstallation: 'OWASP-DC'
+
+        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+    }
+
+    stage('packaging') {
+        sh "./mvnw install -P linux -DskipUTs=true -DskipFTs=true"
+        archiveArtifacts artifacts: '**/target/artifacts/*.deb,**/target/artifacts/*.rpm,**/target/artifacts/*.AppImage', fingerprint: true
+    }
+
 }

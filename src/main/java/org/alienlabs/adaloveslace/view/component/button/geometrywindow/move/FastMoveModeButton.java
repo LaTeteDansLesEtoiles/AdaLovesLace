@@ -3,8 +3,6 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow.move;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
-import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,19 +17,19 @@ public class FastMoveModeButton extends ToggleButton {
 
   private static final Logger logger                    = LoggerFactory.getLogger(FastMoveModeButton.class);
 
-  public FastMoveModeButton(App app, GeometryWindow window) {
+  public FastMoveModeButton() {
     isFastMode = new SimpleBooleanProperty(DEFAULT_FAST_MODE);
 
-    this.setOnMouseClicked(event -> onSwitchSlowModeAction(app, window));
+    this.setOnMouseClicked(event -> onSwitchSlowModeAction());
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(BUTTON_TOOLTIP);
     this.setTooltip(tooltip);
   }
 
-  public static void onSwitchSlowModeAction(App app, GeometryWindow window) {
+  public static void onSwitchSlowModeAction() {
     isFastMode.set(!isFastMode.get());
-    logger.info("Setting fast move mode: {}", isFastMode.get());
+    logger.debug("Setting fast move mode: {}", isFastMode.get());
   }
 
   public static double getMoveSpeed() {

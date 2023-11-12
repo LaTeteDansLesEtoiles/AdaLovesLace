@@ -1,19 +1,22 @@
-module org.alienlabs.adaloveslace.impl {
+module org.alienlabs.adaloveslace {
   // iText
   requires io;
   requires kernel;
-  requires layout;
 
-  requires javafx.controls;
+  requires com.google.gson;
+  requires jakarta.xml.bind;
+  requires java.net.http;
+  requires java.prefs;
   requires javafx.graphics;
   requires javafx.swing;
-  requires jakarta.xml.bind;
-  requires java.prefs;
   requires org.slf4j;
   requires static com.github.spotbugs.annotations;
+  requires static javafx.controls;
+  requires static layout;
 
-  opens org.alienlabs.adaloveslace                  to javafx.graphics, javafx.controls;
-  opens org.alienlabs.adaloveslace.business.model   to jakarta.xml.bind;
+  opens org.alienlabs.adaloveslace                  to javafx.controls, javafx.graphics, layout;
+  opens org.alienlabs.adaloveslace.business.model   to com.google.gson, jakarta.xml.bind;
+  opens org.alienlabs.adaloveslace.util;
 
   exports org.alienlabs.adaloveslace;
   exports org.alienlabs.adaloveslace.business.model;

@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AdaLovesLace" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
+    <option name="MAIN_CLASS_NAME" value="org.alienlabs.adaloveslace.App" />
+    <module name="adaloveslace" />
+    <option name="VM_PARAMETERS" value="--add-modules javafx.controls,javafx.graphics,javafx.swing" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

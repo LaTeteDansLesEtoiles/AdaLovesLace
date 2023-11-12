@@ -8,12 +8,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 
+import static org.alienlabs.adaloveslace.App.ASSETS_DIRECTORY;
 import static org.alienlabs.adaloveslace.App.SMALL_ICON_SIZE;
 
 public class ImageButton extends Button {
 
-  public static final String ASSETS_DIRECTORY = "assets/";
   private static final Logger logger = LoggerFactory.getLogger(ImageButton.class);
 
   public ImageButton(String buttonLabel) {
@@ -22,13 +23,17 @@ public class ImageButton extends Button {
 
   public void buildButtonImage(String pathname) {
     try {
-      Image buttonImage = new Image(new File(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm());
+      Image buttonImage = new Image(ClassLoader.getSystemResource(ASSETS_DIRECTORY + pathname) != null ?
+              ClassLoader.getSystemResource(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm() :
+              new File(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm());
 
       ImageView buttonImageView  = new ImageView(buttonImage);
       buttonImageView.setFitHeight(SMALL_ICON_SIZE);
       buttonImageView.setPreserveRatio(true);
       this.setGraphic(buttonImageView);
     } catch (MalformedURLException e) {
+      logger.error("Error loading button image!", e);
+    } catch (URISyntaxException e) {
       logger.error("Error loading button image!", e);
     }
   }
