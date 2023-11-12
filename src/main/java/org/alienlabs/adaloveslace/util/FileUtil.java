@@ -245,7 +245,7 @@ public class FileUtil {
         final String classPath = JAVA_CLASS_PATH_PROPERTY;
         logger.debug("classpath: {}", classPath);
 
-        if (classPath != null && !"".equals(classPath.trim())) {
+        if (classPath != null && !classPath.trim().isEmpty()) {
             processClasspath(pattern, retval, classPath);
         } else {
             processLocationPath(classpathBase, pattern, retval);

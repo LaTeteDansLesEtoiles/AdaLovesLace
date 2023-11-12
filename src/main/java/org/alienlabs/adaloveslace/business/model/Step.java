@@ -46,7 +46,7 @@ public class Step implements Comparable<Step> {
      * @param diagram        the diagram onto which to work
      * @param displayedKnots the knots to add to the new Step as displayed
      * @param selectedKnots  the knots to add to the new Step as selected
-     * @param layoutChildren
+     * @param layoutChildren shall we redisplay grid content?
      */
     public Step(App app,
                 Diagram diagram,
