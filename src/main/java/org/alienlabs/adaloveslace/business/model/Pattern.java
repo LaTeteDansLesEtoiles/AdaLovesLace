@@ -22,7 +22,7 @@ import java.util.Objects;
  * */
 @XmlType(name = "Pattern")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Pattern {
+public class Pattern implements Comparable<Pattern>{
 
   @XmlTransient
   private String absoluteFilename;
@@ -120,4 +120,8 @@ public class Pattern {
     return Objects.hash(filename);
   }
 
+  @Override
+  public int compareTo(Pattern p) {
+    return this.filename.compareTo(p.filename);
+  }
 }
