@@ -30,7 +30,7 @@ public class SelectionButton extends ToggleButton {
   }
 
   public static void onSetSelectionModeAction(App app, GeometryWindow window) {
-    logger.info("Setting selection mode");
+    logger.debug("Setting selection mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
     app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
 

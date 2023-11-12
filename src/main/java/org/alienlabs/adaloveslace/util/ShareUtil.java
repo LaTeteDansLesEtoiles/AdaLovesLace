@@ -23,7 +23,7 @@ public class ShareUtil {
   private static final Logger logger = LoggerFactory.getLogger(ShareUtil.class);
 
   public ShareUtil(App app, String diagramName, String username, String clientId, String clientSecret) {
-    logger.info("Sharing in progress");
+    logger.debug("Sharing in progress");
 
     Platform.runLater(() -> {
       DiagramDTO diagram;
@@ -50,7 +50,7 @@ public class ShareUtil {
     completableFuture.join();
 
     try {
-      logger.info("Response status code: {}", completableFuture.get().statusCode());
+      logger.debug("Response status code: {}", completableFuture.get().statusCode());
     } catch (InterruptedException | ExecutionException e) {
       throw new RuntimeException("Error getting response status code!", e);
     }

@@ -8,9 +8,10 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
+import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class RotationSpinner {
@@ -30,24 +31,17 @@ public class RotationSpinner {
       spinnerToReflect2.setValue(newValue);
 
       if (++numberOfUpdates == 1) {
-        Set<Knot> displayedCopy = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-        Set<Knot> selectedCopy = new HashSet<>();
+        Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+        Set<Knot> selectedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+        Set<Knot> copiedKnots = new TreeSet<>();
 
-        if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots() != null && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().isEmpty()) {
-          for (Knot currentKnot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
-            Knot knotCopy = new NodeUtil().copyKnot(currentKnot);
-            knotCopy.setRotationAngle(newValue);
-            selectedCopy.add(knotCopy);
-
-            if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots() != null && !app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().isEmpty()) {
-              displayedCopy.remove(currentKnot);
-              app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().remove(currentKnot);
-            }
-          }
+        for (Knot knot : selectedKnots) {
+          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          copiedKnot.setRotationAngle(newValue);
+          copiedKnots.add(copiedKnot);
         }
 
-        app.getOptionalDotGrid().getDiagram().addKnotsWithStep(displayedCopy, selectedCopy);
-        app.getOptionalDotGrid().layoutChildren();
+        newStep(displayedKnots, copiedKnots, true);
       }
 
       if (numberOfUpdates > 2) {

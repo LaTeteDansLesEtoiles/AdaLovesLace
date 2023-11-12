@@ -6,6 +6,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.ImageUtil;
@@ -14,6 +15,10 @@ import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Set;
+import java.util.TreeSet;
+
+import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class CreatePatternButton extends ImageButton {
@@ -47,7 +52,7 @@ public class CreatePatternButton extends ImageButton {
     }
 
     public static void onCreatePatternModeAction(App app) {
-        logger.info("Setting create pattern mode");
+        logger.debug("Setting create pattern mode");
         app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.CREATE_PATTERN);
 
         app.getGeometryWindow().getDrawingButton().setSelected(false);
@@ -58,13 +63,17 @@ public class CreatePatternButton extends ImageButton {
         app.getOptionalDotGrid().clearSelections();
         app.getOptionalDotGrid().clearHovered();
         app.getOptionalDotGrid().clearAllGuideLines();
-        app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
 
+        Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+        Set<Knot> selectedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+        displayedKnots.addAll(new TreeSet<>(selectedKnots));
+        selectedKnots.clear();
         app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
 
         if (Events.getGridHoverEventHandler(app) != null) {
             app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
         }
+        newStep(displayedKnots, selectedKnots, true);
 
         if (mouseClicks == 2) {
             removeRectangle(app);
@@ -88,7 +97,7 @@ public class CreatePatternButton extends ImageButton {
             };
 
             mouseClickedListener = mouseEvent -> {
-                logger.info("Create Pattern => MouseEvent pressed: X= {}, Y= {}", mouseEvent.getX(), mouseEvent.getY());
+                logger.debug("Create Pattern => MouseEvent pressed: X= {}, Y= {}", mouseEvent.getX(), mouseEvent.getY());
 
                 mouseClicks++;
 

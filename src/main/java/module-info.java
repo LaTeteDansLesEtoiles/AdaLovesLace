@@ -16,6 +16,7 @@ module org.alienlabs.adaloveslace {
 
   opens org.alienlabs.adaloveslace                  to javafx.controls, javafx.graphics, layout;
   opens org.alienlabs.adaloveslace.business.model   to com.google.gson, jakarta.xml.bind;
+  opens org.alienlabs.adaloveslace.util;
 
   exports org.alienlabs.adaloveslace;
   exports org.alienlabs.adaloveslace.business.model;

@@ -216,7 +216,7 @@ public class ToolboxWindow {
 
     this.toolboxStage.setTitle(resourceBundle.getString(TOOLBOX_TITLE));
     this.toolboxStage.setOnCloseRequest(windowEvent ->
-            logger.info("You shall not close the toolbox window directly!")
+            logger.debug("You shall not close the toolbox window directly!")
     );
   }
 
@@ -228,7 +228,7 @@ public class ToolboxWindow {
         return 900;
       }
 
-      return app.getOptionalDotGrid().getDiagram().getPatterns().size() * 60;
+      return app.getOptionalDotGrid().getDiagram().getPatterns().size() * 200;
     }
   }
 

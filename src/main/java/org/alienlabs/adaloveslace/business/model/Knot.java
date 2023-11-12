@@ -56,6 +56,12 @@ public class Knot implements Comparable<Knot> {
   private Node hovered;
 
   @XmlTransient
+  private boolean hoveredKnot = false;
+
+  @XmlTransient
+  private Node handle;
+
+  @XmlTransient
   private List<Node> guideLines = new ArrayList<>();
 
   public Knot() {
@@ -147,12 +153,16 @@ public class Knot implements Comparable<Knot> {
     this.hovered = hovered;
   }
 
-  public List<Node> getGuideLines() {
-    return guideLines;
+  public Node getHandle() {
+    return handle;
   }
 
-  public void setGuideLines(List<Node> guideLines) {
-    this.guideLines = guideLines;
+  public void setHandle(Node handle) {
+    this.handle = handle;
+  }
+
+  public List<Node> getGuideLines() {
+    return guideLines;
   }
 
   public boolean isVisible() {
@@ -179,15 +189,18 @@ public class Knot implements Comparable<Knot> {
     this.flippedHorizontally = flippedHorizontally;
   }
 
-  public boolean coincide(Knot other) {
-    return this.x == other.x && this.y == other.y &&
-      this.pattern.getAbsoluteFilename().equals(other.getPattern().getAbsoluteFilename());
+  public boolean isHoveredKnot() {
+    return this.hoveredKnot;
+  }
+
+  public void setHoveredKnot(boolean hoveredKnot) {
+    this.hoveredKnot = hoveredKnot;
   }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Knot knot)) return false;
+    if (!(o instanceof Knot)) return false;
 
     return uuid.equals(((Knot)o).uuid);
   }
@@ -200,9 +213,11 @@ public class Knot implements Comparable<Knot> {
   @Override
   public String toString() {
     return "Knot{" +
-      "x=" + x +
+      "pattern=" + pattern.getFilename() +
+      ", isHovered=" + hoveredKnot +
+      ", uuid=" + uuid +
+      ", x=" + x +
       ", y=" + y +
-      ", pattern=" + pattern.getFilename() +
       ", visible=" + visible +
       '}';
   }

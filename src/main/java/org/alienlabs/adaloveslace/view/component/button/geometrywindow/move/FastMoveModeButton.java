@@ -29,7 +29,7 @@ public class FastMoveModeButton extends ToggleButton {
 
   public static void onSwitchSlowModeAction() {
     isFastMode.set(!isFastMode.get());
-    logger.info("Setting fast move mode: {}", isFastMode.get());
+    logger.debug("Setting fast move mode: {}", isFastMode.get());
   }
 
   public static double getMoveSpeed() {

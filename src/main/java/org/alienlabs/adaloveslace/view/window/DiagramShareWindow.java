@@ -62,7 +62,7 @@ public class DiagramShareWindow {
 
       new ShareUtil(app, filenameText.getText(), userText.getText(), clientIdText.getText(), clientSecretText.getText());
     } else {
-      logger.info("Sharing cancelled");
+      logger.debug("Sharing cancelled");
     }
 
     alert.close();

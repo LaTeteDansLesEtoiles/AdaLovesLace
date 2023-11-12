@@ -6,17 +6,18 @@ import org.alienlabs.adaloveslace.business.model.Knot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.MalformedURLException;
-
 public class NodeUtil {
 
-  private static final Logger logger                  = LoggerFactory.getLogger(NodeUtil.class);
+  public static final int KNOT_PADDING  = 10;   // https://stackoverflow.com/questions/36294985/javafx-get-the-x-and-y-pixel-coordinates-clicked-on-an-imageview
+  public static final int HANDLE_SIZE   = 25;
+
+  private static final Logger logger    = LoggerFactory.getLogger(NodeUtil.class);
 
   public NodeUtil() {
     // Nothing to do here, that's just to avoid an all-static class
   }
 
-  public boolean isMouseOverKnot(Knot knot, double mouseX, double mouseY) throws MalformedURLException {
+  public boolean isMouseOverKnot(Knot knot, double mouseX, double mouseY) {
     if (!knot.isVisible()) {
       return false;
     }
@@ -24,34 +25,58 @@ public class NodeUtil {
     ImageView img = knot.getImageView();
 
     // Get coordinates of the img relative to screen (as mouse coordinates are relative to screen, too)
-    Bounds boundsInScreen = img.localToScreen(img.getBoundsInParent());
-    if (boundsInScreen == null) {
+    Bounds boundsInParent = img.getBoundsInParent();
+    if (boundsInParent == null) {
       return false;
     }
-    logger.debug("nodeCoord X= {}, Y={}", boundsInScreen.getMinX(), boundsInScreen.getMinY());
+    logger.debug("nodeCoord X= {}, Y={}", boundsInParent.getMinX(), boundsInParent.getMinY());
+    logger.debug("mouseCoord X= {}, Y={}", mouseX, mouseY);
 
-    return (boundsInScreen.getMinX() <= mouseX) && (boundsInScreen.getMaxX() >= mouseX) &&
-      (boundsInScreen.getMinY() <= mouseY) && (boundsInScreen.getMaxY() >= mouseY);
+    return (boundsInParent.getMinX() + KNOT_PADDING <= mouseX) && (boundsInParent.getMaxX() - KNOT_PADDING >= mouseX) &&
+      (boundsInParent.getMinY() <= mouseY + KNOT_PADDING) && (boundsInParent.getMaxY() - KNOT_PADDING >= mouseY);
   }
 
   public Knot copyKnot(Knot knot) {
     Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), knot.getImageView());
+
     copy.setRotationAngle(knot.getRotationAngle());
     copy.setZoomFactor(knot.getZoomFactor());
     copy.setVisible(knot.isVisible());
     copy.setFlippedVertically(knot.isFlippedVertically());
     copy.setFlippedHorizontally(knot.isFlippedHorizontally());
+
+    copy.getImageView().setX(knot.getX());
+    copy.getImageView().setY(knot.getY());
+    copy.getImageView().setFitHeight(knot.getPattern().getHeight());
+    copy.getImageView().setFitWidth(knot.getPattern().getWidth());
+
+    if (knot.getHovered() != null) {
+      copy.setHovered(knot.getHovered());
+      knot.setHovered(null);
+    }
+    if (knot.getSelection() != null) {
+      copy.setSelection(knot.getSelection());
+      knot.setSelection(null);
+    }
+    if (knot.getHandle() != null) {
+      copy.setHandle(knot.getHandle());
+      knot.setHandle(null);
+    }
 
     return copy;
   }
 
   public Knot copyKnotCloningImageView(Knot knot) {
     Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), new ImageView(knot.getImageView().getImage()));
+
     copy.setRotationAngle(knot.getRotationAngle());
     copy.setZoomFactor(knot.getZoomFactor());
     copy.setVisible(knot.isVisible());
     copy.setFlippedVertically(knot.isFlippedVertically());
     copy.setFlippedHorizontally(knot.isFlippedHorizontally());
+
+    copy.getImageView().setFitHeight(knot.getPattern().getHeight());
+    copy.getImageView().setFitWidth(knot.getPattern().getWidth());
 
     return copy;
   }

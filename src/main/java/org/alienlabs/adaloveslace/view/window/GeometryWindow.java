@@ -74,7 +74,7 @@ public class GeometryWindow {
 
     this.geometryStage = geometryStage;
     geometryStage.setTitle(resourceBundle.getString(GEOMETRY_TITLE));
-    geometryStage.setOnCloseRequest(windowEvent -> logger.info("You shall not close the geometry window directly!"));    geometryStage.setX(GEOMETRY_WINDOW_X);
+    geometryStage.setOnCloseRequest(windowEvent -> logger.debug("You shall not close the geometry window directly!"));    geometryStage.setX(GEOMETRY_WINDOW_X);
     geometryStage.setY(MAIN_WINDOW_Y);
     geometryStage.setScene(geometryScene);
     geometryStage.show();

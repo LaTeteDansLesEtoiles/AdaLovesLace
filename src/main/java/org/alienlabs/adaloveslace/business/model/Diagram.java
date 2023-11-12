@@ -5,16 +5,24 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import javafx.scene.Group;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
 import org.alienlabs.adaloveslace.App;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
+import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 
 /**
  * What is drawn on a Canvas: the Diagram is the desired, final business object consisting of Knots drawn with Patterns.
@@ -33,7 +41,7 @@ public class Diagram {
 
     private Integer             currentStepIndex;
 
-    private final List<Step>    allSteps;
+    private List<Step>          allSteps = new ArrayList<>();
 
     @XmlTransient
     private Pattern             currentPattern;
@@ -45,29 +53,52 @@ public class Diagram {
     private boolean             isKnotSelected;
 
     @XmlTransient
+    private static App          app;
+
+    @XmlTransient
     private MouseMode           currentMode;
 
     @XmlTransient
     private static final Logger logger = LoggerFactory.getLogger(Diagram.class);
 
+    @XmlTransient
+    private static final double SPACING_X = 25d; // The X space between the dots
+
+    @XmlTransient
+    private static final double SPACING_Y = 10d; // The Y space between the dots
+
+    @XmlTransient
+    private static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
+
     // For JAXB
     public Diagram() {
-        this.patterns     = new ArrayList<>();
-        this.knots        = new ArrayList<>();
-        this.allSteps     = new ArrayList<>();
-        this.currentMode  = MouseMode.DRAWING;
-        this.currentStepIndex = 0;
+        this.patterns           = new ArrayList<>();
+        this.knots              = new ArrayList<>();
+        this.currentMode        = MouseMode.DRAWING;
+        this.currentStepIndex   = 0;
     }
 
-    public Diagram(final Diagram diagram) {
-        this.patterns         = new ArrayList<>(diagram.getPatterns());
-        this.knots            = new ArrayList<>(diagram.getKnots());
-        this.allSteps         = new ArrayList<>(diagram.getAllSteps());
-        this.currentStepIndex = diagram.getCurrentStepIndex();
-        this.currentMode      = diagram.getCurrentMode();
-        this.currentKnot      = diagram.getCurrentKnot();
-        this.isKnotSelected   = diagram.isKnotSelected();
+    public Diagram(App app) {
+        this.patterns           = new ArrayList<>();
+        this.knots              = new ArrayList<>();
+        this.currentMode        = MouseMode.DRAWING;
+        this.currentStepIndex   = 0;
+        Diagram.app             = app;
+        this.allSteps.add(new Step());
+    }
+
+    public Diagram(final Diagram diagram, App app) {
+        this.patterns               = new ArrayList<>(diagram.getPatterns());
+        this.knots                  = new ArrayList<>(diagram.getKnots());
+        this.allSteps               = new ArrayList<>(diagram.getAllSteps());
+        this.currentStepIndex       = diagram.getCurrentStepIndex();
+        this.currentMode            = diagram.getCurrentMode();
+        this.currentKnot            = diagram.getCurrentKnot();
+        this.isKnotSelected         = diagram.isKnotSelected();
         this.setCurrentPattern(diagram.getCurrentPattern());
+        this.currentStepIndex       = 0;
+        Diagram.app                 = app;
+        this.allSteps.add(new Step());
     }
 
     public List<Pattern> getPatterns() {
@@ -78,120 +109,105 @@ public class Diagram {
         return this.knots;
     }
 
-
     public void addPattern(final Pattern pattern) {
         this.patterns.add(pattern);
     }
 
-    /**
-     * Adds a single Knot to a new undo / redo Step
-     * @param knot the Knot to add.
-     */
-    public void addKnotWithStep(final Knot knot) {
-        Set<Knot> displayedKnots = this.getCurrentStep().getDisplayedKnots();
-        Set<Knot> selectedKnots = this.getCurrentStep().getSelectedKnots();
+    public void undoLastStep(App app, Boolean... layoutChildren) {
+        logger.debug("Undo step, current step={}", this.getCurrentStepIndex());
 
-        Step newStep;
-
-        if (knot.getSelection() == null) {
-            Set<Knot> newDisplayed = new HashSet<>(displayedKnots);
-            newDisplayed.add(knot);
-            newStep = new Step(this, newDisplayed, selectedKnots);
-        } else {
-            Set<Knot> newSelected = new HashSet<>(selectedKnots);
-            newSelected.add(knot);
-            newStep = new Step(this, displayedKnots, newSelected);
+        if (this.getCurrentStepIndex() > 0) {
+            this.setCurrentStepIndex(this.getCurrentStepIndex() - 1);
         }
 
-        this.getAllSteps().add(newStep);
-        this.currentStepIndex = newStep.getStepIndex();
-    }
-
-    /**
-     * Creates a step given the displayed knots and the selected knots. A knot can only be one of those, not both.
-     *
-     * @param displayedKnots the displayed but not selected knots to add to the new Step
-     * @param selectedKnots the selected (hence displayed but not in the displayedKnots Set) to add to the new Step
-     * @return the new undo / redo Step
-     */
-    public Step addKnotsWithStep(final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
-        Step step = new Step(this, displayedKnots, selectedKnots);
-        this.getAllSteps().add(step);
-
-        return step;
-    }
-
-    public void addKnotsToStep(final Set<Knot> displayedKnots, final Set<Knot> selectedKnots) {
-        Step step = Step.of(this, displayedKnots, selectedKnots);
-        this.getAllSteps().add(step);
-    }
-
-    public void undoLastStep(App app) {
-        logger.info("Undo step, current step={}", currentStepIndex);
-
-        if (this.allSteps == null || this.allSteps.isEmpty()) {
-            return;
-        }
-
-        if (this.currentStepIndex > 1) {
-            deleteNodesFromCurrentStep(app);
-            this.currentStepIndex--;
+        if (layoutChildren.length == 0) {
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
+        }
 
-            logger.info("Undo step, new step={}", currentStepIndex);
-        } else {
-            deleteNodesFromCurrentStep(app);
-            this.currentStepIndex = 1;
+        logger.debug("Undo step, new step={}", this.getCurrentStepIndex());
+    }
+
+    public void redoLastStep(App app, Boolean... layoutChildren) {
+        logger.debug("Redo 0 step, current step={}", this.getCurrentStepIndex());
+
+        if (this.getCurrentStepIndex() <
+                this.getAllSteps().size() - 1) {
+            this.setCurrentStepIndex(this.getCurrentStepIndex() + 1);
+        }
+
+        if (layoutChildren.length == 0) {
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
+        }
 
-            logger.info("Undo step, new step={}", currentStepIndex);
+        logger.debug("Redo 2 step, new step={}", this.getCurrentStepIndex());
+    }
+
+    public static void newStep(Set<Knot> displayedKnots, Set<Knot> selectedKnots, boolean layoutChildren, Circle... handle) {
+        new Step(app,
+                app.getOptionalDotGrid().getDiagram(),
+                displayedKnots,
+                selectedKnots,
+                layoutChildren, handle
+        );
+    }
+    public void drawGrid(double w, double h, double desiredRadius, Set<Shape> grid) {
+        app.getOptionalDotGrid().hideGrid();
+
+        for (double x = 40d; x < (w - 185d); x += SPACING_X) {
+            for (double y = 60d; y < (h - 50d); y += SPACING_Y) {
+                double offsetY = (y % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
+                Ellipse ell = new Ellipse(x - desiredRadius + offsetY,y - desiredRadius, desiredRadius, desiredRadius); // A dot
+                ell.setFill(GRID_COLOR);
+                ell.toFront();
+
+                grid.add(ell);
+                app.getOptionalDotGrid().getRoot().getChildren().add(ell);
+            }
         }
     }
 
-    public void redoLastStep(App app) {
-        logger.info("Redo 0 step, current step={}", this.currentStepIndex);
+    public void drawKnot(double x, double y) {
+        logger.debug("Current pattern  -> {}", this.getCurrentPattern());
 
-        if (this.allSteps == null || this.allSteps.isEmpty()) {
-            return;
-        }
+        try (FileInputStream fis = new FileInputStream(new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, this.getCurrentPattern().getFilename()))) {
+            Image image = new Image(fis);
+            ImageView iv = new ImageView(image);
 
-        if (this.currentStepIndex < 1 && this.allSteps.size() > 1) {
-            app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
-            logger.info("Redo 1 step, new step={}", this.currentStepIndex);
-        } else if (this.currentStepIndex < this.allSteps.size()) {
-            deleteNodesFromCurrentStep(app);
-            this.currentStepIndex++;
-            app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
+            iv.setX(x);
+            iv.setY(y);
+            iv.setRotate(0d);
 
-            logger.info("Redo 2 step, new step={}", this.currentStepIndex);
-        } else {
-            this.currentStepIndex = this.allSteps.size();
-            logger.info("Redo 3 step, new index={}", this.currentStepIndex);
+            logger.debug("Top left corner of the knot {} is ({},{})", this.getCurrentPattern().getFilename(), x, y);
+
+            app.getOptionalDotGrid().getRoot().getChildren().add(iv);
+            currentKnot = new Knot(x, y, this.getCurrentPattern(), iv);
+            this.setCurrentKnot(currentKnot);
+
+            Set<Knot> displayed = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+            displayed.add(currentKnot);
+
+            newStep(displayed, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots(), true);
+        } catch (IOException e) {
+            logger.error("Problem with pattern resource file!", e);
         }
     }
 
-    private void deleteNodesFromCurrentStep(App app) {
-        getCurrentStep().getDisplayedKnots().forEach(knot -> {
-            app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView()); // Delete nodes from step before
-            app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
-            app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
-        });
-        getCurrentStep().getSelectedKnots().forEach(knot -> {
-            app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView()); // Delete nodes from step before
-            app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
-            app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
-        });
-    }
-
-    public void deleteNodesFromCurrentStep(App app, Knot knot) {
+    public void deleteNodesFromFollowingSteps(App app, Knot knot) {
         app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
         app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
         app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
         knot.getGuideLines().clear();
     }
 
-    public void deleteNodesFromCurrentStep(Group root) {
-        root.getChildren().removeAll(root.getChildren().stream().filter(node -> (node instanceof Line || node instanceof Rectangle)).toList());
+    public void deleteNodesFromFollowingSteps(Group root) {
+        root.getChildren().removeAll(root.getChildren().stream().filter(node ->
+                (node instanceof Line ||
+                        node instanceof Rectangle ||
+                        node instanceof Circle)).toList());
+    }
+
+    public void deleteHandlesFromCurrentStep(Group root) {
+        root.getChildren().removeAll(root.getChildren().stream().filter(Circle.class::isInstance).toList());
     }
 
     // We don't lose the undo / redo history
@@ -240,25 +256,19 @@ public class Diagram {
     }
 
     public Step getCurrentStep() {
-
-        if (allSteps.isEmpty() || currentStepIndex == -1) {
-            Step newEmptyStep = new Step(this, 1);
-            this.getAllSteps().add(newEmptyStep);
-            this.setCurrentStepIndex(1);
-            return newEmptyStep;
-        }
-
-        if (allSteps.stream().anyMatch(step -> step.getStepIndex().equals(currentStepIndex))) {
-            return allSteps.stream().filter(step -> step.getStepIndex().equals(currentStepIndex)).findFirst().get();
-        }
-
-        Step newEmptyStep = new Step(this, 1);
-        this.getAllSteps().add(newEmptyStep);
-        this.setCurrentStepIndex(1);
-        return newEmptyStep;
+        return this.getAllSteps().get(currentStepIndex);
     }
 
     public List<Step> getAllSteps() {
-        return allSteps;
+        return this.allSteps;
     }
+
+    public App getApp() {
+        return app;
+    }
+
+    public void setApp(App app) {
+        Diagram.app = app;
+    }
+
 }

@@ -44,7 +44,7 @@ public class PatternButton extends ToggleButton {
       PatternButton.this.setSelected(true);
       PatternButton.this.setStyle("-fx-border-color: blue;");
 
-      logger.info("Event type -> {}, new current Pattern -> {}", eType, newCurrentPattern);
+      logger.debug("Event type -> {}, new current Pattern -> {}", eType, newCurrentPattern);
 
       app.getOptionalDotGrid().getCurrentPatternProperty().set(newCurrentPattern);
     });

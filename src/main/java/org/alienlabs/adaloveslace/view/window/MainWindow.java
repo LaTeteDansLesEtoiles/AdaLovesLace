@@ -13,6 +13,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
@@ -26,10 +27,11 @@ import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.MalformedURLException;
 import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
+import static org.alienlabs.adaloveslace.util.Events.moveDraggedAndDroppedNodes;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
@@ -142,10 +144,10 @@ public class MainWindow {
     MenuItem printItem = new MenuItem(resourceBundle.getString(PRINT_BUTTON_NAME));
     printItem.setOnAction(actionEvent -> {
       if (!printers.isEmpty()) {
-        logger.info("Printing attempt of diagram");
+        logger.debug("Printing attempt of diagram");
 
         Printer printer = printers.iterator().next();
-        logger.info("Printing attempt of diagram with printer {}", printer.getName());
+        logger.debug("Printing attempt of diagram with printer {}", printer.getName());
 
         PrinterJob pJ = PrinterJob.createPrinterJob(printer);
 
@@ -155,7 +157,7 @@ public class MainWindow {
         if (proceed) {
           new PrintUtil(app).print(pJ);
         } else {
-          logger.info("Printing diagram aborted by user!");
+          logger.debug("Printing diagram aborted by user!");
         }
       }
     });
@@ -215,12 +217,12 @@ public class MainWindow {
     return footer;
   }
 
-  public StackPane createGrid(final double width, final double height, final double radius,
+  public StackPane createGrid(App app, final double width, final double height, final double radius,
                               final Diagram diagram, final Group root) {
     if (width == 0d || height == 0d) {
-      this.optionalDotGrid = new OptionalDotGrid(diagram, root);
+      this.optionalDotGrid = new OptionalDotGrid(app, diagram, root);
     } else {
-      this.optionalDotGrid = new OptionalDotGrid(width, height, radius, diagram, root);
+      this.optionalDotGrid = new OptionalDotGrid(app, width, height, radius, diagram, root);
     }
 
     grid = new StackPane(this.optionalDotGrid);
@@ -239,159 +241,112 @@ public class MainWindow {
     root.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
   }
 
+  public void onDragOverHandleWithSelectionMode(App app, double x, double y) {
+    Circle handle = (Circle)app.getOptionalDotGrid().getDragOriginKnot().getHandle();
+    moveDraggedAndDroppedNodes(app, x, y, handle);
+  }
+
   public void onClickWithSelectionMode(App app, double x, double y) {
-    Iterator<Knot> it = optionalDotGrid.getDiagram().getCurrentStep().getDisplayedKnots().iterator();
-    boolean hasClickedOnAKnot = false;
+    Iterator<Knot> it = optionalDotGrid.getDiagram().getCurrentStep().getAllVisibleKnots().iterator();
     boolean hasClickedOnAGivenKnot = false;
     app.getOptionalDotGrid().clearHovered();
+    Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    Set<Knot> selectedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
     // We iterate on the Knots as long as they are still Knots left to iterate
     // And we stop at the first clicked Knot
     while (it.hasNext()) {
       Knot knot = it.next();
 
-      try {
-        hasClickedOnAGivenKnot = new NodeUtil().isMouseOverKnot(knot, x, y);
+      hasClickedOnAGivenKnot = new NodeUtil().isMouseOverKnot(knot, x, y);
 
-        if (hasClickedOnAGivenKnot && !hasClickedOnAKnot) {
-          hasClickedOnAKnot = true;
-        }
-      } catch (MalformedURLException e) {
-        logger.error("Error during click on select!", e);
-      }
-
-      if (hasClickedOnAGivenKnot && (knot.getSelection() == null || knot.getHovered() == null)) {
-        logger.info("Clicked Knot {} in order to select it", knot.getPattern().getFilename());
+      if (hasClickedOnAGivenKnot && (knot.getSelection() == null)) {
+        logger.debug("Clicked Knot {} in order to select it", knot.getPattern().getFilename());
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
-          app.getOptionalDotGrid().clearSelections();
-          app.getOptionalDotGrid().getAllHoveredKnots().clear();
-          app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
+          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          selectedKnots.clear();
+          selectedKnots.add(copiedKnot);
+          displayedKnots.remove(knot);
 
-          Set<Knot> selected = new HashSet<>();
-          selected.add(knot);
-          Set<Knot> displayed = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-          displayed.remove(knot);
-
-          app.getOptionalDotGrid().getDiagram().addKnotsWithStep(displayed, selected);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          newStep(displayedKnots, selectedKnots, true);
         } else {
-          app.getOptionalDotGrid().clearSelections();
-          app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
+          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          selectedKnots.add(copiedKnot);
+          displayedKnots.remove(knot);
 
-          Set<Knot> selected = new HashSet<>();
-          selected.add(knot);
-          selected.addAll(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-          Set<Knot> displayed = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-          displayed.remove(knot);
-
-          app.getOptionalDotGrid().getDiagram().addKnotsWithStep(displayed, selected);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          newStep(displayedKnots, selectedKnots, true);
         }
 
-        Knot[] knots = new Knot[app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size()];
-        app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(false,
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().toArray(knots));
+        break;
       } else if (hasClickedOnAGivenKnot) {
-        logger.info("Clicked Knot displayed {}, pattern {} in order to unselect it",
+        logger.debug("Clicked Knot displayed {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot), knot.getPattern().getFilename());
-        logger.info("Clicked Knot selected {}, pattern {} in order to unselect it",
+        logger.debug("Clicked Knot selected {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot), knot.getPattern().getFilename());
 
         app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
-          app.getOptionalDotGrid().clearSelections();
-          app.getOptionalDotGrid().getAllHoveredKnots().clear();
-          app.getOptionalDotGrid().getAllHoveredKnots().add(knot);
 
-          Set<Knot> selected = new HashSet<>();
-          selected.add(knot);
-          Set<Knot> displayed = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-          displayed.remove(knot);
+          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          displayedKnots.addAll(new HashSet<>(selectedKnots));
+          selectedKnots.clear();
+          selectedKnots.add(copiedKnot);
+          displayedKnots.remove(knot);
 
-          app.getOptionalDotGrid().getDiagram().addKnotsToStep(displayed, selected);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          newStep(displayedKnots, selectedKnots, true);
 
-          Knot[] knots = new Knot[app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size()];
-          app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(false,
-                  app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().toArray(knots));
+          break;
         } else {
-          app.getOptionalDotGrid().getAllHoveredKnots().remove(knot);
+          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          displayedKnots.add(copiedKnot);
+          selectedKnots.remove(knot);
 
-          Set<Knot> selected = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-          selected.remove(knot);
-          Set<Knot> displayed = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-          displayed.add(knot);
-
-          app.getOptionalDotGrid().getDiagram().addKnotsWithStep(displayed, selected);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
-
-          app.getOptionalDotGrid().drawHoveredOverOrSelectedKnot(true, knot);
+          newStep(displayedKnots, selectedKnots, true);
           break;
         }
       }
     }
 
-    // If there is a current knot and we have clicked somewhere else than on a knot,
-    // we shall move the current knot
-    if (!hasClickedOnAKnot && this.getOptionalDotGrid().getDiagram().getCurrentKnot() != null) {
-      logger.info("Shall move knot");
+    // If we have clicked elsewhere, we deselect all knots
+    if (!hasClickedOnAGivenKnot) {
+      displayedKnots.addAll(new HashSet<>(selectedKnots));
+      selectedKnots.clear();
 
-      Set<Knot> selectedKnots = this.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
-      Set<Knot> displayed  = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-
-      for (Knot currentKnot : selectedKnots) {
-        app.getOptionalDotGrid().clearSelection(currentKnot);
-        displayed.remove(currentKnot);
-        moveKnot(currentKnot, x - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getWidth(),
-                y - this.getOptionalDotGrid().getDiagram().getCurrentPattern().getHeight());
-      }
-
-      Set<Knot> selected   = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-      app.getOptionalDotGrid().getDiagram().addKnotsWithStep(displayed, selected);
-      app.getOptionalDotGrid().clearAllGuideLines();
+      newStep(displayedKnots, selectedKnots, true);
     }
 
     app.getOptionalDotGrid().layoutChildren();
   }
 
-  private void moveKnot(Knot toMove, double x, double y) {
-    toMove.setX(x);
-    toMove.setY(y);
-    toMove.getImageView().setX(x);
-    toMove.getImageView().setY(y);
-  }
-
   public void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
-    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots()) {
-
-      try {
-        if (new NodeUtil().isMouseOverKnot(knot, x, y)) {
-          removeKnotIfClicked(app, diagram, knot);
-          break;
-        }
-      } catch (MalformedURLException e) {
-        logger.error("Error removing knot {} ", knot, e);
+    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
+      if (new NodeUtil().isMouseOverKnot(knot, x, y)) {
+        removeKnotIfClicked(app, diagram, knot);
+        break;
       }
     }
   }
 
   private void removeKnotIfClicked(App app, Diagram diagram, Knot knot) {
     app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView());
-    app.getOptionalDotGrid().getDiagram().deleteNodesFromCurrentStep(app, knot);
+    app.getOptionalDotGrid().getDiagram().deleteNodesFromFollowingSteps(app, knot);
 
-    Set<Knot> visibleKnotsToFilterOut = app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots();
-    visibleKnotsToFilterOut.remove(knot);
-    Set<Knot> selectedKnotsToFilterOut = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
+    Set<Knot> displayedKnotsToFilterOut = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    displayedKnotsToFilterOut.remove(knot);
+    Set<Knot> selectedKnotsToFilterOut = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
     selectedKnotsToFilterOut.remove(knot);
 
-    app.getOptionalDotGrid().getDiagram().addKnotsToStep(visibleKnotsToFilterOut, selectedKnotsToFilterOut);
+    newStep(displayedKnotsToFilterOut, selectedKnotsToFilterOut, true);
 
-    logger.info("Removing Knot {}, current index = {}", knot, diagram.getCurrentStepIndex());
-    optionalDotGrid.layoutChildren();
+    logger.debug("Removing Knot {}, current index = {}", knot, diagram.getCurrentStepIndex());
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
@@ -406,11 +361,11 @@ public class MainWindow {
   }
 
   public TilePane getFooter() {
-    return footer;
+    return this.footer;
   }
 
   public StackPane getGrid() {
-    return grid;
+    return this.grid;
   }
 
   public void setOptionalDotGrid(OptionalDotGrid optionalDotGrid) {

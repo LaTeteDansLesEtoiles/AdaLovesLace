@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class VerticalFlippingButton extends ImageButton {
@@ -34,23 +35,22 @@ public class VerticalFlippingButton extends ImageButton {
   }
 
   public static void onFlipVerticallyAction(final App app) {
-    logger.info("Flipping vertically");
+    logger.debug("Flipping vertically");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MIRROR);
 
-    Set<Knot> newSelectedKnots = new TreeSet<>();
-    Set<Knot> newDisplayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    Set<Knot> selectedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    Set<Knot> selectedKnotsCopy = new TreeSet<>();
 
-    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()) {
+    for (Knot knot : selectedKnots) {
       Knot copy = new NodeUtil().copyKnot(knot);
       copy.setFlippedVertically(!knot.isFlippedVertically());
-      newSelectedKnots.add(copy);
-      newDisplayedKnots.add(copy);
-      newDisplayedKnots.remove(knot);
+      selectedKnotsCopy.add(copy);
     }
 
-    app.getOptionalDotGrid().getDiagram().addKnotsToStep(newDisplayedKnots, newSelectedKnots);
+    displayedKnots.removeAll(selectedKnots);
 
-    app.getOptionalDotGrid().layoutChildren();
+    newStep(displayedKnots, selectedKnotsCopy, true);
   }
 
 }
