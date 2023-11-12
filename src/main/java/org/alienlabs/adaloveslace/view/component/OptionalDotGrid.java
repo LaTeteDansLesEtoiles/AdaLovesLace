@@ -131,25 +131,29 @@ public class OptionalDotGrid extends Pane {
   public void deleteKnotsFromCanvas() {
     this.diagram.deleteNodesFromFollowingSteps(root);
     ArrayList<Node> nodeListToRemove = new ArrayList<>();
+    Step step = this.diagram.getCurrentStep();
 
-    for (Step step : this.diagram.getAllSteps()) {
-      for (Knot k : step.getDisplayedKnots()) {
-        nodeListToRemove.add(k.getImageView());
-        if (k.getHovered() != null) {
-          nodeListToRemove.add(k.getHovered());
-        }
-        if (k.getHandle() != null) {
-          nodeListToRemove.add(k.getHandle());
-        }
+    for (Knot k : step.getSelectedKnots()) {
+      if (k.getHovered() != null) {
+        nodeListToRemove.add(k.getHovered());
       }
-
-      for (Knot k : step.getSelectedKnots()) {
-        nodeListToRemove.add(k.getImageView());
+      if (k.getSelection() != null) {
         nodeListToRemove.add(k.getSelection());
       }
-
-      root.getChildren().removeAll(nodeListToRemove);
+      if (k.getHandle() != null) {
+        nodeListToRemove.add(k.getHandle());
+      }
     }
+
+    for (Step s : this.diagram.getAllSteps().subList(
+            this.diagram.getCurrentStep().getStepIndex(),
+            this.diagram.getAllSteps().size())) {
+      for (Knot k : s.getAllVisibleKnots()) {
+        nodeListToRemove.add(k.getImageView());
+      }
+    }
+
+    root.getChildren().removeAll(nodeListToRemove);
   }
 
   public void drawHoveredOverOrSelectedKnot(List<Knot> knots) {
