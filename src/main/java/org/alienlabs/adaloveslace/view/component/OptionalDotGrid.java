@@ -269,7 +269,7 @@ public class OptionalDotGrid extends Pane {
 
         for (Knot otherKnot : step.getAllVisibleKnots()) {
           if (!otherKnot.equals(knot) && otherKnot.isVisible()) {
-            new GuideLinesUtil(app, knot, otherKnot, root);
+            new GuideLinesUtil(knot, otherKnot, root);
           }
         }
       }
