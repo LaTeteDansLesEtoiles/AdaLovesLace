@@ -10,7 +10,10 @@ import org.alienlabs.adaloveslace.business.model.Knot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.MOUSE_CLICKED;
@@ -120,9 +123,9 @@ public class Events {
     double deltaX = handle.getCenterX() < x ? -(handle.getCenterX() - x) : (x - handle.getCenterX());
     double deltaY = handle.getCenterY() < y ? -(handle.getCenterY() - y) : (y - handle.getCenterY());
 
-    Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-    Set<Knot> selectedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-    Set<Knot> copiedKnots = new TreeSet<>();
+    List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+    List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    List<Knot> copiedKnots = new ArrayList<>();
 
     for (Knot knot : selectedKnots) {
       knot.setX(knot.getX() + deltaX);
@@ -161,7 +164,7 @@ public class Events {
   public static final EventHandler<MouseEvent> gridHoverEventHandler = mouseEvent -> {
     logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
-    Set<Knot> allKnots = new HashSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots());
+    List<Knot> allKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots());
     boolean isMouseOverAGivenKnot = false;
 
     for (Knot knot : allKnots) {

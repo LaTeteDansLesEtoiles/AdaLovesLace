@@ -23,7 +23,10 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -221,7 +224,7 @@ public class FileUtil {
     }
 
     private void writePatternsToLaceFile(Diagram toSave, ZipOutputStream zipOut) throws IOException {
-        for (org.alienlabs.adaloveslace.business.model.Pattern pattern : new HashSet<>(toSave.getPatterns())) {
+        for (org.alienlabs.adaloveslace.business.model.Pattern pattern : new ArrayList<>(toSave.getPatterns())) {
             File fileToZip = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
                 + pattern.getFilename());
             zipOut.putNextEntry(new ZipEntry(pattern.getFilename()));

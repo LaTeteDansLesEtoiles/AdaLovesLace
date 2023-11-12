@@ -7,7 +7,9 @@ import jakarta.xml.bind.annotation.XmlType;
 import javafx.scene.shape.Circle;
 import org.alienlabs.adaloveslace.App;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * What is drawn on a Canvas at any given time: we can move back and forward the Step list in order to undo / redo
@@ -26,9 +28,9 @@ public class Step implements Comparable<Step> {
     @XmlTransient
     public App app;
 
-    private Set<Knot> displayedKnots = new HashSet<>();
+    private List<Knot> displayedKnots = new ArrayList<>();
 
-    private Set<Knot> selectedKnots = new HashSet<>();
+    private List<Knot> selectedKnots = new ArrayList<>();
 
     @XmlTransient
     private Circle[] handle;
@@ -48,8 +50,8 @@ public class Step implements Comparable<Step> {
      */
     public Step(App app,
                 Diagram diagram,
-                Set<Knot> displayedKnots,
-                Set<Knot> selectedKnots,
+                List<Knot> displayedKnots,
+                List<Knot> selectedKnots,
                 boolean layoutChildren,
                 Circle... handle) {
         this.app = app;
@@ -83,16 +85,16 @@ public class Step implements Comparable<Step> {
         diagram.getAllSteps().removeAll(stepsToRemove);
     }
 
-    public Set<Knot> getDisplayedKnots() {
+    public List<Knot> getDisplayedKnots() {
         return displayedKnots;
     }
 
-    public Set<Knot> getSelectedKnots() {
+    public List<Knot> getSelectedKnots() {
         return selectedKnots;
     }
 
-    public Set<Knot> getAllVisibleKnots() {
-        Set<Knot> all = new HashSet<>(selectedKnots);
+    public List<Knot> getAllVisibleKnots() {
+        List<Knot> all = new ArrayList<>(selectedKnots);
         all.addAll(displayedKnots);
 
         return all;

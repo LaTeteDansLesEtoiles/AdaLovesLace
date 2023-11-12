@@ -50,7 +50,7 @@ public class OptionalDotGrid extends Pane {
 
   private Diagram diagram;
 
-  private final Set<Shape> grid = new HashSet<>();
+  private final List<Shape> grid = new ArrayList<>();
 
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
   private final Group root;
@@ -152,7 +152,7 @@ public class OptionalDotGrid extends Pane {
     }
   }
 
-  public void drawHoveredOverOrSelectedKnot(Set<Knot> knots) {
+  public void drawHoveredOverOrSelectedKnot(List<Knot> knots) {
     for (Knot knot : knots) {
 
       // If selected & hovered: red
