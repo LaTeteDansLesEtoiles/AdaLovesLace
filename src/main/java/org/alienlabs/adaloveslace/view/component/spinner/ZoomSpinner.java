@@ -33,14 +33,12 @@ public class ZoomSpinner {
       if (++numberOfUpdates == 1) {
 
         Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-        Set<Knot> selectedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+        Set<Knot> selectedKnots = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
         Set<Knot> copiedKnots = new TreeSet<>();
 
         for (Knot knot : selectedKnots) {
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
           copiedKnot.setZoomFactor(newValue);
-
-          displayedKnots.remove(knot);
           copiedKnots.add(copiedKnot);
         }
 
