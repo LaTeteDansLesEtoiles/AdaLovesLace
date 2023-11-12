@@ -8,8 +8,8 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
@@ -32,9 +32,9 @@ public class ZoomSpinner {
 
       if (++numberOfUpdates == 1) {
 
-        Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-        Set<Knot> selectedKnots = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
-        Set<Knot> copiedKnots = new TreeSet<>();
+        List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+        List<Knot> selectedKnots = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
+        List<Knot> copiedKnots = new ArrayList<>();
 
         for (Knot knot : selectedKnots) {
           Knot copiedKnot = new NodeUtil().copyKnot(knot);

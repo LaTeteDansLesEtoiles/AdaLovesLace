@@ -10,8 +10,8 @@ import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,9 +33,9 @@ class StepTest {
     void test_add_a_step() {
         // Given
         Knot knot1 = new Knot(10, 15, new Pattern(), null);
-        Set<Knot> knots1 = new HashSet<>();
+        List<Knot> knots1 = new ArrayList<>();
         knots1.add(knot1);
-        Set<Knot> selectedKnots1 = new HashSet<>();
+        List<Knot> selectedKnots1 = new ArrayList<>();
 
         // When
         Diagram.newStep(knots1, selectedKnots1, false);
@@ -61,25 +61,25 @@ class StepTest {
 
         // When
         Knot knot1 = new Knot(10, 15, new Pattern(), null);
-        Set<Knot> knots1 = new HashSet<>();
+        List<Knot> knots1 = new ArrayList<>();
         knots1.add(knot1);
-        Set<Knot> selectedKnots1 = new HashSet<>();
+        List<Knot> selectedKnots1 = new ArrayList<>();
 
         Diagram.newStep(knots1, selectedKnots1, false);
 
         Knot knot2 = new Knot(20, 25, new Pattern(), null);
         Knot knot3 = new Knot(30, 35, new Pattern(), null);
-        Set<Knot> knots2 = new HashSet<>();
+        List<Knot> knots2 = new ArrayList<>();
         knots2.add(knot2);
         knots2.add(knot3);
-        Set<Knot> selectedKnots2 = new HashSet<>();
+        List<Knot> selectedKnots2 = new ArrayList<>();
 
         Diagram.newStep(knots2, selectedKnots2, false);
 
         Knot knot4 = new Knot(40, 45, new Pattern(), null);
-        Set<Knot> knots4 = new HashSet<>();
+        List<Knot> knots4 = new ArrayList<>();
         knots4.add(knot4);
-        Set<Knot> selectedKnots4 = new HashSet<>();
+        List<Knot> selectedKnots4 = new ArrayList<>();
 
         Diagram.newStep(knots4, selectedKnots4, false);
 
@@ -141,25 +141,25 @@ class StepTest {
 
         // When
         Knot knot1 = new Knot(10, 15, new Pattern(), null);
-        Set<Knot> knots1 = new HashSet<>();
+        List<Knot> knots1 = new ArrayList<>();
         knots1.add(knot1);
-        Set<Knot> selectedKnots1 = new HashSet<>();
+        List<Knot> selectedKnots1 = new ArrayList<>();
 
         Diagram.newStep(knots1, selectedKnots1, false);
 
         Knot knot2 = new Knot(20, 25, new Pattern(), null);
         Knot knot3 = new Knot(30, 35, new Pattern(), null);
-        Set<Knot> selectedKnots2 = new HashSet<>();
+        List<Knot> selectedKnots2 = new ArrayList<>();
         selectedKnots2.add(knot2);
         selectedKnots2.add(knot3);
-        Set<Knot> knots2 = new HashSet<>();
+        List<Knot> knots2 = new ArrayList<>();
 
         Diagram.newStep(knots2, selectedKnots2, false);
 
         Knot knot4 = new Knot(40, 45, new Pattern(), null);
-        Set<Knot> selectedKnots4 = new HashSet<>();
+        List<Knot> selectedKnots4 = new ArrayList<>();
         selectedKnots4.add(knot4);
-        Set<Knot> knots4 = new HashSet<>();
+        List<Knot> knots4 = new ArrayList<>();
 
         Diagram.newStep(knots4, selectedKnots4, false);
 
@@ -221,24 +221,24 @@ class StepTest {
 
         // When
         Knot knot1 = new Knot(10, 15, new Pattern(), null);
-        Set<Knot> selectedKnots1 = new HashSet<>();
+        List<Knot> selectedKnots1 = new ArrayList<>();
         selectedKnots1.add(knot1);
-        Set<Knot> knots1 = new HashSet<>();
+        List<Knot> knots1 = new ArrayList<>();
 
         Diagram.newStep(knots1, selectedKnots1, false);
 
         Knot knot2 = new Knot(20, 25, new Pattern(), null);
         Knot knot3 = new Knot(30, 35, new Pattern(), null);
-        Set<Knot> selectedKnots2 = new HashSet<>();
+        List<Knot> selectedKnots2 = new ArrayList<>();
         selectedKnots2.add(knot2);
         selectedKnots2.add(knot3);
-        Set<Knot> knots2 = new HashSet<>();
+        List<Knot> knots2 = new ArrayList<>();
 
         Diagram.newStep(knots2, selectedKnots2, false);
 
-        Set<Knot> knots3 = new HashSet<>();
+        List<Knot> knots3 = new ArrayList<>();
         knots3.add(knot3);
-        Set<Knot> selectedKnots3 = new HashSet<>();
+        List<Knot> selectedKnots3 = new ArrayList<>();
 
         Diagram.newStep(knots3, selectedKnots3, false);
 
@@ -285,17 +285,17 @@ class StepTest {
     void test_add_a_knot_to_a_step() {
         // Given
         Knot knot1 = new Knot(10, 15, new Pattern(), null);
-        Set<Knot> knots1 = new HashSet<>();
+        List<Knot> knots1 = new ArrayList<>();
         knots1.add(knot1);
-        Set<Knot> selectedKnots1 = new HashSet<>();
+        List<Knot> selectedKnots1 = new ArrayList<>();
 
         Diagram.newStep(knots1, selectedKnots1, false);
 
         // When
         Knot knot2 = new Knot(20, 25, new Pattern(), null);
-        Set<Knot> knots2 = new HashSet<>();
+        List<Knot> knots2 = new ArrayList<>();
         knots2.add(knot2);
-        Set<Knot> selectedKnots2 = new HashSet<>();
+        List<Knot> selectedKnots2 = new ArrayList<>();
 
         Diagram.newStep(knots2, selectedKnots2, false);
 
@@ -323,25 +323,25 @@ class StepTest {
     void test_add_several_knots() {
         // Given
         Knot knot1 = new Knot(10, 15, new Pattern(), null);
-        Set<Knot> knots1 = new HashSet<>();
+        List<Knot> knots1 = new ArrayList<>();
         knots1.add(knot1);
-        Set<Knot> selectedKnots1 = new HashSet<>();
+        List<Knot> selectedKnots1 = new ArrayList<>();
 
         Diagram.newStep(knots1, selectedKnots1, false);
 
         Knot firstKnotsStep2 = new Knot(20, 25, new Pattern(), null);
-        Set<Knot> knots2 = new HashSet<>();
+        List<Knot> knots2 = new ArrayList<>();
         knots2.add(firstKnotsStep2);
-        Set<Knot> selectedKnots2 = new HashSet<>();
+        List<Knot> selectedKnots2 = new ArrayList<>();
 
         Diagram.newStep(knots2, selectedKnots2, false);
 
         Knot firstKnotsStep3 = new Knot(30, 35, new Pattern(), null);
         Knot secondKnotsStep3 = new Knot(40, 45, new Pattern(), null);
-        Set<Knot> knots3 = new HashSet<>();
+        List<Knot> knots3 = new ArrayList<>();
         knots3.add(firstKnotsStep3);
         knots3.add(secondKnotsStep3);
-        Set<Knot> selectedKnots3 = new HashSet<>();
+        List<Knot> selectedKnots3 = new ArrayList<>();
 
         // When
         Diagram.newStep(knots3, selectedKnots3, false);
