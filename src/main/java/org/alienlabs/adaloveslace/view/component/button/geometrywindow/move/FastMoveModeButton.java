@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 public class FastMoveModeButton extends ToggleButton {
 
-  public static final String BUTTON_TOOLTIP             = "Set \"fast knot move\" mode on or off (q)\n";
+  public static final String BUTTON_TOOLTIP             = "Set \"fast knot move\" mode on or off (f)\n";
   public static final double FAST_MODE_SPEED            = 5d;
   public static final double SLOW_MODE_SPEED            = 1d;
 
