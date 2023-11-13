@@ -5,6 +5,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -118,7 +119,24 @@ public class Diagram {
             this.setCurrentStepIndex(this.getCurrentStepIndex() - 1);
         }
 
+        List<Node> nodeListToRemove = new ArrayList<>();
+
+        if (!this.getAllSteps().isEmpty()) {
+            for (Step s : this.getAllSteps().subList(
+                    this.getCurrentStepIndex(),
+                    this.getAllSteps().size())
+            ) {
+                for (Knot k : s.getAllVisibleKnots()) {
+                    if (!this.getCurrentStep().getAllVisibleKnots().contains(k)) {
+                        nodeListToRemove.add(k.getImageView());
+                    }
+                }
+
+            }
+        }
+
         if (layoutChildren.length == 0) {
+            app.getRoot().getChildren().removeAll(nodeListToRemove);
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
         }
 
@@ -133,7 +151,24 @@ public class Diagram {
             this.setCurrentStepIndex(this.getCurrentStepIndex() + 1);
         }
 
+        List<Node> nodeListToRemove = new ArrayList<>();
+
+        if (!this.getAllSteps().isEmpty()) {
+            for (Step s : this.getAllSteps().subList(
+                    1,
+                    this.getCurrentStepIndex())
+            ) {
+                for (Knot k : s.getAllVisibleKnots()) {
+                    if (!this.getCurrentStep().getAllVisibleKnots().contains(k)) {
+                        nodeListToRemove.add(k.getImageView());
+                    }
+                }
+
+            }
+        }
+
         if (layoutChildren.length == 0) {
+            app.getRoot().getChildren().removeAll(nodeListToRemove);
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
         }
 
@@ -254,6 +289,10 @@ public class Diagram {
     }
 
     public Step getCurrentStep() {
+        if (currentStepIndex < 0) {
+            return new Step();
+        }
+
         return this.getAllSteps().get(currentStepIndex);
     }
 
