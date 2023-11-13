@@ -235,7 +235,7 @@ public class App extends Application {
         () -> LeftButton.onMoveKnotLeftAction   (this));
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT),
         () -> RightButton.onMoveKnotRightAction (this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.Q),
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F),
               FastMoveModeButton::onSwitchSlowModeAction);
     });
   }

@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
@@ -191,10 +192,7 @@ public class FileUtil {
             Marshaller jaxbMarshaller = context.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-            if (!file.getName().endsWith(LACE_FILE_EXTENSION)) {
-                file = new File(file.getAbsoluteFile().getName() + LACE_FILE_EXTENSION);
-            }
-
+            deleteXmlFile();
             writeLaceFile(file, jaxbMarshaller, diagram, currentStepIndex);
             deleteXmlFile();
         } catch (JAXBException | IOException e) {
@@ -227,8 +225,12 @@ public class FileUtil {
         for (org.alienlabs.adaloveslace.business.model.Pattern pattern : new ArrayList<>(toSave.getPatterns())) {
             File fileToZip = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
                 + pattern.getFilename());
-            zipOut.putNextEntry(new ZipEntry(pattern.getFilename()));
-            Files.copy(fileToZip.toPath(), zipOut);
+            try {
+                zipOut.putNextEntry(new ZipEntry(pattern.getFilename()));
+                Files.copy(fileToZip.toPath(), zipOut);
+            } catch (ZipException e) {
+                logger.error("Error saving pattern of .lace file!", e);
+            }
         }
     }
 

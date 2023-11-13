@@ -5,11 +5,13 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
+import org.alienlabs.adaloveslace.view.window.FileAlreadyExistsWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+import static org.alienlabs.adaloveslace.App.LACE_FILE_EXTENSION;
 import static org.alienlabs.adaloveslace.App.USER_HOME;
 import static org.alienlabs.adaloveslace.util.Preferences.LACE_FILE_FOLDER_SAVE_PATH;
 import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
@@ -26,7 +28,6 @@ public class SaveAsButton extends ImageButton {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onSaveAsAction(app));
     buildButtonImage("save_as.png");
-
   }
 
   public static void onSaveAsAction(App app) {
@@ -51,14 +52,27 @@ public class SaveAsButton extends ImageButton {
     File file = saveAs.showSaveDialog(app.getScene().getWindow());
 
     if (file != null) {
-      preferences.setPathWithFileValue(file, SAVED_LACE_FILE);
+      if (!file.getName().endsWith(LACE_FILE_EXTENSION)) {
+        file = new File(file.getAbsolutePath() + LACE_FILE_EXTENSION);
+      }
+
+      FileAlreadyExistsWindow alert = null;
+
+      if (file.exists()) {
+        alert = new FileAlreadyExistsWindow(file);
+      }
+
       preferences.setPathWithFileValue(file.getParentFile(), LACE_FILE_FOLDER_SAVE_PATH);
 
-      new FileUtil(app).saveFile(
-              file,
-              app.getOptionalDotGrid().getDiagram(),
-              app.getOptionalDotGrid().getDiagram().getCurrentStepIndex()
-      );
+      if (null == alert || !alert.isCancelled()) {
+        preferences.setPathWithFileValue(file, SAVED_LACE_FILE);
+
+        new FileUtil(app).saveFile(
+                file,
+                app.getOptionalDotGrid().getDiagram(),
+                app.getOptionalDotGrid().getDiagram().getCurrentStepIndex()
+        );
+      }
     }
   }
 
