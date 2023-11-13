@@ -21,17 +21,14 @@ import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
-import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.DownButton;
-import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.LeftButton;
-import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.RightButton;
-import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.UpButton;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.*;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -99,7 +96,7 @@ public class App extends Application {
   private GeometryWindow geometryWindow;
   private ToolboxWindow toolboxWindow;
 
-  private final Map<KeyCode, Boolean> currentlyActiveKeys = new HashMap<>();
+  private final Map<KeyCode, Boolean> currentlyActiveKeys = new EnumMap<>(KeyCode.class);
 
   @Override
   public void start(Stage primaryStage) {
@@ -238,6 +235,8 @@ public class App extends Application {
         () -> LeftButton.onMoveKnotLeftAction   (this));
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT),
         () -> RightButton.onMoveKnotRightAction (this));
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.Q),
+              FastMoveModeButton::onSwitchSlowModeAction);
     });
   }
 

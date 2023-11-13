@@ -8,18 +8,20 @@ import org.slf4j.LoggerFactory;
 
 public class FastMoveModeButton extends ToggleButton {
 
-  public static final String BUTTON_TOOLTIP             = "Set \"fast knot move\" mode on or off\n";
+  public static final String BUTTON_TOOLTIP             = "Set \"fast knot move\" mode on or off (q)\n";
   public static final double FAST_MODE_SPEED            = 5d;
   public static final double SLOW_MODE_SPEED            = 1d;
 
   private static SimpleBooleanProperty isFastMode;
   private static final boolean DEFAULT_FAST_MODE        = false;
 
+  private static FastMoveModeButton instance;
+
   private static final Logger logger                    = LoggerFactory.getLogger(FastMoveModeButton.class);
 
   public FastMoveModeButton() {
-    isFastMode = new SimpleBooleanProperty(DEFAULT_FAST_MODE);
-
+    FastMoveModeButton.isFastMode = new SimpleBooleanProperty(DEFAULT_FAST_MODE);
+    FastMoveModeButton.instance = this;
     this.setOnMouseClicked(event -> onSwitchSlowModeAction());
 
     final Tooltip tooltip = new Tooltip();
@@ -29,6 +31,7 @@ public class FastMoveModeButton extends ToggleButton {
 
   public static void onSwitchSlowModeAction() {
     isFastMode.set(!isFastMode.get());
+    instance.setSelected(isFastMode.get());
     logger.debug("Setting fast move mode: {}", isFastMode.get());
   }
 
