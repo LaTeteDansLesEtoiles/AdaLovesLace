@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 import static org.alienlabs.adaloveslace.App.USER_HOME;
 import static org.alienlabs.adaloveslace.util.Preferences.LACE_FILE_FOLDER_SAVE_PATH;
@@ -56,7 +58,7 @@ public class SaveButton extends ImageButton {
             file = saveAs.showSaveDialog(app.getScene().getWindow());
         } else {
             // We know where to save
-            file = laceFilePath;
+            file = new File(laceFilePath.getAbsolutePath());
         }
 
         if (file != null) {
@@ -64,11 +66,20 @@ public class SaveButton extends ImageButton {
             preferences.setPathWithFileValue(file, SAVED_LACE_FILE);
             preferences.setPathWithFileValue(file.getParentFile(), LACE_FILE_FOLDER_SAVE_PATH);
 
+            if (file.exists()) {
+                try {
+                    Files.delete(file.toPath());
+                } catch (IOException e) {
+                    logger.error("Error deleting file during diagram save!", e);
+                }
+            }
+
             for (Step step : app.getOptionalDotGrid().getDiagram().getAllSteps()) {
                 step.getDisplayedKnots().removeAll(
                         step.getSelectedKnots()
                 );
             }
+
             new FileUtil(app).saveFile(file,
                     app.getOptionalDotGrid().getDiagram(),
                     app.getOptionalDotGrid().getDiagram().getCurrentStepIndex()
