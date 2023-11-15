@@ -4,6 +4,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
@@ -35,10 +36,14 @@ public class DrawingButton extends ToggleButton {
     app.getOptionalDotGrid().clearSelections();
     app.getOptionalDotGrid().clearHovered();
     app.getOptionalDotGrid().clearAllGuideLines();
-//    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
 
     if (Events.getGridHoverEventHandler(app) != null) {
       app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+    }
+
+    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
+      knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+      knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
     }
 
     window.getDrawingButton()     .setSelected(true);

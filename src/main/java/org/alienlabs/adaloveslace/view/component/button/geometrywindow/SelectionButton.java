@@ -4,6 +4,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
@@ -32,6 +33,12 @@ public class SelectionButton extends ToggleButton {
   public static void onSetSelectionModeAction(App app, GeometryWindow window) {
     logger.debug("Setting selection mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
+
+    for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
+      knot.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+      knot.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+    }
+
     app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
 
     window.getDrawingButton()     .setSelected(false);
