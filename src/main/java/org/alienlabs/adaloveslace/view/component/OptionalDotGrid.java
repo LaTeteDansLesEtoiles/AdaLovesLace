@@ -156,6 +156,10 @@ public class OptionalDotGrid extends Pane {
   public void drawHoveredOverOrSelectedKnot(List<Knot> knots) {
     for (Knot knot : knots) {
 
+      if (!knot.isSelectable()) {
+        continue;
+      }
+
       // If selected & hovered: red
       if (knot.isHoveredKnot()
               && getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {

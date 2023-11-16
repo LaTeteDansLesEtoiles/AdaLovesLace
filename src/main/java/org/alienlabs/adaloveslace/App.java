@@ -24,6 +24,7 @@ import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.*;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
+import org.alienlabs.adaloveslace.view.window.StateWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,7 @@ public class App extends Application {
   public static final String USER_HOME                = "user.home";
   public static final String TOOLBOX_TITLE            = "Toolbox";
   public static final String GEOMETRY_TITLE           = "Geometry";
+  public static final String STATE_TITLE              = "State";
   public static final String LACE_FILE_EXTENSION      = ".lace";
   public static final String LACE_FILE_MIME_TYPE      = "application/lace";
   public static final String ADA_LOVES_LACE_WEB       = "https://dentelle.damemarie.club";
@@ -94,6 +96,8 @@ public class App extends Application {
   public Stage primaryStage;
   private Stage geometryStage;
   private GeometryWindow geometryWindow;
+  private Stage stateStage;
+  private StateWindow stateWindow;
   private ToolboxWindow toolboxWindow;
 
   private final Map<KeyCode, Boolean> currentlyActiveKeys = new EnumMap<>(KeyCode.class);
@@ -115,6 +119,9 @@ public class App extends Application {
 
     logger.debug("Opening geometry window");
     showGeometryWindow(this);
+
+    logger.debug("Opening state window");
+    showStateWindow(this);
   }
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
@@ -197,6 +204,15 @@ public class App extends Application {
     return geometryWindow;
   }
 
+  public StateWindow showStateWindow(App app) {
+    stateStage   = new Stage(StageStyle.DECORATED);
+    GridPane parent = newGridPane();
+    stateWindow  = new StateWindow();
+    stateWindow.createStateButtons(app, parent);
+    stateWindow.createStateStage(stateStage, parent);
+
+    return stateWindow;
+  }
   public GridPane newGridPane() {
     GridPane parent = new GridPane();
     parent.setAlignment(Pos.TOP_CENTER);
@@ -271,8 +287,16 @@ public class App extends Application {
     return App.mainWindow;
   }
 
+  public void setMainWindow(MainWindow mainWindow) {
+    App.mainWindow = mainWindow;
+  }
+
   public GeometryWindow getGeometryWindow() {
     return geometryWindow;
+  }
+
+  public StateWindow getStateWindow() {
+    return this.stateWindow;
   }
 
   public Group getRoot() {
@@ -291,8 +315,12 @@ public class App extends Application {
     this.primaryStage = primaryStage;
   }
 
-  public void setMainWindow(MainWindow mainWindow) {
-    App.mainWindow = mainWindow;
+  public Stage getStateStage() {
+    return this.stateStage;
+  }
+
+  public void setStateStage(Stage stateStage) {
+    this.stateStage = stateStage;
   }
 
   public static void setResourceBundle(ResourceBundle resourceBundle) {

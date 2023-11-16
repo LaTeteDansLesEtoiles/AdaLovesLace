@@ -30,6 +30,7 @@ public class NodeUtil {
     copy.setRotationAngle(knot.getRotationAngle());
     copy.setZoomFactor(knot.getZoomFactor());
     copy.setVisible(knot.isVisible());
+    copy.setSelectable(knot.isSelectable());
     copy.setFlippedVertically(knot.isFlippedVertically());
     copy.setFlippedHorizontally(knot.isFlippedHorizontally());
 

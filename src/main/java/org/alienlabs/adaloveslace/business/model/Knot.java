@@ -40,11 +40,14 @@ public class Knot implements Comparable<Knot> {
 
   private Pattern pattern;
 
-  private boolean visible;
+  private boolean visible = true;
 
-  private boolean flippedVertically;
+  private boolean selectable = true;
 
-  private boolean flippedHorizontally;
+  private boolean flippedVertically = false;
+
+  private boolean flippedHorizontally = false;
+
 
   @XmlTransient
   private ImageView imageView;
@@ -66,9 +69,6 @@ public class Knot implements Comparable<Knot> {
 
   public Knot() {
     this.uuid                 = UUID.randomUUID();
-    this.visible              = true;
-    this.flippedVertically    = false;
-    this.flippedHorizontally  = false;
   }
 
   public Knot(final double x, final double y, final Pattern pattern, final ImageView imageView) {
@@ -80,9 +80,6 @@ public class Knot implements Comparable<Knot> {
     this.uuid                 = UUID.randomUUID();
     this.rotationAngle        = DEFAULT_ROTATION;
     this.zoomFactor           = DEFAULT_ZOOM;
-    this.visible              = true;
-    this.flippedVertically    = false;
-    this.flippedHorizontally  = false;
   }
 
   public UUID getUuid() {
@@ -171,6 +168,14 @@ public class Knot implements Comparable<Knot> {
 
   public void setVisible(boolean visible) {
     this.visible = visible;
+  }
+
+  public boolean isSelectable() {
+    return this.selectable;
+  }
+
+  public void setSelectable(boolean selectable) {
+    this.selectable = selectable;
   }
 
   public boolean isFlippedVertically() {
