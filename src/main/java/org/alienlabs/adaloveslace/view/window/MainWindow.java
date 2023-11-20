@@ -288,11 +288,8 @@ public class MainWindow {
         logger.debug("Clicked Knot selected {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot), knot.getPattern().getFilename());
 
-        app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
-
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
-
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
           displayedKnots.addAll(new ArrayList<>(selectedKnots));
           selectedKnots.clear();
@@ -305,9 +302,9 @@ public class MainWindow {
           break;
         } else {
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
-          selectedKnots.add(copiedKnot);
+          copiedKnot.setSelection(null);
           selectedKnots.remove(knot);
-          displayedKnots.remove(knot);
+          displayedKnots.add(copiedKnot);
 
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           newStep(displayedKnots, selectedKnots, true);
