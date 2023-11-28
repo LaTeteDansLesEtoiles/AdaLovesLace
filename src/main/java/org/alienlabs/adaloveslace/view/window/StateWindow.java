@@ -8,7 +8,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.component.button.statewindow.InvisibleButton;
 import org.alienlabs.adaloveslace.view.component.button.statewindow.SelectableButton;
 import org.alienlabs.adaloveslace.view.component.button.statewindow.UnselectableButton;
@@ -29,9 +28,9 @@ public class StateWindow {
   public static final double STATE_WINDOW_GAP                = 20d;
   public static final double STATE_WINDOW_WIDTH              = 400d;
   public static final double STATE_WINDOW_HEIGHT             = 175d;
-  public static final double GAP_BETWEEN_BUTTONS             = 30d;
+  public static final double GAP_BETWEEN_BUTTONS             = 5d;
 
-  public static final double STATE_BUTTONS_HEIGHT            = 50d;
+  public static final double STATE_BUTTONS_HEIGHT            = 35d;
 
   private UnselectableButton unselectableButton;
   private SelectableButton selectableButton;
@@ -58,10 +57,9 @@ public class StateWindow {
     buttonsPane.setAlignment(Pos.BOTTOM_CENTER);
     buttonsPane.setPrefColumns(2);
     buttonsPane.setVgap(GAP_BETWEEN_BUTTONS);
-    ImageUtil util = new ImageUtil(app);
 
-    this.invisibleButton = new InvisibleButton(app, this, resourceBundle.getString(INVISIBLE_BUTTON_NAME));
-    this.visibleButton = new VisibleButton(app, this, resourceBundle.getString(VISIBLE_BUTTON_NAME));
+    this.invisibleButton = new InvisibleButton(app, resourceBundle.getString(INVISIBLE_BUTTON_NAME));
+    this.visibleButton = new VisibleButton(app, resourceBundle.getString(VISIBLE_BUTTON_NAME));
     this.unselectableButton = new UnselectableButton(app, resourceBundle.getString(UNSELECTABLE_BUTTON_NAME));
     this.selectableButton = new SelectableButton(app, resourceBundle.getString(SELECTABLE_BUTTON_NAME));
 

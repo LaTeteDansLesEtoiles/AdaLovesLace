@@ -36,6 +36,7 @@ public class GeometryWindow {
   public static final double GAP_BETWEEN_BUTTONS                = 10d;
 
   public static final double GEOMETRY_BUTTONS_HEIGHT            = 50d;
+
   public static final int ROTATION_SPINNER_MIN_VALUE            = -360;
   public static final int ROTATION_SPINNER_MAX_VALUE            = 360;
   public static final int ROTATION_SPINNER_INCREMENTS_1         = 1;

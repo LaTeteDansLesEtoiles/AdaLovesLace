@@ -246,7 +246,7 @@ public class MainWindow {
     moveDraggedAndDroppedNodes(app, x, y, handle);
   }
 
-  public void onClickWithSelectionMode(App app, double x, double y) {
+  public void onClickWithSelectionMode(App app) {
     Iterator<Knot> it = optionalDotGrid.getDiagram().getCurrentStep().getAllVisibleKnots().iterator();
     boolean hasClickedOnAGivenKnot = false;
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
@@ -322,7 +322,7 @@ public class MainWindow {
     }
   }
 
-  public void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
+  public void onClickWithDeletionMode(App app, Diagram diagram) {
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
       if (new NodeUtil().isMouseOverKnot(knot)) {
         removeKnotIfClicked(app, diagram, knot);

@@ -7,11 +7,10 @@ import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
-import org.alienlabs.adaloveslace.view.window.StateWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.view.window.StateWindow.STATE_BUTTONS_HEIGHT;
 
 public class VisibleButton extends ImageButton {
 
@@ -20,10 +19,10 @@ public class VisibleButton extends ImageButton {
 
   private static final Logger logger                = LoggerFactory.getLogger(VisibleButton.class);
 
-  public VisibleButton(App app, StateWindow window, String buttonLabel) {
+  public VisibleButton(App app, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onSetVisibleAction(app, window));
-    this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
+    this.setOnMouseClicked(event -> onSetVisibleAction(app));
+    this.setPrefHeight(STATE_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(BUTTON_TOOLTIP);
@@ -31,7 +30,7 @@ public class VisibleButton extends ImageButton {
     buildButtonImage("visible.png");
   }
 
-  public static void onSetVisibleAction(App app, StateWindow window) {
+  public static void onSetVisibleAction(App app) {
     logger.debug("Setting draw mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
     app.getOptionalDotGrid().clearSelections();

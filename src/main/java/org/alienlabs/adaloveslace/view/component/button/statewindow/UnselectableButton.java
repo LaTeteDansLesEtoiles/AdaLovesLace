@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.view.window.StateWindow.STATE_BUTTONS_HEIGHT;
 
 public class UnselectableButton extends ImageButton {
 
@@ -26,7 +26,7 @@ public class UnselectableButton extends ImageButton {
   public UnselectableButton(App app, String buttonLabel) {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onSetUnselectableModeAction(app));
-    this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
+    this.setPrefHeight(STATE_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(BUTTON_TOOLTIP);

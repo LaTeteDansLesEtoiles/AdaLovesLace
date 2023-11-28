@@ -22,14 +22,14 @@ public class FastMoveModeButton extends ToggleButton {
   public FastMoveModeButton() {
     FastMoveModeButton.isFastMode = new SimpleBooleanProperty(DEFAULT_FAST_MODE);
     FastMoveModeButton.instance = this;
-    this.setOnMouseClicked(event -> onSwitchSlowModeAction());
+    this.setOnMouseClicked(event -> onSwitchFastModeAction());
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(BUTTON_TOOLTIP);
     this.setTooltip(tooltip);
   }
 
-  public static void onSwitchSlowModeAction() {
+  public static void onSwitchFastModeAction() {
     isFastMode.set(!isFastMode.get());
     instance.setSelected(isFastMode.get());
     logger.debug("Setting fast move mode: {}", isFastMode.get());

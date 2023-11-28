@@ -22,6 +22,10 @@ import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.*;
+import org.alienlabs.adaloveslace.view.component.button.statewindow.InvisibleButton;
+import org.alienlabs.adaloveslace.view.component.button.statewindow.SelectableButton;
+import org.alienlabs.adaloveslace.view.component.button.statewindow.UnselectableButton;
+import org.alienlabs.adaloveslace.view.component.button.statewindow.VisibleButton;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.alienlabs.adaloveslace.view.window.StateWindow;
@@ -251,8 +255,16 @@ public class App extends Application {
         () -> LeftButton.onMoveKnotLeftAction   (this));
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT),
         () -> RightButton.onMoveKnotRightAction (this));
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.S),
+        () -> SelectableButton.onSetSelectableModeAction(this));
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.T),
+        () -> UnselectableButton.onSetUnselectableModeAction(this));
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.V),
+        () -> VisibleButton.onSetVisibleAction   (this));
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.W),
+        () -> InvisibleButton.onSetInvisibleAction (this));
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F),
-              FastMoveModeButton::onSwitchSlowModeAction);
+              FastMoveModeButton::onSwitchFastModeAction);
     });
   }
 
