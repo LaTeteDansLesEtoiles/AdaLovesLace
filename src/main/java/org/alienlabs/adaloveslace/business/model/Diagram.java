@@ -115,7 +115,7 @@ public class Diagram {
         this.patterns.add(pattern);
     }
 
-    public void undoLastStep(App app, Boolean... layoutChildren) {
+    public void undoLastStep(App app, boolean layoutChildren) {
         logger.debug("Undo step, current step={}", this.getCurrentStepIndex());
 
         if (this.getCurrentStepIndex() > 0) {
@@ -170,7 +170,7 @@ public class Diagram {
             }
         }
 
-        if (layoutChildren.length == 0) {
+        if (layoutChildren) {
             app.getRoot().getChildren().removeAll(nodeListToRemove);
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
         }
@@ -178,7 +178,7 @@ public class Diagram {
         logger.debug("Undo step, new step={}", this.getCurrentStepIndex());
     }
 
-    public void redoLastStep(App app, Boolean... layoutChildren) {
+    public void redoLastStep(App app, boolean layoutChildren) {
         logger.debug("Redo 0 step, current step={}", this.getCurrentStepIndex());
 
         if (this.getCurrentStepIndex() <
@@ -234,7 +234,7 @@ public class Diagram {
             }
         }
 
-        if (layoutChildren.length == 0) {
+        if (layoutChildren) {
             app.getRoot().getChildren().removeAll(nodeListToRemove);
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
         }

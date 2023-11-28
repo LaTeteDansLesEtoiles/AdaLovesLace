@@ -1,6 +1,7 @@
 package org.alienlabs.adaloveslace.unittest.business.model;
 
 import javafx.scene.Group;
+import javafx.scene.image.ImageView;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
@@ -175,21 +176,21 @@ class UndoRedoStepTest {
     @Test
     void test_add_several_knots_then_undo_a_step_then_redo_this_step() {
         // Given
-        Knot knotStep1 = new Knot(10, 15, new Pattern(), null);
+        Knot knotStep1 = new Knot(10, 15, new Pattern(), new ImageView());
         List<Knot> knots1 = new ArrayList<>();
         knots1.add(knotStep1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
         Diagram.newStep(knots1, selectedKnots1, false);
 
-        Knot knotStep2 = new Knot(20, 25, new Pattern(), null);
+        Knot knotStep2 = new Knot(20, 25, new Pattern(), new ImageView());
         List<Knot> knots2 = new ArrayList<>();
         knots2.add(knotStep2);
         List<Knot> selectedKnots2 = new ArrayList<>();
 
         Diagram.newStep(knots2, selectedKnots2, false);
 
-        Knot knotStep3 = new Knot(30, 35, new Pattern(), null);
+        Knot knotStep3 = new Knot(30, 35, new Pattern(), new ImageView());
         List<Knot> knots3 = new ArrayList<>();
         knots3.add(knotStep3);
         List<Knot> selectedKnots3 = new ArrayList<>();
@@ -232,21 +233,21 @@ class UndoRedoStepTest {
     @Test
     void test_add_several_selected_knots_then_undo_a_step_then_redo_this_step() {
         // Given
-        Knot knotStep1 = new Knot(10, 15, new Pattern(), null);
+        Knot knotStep1 = new Knot(10, 15, new Pattern(), new ImageView());
         List<Knot> knots1 = new ArrayList<>();
         knots1.add(knotStep1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
         Diagram.newStep(knots1, selectedKnots1, false);
 
-        Knot knotStep2 = new Knot(20, 25, new Pattern(), null);
+        Knot knotStep2 = new Knot(20, 25, new Pattern(), new ImageView());
         List<Knot> knots2 = new ArrayList<>();
         knots2.add(knotStep2);
         List<Knot> selectedKnots2 = new ArrayList<>();
 
         Diagram.newStep(knots2, selectedKnots2, false);
 
-        Knot knotStep3 = new Knot(30, 35, new Pattern(), null);
+        Knot knotStep3 = new Knot(30, 35, new Pattern(), new ImageView());
         List<Knot> selectedKnots3 = new ArrayList<>();
         selectedKnots3.add(knotStep3);
         List<Knot> knots3 = new ArrayList<>();
