@@ -4,9 +4,9 @@ AdaLovesLace: A tatting lace patterns creation software
 
 
 
-Ceci est un Logiciel Libre, sous les termes de la [licence Affero GPL V3](license.md) 
+Ceci est un Logiciel Libre, sous les termes de la [licence Affero GPL V3](licence.md) 
 
-This is Free Software, under [Affero GPL V3 license](license.md)
+This is Free Software, under [Affero GPL V3 license](licence.md)
 
 
 
