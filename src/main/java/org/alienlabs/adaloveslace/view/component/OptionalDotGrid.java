@@ -50,7 +50,7 @@ public class OptionalDotGrid extends Pane {
 
   private Diagram diagram;
 
-  private final Set<Shape> grid = new HashSet<>();
+  private final List<Shape> grid = new ArrayList<>();
 
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
   private final Group root;
@@ -123,68 +123,99 @@ public class OptionalDotGrid extends Pane {
         }
       }
 
-      drawHoveredOverOrSelectedKnot(this.diagram.getCurrentStep().getSelectedKnots());
+      drawHoveredOverOrSelectedKnot(this.diagram.getCurrentStep().getAllVisibleKnots());
     }
   }
 
   // We shall not display the undone knots => delete them from canvas, then draw the grid again
   public void deleteKnotsFromCanvas() {
     this.diagram.deleteNodesFromFollowingSteps(root);
-    ArrayList<Node> nodeListToRemove = new ArrayList<>();
+    List<Node> nodeListToRemove = new ArrayList<>();
+    Step step = this.diagram.getCurrentStep();
 
-    for (Step step : this.diagram.getAllSteps()) {
-      for (Knot k : step.getDisplayedKnots()) {
-        nodeListToRemove.add(k.getImageView());
-        if (k.getHovered() != null) {
-          nodeListToRemove.add(k.getHovered());
-        }
-        if (k.getHandle() != null) {
-          nodeListToRemove.add(k.getHandle());
-        }
+    for (Knot k : step.getSelectedKnots()) {
+      if (k.getHovered() != null) {
+        nodeListToRemove.add(k.getHovered());
       }
-
-      for (Knot k : step.getSelectedKnots()) {
-        nodeListToRemove.add(k.getImageView());
+      if (k.getSelection() != null) {
         nodeListToRemove.add(k.getSelection());
       }
-
-      root.getChildren().removeAll(nodeListToRemove);
+      if (k.getHandle() != null) {
+        nodeListToRemove.add(k.getHandle());
+      }
     }
+
+    Step s = this.diagram.getCurrentStep();
+    for (Knot k : s.getAllVisibleKnots()) {
+      nodeListToRemove.add(k.getImageView());
+    }
+
+    root.getChildren().removeAll(nodeListToRemove);
   }
 
-  public void drawHoveredOverOrSelectedKnot(Set<Knot> knots) {
+  public void drawHoveredOverOrSelectedKnot(List<Knot> knots) {
     for (Knot knot : knots) {
 
-      // If selected & hovered: red
-      if (knot.isHoveredKnot() &&
-              getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
-        Knot firstKnot = getDiagram().getCurrentStep().getSelectedKnots().stream()
-                .min(Comparator.comparing(Knot::getX)
-                        .thenComparing(Knot::getY))
-                .get();
-        logger.debug("Adding red rectangle for Knot {}", knot);
-        addSelectionAndHandleToAKnot(knot, Color.rgb(255, 0, 0, 0.5), firstKnot);
-      } else if (knot.isHoveredKnot()) {
-        // If hovered & not selected: gray
-        Rectangle rec = newRectangle(knot, Color.GRAY);
-        knot.setHovered(rec);
-        logger.debug("Adding hover {} for Knot {}", rec, knot);
-        root.getChildren().add(rec);
-        rec.addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-
-        if (knot.getHandle() != null) {
-          root.getChildren().remove(knot.getHandle());
-        }
+      if (!knot.isSelectable()) {
+        continue;
       }
 
-      if (!knot.isHoveredKnot() && getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
-        // If not hovered & selected: blue
-        Knot firstKnot = getDiagram().getCurrentStep().getSelectedKnots().stream()
+      // If selected & hovered: red
+      if (knot.isHoveredKnot()
+              && getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
+        Optional<Knot> firstKnot = getDiagram().getCurrentStep().getSelectedKnots().stream()
                 .min(Comparator.comparing(Knot::getX)
-                        .thenComparing(Knot::getY))
-                .get();
-        addSelectionAndHandleToAKnot(knot, Color.rgb(0,0,255, 0.5), firstKnot);
-      } else if (!knot.isHoveredKnot() && knot.getHovered() != null) {
+                        .thenComparing(Knot::getY));
+
+        if (firstKnot.isPresent()) {
+          logger.debug("Adding red rectangle for Knot {}", knot);
+          addSelectionAndHandleToAKnot(knot, Color.rgb(255, 0, 0, 0.5));
+        } else {
+          Platform.runLater(() -> {
+            Rectangle rec = newRectangle(knot, Color.BLUE);
+            knot.setSelection(rec);
+            logger.debug("Adding hover {} for Knot {}", rec, knot);
+            root.getChildren().add(rec);
+
+            if (knot.getHandle() != null) {
+              root.getChildren().remove(knot.getHandle());
+            }
+          });
+        }
+      } else if (knot.isHoveredKnot()) {
+        // If hovered & not selected: gray
+        Platform.runLater(() -> {
+          Rectangle rec = newRectangle(knot, Color.GRAY);
+          knot.setHovered(rec);
+          logger.debug("Adding hover {} for Knot {}", rec, knot);
+          root.getChildren().add(rec);
+
+          if (knot.getHandle() != null) {
+            root.getChildren().remove(knot.getHandle());
+          }
+        });
+      } else if (getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
+        // If not hovered & selected: blue
+        Optional<Knot> firstKnot = getDiagram().getCurrentStep().getSelectedKnots().stream()
+                .min(Comparator.comparing(Knot::getX)
+                        .thenComparing(Knot::getY));
+
+        if (firstKnot.isPresent()) {
+          Platform.runLater(() -> addSelectionAndHandleToAKnot(knot, Color.rgb(0, 0, 255, 0.5)));
+        } else {
+          Platform.runLater(() -> {
+            Rectangle rec = newRectangle(knot, Color.BLUE);
+            knot.setSelection(rec);
+            logger.debug("Adding hover {} for Knot {}", rec, knot);
+            root.getChildren().add(rec);
+
+            if (knot.getHandle() != null) {
+              root.getChildren().remove(knot.getHandle());
+            }
+          });
+        }
+      } else if (!knot.isHoveredKnot()
+              && knot.getHovered() != null) {
         Platform.runLater(() -> {
           logger.debug("Removing node {} and hover {} from hovered {}", knot, knot.getHovered(), root.getChildren().remove(knot.getHovered()));
           knot.setHovered(null);
@@ -194,7 +225,7 @@ public class OptionalDotGrid extends Pane {
     }
   }
 
-  public void addSelectionAndHandleToAKnot(Knot knot, Color rgba, Knot firstKnot) {
+  public void addSelectionAndHandleToAKnot(Knot knot, Color rgba) {
     Platform.runLater(() -> {
       Rectangle rec = newRectangle(knot, rgba);
       rec.addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
@@ -204,17 +235,15 @@ public class OptionalDotGrid extends Pane {
       root.getChildren().add(rec);
 
       // Only the first knot of a multi-selection has a handle
-      if (firstKnot.equals(knot)) {
-        getDiagram().deleteHandlesFromCurrentStep(getRoot());
+      getDiagram().deleteHandlesFromCurrentStep(getRoot());
 
-        Circle handle = newHandle(knot, Color.rgb(0,0,255, 0.3), rec);
-        knot.setHandle(handle);
-        root.getChildren().add(handle);
+      Circle handle = newHandle(knot, Color.rgb(0,0,255, 0.3), rec);
+      knot.setHandle(handle);
+      root.getChildren().add(handle);
 
-        handle.setOnDragDetected(Events.getDragInitiatedOverHandleEventHandler());
-        handle.setOnDragOver(Events.getMouseDragOverHandleEventHandler());
-        handle.setOnDragDropped(Events.getMouseDragDroppedHandleEventHandler());
-      }
+      handle.setOnDragDetected(Events.getDragInitiatedOverHandleEventHandler());
+      handle.setOnDragOver(Events.getMouseDragOverHandleEventHandler());
+      handle.setOnDragDropped(Events.getMouseDragDroppedHandleEventHandler());
     });
   }
 
@@ -253,6 +282,7 @@ public class OptionalDotGrid extends Pane {
     rec.setScaleX(computeZoomFactor(knot));
     rec.setScaleY(computeZoomFactor(knot));
     rec.setRotate(knot.getRotationAngle());
+
     return rec;
   }
 
@@ -261,15 +291,15 @@ public class OptionalDotGrid extends Pane {
 
     Platform.runLater(() -> {
       if ((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION)
-        || (diagram.getCurrentMode() == MouseMode.MOVE) || (diagram.getCurrentMode() == MouseMode.DRAWING)
-        || (diagram.getCurrentMode() == MouseMode.DUPLICATION)) {
+              || (diagram.getCurrentMode() == MouseMode.MOVE) || (diagram.getCurrentMode() == MouseMode.DRAWING)
+              || (diagram.getCurrentMode() == MouseMode.DUPLICATION)) {
 
         // The black, thick lines that we use as guides
         getDiagram().deleteNodesFromFollowingSteps(root);
 
         for (Knot otherKnot : step.getAllVisibleKnots()) {
           if (!otherKnot.equals(knot) && otherKnot.isVisible()) {
-            new GuideLinesUtil(app, knot, otherKnot, root);
+            new GuideLinesUtil(knot, otherKnot, root);
           }
         }
       }
@@ -450,8 +480,8 @@ public class OptionalDotGrid extends Pane {
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
-    value = "EI_EXPOSE_REP",
-    justification = "A JavaFX property is meant to be modified from the outside")
+          value = "EI_EXPOSE_REP",
+          justification = "A JavaFX property is meant to be modified from the outside")
   public SimpleObjectProperty<Pattern> getCurrentPatternProperty() {
     return this.currentPatternProperty;
   }
@@ -465,8 +495,8 @@ public class OptionalDotGrid extends Pane {
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
-    value = "EI_EXPOSE_REP",
-    justification = "A JavaFX property is meant to be modified from the outside")
+          value = "EI_EXPOSE_REP",
+          justification = "A JavaFX property is meant to be modified from the outside")
   public SimpleBooleanProperty isShowHideGridProperty() {
     return this.showHideGridProperty;
   }

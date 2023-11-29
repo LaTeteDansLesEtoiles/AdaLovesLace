@@ -15,8 +15,8 @@ import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
@@ -64,9 +64,9 @@ public class CreatePatternButton extends ImageButton {
         app.getOptionalDotGrid().clearHovered();
         app.getOptionalDotGrid().clearAllGuideLines();
 
-        Set<Knot> displayedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-        Set<Knot> selectedKnots = new TreeSet<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-        displayedKnots.addAll(new TreeSet<>(selectedKnots));
+        List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+        List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+        displayedKnots.addAll(new ArrayList<>(selectedKnots));
         selectedKnots.clear();
         app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
 

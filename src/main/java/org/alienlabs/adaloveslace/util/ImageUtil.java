@@ -3,6 +3,10 @@ package org.alienlabs.adaloveslace.util;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.ButtonBase;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.*;
@@ -13,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.UUID;
 
@@ -154,6 +160,25 @@ public class ImageUtil {
             app.getOptionalDotGrid().clearSelections();
             app.getOptionalDotGrid().clearAllGuideLines();
             app.getOptionalDotGrid().clearHovered();
+        }
+    }
+
+    public void getImageView(String pathname, ButtonBase button, boolean isSelected) {
+        try {
+            Image buttonImage = new Image(ClassLoader.getSystemResource(ASSETS_DIRECTORY + pathname) != null ?
+                    ClassLoader.getSystemResource(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm() :
+                    new File(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm());
+
+            ImageView buttonImageView  = new ImageView(buttonImage);
+            buttonImageView.setFitHeight(ICON_SIZE);
+            buttonImageView.setPreserveRatio(true);
+            button.setGraphic(buttonImageView);
+
+            if (isSelected) {
+                ((ToggleButton)button).setSelected(true);
+            }
+        } catch (MalformedURLException | URISyntaxException e) {
+            logger.error("Error loading button image!", e);
         }
     }
 

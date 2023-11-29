@@ -1,6 +1,5 @@
 package org.alienlabs.adaloveslace.util;
 
-import javafx.geometry.Bounds;
 import javafx.scene.image.ImageView;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.slf4j.Logger;
@@ -17,23 +16,12 @@ public class NodeUtil {
     // Nothing to do here, that's just to avoid an all-static class
   }
 
-  public boolean isMouseOverKnot(Knot knot, double mouseX, double mouseY) {
-    if (!knot.isVisible()) {
-      return false;
-    }
-
-    ImageView img = knot.getImageView();
-
-    // Get coordinates of the img relative to screen (as mouse coordinates are relative to screen, too)
-    Bounds boundsInParent = img.getBoundsInParent();
-    if (boundsInParent == null) {
-      return false;
-    }
-    logger.debug("nodeCoord X= {}, Y={}", boundsInParent.getMinX(), boundsInParent.getMinY());
-    logger.debug("mouseCoord X= {}, Y={}", mouseX, mouseY);
-
-    return (boundsInParent.getMinX() + KNOT_PADDING <= mouseX) && (boundsInParent.getMaxX() - KNOT_PADDING >= mouseX) &&
-      (boundsInParent.getMinY() <= mouseY + KNOT_PADDING) && (boundsInParent.getMaxY() - KNOT_PADDING >= mouseY);
+  public boolean isMouseOverKnot(Knot knot) {
+    return (knot.getImageView().isHover())
+            || ((knot.getHovered() != null)
+            && (knot.getHovered().isHover())
+            || ((knot.getSelection() != null)
+            && (knot.getSelection().isHover())));
   }
 
   public Knot copyKnot(Knot knot) {
@@ -42,6 +30,7 @@ public class NodeUtil {
     copy.setRotationAngle(knot.getRotationAngle());
     copy.setZoomFactor(knot.getZoomFactor());
     copy.setVisible(knot.isVisible());
+    copy.setSelectable(knot.isSelectable());
     copy.setFlippedVertically(knot.isFlippedVertically());
     copy.setFlippedHorizontally(knot.isFlippedHorizontally());
 

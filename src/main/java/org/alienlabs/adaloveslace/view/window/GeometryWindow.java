@@ -3,26 +3,19 @@ package org.alienlabs.adaloveslace.view.window;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.*;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.*;
 import org.alienlabs.adaloveslace.view.component.spinner.RotationSpinner;
 import org.alienlabs.adaloveslace.view.component.spinner.ZoomSpinner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
@@ -43,6 +36,7 @@ public class GeometryWindow {
   public static final double GAP_BETWEEN_BUTTONS                = 10d;
 
   public static final double GEOMETRY_BUTTONS_HEIGHT            = 50d;
+
   public static final int ROTATION_SPINNER_MIN_VALUE            = -360;
   public static final int ROTATION_SPINNER_MAX_VALUE            = 360;
   public static final int ROTATION_SPINNER_INCREMENTS_1         = 1;
@@ -85,30 +79,31 @@ public class GeometryWindow {
     buttonsPane.setAlignment(Pos.BOTTOM_CENTER);
     buttonsPane.setPrefColumns(2);
     buttonsPane.setVgap(GAP_BETWEEN_BUTTONS);
+    ImageUtil util = new ImageUtil(app);
 
     this.deletionButton = new DeletionButton(app, this, resourceBundle.getString(DELETION_BUTTON_NAME));
-    getImageView("deletion.png", deletionButton, false);
+    util.getImageView("deletion.png", deletionButton, false);
 
     this.duplicationButton = new DuplicationButton(app, this, resourceBundle.getString(DUPLICATION_BUTTON_NAME));
-    getImageView("duplication.png", duplicationButton, false);
+    util.getImageView("duplication.png", duplicationButton, false);
 
     VerticalFlippingButton verticalFlippingButton = new VerticalFlippingButton(app, resourceBundle.getString(VERTICAL_FLIPPING_BUTTON_NAME));
-    getImageView("flip_vertically.png", verticalFlippingButton, false);
+    util.getImageView("flip_vertically.png", verticalFlippingButton, false);
 
     HorizontalFlippingButton horizontalFlippingButton = new HorizontalFlippingButton(app, resourceBundle.getString(HORIZONTAL_FLIPPING_BUTTON_NAME));
-    getImageView("flip_horizontally.png", horizontalFlippingButton, false);
+    util.getImageView("flip_horizontally.png", horizontalFlippingButton, false);
 
     this.drawingButton = new DrawingButton(app, this, resourceBundle.getString(DrawingButton.DRAWING_BUTTON_NAME));
-    getImageView("drawing.png", drawingButton, true);
+    util.getImageView("drawing.png", drawingButton, true);
 
     this.selectionButton = new SelectionButton(app, this, resourceBundle.getString(SELECTION_BUTTON_NAME));
-    getImageView("selection.png", selectionButton, false);
+    util.getImageView("selection.png", selectionButton, false);
 
     RotationButton rotationButton = new RotationButton(app, this, resourceBundle.getString(ROTATION_BUTTON_NAME));
-    getImageView("rotation.png", rotationButton, false);
+    util.getImageView("rotation.png", rotationButton, false);
 
     ZoomButton zoomButton = new ZoomButton(app, this, resourceBundle.getString(ZOOM_BUTTON_NAME));
-    getImageView("zoom.png", zoomButton, false);
+    util.getImageView("zoom.png", zoomButton, false);
 
     this.rotationSpinner1 = new Spinner<>(ROTATION_SPINNER_MIN_VALUE, ROTATION_SPINNER_MAX_VALUE,
       DEFAULT_ROTATION, ROTATION_SPINNER_INCREMENTS_1);
@@ -159,67 +154,49 @@ public class GeometryWindow {
 
   public void createMoveKnotButtons(App app, GridPane parent) {
     GridPane moveKnotPane = app.newGridPane();
+    ImageUtil util = new ImageUtil(app);
 
     UpButton upButton = new UpButton(app);
-    getImageView("up.png", upButton, false);
+    util.getImageView("up.png", upButton, false);
     moveKnotPane.add(upButton, 1, 0);
 
     DownButton downButton = new DownButton(app);
-    getImageView("down.png", downButton, false);
+    util.getImageView("down.png", downButton, false);
     moveKnotPane.add(downButton, 1, 2);
 
     LeftButton leftButton = new LeftButton(app);
-    getImageView("left.png", leftButton, false);
+    util.getImageView("left.png", leftButton, false);
     moveKnotPane.add(leftButton, 0, 1);
 
     RightButton rightButton = new RightButton(app);
-    getImageView("right.png", rightButton, false);
+    util.getImageView("right.png", rightButton, false);
     moveKnotPane.add(rightButton, 2, 1);
 
     DownLeftButton downLeftButton = new DownLeftButton(app);
-    getImageView("down_left.png", downLeftButton, false);
+    util.getImageView("down_left.png", downLeftButton, false);
     moveKnotPane.add(downLeftButton, 0, 2);
 
     UpLeftButton upLeftButton = new UpLeftButton(app);
-    getImageView("up_left.png", upLeftButton, false);
+    util.getImageView("up_left.png", upLeftButton, false);
     moveKnotPane.add(upLeftButton, 0, 0);
 
     DownRightButton downRightButton = new DownRightButton(app);
-    getImageView("down_right.png", downRightButton, false);
+    util.getImageView("down_right.png", downRightButton, false);
     moveKnotPane.add(downRightButton, 2, 2);
 
     UpRightButton upRightButton = new UpRightButton(app);
-    getImageView("up_right.png", upRightButton, false);
+    util.getImageView("up_right.png", upRightButton, false);
     moveKnotPane.add(upRightButton, 2, 0);
 
     FastMoveModeButton fastMoveModeButton = new FastMoveModeButton();
-    getImageView("fast.png", fastMoveModeButton, false);
+    util.getImageView("fast.png", fastMoveModeButton, false);
     moveKnotPane.add(fastMoveModeButton, 1, 1);
 
     parent.add(moveKnotPane, 0, 2);
   }
 
-  private void getImageView(String pathname, ButtonBase button, boolean isSelected) {
-    try {
-      Image buttonImage = new Image(ClassLoader.getSystemResource(ASSETS_DIRECTORY + pathname) != null ?
-              ClassLoader.getSystemResource(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm() :
-              new File(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm());
-
-      ImageView buttonImageView  = new ImageView(buttonImage);
-      buttonImageView.setFitHeight(ICON_SIZE);
-      buttonImageView.setPreserveRatio(true);
-      button.setGraphic(buttonImageView);
-
-      if (isSelected) {
-        ((ToggleButton)button).setSelected(true);
-      }
-    } catch (MalformedURLException | URISyntaxException e) {
-      logger.error("Error loading button image!", e);
-    }
-  }
-
   public DrawingButton getDrawingButton() {
-    return drawingButton;
+    return this.drawingButton;
   }
 
   public SelectionButton getSelectionButton() {
@@ -227,39 +204,39 @@ public class GeometryWindow {
   }
 
   public DeletionButton getDeletionButton() {
-    return deletionButton;
+    return this.deletionButton;
   }
 
   public DuplicationButton getDuplicationButton() {
-    return duplicationButton;
+    return this.duplicationButton;
   }
 
   public Spinner<Integer> getRotationSpinner1() {
-    return rotationSpinner1;
+    return this.rotationSpinner1;
   }
 
   public Spinner<Integer> getRotationSpinner2() {
-    return rotationSpinner2;
+    return this.rotationSpinner2;
   }
 
   public Spinner<Integer> getRotationSpinner3() {
-    return rotationSpinner3;
+    return this.rotationSpinner3;
   }
 
   public Spinner<Integer> getZoomSpinner1() {
-    return zoomSpinner1;
+    return this.zoomSpinner1;
   }
 
   public Spinner<Integer> getZoomSpinner2() {
-    return zoomSpinner2;
+    return this.zoomSpinner2;
   }
 
   public Spinner<Integer> getZoomSpinner3() {
-    return zoomSpinner3;
+    return this.zoomSpinner3;
   }
 
   public Stage getGeometryStage() {
-    return geometryStage;
+    return this.geometryStage;
   }
 
 }
