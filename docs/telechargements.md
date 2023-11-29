@@ -15,4 +15,4 @@ Téléchargez Ada Loves Lace ici, il est libre pour tous les usages et gratuit :
 [Linux .rpm](https://github.com/LaTeteDansLesEtoiles/AdaLovesLace/releases/download/1.0.1/adaloveslace_1.0.1.rpm)
 
 
-[Linux .AppImage](https://github.com/LaTeteDansLesEtoiles/AdaLovesLace/releases/download/1.0.1/adaloveslace.AppImage)
+[Linux .AppImage](https://github.com/LaTeteDansLesEtoiles/AdaLovesLace/releases/download/1.0.1/adaloveslace_1.0.1.AppImage)
