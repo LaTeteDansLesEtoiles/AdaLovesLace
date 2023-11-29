@@ -1,4 +1,4 @@
-### Ada Aime la Dentelle : un logiciel de création de diagrammes de dentelle
+Ada Aime la Dentelle : un logiciel de création de diagrammes de dentelle
 
 AdaLovesLace: A tatting lace patterns creation software
 
@@ -12,10 +12,10 @@ This is Free Software, under [Affero GPL V3 license](licence.md)
 
 
 
-### © 2023 Zala GOUPIL
+© 2023 Zala GOUPIL
 
 
 
-### Ce logiciel vient SANS ABSOLUMENT AUCUNE GARANTIE, autres que celles que la loi exige.
+Ce logiciel vient SANS ABSOLUMENT AUCUNE GARANTIE, autres que celles que la loi exige.
 
 This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by applicable law.
