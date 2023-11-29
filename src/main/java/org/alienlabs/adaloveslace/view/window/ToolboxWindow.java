@@ -335,7 +335,7 @@ public class ToolboxWindow {
   }
 
   public TextArea getPrintersTextArea() {
-    return printersTextArea;
+    return this.printersTextArea;
   }
 
   public List<ToggleButton> getAllPatterns() {
@@ -351,7 +351,7 @@ public class ToolboxWindow {
   }
 
   public Stage getToolboxStage() {
-    return toolboxStage;
+    return this.toolboxStage;
   }
 
 }

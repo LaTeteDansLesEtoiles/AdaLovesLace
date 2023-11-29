@@ -246,10 +246,9 @@ public class MainWindow {
     moveDraggedAndDroppedNodes(app, x, y, handle);
   }
 
-  public void onClickWithSelectionMode(App app, double x, double y) {
+  public void onClickWithSelectionMode(App app) {
     Iterator<Knot> it = optionalDotGrid.getDiagram().getCurrentStep().getAllVisibleKnots().iterator();
     boolean hasClickedOnAGivenKnot = false;
-    app.getOptionalDotGrid().clearHovered();
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
@@ -258,7 +257,7 @@ public class MainWindow {
     while (it.hasNext()) {
       Knot knot = it.next();
 
-      hasClickedOnAGivenKnot = new NodeUtil().isMouseOverKnot(knot, x, y);
+      hasClickedOnAGivenKnot = new NodeUtil().isMouseOverKnot(knot);
 
       if (hasClickedOnAGivenKnot && (knot.getSelection() == null)) {
         logger.debug("Clicked Knot {} in order to select it", knot.getPattern().getFilename());
@@ -271,14 +270,14 @@ public class MainWindow {
           selectedKnots.clear();
           selectedKnots.add(copiedKnot);
 
-          app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           newStep(displayedKnots, selectedKnots, true);
         } else {
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
           selectedKnots.add(copiedKnot);
           displayedKnots.remove(knot);
 
-          app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           newStep(displayedKnots, selectedKnots, true);
         }
 
@@ -289,27 +288,25 @@ public class MainWindow {
         logger.debug("Clicked Knot selected {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot), knot.getPattern().getFilename());
 
-        app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
-
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
-
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
           displayedKnots.addAll(new ArrayList<>(selectedKnots));
           selectedKnots.clear();
           selectedKnots.add(copiedKnot);
           displayedKnots.remove(knot);
 
-          app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           newStep(displayedKnots, selectedKnots, true);
 
           break;
         } else {
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
-          displayedKnots.add(copiedKnot);
+          copiedKnot.setSelection(null);
           selectedKnots.remove(knot);
+          displayedKnots.add(copiedKnot);
 
-          app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+          app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           newStep(displayedKnots, selectedKnots, true);
           break;
         }
@@ -323,13 +320,11 @@ public class MainWindow {
 
       newStep(displayedKnots, selectedKnots, true);
     }
-
-    app.getOptionalDotGrid().layoutChildren();
   }
 
-  public void onClickWithDeletionMode(App app, Diagram diagram, double x, double y) {
+  public void onClickWithDeletionMode(App app, Diagram diagram) {
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
-      if (new NodeUtil().isMouseOverKnot(knot, x, y)) {
+      if (new NodeUtil().isMouseOverKnot(knot)) {
         removeKnotIfClicked(app, diagram, knot);
         break;
       }

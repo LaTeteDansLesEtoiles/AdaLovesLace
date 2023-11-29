@@ -15,6 +15,7 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
+import org.alienlabs.adaloveslace.view.window.StateWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ public class AppFunctionalTestParent {
   public Stage primaryStage;
   public GeometryWindow geometryWindow;
   public ToolboxWindow toolboxWindow;
+  public StateWindow stateWindow;
   public App app;
 
   // For tests:
@@ -103,6 +105,11 @@ public class AppFunctionalTestParent {
     this.geometryWindow = this.app.showGeometryWindow(this.app);
     this.app.getGeometryStage().setX(720d);
     this.app.getGeometryStage().setY(50d);
+
+    this.stateWindow = this.app.showStateWindow(this.app);
+    this.app.getStateStage().setX(720d);
+    this.app.getStateStage().setY(770d);
+    this.app.getStateStage().setHeight(300d);
   }
 
   // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
