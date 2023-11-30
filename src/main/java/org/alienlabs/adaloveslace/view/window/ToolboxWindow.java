@@ -248,12 +248,12 @@ public class ToolboxWindow {
 
     Button getPrintersButton    = new Button(resourceBundle.getString(GET_PRINTERS_BUTTON_NAME));
     final Tooltip tooltip       = new Tooltip();
-    tooltip.setText("Please click here first before printing");
+    tooltip.setText(resourceBundle.getString("GET_PRINTERS_BUTTON_TOOLTIP"));
     getPrintersButton.setTooltip(tooltip);
 
     Button printButton          = new Button(resourceBundle.getString(PRINT_BUTTON_NAME));
     final Tooltip tooltip2      = new Tooltip();
-    tooltip2.setText("Please click here secondly in order to print");
+    tooltip2.setText(resourceBundle.getString("PRINT_BUTTON_TOOLTIP"));
     printButton.setTooltip(tooltip2);
 
     parent.add(getPrintersButton,   0, posY + 7);

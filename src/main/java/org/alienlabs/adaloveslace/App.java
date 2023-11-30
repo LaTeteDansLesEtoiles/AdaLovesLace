@@ -81,8 +81,8 @@ public class App extends Application {
   public static final double  GRID_DOTS_RADIUS        = 2.5d;// The dots from the grid are ellipses, this is their radius
   public static final String LOCALE_LANGUAGE = "LOCALE_LANGUAGE";
   public static final String LOCALE_COUNTRY = "LOCALE_COUNTRY";
-  public static final String DEFAULT_LOCALE_LANGUAGE = "en";
-  public static final String DEFAULT_LOCALE_COUNTRY = "EN";
+  public static final String DEFAULT_LOCALE_LANGUAGE = "fr";
+  public static final String DEFAULT_LOCALE_COUNTRY = "FR";
 
   public static ResourceBundle resourceBundle = ResourceBundle.getBundle(
           ADA_LOVES_LACE,

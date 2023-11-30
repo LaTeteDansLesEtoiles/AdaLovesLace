@@ -13,13 +13,13 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.StateWindow.STATE_BUTTONS_HEIGHT;
 
 public class SelectableButton extends ImageButton {
 
   public static final String SELECTABLE_BUTTON_NAME     = "SELECTABLE_BUTTON_NAME";
-  public static final String BUTTON_TOOLTIP             = "Select this button to have\nall knots selectable again";
 
   private static final Logger logger                = LoggerFactory.getLogger(SelectableButton.class);
 
@@ -29,7 +29,7 @@ public class SelectableButton extends ImageButton {
     this.setPrefHeight(STATE_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
-    tooltip.setText(BUTTON_TOOLTIP);
+    tooltip.setText(resourceBundle.getString("SELECTABLE_BUTTON_TOOLTIP"));
     this.setTooltip(tooltip);
     buildButtonImage("selectable.png");
   }

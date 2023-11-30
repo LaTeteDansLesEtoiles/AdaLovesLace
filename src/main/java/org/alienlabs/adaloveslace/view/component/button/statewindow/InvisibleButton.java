@@ -10,12 +10,12 @@ import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.window.StateWindow.STATE_BUTTONS_HEIGHT;
 
 public class InvisibleButton extends ImageButton {
 
   public static final String INVISIBLE_BUTTON_NAME  = "INVISIBLE_BUTTON_NAME";
-  public static final String BUTTON_TOOLTIP         = "Select this button to\nhave selection invisible\n";
 
   private static final Logger logger                = LoggerFactory.getLogger(InvisibleButton.class);
 
@@ -25,7 +25,7 @@ public class InvisibleButton extends ImageButton {
     this.setPrefHeight(STATE_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
-    tooltip.setText(BUTTON_TOOLTIP);
+    tooltip.setText(resourceBundle.getString("INVISIBLE_BUTTON_TOOLTIP"));
     this.setTooltip(tooltip);
     buildButtonImage("invisible.png");
   }

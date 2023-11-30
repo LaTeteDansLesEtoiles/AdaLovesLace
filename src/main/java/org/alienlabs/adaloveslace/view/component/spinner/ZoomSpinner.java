@@ -11,12 +11,11 @@ import org.alienlabs.adaloveslace.util.NodeUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class ZoomSpinner {
-
-  public static final String BUTTON_TOOLTIP = "Use these fields to zoom in or out\nthe currently selected knot\n";
 
   private static int numberOfUpdates = 0;
 
@@ -56,7 +55,7 @@ public class ZoomSpinner {
     spinner.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
-    tooltip.setText(BUTTON_TOOLTIP);
+    tooltip.setText(resourceBundle.getString("ZOOM_SPINNER_BUTTON_TOOLTIP"));
     spinner.setTooltip(tooltip);
   }
 

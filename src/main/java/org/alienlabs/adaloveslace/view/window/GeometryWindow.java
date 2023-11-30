@@ -99,10 +99,10 @@ public class GeometryWindow {
     this.selectionButton = new SelectionButton(app, this, resourceBundle.getString(SELECTION_BUTTON_NAME));
     util.getImageView("selection.png", selectionButton, false);
 
-    RotationButton rotationButton = new RotationButton(app, this, resourceBundle.getString(ROTATION_BUTTON_NAME));
+    RotationButton rotationButton = new RotationButton(resourceBundle.getString(ROTATION_BUTTON_NAME));
     util.getImageView("rotation.png", rotationButton, false);
 
-    ZoomButton zoomButton = new ZoomButton(app, this, resourceBundle.getString(ZOOM_BUTTON_NAME));
+    ZoomButton zoomButton = new ZoomButton(resourceBundle.getString(ZOOM_BUTTON_NAME));
     util.getImageView("zoom.png", zoomButton, false);
 
     this.rotationSpinner1 = new Spinner<>(ROTATION_SPINNER_MIN_VALUE, ROTATION_SPINNER_MAX_VALUE,

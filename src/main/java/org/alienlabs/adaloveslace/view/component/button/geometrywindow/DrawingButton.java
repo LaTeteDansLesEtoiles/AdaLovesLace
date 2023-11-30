@@ -11,12 +11,12 @@ import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class DrawingButton extends ToggleButton {
 
   public static final String DRAWING_BUTTON_NAME    = "DRAWING_BUTTON_NAME";
-  public static final String BUTTON_TOOLTIP         = "Select this button then click anywhere on the canvas to draw\nthe currently selected knot where you clicked on\n";
 
   private static final Logger logger                = LoggerFactory.getLogger(DrawingButton.class);
 
@@ -26,7 +26,7 @@ public class DrawingButton extends ToggleButton {
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
-    tooltip.setText(BUTTON_TOOLTIP);
+    tooltip.setText(resourceBundle.getString("DRAWING_BUTTON_TOOLTIP"));
     this.setTooltip(tooltip);
   }
 

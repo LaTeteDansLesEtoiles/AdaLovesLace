@@ -8,12 +8,12 @@ import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class DeletionButton extends ToggleButton {
 
   public static final String DELETION_BUTTON_NAME     = "DELETION_BUTTON_NAME";
-  public static final String BUTTON_TOOLTIP           = "Select this button then click on a\nknot in the canvas to delete it\n";
 
   private static final Logger logger                  = LoggerFactory.getLogger(DeletionButton.class);
 
@@ -23,7 +23,7 @@ public class DeletionButton extends ToggleButton {
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
-    tooltip.setText(BUTTON_TOOLTIP);
+    tooltip.setText(resourceBundle.getString("DELETION_BUTTON_TOOLTIP"));
     this.setTooltip(tooltip);
   }
 

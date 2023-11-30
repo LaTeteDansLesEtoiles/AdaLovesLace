@@ -13,13 +13,13 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.StateWindow.STATE_BUTTONS_HEIGHT;
 
 public class UnselectableButton extends ImageButton {
 
   public static final String UNSELECTABLE_BUTTON_NAME = "UNSELECTABLE_BUTTON_NAME";
-  public static final String BUTTON_TOOLTIP           = "Select this button to have\nselection unselectable\n";
 
   private static final Logger logger                = LoggerFactory.getLogger(UnselectableButton.class);
 
@@ -29,7 +29,7 @@ public class UnselectableButton extends ImageButton {
     this.setPrefHeight(STATE_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
-    tooltip.setText(BUTTON_TOOLTIP);
+    tooltip.setText(resourceBundle.getString("UNSELECTABLE_BUTTON_TOOLTIP"));
     this.setTooltip(tooltip);
     buildButtonImage("unselectable.png");
   }

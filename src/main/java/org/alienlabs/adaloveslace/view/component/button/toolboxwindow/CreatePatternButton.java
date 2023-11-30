@@ -18,13 +18,13 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class CreatePatternButton extends ImageButton {
 
     public static final String CREATE_PATTERN_BUTTON  = "CREATE_PATTERN_BUTTON";
-    public static final String BUTTON_TOOLTIP         = "Select this button then draw a\nrectanle with the mouse to\ncreate a pattern with its content\n";
 
     private static int mouseClicks                    = 0;
     private static final Logger logger                = LoggerFactory.getLogger(CreatePatternButton.class);
@@ -45,7 +45,7 @@ public class CreatePatternButton extends ImageButton {
         this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
 
         final Tooltip tooltip = new Tooltip();
-        tooltip.setText(BUTTON_TOOLTIP);
+        tooltip.setText(resourceBundle.getString("CREATE_PATTERN_BUTTON_TOOLTIP"));
         this.setTooltip(tooltip);
 
         buildButtonImage("create_pattern.png");
