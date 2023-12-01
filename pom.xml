@@ -14,7 +14,7 @@
     <itext.version>8.0.2</itext.version>
     <testfx.version>4.0.17</testfx.version>
     <junit.version>5.10.1</junit.version>
-    <logback.version>1.4.11</logback.version>
+    <logback.version>1.4.12</logback.version>
     <dependency-check-maven.version>8.4.0</dependency-check-maven.version>
   </properties>
 
