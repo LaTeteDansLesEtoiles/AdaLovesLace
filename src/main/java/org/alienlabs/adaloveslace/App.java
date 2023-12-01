@@ -233,7 +233,7 @@ public class App extends Application {
   public static void main(String[] args) {
     Preferences prefs = new Preferences();
 
-    if ((!prefs.getStringValue(LOCALE_LANGUAGE).equals("")) && (!prefs.getStringValue(LOCALE_COUNTRY).equals(""))) {
+    if ((!prefs.getStringValue(LOCALE_LANGUAGE).isEmpty()) && (!prefs.getStringValue(LOCALE_COUNTRY).isEmpty())) {
       Locale locale = new Locale(prefs.getStringValue(LOCALE_LANGUAGE), prefs.getStringValue(LOCALE_COUNTRY));
       resourceBundle = ResourceBundle.getBundle(ADA_LOVES_LACE, locale);
     } else {
