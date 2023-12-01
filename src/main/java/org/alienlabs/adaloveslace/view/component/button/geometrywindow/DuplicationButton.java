@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.NEW_KNOT_GAP;
@@ -20,7 +22,6 @@ import static org.alienlabs.adaloveslace.view.window.MainWindow.NEW_KNOT_GAP;
 public class DuplicationButton extends ToggleButton {
 
   public static final String DUPLICATION_BUTTON_NAME  = "DUPLICATION_BUTTON_NAME";
-  public static final String BUTTON_TOOLTIP           = "Select this button then click on a\nknot in the canvas to copy it\n";
 
   private static final Logger logger                  = LoggerFactory.getLogger(DuplicationButton.class);
 
@@ -30,7 +31,8 @@ public class DuplicationButton extends ToggleButton {
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
-    tooltip.setText(BUTTON_TOOLTIP);
+    tooltip.setText(resourceBundle.getString("DUPLICATION_BUTTON_TOOLTIP"));
+    tooltip.setShowDuration(TOOLTIPS_DURATION);
     this.setTooltip(tooltip);
   }
 

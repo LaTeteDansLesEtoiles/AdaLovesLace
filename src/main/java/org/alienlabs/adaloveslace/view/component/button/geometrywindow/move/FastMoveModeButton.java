@@ -6,9 +6,11 @@ import javafx.scene.control.Tooltip;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
+import static org.alienlabs.adaloveslace.App.resourceBundle;
+
 public class FastMoveModeButton extends ToggleButton {
 
-  public static final String BUTTON_TOOLTIP             = "Set \"fast knot move\" mode on or off (f)\n";
   public static final double FAST_MODE_SPEED            = 5d;
   public static final double SLOW_MODE_SPEED            = 1d;
 
@@ -25,7 +27,8 @@ public class FastMoveModeButton extends ToggleButton {
     this.setOnMouseClicked(event -> onSwitchFastModeAction());
 
     final Tooltip tooltip = new Tooltip();
-    tooltip.setText(BUTTON_TOOLTIP);
+    tooltip.setText(resourceBundle.getString("FAST_MODE_BUTTON_TOOLTIP"));
+    tooltip.setShowDuration(TOOLTIPS_DURATION);
     this.setTooltip(tooltip);
   }
 
