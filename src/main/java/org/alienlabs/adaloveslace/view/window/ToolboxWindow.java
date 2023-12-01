@@ -249,11 +249,13 @@ public class ToolboxWindow {
     Button getPrintersButton    = new Button(resourceBundle.getString(GET_PRINTERS_BUTTON_NAME));
     final Tooltip tooltip       = new Tooltip();
     tooltip.setText(resourceBundle.getString("GET_PRINTERS_BUTTON_TOOLTIP"));
+    tooltip.setShowDuration(TOOLTIPS_DURATION);
     getPrintersButton.setTooltip(tooltip);
 
     Button printButton          = new Button(resourceBundle.getString(PRINT_BUTTON_NAME));
     final Tooltip tooltip2      = new Tooltip();
     tooltip2.setText(resourceBundle.getString("PRINT_BUTTON_TOOLTIP"));
+    tooltip2.setShowDuration(TOOLTIPS_DURATION);
     printButton.setTooltip(tooltip2);
 
     parent.add(getPrintersButton,   0, posY + 7);

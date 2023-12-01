@@ -11,6 +11,7 @@ import org.alienlabs.adaloveslace.util.NodeUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
@@ -56,6 +57,7 @@ public class ZoomSpinner {
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(resourceBundle.getString("ZOOM_SPINNER_BUTTON_TOOLTIP"));
+    tooltip.setShowDuration(TOOLTIPS_DURATION);
     spinner.setTooltip(tooltip);
   }
 

@@ -6,6 +6,7 @@ import javafx.scene.control.Tooltip;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 
 public class FastMoveModeButton extends ToggleButton {
@@ -27,6 +28,7 @@ public class FastMoveModeButton extends ToggleButton {
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(resourceBundle.getString("FAST_MODE_BUTTON_TOOLTIP"));
+    tooltip.setShowDuration(TOOLTIPS_DURATION);
     this.setTooltip(tooltip);
   }
 

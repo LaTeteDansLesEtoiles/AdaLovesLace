@@ -11,6 +11,7 @@ import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
@@ -27,6 +28,7 @@ public class SelectionButton extends ToggleButton {
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(resourceBundle.getString("SELECTION_BUTTON_TOOLTIP"));
+    tooltip.setShowDuration(TOOLTIPS_DURATION);
     this.setTooltip(tooltip);
   }
 

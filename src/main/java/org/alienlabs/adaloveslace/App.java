@@ -16,6 +16,7 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.util.Preferences;
@@ -83,6 +84,7 @@ public class App extends Application {
   public static final String LOCALE_COUNTRY = "LOCALE_COUNTRY";
   public static final String DEFAULT_LOCALE_LANGUAGE = "fr";
   public static final String DEFAULT_LOCALE_COUNTRY = "FR";
+  public static final Duration TOOLTIPS_DURATION = Duration.seconds(60);
 
   public static ResourceBundle resourceBundle = ResourceBundle.getBundle(
           ADA_LOVES_LACE,

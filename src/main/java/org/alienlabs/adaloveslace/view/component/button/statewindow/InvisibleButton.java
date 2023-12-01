@@ -10,6 +10,7 @@ import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.window.StateWindow.STATE_BUTTONS_HEIGHT;
 
@@ -26,6 +27,7 @@ public class InvisibleButton extends ImageButton {
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(resourceBundle.getString("INVISIBLE_BUTTON_TOOLTIP"));
+    tooltip.setShowDuration(TOOLTIPS_DURATION);
     this.setTooltip(tooltip);
     buildButtonImage("invisible.png");
   }
