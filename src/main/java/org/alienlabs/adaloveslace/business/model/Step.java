@@ -35,6 +35,9 @@ public class Step implements Comparable<Step> {
     @XmlTransient
     private Circle[] handle;
 
+    @XmlTransient
+    private static final int MAX_NUMBER_OF_STEPS = 1000;
+
     // For JAXB
     public Step() {
         this.stepIndex = 0;
@@ -63,11 +66,12 @@ public class Step implements Comparable<Step> {
         this.displayedKnots.removeAll(this.selectedKnots);
         this.selectedKnots.removeAll(this.displayedKnots);
 
-        this.stepIndex = diagram.getCurrentStepIndex() + 1;
         clearStepsGreaterThanPresentStep(app.getOptionalDotGrid().getDiagram());
+        limitToOneThousandSteps(app.getOptionalDotGrid().getDiagram());
 
-        diagram.setCurrentStepIndex(this.stepIndex);
         diagram.getAllSteps().add(this);
+        this.stepIndex = diagram.getAllSteps().size();
+        diagram.setCurrentStepIndex(this.stepIndex);
 
         this.handle = handle;
 
@@ -83,6 +87,22 @@ public class Step implements Comparable<Step> {
                         .getCurrentStepIndex()))
                 .toList());
         diagram.getAllSteps().removeAll(stepsToRemove);
+    }
+
+    private void limitToOneThousandSteps(Diagram diagram) {
+        diagram.setAllSteps(
+                diagram.getAllSteps().subList(
+                        Math.max(
+                                0,
+                                diagram.getCurrentStepIndex() - MAX_NUMBER_OF_STEPS
+                        ),
+                        diagram.getAllSteps().size()
+                )
+        );
+
+        for (int i = 0; i < diagram.getAllSteps().size(); i++) {
+            diagram.getAllSteps().get(i).setStepIndex(i + 1);
+        }
     }
 
     public List<Knot> getDisplayedKnots() {
