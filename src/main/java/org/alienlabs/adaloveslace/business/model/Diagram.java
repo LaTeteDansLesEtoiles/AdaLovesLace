@@ -118,7 +118,7 @@ public class Diagram {
     public void undoLastStep(App app, boolean layoutChildren) {
         logger.debug("Undo step, current step={}", this.getCurrentStepIndex());
 
-        if (this.getCurrentStepIndex() > 0) {
+        if (this.getCurrentStepIndex() > 1) {
             this.setCurrentStepIndex(this.getCurrentStepIndex() - 1);
         }
 
@@ -182,7 +182,7 @@ public class Diagram {
         logger.debug("Redo 0 step, current step={}", this.getCurrentStepIndex());
 
         if (this.getCurrentStepIndex() <
-                this.getAllSteps().size() - 1) {
+                this.getAllSteps().size()) {
             this.setCurrentStepIndex(this.getCurrentStepIndex() + 1);
         }
 
@@ -190,7 +190,7 @@ public class Diagram {
 
         if (!this.getAllSteps().isEmpty()) {
             for (Step s : this.getAllSteps().subList(
-                    1,
+                    0,
                     this.getCurrentStepIndex())
             ) {
                 for (Knot k : s.getAllVisibleKnots()) {
@@ -356,15 +356,19 @@ public class Diagram {
     }
 
     public Step getCurrentStep() {
-        if (currentStepIndex < 0) {
+        if (currentStepIndex <= 0) {
             return new Step();
         }
 
-        return this.getAllSteps().get(currentStepIndex);
+        return this.getAllSteps().get(currentStepIndex - 1);
     }
 
     public List<Step> getAllSteps() {
         return this.allSteps;
+    }
+
+    public void setAllSteps(List<Step> allSteps) {
+        this.allSteps = allSteps;
     }
 
     public App getApp() {

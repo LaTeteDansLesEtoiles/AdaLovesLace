@@ -4,15 +4,28 @@ title: Téléchargements
 permalink: telechargements
 ---
 
-Téléchargez Ada Loves Lace ici, il est libre pour tous les usages et gratuit :
-
-[Windows](https://github.com/LaTeteDansLesEtoiles/AdaLovesLace/releases/download/1.0.1/adaloveslace_1.0.1.msi)
+Téléchargez AdaLovesLace ici, il est libre pour tous les usages et gratuit :
 
 
-[Linux .deb](https://github.com/LaTeteDansLesEtoiles/AdaLovesLace/releases/download/1.0.1/adaloveslace_1.0.1.deb)
+Download AdaLovesLace here, it is free as in free speech and free as in free beer:
 
 
-[Linux .rpm](https://github.com/LaTeteDansLesEtoiles/AdaLovesLace/releases/download/1.0.1/adaloveslace_1.0.1.rpm)
+[Windows](https://github.com/LaTeteDansLesEtoiles/AdaLovesLace/releases/download/1.0.2/adaloveslace_1.0.2.msi)
 
 
-[Linux .AppImage](https://github.com/LaTeteDansLesEtoiles/AdaLovesLace/releases/download/1.0.1/adaloveslace_1.0.1.AppImage)
+[Linux .deb](https://github.com/LaTeteDansLesEtoiles/AdaLovesLace/releases/download/1.0.2/adaloveslace_1.0.2.deb)
+
+
+[Linux .rpm](https://github.com/LaTeteDansLesEtoiles/AdaLovesLace/releases/download/1.0.2/adaloveslace_1.0.2.rpm)
+
+
+[Linux .AppImage](https://github.com/LaTeteDansLesEtoiles/AdaLovesLace/releases/download/1.0.2/adaloveslace_1.0.2.AppImage)
+
+
+Et voici un diagramme de tricot d'exemple, à charger dans l'application pour commencer :
+
+
+And here is a knitting diagram, to load in the application in order to kickstart it:
+
+
+[Diagramme de tricot](/tricot.lace)
