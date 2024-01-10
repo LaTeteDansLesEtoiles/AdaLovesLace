@@ -7,16 +7,18 @@ import org.alienlabs.adaloveslace.business.model.DiagramDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static org.alienlabs.adaloveslace.App.ADA_LOVES_LACE_WEB;
-import static org.alienlabs.adaloveslace.App.ADA_LOVES_LACE_WEB_SHARE_ENDPOINT;
+import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 
 public class ShareUtil {
 
@@ -38,7 +40,17 @@ public class ShareUtil {
       HttpClient client = HttpClient.newHttpClient();
       HttpRequest request = postRequest(diagram, gson);
 
-      handleResponse(client, request);
+      try {
+        handleResponse(client, request);
+
+        File laceFilePath = new File(APP_FOLDER_IN_USER_HOME + diagramName + LACE_FILE_EXTENSION);
+        File previewFile  = ImageUtil.PATH_NAME;
+
+        Files.delete(laceFilePath.toPath());
+        Files.delete(previewFile.toPath());
+      } catch (IOException e) {
+          throw new RuntimeException(e);
+      }
     });
   }
 

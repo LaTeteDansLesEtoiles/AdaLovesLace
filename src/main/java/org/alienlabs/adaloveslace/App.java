@@ -57,7 +57,7 @@ public class App extends Application {
   public static final String STATE_TITLE              = "State";
   public static final String LACE_FILE_EXTENSION      = ".lace";
   public static final String LACE_FILE_MIME_TYPE      = "application/lace";
-  public static final String ADA_LOVES_LACE_WEB       = "https://dentelle.damemarie.club";
+  public static final String ADA_LOVES_LACE_WEB       = "https://dentelle.damemarieantoinette.art/";
   public static final String ADA_LOVES_LACE_WEB_SHARE_ENDPOINT       = "/api/upload-diagram";
   public static final String EXPORT_IMAGE_FILE_FORMAT = "png";
 
