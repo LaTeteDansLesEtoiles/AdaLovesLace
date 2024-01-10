@@ -23,10 +23,8 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.CompletionException;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -166,7 +164,7 @@ public class FileUtil {
     private Diagram buildDiagram(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
         Diagram diagram = unmarshallXmlFile(zipFile, entry);
         buildAbsoluteFilenamesForKnots(diagram);
-        diagram.setCurrentPattern(diagram.getPatterns().get(0));
+        diagram.setCurrentPattern(diagram.getPatterns().getFirst());
         return diagram;
     }
 
@@ -192,12 +190,16 @@ public class FileUtil {
             Marshaller jaxbMarshaller = context.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-            deleteXmlFile();
             writeLaceFile(file, jaxbMarshaller, diagram, currentStepIndex);
             deleteXmlFile();
-        } catch (JAXBException | IOException e) {
+        } catch (JAXBException e) {
             logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
+        } catch (CompletionException e) {
+            logger.error("Error uploading file: " + file.getAbsolutePath(), e);
+        } catch (IOException e) {
+            logger.error("Error deleting file to upload", e);
         }
+
 
         return file;
     }
@@ -222,7 +224,7 @@ public class FileUtil {
     }
 
     private void writePatternsToLaceFile(Diagram toSave, ZipOutputStream zipOut) throws IOException {
-        for (org.alienlabs.adaloveslace.business.model.Pattern pattern : new ArrayList<>(toSave.getPatterns())) {
+        for (org.alienlabs.adaloveslace.business.model.Pattern pattern : new HashSet<>(toSave.getPatterns())) {
             File fileToZip = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
                 + pattern.getFilename());
             try {

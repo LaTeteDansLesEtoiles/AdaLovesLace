@@ -63,28 +63,32 @@ public class ImageUtil {
 
     public DiagramDTO getDiagram(String diagramFilename, String username, String clientId, String clientSecret) throws IOException {
         UUID uuid         = UUID.randomUUID();
-        new ImageUtil(app).buildWritableImageWithoutTechnicalElements(
-                APP_FOLDER_IN_USER_HOME + uuid + EXPORT_IMAGE_FILE_TYPE);
+        new ImageUtil(app).
+                buildWritableImageWithoutTechnicalElements(
+                        APP_FOLDER_IN_USER_HOME + uuid + EXPORT_IMAGE_FILE_TYPE
+                );
         File laceFilePath = new File(APP_FOLDER_IN_USER_HOME + diagramFilename + LACE_FILE_EXTENSION);
 
         File previewFile  = ImageUtil.PATH_NAME;
-        DiagramDTO diagramDTO = new DiagramDTO().uuid(uuid).name(diagramFilename).
+        return new DiagramDTO().
+                uuid(uuid).
+                name(diagramFilename).
                 preview(Files.readAllBytes(previewFile.toPath())).previewContentType(EXPORT_IMAGE_CONTENT_TYPE).
-                technique(Technique.LACE).subTechnique(SubTechnique.TATTING_LACE).
-                language(Language.FRENCH).diagram(Files.readAllBytes(
+                technique(Technique.LACE).
+                subTechnique(SubTechnique.TATTING_LACE).
+                language(Language.FRENCH).
+                diagram(Files.readAllBytes(
                         new FileUtil(app).saveFile(
                                 laceFilePath,
                                 new Diagram(app.getOptionalDotGrid().getDiagram(),
-                                        app),
+                                        app
+                                ),
                                 app.getOptionalDotGrid().getDiagram().getCurrentStepIndex()
                         ).toPath())).
-                diagramContentType(LACE_FILE_MIME_TYPE).username(username).
-                clientId(UUID.fromString(clientId)).clientSecret(UUID.fromString(clientSecret));
-
-        Files.delete(laceFilePath.toPath());
-        Files.delete(previewFile.toPath());
-
-        return diagramDTO;
+                diagramContentType(LACE_FILE_MIME_TYPE).
+                username(username).
+                clientId(UUID.fromString(clientId)).
+                clientSecret(UUID.fromString(clientSecret));
     }
 
     private WritableImage  buildWritableImage(String pathname) {
