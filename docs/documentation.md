@@ -4,7 +4,7 @@ title: Documentation
 permalink: documentation
 ---
 
-Voici deux vidéos en français pour vous mettre pied à l'étrier d'AdaLovesLace :
+Voici deux vidéos en français pour vous mettre le pied à l'étrier d'AdaLovesLace :
 
 
 Here are two videos (in French) for you to quickstart AdaLovesLace:
