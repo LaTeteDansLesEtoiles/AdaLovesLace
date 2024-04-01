@@ -1,7 +1,7 @@
 ---
 layout: template
-title: Téléchargements
-permalink: telechargements
+title: Documentation
+permalink: documentation
 ---
 
 Voici deux vidéos en français pour vous mettre pied à l'étrier d'AdaLovesLace :

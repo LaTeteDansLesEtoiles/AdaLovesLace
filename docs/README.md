@@ -5,7 +5,7 @@ AdaLovesLace: A tatting lace patterns creation software
 
 ### [Téléchargements](telechargements.md)
 
-### [Démarrer](quickstart.md)
+### [Documentation](documentation.md)
 
 
 ![Screenshot of the application](AdaLovesLace.png "Une capture d'écran de l'application")
