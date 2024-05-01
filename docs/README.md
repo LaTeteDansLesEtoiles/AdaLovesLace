@@ -3,9 +3,11 @@ Ada Aime la Dentelle : un logiciel de création de diagrammes de dentelle
 AdaLovesLace: A tatting lace patterns creation software
 
 
-### [Téléchargements](telechargements.md)
+### [Téléchargements / downloads](telechargements.md)
 
 ### [Documentation](documentation.md)
+
+### [Partage de diagrammes / diagram sharing](https://dentelle.damemarieantoinette.art/)
 
 
 ![Screenshot of the application](AdaLovesLace.png "Une capture d'écran de l'application")
