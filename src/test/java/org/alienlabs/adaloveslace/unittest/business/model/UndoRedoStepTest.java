@@ -98,58 +98,58 @@ class UndoRedoStepTest {
         Diagram.newStep(displayedKnots, selectedKnots, false);
 
         // Then
-        assertEquals(7,
+        assertEquals(8,
                 this.diagram.getCurrentStepIndex(),
-                "We should be at 7th Step, empty Step included!");
+                "We should be at 8th Step, empty Step included!");
 
         assertEquals(8,
                 this.diagram.getAllSteps().size(),
                 "We should have 8 Steps in total, empty Step included!");
 
         assertEquals(4,
-                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots().size(),
                 "We should have 4 knots in the 7th Step!");
 
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(knot -> knot.getX() == 10),
-                "We should have a knot at X=10 in the 4th Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+                "We should have a knot at X=10 in the 8th Step!");
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(knot -> knot.getY() == 15),
-                "We should have a knot at Y=15 in the 4th Step!");
+                "We should have a knot at Y=15 in the 8th Step!");
 
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(knot -> knot.getX() == 20),
-                "We should have a knot at X=20 in the 4th Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+                "We should have a knot at X=20 in the 8th Step!");
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots().
                         stream().
                         anyMatch(knot -> knot.getY() == 25),
-                "We should have a knot at Y=25 in the 4th Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+                "We should have a knot at Y=25 in the 8th Step!");
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(knot -> knot.getX() == 30),
-                "We should have a knot at X=10 in the 4th Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+                "We should have a knot at X=10 in the 8th Step!");
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -157,20 +157,20 @@ class UndoRedoStepTest {
                         .anyMatch(knot -> knot.getY() == 35),
                 "We should have a knot at Y=15 in the 4th Step!");
 
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(knot -> knot.getX() == 40),
-                "We should have a knot at X=20 in the 4th Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+                "We should have a knot at X=20 in the 8th Step!");
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots().
                         stream().
                         anyMatch(knot -> knot.getY() == 45),
-                "We should have a knot at Y=25 in the 4th Step!");
+                "We should have a knot at Y=25 in the 8th Step!");
     }
 
     @Test
@@ -206,17 +206,17 @@ class UndoRedoStepTest {
                 this.diagram.getAllSteps().size(),
                 "We should have 4 Steps!");
 
-        assertEquals(2,
-                this.diagram.getAllSteps().get(2).getStepIndex(),
-                "We should have 2 as stepIndex of the 3rd step!");
-
         assertEquals(3,
+                this.diagram.getAllSteps().get(2).getStepIndex(),
+                "We should have 3 as stepIndex of the 3rd step!");
+
+        assertEquals(4,
                 this.diagram.getAllSteps().get(3).getStepIndex(),
-                "We should have 3 as stepIndex of the 4th step!");
+                "We should have 4 as stepIndex of the 4th step!");
 
         assertEquals(1,
                 this.diagram.getAllSteps().get(3).getDisplayedKnots().size(),
-                "We should have 3 knots in the 4th Step!");
+                "We should have 1 knots in the 4th Step!");
 
         assertTrue(this.diagram.getAllSteps().get(3).
                         getDisplayedKnots().
@@ -263,17 +263,17 @@ class UndoRedoStepTest {
                 this.diagram.getAllSteps().size(),
                 "We should have 4 Steps!");
 
-        assertEquals(2,
-                this.diagram.getAllSteps().get(2).getStepIndex(),
-                "We should have 2 as stepIndex of the 3rd step!");
-
         assertEquals(3,
+                this.diagram.getAllSteps().get(2).getStepIndex(),
+                "We should have 3 as stepIndex of the 3rd step!");
+
+        assertEquals(4,
                 this.diagram.getAllSteps().get(3).getStepIndex(),
-                "We should have 3 as stepIndex of the 4th step!");
+                "We should have 4 as stepIndex of the 4th step!");
 
         assertEquals(1,
                 this.diagram.getAllSteps().get(3).getSelectedKnots().size(),
-                "We should have 3 knots in the 4th Step!");
+                "We should have 1 selected knot in the 4th Step!");
 
         assertTrue(this.diagram.getAllSteps().get(3).
                         getSelectedKnots().

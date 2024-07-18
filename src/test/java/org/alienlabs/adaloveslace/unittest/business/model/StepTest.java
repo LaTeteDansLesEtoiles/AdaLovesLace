@@ -91,8 +91,8 @@ class StepTest {
         assertEquals(1,
                 this.diagram.getAllSteps().get(1).getDisplayedKnots().size(),
                 "We should have only one knot in the 1st Step!");
-        assertEquals(10,
-                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 1)
+        assertEquals(20,
+                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -101,8 +101,8 @@ class StepTest {
                         .get()
                         .getX(),
                 "We should have only one knot in the 2nd non-empty Step, at X=20!");
-        assertEquals(15,
-                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 1)
+        assertEquals(25,
+                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -113,20 +113,20 @@ class StepTest {
                 "We should have only one knot in the 2nd non-empty Step, at Y=25!");
 
         assertEquals(2,
-                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .size(),
                 "We should have two knots in the 2nd non-empty Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(k -> k.getX() == 40),
                 "We should have a knot in the 3rd non-empty Step, at X=30!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -149,17 +149,17 @@ class StepTest {
 
         Knot knot2 = new Knot(20, 25, new Pattern(), null);
         Knot knot3 = new Knot(30, 35, new Pattern(), null);
-        List<Knot> selectedKnots2 = new ArrayList<>();
-        selectedKnots2.add(knot2);
-        selectedKnots2.add(knot3);
         List<Knot> knots2 = new ArrayList<>();
+        knots2.add(knot2);
+        knots2.add(knot3);
+        List<Knot> selectedKnots2 = new ArrayList<>();
 
         Diagram.newStep(knots2, selectedKnots2, false);
 
         Knot knot4 = new Knot(40, 45, new Pattern(), null);
-        List<Knot> selectedKnots4 = new ArrayList<>();
-        selectedKnots4.add(knot4);
         List<Knot> knots4 = new ArrayList<>();
+        knots4.add(knot4);
+        List<Knot> selectedKnots4 = new ArrayList<>();
 
         Diagram.newStep(knots4, selectedKnots4, false);
 
@@ -171,8 +171,8 @@ class StepTest {
         assertEquals(1,
                 this.diagram.getAllSteps().get(1).getDisplayedKnots().size(),
                 "We should have only one knot in the 1st Step!");
-        assertEquals(10,
-                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 1)
+        assertEquals(20,
+                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -181,8 +181,8 @@ class StepTest {
                         .get()
                         .getX(),
                 "We should have only one knot in the 2nd non-empty Step, at X=20!");
-        assertEquals(15,
-                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 1)
+        assertEquals(25,
+                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -193,26 +193,26 @@ class StepTest {
                 "We should have only one knot in the 2nd non-empty Step, at Y=25!");
 
         assertEquals(2,
-                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
-                        .getSelectedKnots()
+                        .getDisplayedKnots()
                         .size(),
                 "We should have two knots in the 2nd non-empty Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
-                        .getSelectedKnots()
+                        .getDisplayedKnots()
                         .stream()
                         .anyMatch(k -> k.getX() == 40),
-                "We should have a knot in the 3rd non-empty Step, at X=30!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+                "We should have a knot in the 3rd non-empty Step, at X=40!");
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
-                        .getSelectedKnots()
+                        .getDisplayedKnots()
                         .stream()
                         .anyMatch(k -> k.getY() == 45),
-                "We should have a knot in the 3rd non-empty Step, at Y=35!");
+                "We should have a knot in the 3rd non-empty Step, at Y=45!");
     }
 
     @Test
@@ -352,7 +352,7 @@ class StepTest {
                 "We should have 5 Steps (non-empty step included)!");
 
         assertEquals(2,
-                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -360,35 +360,35 @@ class StepTest {
                 "We should have 2 displayed knots in the 3rd non-empty Step!");
 
         assertEquals(0,
-                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getSelectedKnots()
                         .size(),
                 "We should have 4 selected knot in the 3rd non-empty Step!");
 
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream().
                         anyMatch(knot -> knot.getX() == 30),
                     "We should have a knot at X=30 in the 4th non-empty Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(knot -> knot.getY() == 35),
                 "We should have a knot at Y=35 in the 4th non-empty Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(knot -> knot.getX() == 40),
                 "We should have a knot at X=40 in the 4th non-empty Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
