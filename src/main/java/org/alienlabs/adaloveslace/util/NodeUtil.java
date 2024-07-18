@@ -1,16 +1,16 @@
 package org.alienlabs.adaloveslace.util;
 
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static org.alienlabs.adaloveslace.util.Events.app;
 
 public class NodeUtil {
 
   public static final int KNOT_PADDING  = 10;   // https://stackoverflow.com/questions/36294985/javafx-get-the-x-and-y-pixel-coordinates-clicked-on-an-imageview
   public static final int HANDLE_SIZE   = 25;
 
-  private static final Logger logger    = LoggerFactory.getLogger(NodeUtil.class);
 
   public NodeUtil() {
     // Nothing to do here, that's just to avoid an all-static class
@@ -25,6 +25,8 @@ public class NodeUtil {
   }
 
   public Knot copyKnot(Knot knot) {
+    knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+
     Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), knot.getImageView());
 
     copy.setRotationAngle(knot.getRotationAngle());
@@ -56,6 +58,8 @@ public class NodeUtil {
   }
 
   public Knot copyKnotCloningImageView(Knot knot) {
+    knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+
     Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), new ImageView(knot.getImageView().getImage()));
 
     copy.setRotationAngle(knot.getRotationAngle());

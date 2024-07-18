@@ -39,7 +39,6 @@ public class SelectionButton extends ToggleButton {
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
       if (knot.isSelectable()) {
         knot.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-        knot.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
       }
     }
 
