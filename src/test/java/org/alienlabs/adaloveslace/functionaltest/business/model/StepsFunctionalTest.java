@@ -52,7 +52,7 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
                 app.getOptionalDotGrid().getDiagram().getAllSteps().get(1).getDisplayedKnots().size(),
                 "We should have only one knot in the 1st Step!");
         assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 1)
+                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -64,7 +64,7 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
 
         // There is always a Y offset of -10 pixels between where we clicked and where the knot appears
         assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 1)
+                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -77,14 +77,14 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
         assertEquals(2,
                 app.getOptionalDotGrid().getDiagram().getAllSteps().get(2).getDisplayedKnots().size(),
                 "We should have only two knots in the 2nd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(k -> k.getX() == 300),
                 "We should have a knot in the 2nd non-empty Step, at X=300!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -95,12 +95,16 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
         assertEquals(3,
                 app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots().size(),
                 "We should have 3 knots in the 3rd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().get(3)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+                        .findFirst()
+                        .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(k -> k.getX() == 220),
                 "We should have a knot in the 3rd non-empty Step, at X=220!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().get(3)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+                        .findFirst()
+                        .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(k -> k.getY() == 60),
@@ -125,7 +129,7 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> drawSnowFlake(robot, 80, 85));
 
         // Then
-        assertEquals(5,
+        assertEquals(6,
                 app.getOptionalDotGrid().getDiagram().getAllSteps().size(),
                 "We should have 5 Steps!");
 
@@ -133,7 +137,7 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
                 app.getOptionalDotGrid().getDiagram().getAllSteps().get(1).getDisplayedKnots().size(),
                 "We should have only one knot in the 1st Step!");
         assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 1)
+                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -145,7 +149,7 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
 
         // There is always a Y offset of -10 pixels between where we clicked and where the knot appears
         assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 1)
+                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -158,14 +162,14 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
         assertEquals(2,
                 app.getOptionalDotGrid().getDiagram().getAllSteps().get(2).getDisplayedKnots().size(),
                 "We should have only two knots in the 2nd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(k -> k.getX() == 40),
                 "We should have a knot in the 2nd non-empty Step, at X=20!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -176,14 +180,14 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
         assertEquals(3,
                 app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots().size(),
                 "We should have 3 knots in the 3rd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(k -> k.getX() == 110),
                 "We should have a knot in the 3rd non-empty Step, at X=100!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -194,14 +198,14 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
         assertEquals(4,
                 app.getOptionalDotGrid().getDiagram().getAllSteps().get(4).getDisplayedKnots().size(),
                 "We should have 3 knots in the 3rd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 5)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(k -> k.getX() == 80),
                 "We should have a knot in the 3rd non-empty Step, at X=80!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 5)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -238,15 +242,6 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> RedoKnotButton.redoKnot(app));
         synchronizeTask(() -> RedoKnotButton.redoKnot(app));
         synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
 
         synchronizeTask(() -> drawSnowFlake(robot, 220, 160));
 
@@ -259,7 +254,7 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
                 app.getOptionalDotGrid().getDiagram().getAllSteps().get(1).getDisplayedKnots().size(),
                 "We should have only one knot in the 1st Step!");
         assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 1)
+                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -271,7 +266,7 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
         
         // There is always a Y offset of -10 pixels between where we clicked and where the knot appears
         assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 1)
+                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -284,14 +279,14 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
         assertEquals(2,
                 app.getOptionalDotGrid().getDiagram().getAllSteps().get(2).getDisplayedKnots().size(),
                 "We should have only two knots in the 2nd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(k -> k.getX() == 110),
                 "We should have a knot in the 2nd non-empty Step, at X=110!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -302,14 +297,14 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
         assertEquals(3,
                 app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots().size(),
                 "We should have 3 knots in the 3rd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(k -> k.getX() == 160),
                 "We should have a knot in the 3rd non-empty Step, at X=160!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -320,13 +315,105 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
         assertEquals(4,
                 app.getOptionalDotGrid().getDiagram().getAllSteps().get(4).getDisplayedKnots().size(),
                 "We should have 3 knots in the 3rd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 5)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(k -> k.getX() == 220),
                 "We should have a knot in the 3rd non-empty Step, at X=220!");
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 5)
+                        .findFirst()
+                        .get()
+                        .getDisplayedKnots()
+                        .stream()
+                        .anyMatch(k -> k.getY() == 150),
+                "We should have a knot in the 3rd non-empty Step, at Y=150!");
+    }
+
+    @Test
+    void test_add_3_steps_and_do_many_redo_undo(FxRobot robot) {
+        // Given a diagram with an empty step
+        synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+
+        // When
+        synchronizeTask(() -> drawSnowFlake(robot, 60, 70));
+
+        synchronizeTask(() -> drawSnowFlake(robot, 110, 120));
+
+        synchronizeTask(() -> drawSnowFlake(robot, 160, 160));
+
+        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+
+        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
+        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
+        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
+        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
+        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
+
+        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+
+        synchronizeTask(() -> drawSnowFlake(robot, 220, 160));
+
+        // Then
+        assertEquals(4,
+                app.getOptionalDotGrid().getDiagram().getAllSteps().size(),
+                "We should have 5 Steps!");
+
+        assertEquals(1,
+                app.getOptionalDotGrid().getDiagram().getAllSteps().get(1).getDisplayedKnots().size(),
+                "We should have only one knot in the 1st Step!");
+        assertEquals(60,
+                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+                        .findFirst()
+                        .get()
+                        .getDisplayedKnots()
+                        .stream()
+                        .findFirst()
+                        .get()
+                        .getX(),
+                "We should have only one knot in the 1st non-empty Step, at X=60!");
+
+        // There is always a Y offset of -10 pixels between where we clicked and where the knot appears
+        assertEquals(60,
+                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+                        .findFirst()
+                        .get()
+                        .getDisplayedKnots()
+                        .stream()
+                        .findFirst()
+                        .get()
+                        .getY(),
+                "We should have only one knot in the 1st non-empty Step, at Y=60!");
+
+        assertEquals(2,
+                app.getOptionalDotGrid().getDiagram().getAllSteps().get(2).getDisplayedKnots().size(),
+                "We should have only two knots in the 2nd non-empty Step!");
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+                        .findFirst()
+                        .get()
+                        .getDisplayedKnots()
+                        .stream()
+                        .anyMatch(k -> k.getX() == 110),
+                "We should have a knot in the 2nd non-empty Step, at X=110!");
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+                        .findFirst()
+                        .get()
+                        .getDisplayedKnots()
+                        .stream()
+                        .anyMatch(k -> k.getY() == 110),
+                "We should have a knot in the 2nd non-empty Step, at Y=110!");
+
+        assertEquals(3,
+                app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots().size(),
+                "We should have 3 knots in the 3rd non-empty Step!");
+        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+                        .findFirst()
+                        .get()
+                        .getDisplayedKnots()
+                        .stream()
+                        .anyMatch(k -> k.getX() == 220),
+                "We should have a knot in the 3rd non-empty Step, at X=160!");
         assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
