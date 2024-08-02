@@ -26,9 +26,22 @@ public class NodeUtil {
 
   public Knot copyKnot(Knot knot) {
     knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
-
     Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), knot.getImageView());
+    copy(knot, copy);
 
+    return copy;
+  }
+
+  public Knot copyKnotCloningImageView(Knot knot) {
+    Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), new ImageView(knot.getImageView().getImage()));
+    copy(knot, copy);
+    copy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+    copy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+
+    return copy;
+  }
+
+  private static void copy(Knot knot, Knot copy) {
     copy.setRotationAngle(knot.getRotationAngle());
     copy.setZoomFactor(knot.getZoomFactor());
     copy.setVisible(knot.isVisible());
@@ -53,25 +66,6 @@ public class NodeUtil {
       copy.setHandle(knot.getHandle());
       knot.setHandle(null);
     }
-
-    return copy;
-  }
-
-  public Knot copyKnotCloningImageView(Knot knot) {
-    knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
-
-    Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), new ImageView(knot.getImageView().getImage()));
-
-    copy.setRotationAngle(knot.getRotationAngle());
-    copy.setZoomFactor(knot.getZoomFactor());
-    copy.setVisible(knot.isVisible());
-    copy.setFlippedVertically(knot.isFlippedVertically());
-    copy.setFlippedHorizontally(knot.isFlippedHorizontally());
-
-    copy.getImageView().setFitHeight(knot.getPattern().getHeight());
-    copy.getImageView().setFitWidth(knot.getPattern().getWidth());
-
-    return copy;
   }
 
 }

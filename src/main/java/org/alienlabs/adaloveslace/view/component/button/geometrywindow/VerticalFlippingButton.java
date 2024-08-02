@@ -41,7 +41,7 @@ public class VerticalFlippingButton extends ImageButton {
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MIRROR);
 
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-    List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    List<Knot> selectedKnots = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
     List<Knot> selectedKnotsCopy = new ArrayList<>();
 
     for (Knot knot : selectedKnots) {
