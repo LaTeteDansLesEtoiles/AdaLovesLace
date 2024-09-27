@@ -111,6 +111,7 @@ public class App extends Application {
   @Override
   public void start(Stage primaryStage) {
     this.primaryStage = primaryStage;
+    primaryStage.initStyle(StageStyle.DECORATED);
 
     // If we restart the app (for language change)
     if (this.diagram == null) {

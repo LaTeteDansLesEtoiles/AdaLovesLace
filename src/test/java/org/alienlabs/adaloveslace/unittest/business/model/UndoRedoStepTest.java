@@ -39,28 +39,28 @@ class UndoRedoStepTest {
         knots1.add(knotStep1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
-        Diagram.newStep(knots1, selectedKnots1, false);
+        app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
 
         Knot knotStep2 = new Knot(20, 25, new Pattern(), null);
         List<Knot> knots2 = new ArrayList<>();
         knots1.add(knotStep2);
         List<Knot> selectedKnots2 = new ArrayList<>();
 
-        Diagram.newStep(knots2, selectedKnots2, false);
+        app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
 
         Knot knotStep3 = new Knot(30, 35, new Pattern(), null);
         List<Knot> knots3 = new ArrayList<>();
         knots1.add(knotStep3);
         List<Knot> selectedKnots3 = new ArrayList<>();
 
-        Diagram.newStep(knots3, selectedKnots3, false);
+        app.getOptionalDotGrid().getDiagram().newStep(knots3, selectedKnots3, false);
 
         Knot knotStep4 = new Knot(50, 55, new Pattern(), null);
         List<Knot> knots4 = new ArrayList<>();
         knots1.add(knotStep4);
         List<Knot> selectedKnots4 = new ArrayList<>();
 
-        Diagram.newStep(knots4, selectedKnots4, false);
+        app.getOptionalDotGrid().getDiagram().newStep(knots4, selectedKnots4, false);
 
         // When
         this.diagram.undoLastStep(app, false);
@@ -70,14 +70,14 @@ class UndoRedoStepTest {
         knots31.add(knotStep31);
         List<Knot> selectedKnots31 = new ArrayList<>();
 
-        Diagram.newStep(knots31, selectedKnots31, false);
+        app.getOptionalDotGrid().getDiagram().newStep(knots31, selectedKnots31, false);
 
         Knot knotStep32 = new Knot(20, 25, new Pattern(), null);
         List<Knot> knots32 = new ArrayList<>();
         knots32.add(knotStep32);
         List<Knot> selectedKnots32 = new ArrayList<>();
 
-        Diagram.newStep(knots32, selectedKnots32, false);
+        app.getOptionalDotGrid().getDiagram().newStep(knots32, selectedKnots32, false);
 
         Knot knotStep33 = new Knot(30, 35, new Pattern(), null);
         List<Knot> knots33 = new ArrayList<>();
@@ -85,7 +85,7 @@ class UndoRedoStepTest {
 
         List<Knot> selectedKnots33 = new ArrayList<>();
 
-        Diagram.newStep(knots33, selectedKnots33, false);
+        app.getOptionalDotGrid().getDiagram().newStep(knots33, selectedKnots33, false);
 
         Knot knotStep34 = new Knot(40, 45, new Pattern(), null);
         List<Knot> displayedKnots = new ArrayList<>();
@@ -95,61 +95,61 @@ class UndoRedoStepTest {
         displayedKnots.add(knotStep34);
         List<Knot> selectedKnots = new ArrayList<>();
 
-        Diagram.newStep(displayedKnots, selectedKnots, false);
+        app.getOptionalDotGrid().getDiagram().newStep(displayedKnots, selectedKnots, false);
 
         // Then
-        assertEquals(7,
+        assertEquals(8,
                 this.diagram.getCurrentStepIndex(),
-                "We should be at 7th Step, empty Step included!");
+                "We should be at 8th Step, empty Step included!");
 
         assertEquals(8,
                 this.diagram.getAllSteps().size(),
                 "We should have 8 Steps in total, empty Step included!");
 
         assertEquals(4,
-                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+                this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots().size(),
                 "We should have 4 knots in the 7th Step!");
 
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(knot -> knot.getX() == 10),
-                "We should have a knot at X=10 in the 4th Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+                "We should have a knot at X=10 in the 8th Step!");
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(knot -> knot.getY() == 15),
-                "We should have a knot at Y=15 in the 4th Step!");
+                "We should have a knot at Y=15 in the 8th Step!");
 
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(knot -> knot.getX() == 20),
-                "We should have a knot at X=20 in the 4th Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+                "We should have a knot at X=20 in the 8th Step!");
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots().
                         stream().
                         anyMatch(knot -> knot.getY() == 25),
-                "We should have a knot at Y=25 in the 4th Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+                "We should have a knot at Y=25 in the 8th Step!");
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(knot -> knot.getX() == 30),
-                "We should have a knot at X=10 in the 4th Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+                "We should have a knot at X=10 in the 8th Step!");
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
@@ -157,20 +157,20 @@ class UndoRedoStepTest {
                         .anyMatch(knot -> knot.getY() == 35),
                 "We should have a knot at Y=15 in the 4th Step!");
 
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .anyMatch(knot -> knot.getX() == 40),
-                "We should have a knot at X=20 in the 4th Step!");
-        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 7)
+                "We should have a knot at X=20 in the 8th Step!");
+        assertTrue(this.diagram.getAllSteps().stream().filter(step -> step.getStepIndex() == 8)
                         .findFirst()
                         .get()
                         .getDisplayedKnots().
                         stream().
                         anyMatch(knot -> knot.getY() == 45),
-                "We should have a knot at Y=25 in the 4th Step!");
+                "We should have a knot at Y=25 in the 8th Step!");
     }
 
     @Test
@@ -181,21 +181,21 @@ class UndoRedoStepTest {
         knots1.add(knotStep1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
-        Diagram.newStep(knots1, selectedKnots1, false);
+        app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
 
         Knot knotStep2 = new Knot(20, 25, new Pattern(), new ImageView());
         List<Knot> knots2 = new ArrayList<>();
         knots2.add(knotStep2);
         List<Knot> selectedKnots2 = new ArrayList<>();
 
-        Diagram.newStep(knots2, selectedKnots2, false);
+        app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
 
         Knot knotStep3 = new Knot(30, 35, new Pattern(), new ImageView());
         List<Knot> knots3 = new ArrayList<>();
         knots3.add(knotStep3);
         List<Knot> selectedKnots3 = new ArrayList<>();
 
-        Diagram.newStep(knots3, selectedKnots3, false);
+        app.getOptionalDotGrid().getDiagram().newStep(knots3, selectedKnots3, false);
 
         // When
         this.diagram.undoLastStep(app, false);
@@ -206,17 +206,17 @@ class UndoRedoStepTest {
                 this.diagram.getAllSteps().size(),
                 "We should have 4 Steps!");
 
-        assertEquals(2,
-                this.diagram.getAllSteps().get(2).getStepIndex(),
-                "We should have 2 as stepIndex of the 3rd step!");
-
         assertEquals(3,
+                this.diagram.getAllSteps().get(2).getStepIndex(),
+                "We should have 3 as stepIndex of the 3rd step!");
+
+        assertEquals(4,
                 this.diagram.getAllSteps().get(3).getStepIndex(),
-                "We should have 3 as stepIndex of the 4th step!");
+                "We should have 4 as stepIndex of the 4th step!");
 
         assertEquals(1,
                 this.diagram.getAllSteps().get(3).getDisplayedKnots().size(),
-                "We should have 3 knots in the 4th Step!");
+                "We should have 1 knots in the 4th Step!");
 
         assertTrue(this.diagram.getAllSteps().get(3).
                         getDisplayedKnots().
@@ -238,21 +238,21 @@ class UndoRedoStepTest {
         knots1.add(knotStep1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
-        Diagram.newStep(knots1, selectedKnots1, false);
+        app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
 
         Knot knotStep2 = new Knot(20, 25, new Pattern(), new ImageView());
         List<Knot> knots2 = new ArrayList<>();
         knots2.add(knotStep2);
         List<Knot> selectedKnots2 = new ArrayList<>();
 
-        Diagram.newStep(knots2, selectedKnots2, false);
+        app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
 
         Knot knotStep3 = new Knot(30, 35, new Pattern(), new ImageView());
         List<Knot> selectedKnots3 = new ArrayList<>();
         selectedKnots3.add(knotStep3);
         List<Knot> knots3 = new ArrayList<>();
 
-        Diagram.newStep(knots3, selectedKnots3, false);
+        app.getOptionalDotGrid().getDiagram().newStep(knots3, selectedKnots3, false);
 
         // When
         this.diagram.undoLastStep(app, false);
@@ -263,17 +263,17 @@ class UndoRedoStepTest {
                 this.diagram.getAllSteps().size(),
                 "We should have 4 Steps!");
 
-        assertEquals(2,
-                this.diagram.getAllSteps().get(2).getStepIndex(),
-                "We should have 2 as stepIndex of the 3rd step!");
-
         assertEquals(3,
+                this.diagram.getAllSteps().get(2).getStepIndex(),
+                "We should have 3 as stepIndex of the 3rd step!");
+
+        assertEquals(4,
                 this.diagram.getAllSteps().get(3).getStepIndex(),
-                "We should have 3 as stepIndex of the 4th step!");
+                "We should have 4 as stepIndex of the 4th step!");
 
         assertEquals(1,
                 this.diagram.getAllSteps().get(3).getSelectedKnots().size(),
-                "We should have 3 knots in the 4th Step!");
+                "We should have 1 selected knot in the 4th Step!");
 
         assertTrue(this.diagram.getAllSteps().get(3).
                         getSelectedKnots().

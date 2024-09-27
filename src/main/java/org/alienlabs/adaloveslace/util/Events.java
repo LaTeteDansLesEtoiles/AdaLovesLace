@@ -21,7 +21,7 @@ import static org.alienlabs.adaloveslace.view.window.MainWindow.MOUSE_CLICKED;
 
 public class Events {
 
-  private static App app;
+  static App app;
 
   private static final Logger logger = LoggerFactory.getLogger(Events.class);
 
@@ -31,7 +31,7 @@ public class Events {
 
   public static final EventHandler<MouseEvent> mouseClickEventHandler = event -> {
     String eType = event.getEventType().toString();
-    logger.debug("Event type -> {},  current Step index {}, current mode: {}", eType,
+    logger.info("Event type -> {},  current Step index {}, current mode: {}", eType,
       app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
       app.getOptionalDotGrid().getDiagram().getCurrentMode());
 
@@ -39,8 +39,8 @@ public class Events {
       double x          = event.getX();
       double y          = event.getY();
 
-      logger.debug("Coordinate X     -> {}", x);
-      logger.debug("Coordinate Y     -> {}", y);
+      logger.info("Coordinate X     -> {}", x);
+      logger.info("Coordinate Y     -> {}", y);
 
       processMouseClick(x, y);
     }

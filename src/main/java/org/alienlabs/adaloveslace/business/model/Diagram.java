@@ -250,6 +250,7 @@ public class Diagram {
                 layoutChildren, handle
         );
     }
+
     public void drawGrid(double w, double h, double desiredRadius, List<Shape> grid) {
         app.getOptionalDotGrid().hideGrid();
 

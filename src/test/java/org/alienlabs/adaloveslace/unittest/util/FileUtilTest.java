@@ -50,10 +50,7 @@ class FileUtilTest {
         diagramToSave = new Diagram();
         this.app.setDiagram(diagramToSave);
         fileUtil = new FileUtil(app);
-//        Step step1 = new Step(diagramToSave, 1, app);
-//        diagramToSave.getAllSteps().add(step1);
-//        Step step2 = new Step(diagramToSave, 2, app);
-//        diagramToSave.getAllSteps().add(step2);
+
         diagramToSave.setCurrentStepIndex(2);
 
         Pattern pattern = new Pattern();
