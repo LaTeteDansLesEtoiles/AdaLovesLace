@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.BorderPane;
@@ -85,6 +86,7 @@ public class App extends Application {
   public static final String DEFAULT_LOCALE_LANGUAGE = "fr";
   public static final String DEFAULT_LOCALE_COUNTRY = "FR";
   public static final Duration TOOLTIPS_DURATION = Duration.seconds(60);
+  public static final double INITIAL_GRID_ZOOM_FACTOR = 1d;
 
   public static ResourceBundle resourceBundle = ResourceBundle.getBundle(
           ADA_LOVES_LACE,
@@ -97,7 +99,9 @@ public class App extends Application {
   private Stage toolboxStage;
   private Diagram diagram;
   private static MainWindow mainWindow;
+  private Group notCanvas;
   private Group root;
+  private Slider slider;
   private Scene scene;
   public Stage primaryStage;
   private Stage geometryStage;
@@ -139,15 +143,17 @@ public class App extends Application {
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
 
+    notCanvas = new Group();
     root                      = new Group();
     TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
     StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, gridDotsRadius, this.diagram, root);
 
-    grid.getChildren().add(footer);
+    notCanvas.getChildren().add(footer);
     root.getChildren().add(grid);
+    notCanvas.getChildren().add(root);
     App.mainWindow.onMainWindowClicked(this, root);
 
-    scene = new Scene(root, windowWidth, windowHeight);
+    scene = new Scene(notCanvas, windowWidth, windowHeight);
     scene.setFill(Color.TRANSPARENT);
 
     // For multi-selection with "Control" key
@@ -171,11 +177,41 @@ public class App extends Application {
       Platform.exit();
     });
 
-    App.mainWindow.createMenuBar(root, this, primaryStage);
+    App.mainWindow.createMenuBar(notCanvas, this, primaryStage);
+    slider = createZoomSlider();
+
     this.getOptionalDotGrid().setDiagram(diagram);
     this.primaryStage = primaryStage;
 
     primaryStage.show();
+  }
+
+  private Slider createZoomSlider() {
+    slider = new Slider();
+    slider.setMin(0);
+    slider.setMax(100);
+    slider.setValue(50);
+    slider.setShowTickLabels(true);
+    slider.setShowTickMarks(true);
+    slider.setMajorTickUnit(10);
+    slider.setMinorTickCount(5);
+    slider.setBlockIncrement(1);
+    slider.setLayoutX(MAIN_WINDOW_WIDTH / 2d - 60d);
+    slider.valueProperty().addListener((ov, oldVal, newVal) -> {
+      if (newVal.doubleValue() < 50d) {
+        double zoomOutFactor = newVal.doubleValue() / 50d + 0.1d;
+        root.setScaleX(zoomOutFactor);
+        root.setScaleY(zoomOutFactor);
+      } else if (newVal.doubleValue() > 50d) {
+        double zoomInFactor = (newVal.doubleValue() - 40) / 10d;
+        root.setScaleX(zoomInFactor);
+        root.setScaleY(zoomInFactor);
+      } else {
+        root.setScaleX(INITIAL_GRID_ZOOM_FACTOR);
+        root.setScaleY(INITIAL_GRID_ZOOM_FACTOR);
+      }
+    });
+    return slider;
   }
 
   public ToolboxWindow showToolboxWindow(App app, Object classpathBase, String resourcesPath) {
@@ -316,6 +352,10 @@ public class App extends Application {
 
   public Group getRoot() {
     return root;
+  }
+
+  public Slider getSlider() {
+    return slider;
   }
 
   public Scene getScene() {

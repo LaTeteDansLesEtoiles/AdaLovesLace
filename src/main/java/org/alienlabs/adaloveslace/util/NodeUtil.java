@@ -25,7 +25,6 @@ public class NodeUtil {
   }
 
   public Knot copyKnot(Knot knot) {
-    knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
     Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), knot.getImageView());
     copy(knot, copy);
 

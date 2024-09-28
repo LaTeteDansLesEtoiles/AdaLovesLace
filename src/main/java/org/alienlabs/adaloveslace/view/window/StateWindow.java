@@ -27,7 +27,7 @@ public class StateWindow {
 
   public static final double STATE_WINDOW_GAP                = 20d;
   public static final double STATE_WINDOW_WIDTH              = 400d;
-  public static final double STATE_WINDOW_HEIGHT             = 175d;
+  public static final double STATE_WINDOW_HEIGHT             = 240d;
   public static final double GAP_BETWEEN_BUTTONS             = 5d;
 
   public static final double STATE_BUTTONS_HEIGHT            = 35d;
@@ -65,7 +65,7 @@ public class StateWindow {
 
     buttonsPane.getChildren().addAll(
       this.unselectableButton, this.selectableButton,
-      this.invisibleButton, this.visibleButton
+      this.invisibleButton, this.visibleButton, app.getSlider()
     );
 
     parent.add(buttonsPane, 0, 0);

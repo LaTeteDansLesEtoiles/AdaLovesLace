@@ -117,6 +117,10 @@ public class Step implements Comparable<Step> {
         return selectedKnots;
     }
 
+    public void setSelectedKnots(List<Knot> selectedKnots) {
+        this.selectedKnots = selectedKnots;
+    }
+
     public List<Knot> getAllVisibleKnots() {
         List<Knot> all = new ArrayList<>(selectedKnots);
         all.addAll(displayedKnots);

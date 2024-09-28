@@ -70,7 +70,6 @@ public class ToolboxWindow {
       parent.add(buildPatternButton(app, diagram, i), i % 2, i / 2);
     }
 
-
     return diagram;
   }
 
