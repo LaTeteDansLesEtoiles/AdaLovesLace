@@ -351,7 +351,7 @@ public class OptionalDotGrid extends Pane {
   }
 
   public void clearAllGuideLines() {
-    for (Knot knot : getDiagram().getKnots()) {
+    for (Knot knot : getDiagram().getCurrentStep().getSelectedKnots()) {
       clearGuideLines(knot);
     }
   }

@@ -39,8 +39,6 @@ public class Diagram {
 
     private final List<Pattern> patterns;
 
-    private final List<Knot>    knots;
-
     private Integer             currentStepIndex;
 
     private List<Step>          allSteps = new ArrayList<>();
@@ -75,14 +73,12 @@ public class Diagram {
     // For JAXB
     public Diagram() {
         this.patterns           = new ArrayList<>();
-        this.knots              = new ArrayList<>();
         this.currentMode        = MouseMode.DRAWING;
         this.currentStepIndex   = 0;
     }
 
     public Diagram(App app) {
         this.patterns           = new ArrayList<>();
-        this.knots              = new ArrayList<>();
         this.currentMode        = MouseMode.DRAWING;
         this.currentStepIndex   = 0;
         Diagram.app             = app;
@@ -91,7 +87,6 @@ public class Diagram {
 
     public Diagram(final Diagram diagram, App app) {
         this.patterns               = new ArrayList<>(diagram.getPatterns());
-        this.knots                  = new ArrayList<>(diagram.getKnots());
         this.allSteps               = new ArrayList<>(diagram.getAllSteps());
         this.currentStepIndex       = diagram.getCurrentStepIndex();
         this.currentMode            = diagram.getCurrentMode();
@@ -105,10 +100,6 @@ public class Diagram {
 
     public List<Pattern> getPatterns() {
         return this.patterns;
-    }
-
-    public List<Knot> getKnots() {
-        return this.knots;
     }
 
     public void addPattern(final Pattern pattern) {

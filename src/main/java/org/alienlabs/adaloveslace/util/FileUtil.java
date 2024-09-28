@@ -175,8 +175,8 @@ public class FileUtil {
     }
 
     private void buildAbsoluteFilenamesForKnots(Diagram diagram) {
-        for (Knot k : diagram.getKnots()) {
-            k.getPattern().setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + k.getPattern().getFilename());
+        for (org.alienlabs.adaloveslace.business.model.Pattern p : diagram.getPatterns()) {
+            p.setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
         }
     }
 

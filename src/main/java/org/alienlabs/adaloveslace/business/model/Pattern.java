@@ -39,11 +39,7 @@ public class Pattern implements Comparable<Pattern>{
 
   public Pattern(String absoluteFilename) {
     this.absoluteFilename = absoluteFilename;
-    if (this.absoluteFilename == null) {
-      this.filename = null;
-    } else {
-      this.filename = new File(absoluteFilename).getName();
-    }
+    this.filename = new File(absoluteFilename).getName();
   }
 
   public Pattern() {
