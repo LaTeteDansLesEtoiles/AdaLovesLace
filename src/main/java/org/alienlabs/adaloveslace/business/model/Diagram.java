@@ -21,7 +21,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
@@ -37,7 +39,7 @@ import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Diagram {
 
-    private final List<Pattern> patterns;
+    private final Set<Pattern> patterns;
 
     private Integer             currentStepIndex;
 
@@ -72,13 +74,13 @@ public class Diagram {
 
     // For JAXB
     public Diagram() {
-        this.patterns           = new ArrayList<>();
+        this.patterns           = new HashSet<>();
         this.currentMode        = MouseMode.DRAWING;
         this.currentStepIndex   = 0;
     }
 
     public Diagram(App app) {
-        this.patterns           = new ArrayList<>();
+        this.patterns           = new HashSet<>();
         this.currentMode        = MouseMode.DRAWING;
         this.currentStepIndex   = 0;
         Diagram.app             = app;
@@ -86,7 +88,7 @@ public class Diagram {
     }
 
     public Diagram(final Diagram diagram, App app) {
-        this.patterns               = new ArrayList<>(diagram.getPatterns());
+        this.patterns               = new HashSet<>(diagram.getPatterns());
         this.allSteps               = new ArrayList<>(diagram.getAllSteps());
         this.currentStepIndex       = diagram.getCurrentStepIndex();
         this.currentMode            = diagram.getCurrentMode();
@@ -98,7 +100,7 @@ public class Diagram {
         this.allSteps.add(new Step());
     }
 
-    public List<Pattern> getPatterns() {
+    public Set<Pattern> getPatterns() {
         return this.patterns;
     }
 

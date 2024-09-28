@@ -72,7 +72,7 @@ public class OptionalDotGrid extends Pane {
     this.desiredRadius = RADIUS;
 
     if (!this.diagram.getPatterns().isEmpty()) {
-      this.diagram.setCurrentPattern(this.diagram.getPatterns().get(0));
+      this.diagram.setCurrentPattern(this.diagram.getPatterns().stream().findFirst().get());
       currentPatternProperty = new SimpleObjectProperty<>(this.diagram.getCurrentPattern());
     } else {
       currentPatternProperty = new SimpleObjectProperty<>();
