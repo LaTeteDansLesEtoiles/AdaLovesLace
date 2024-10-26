@@ -37,7 +37,7 @@ import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.Sho
 public class MainWindow {
 
   private static final double FOOTER_X      = Double.parseDouble(resourceBundle.getString("FOOTER_X"));
-  public static final double MENU_BAR_Y     = -10d;
+  public static final double MENU_BAR_Y     = 0d;
   public static final double  NEW_KNOT_GAP  = 15d;
   public static final String LANGUAGE = "Language";
   public static final String TOOL = "Tool";
@@ -81,7 +81,7 @@ public class MainWindow {
     // Just to be able to unit test code using the UI without effectively instantiating the UI
   }
 
-  public void createMenuBar(Group root, App app, Stage primaryStage) {
+  public void createMenuBar(Group parent, App app, Stage primaryStage) {
     menuBar = new MenuBar();
 
     Menu fileMenu     = new Menu(resourceBundle.getString(FILE));
@@ -196,7 +196,7 @@ public class MainWindow {
 
     menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu, languageMenu);
     menuBar.setTranslateY(MENU_BAR_Y);
-    root.getChildren().addAll(menuBar);
+    parent.getChildren().addAll(menuBar);
   }
 
   private void restartApp(App app, Stage primaryStage) {
@@ -214,15 +214,16 @@ public class MainWindow {
     footer.getChildren().addAll(new Label("JavaFX " + javafxVersion + resourceBundle.getString("RunningWith") + javaVersion));
     footer.setAlignment(Pos.BOTTOM_LEFT);
     footer.setTranslateX(FOOTER_X);
+    footer.setTranslateY(MAIN_WINDOW_HEIGHT - 100d);
     return footer;
   }
 
   public StackPane createGrid(App app, final double width, final double height, final double radius,
-                              final Diagram diagram, final Group root) {
+                              final Diagram diagram, final Group canvas) {
     if (width == 0d || height == 0d) {
-      this.optionalDotGrid = new OptionalDotGrid(app, diagram, root);
+      this.optionalDotGrid = new OptionalDotGrid(app, diagram, canvas);
     } else {
-      this.optionalDotGrid = new OptionalDotGrid(app, width, height, radius, diagram, root);
+      this.optionalDotGrid = new OptionalDotGrid(app, width, height, radius, diagram, canvas);
     }
 
     grid = new StackPane(this.optionalDotGrid);
@@ -237,8 +238,8 @@ public class MainWindow {
     return grid;
   }
 
-  public void onMainWindowClicked(final App app, final Group root) {
-    root.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+  public void onMainWindowClicked(final App app, final Group canvas) {
+    canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
   }
 
   public void onDragOverHandleWithSelectionMode(App app, double x, double y) {

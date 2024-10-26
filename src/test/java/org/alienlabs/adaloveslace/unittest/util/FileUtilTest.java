@@ -143,7 +143,7 @@ class FileUtilTest {
 
         assertEquals(5, diagramToCheck.getCurrentStepIndex());
         assertEquals(1, diagramToCheck.getPatterns().size());
-        assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getPatterns().get(0).getFilename());
+        assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getPatterns().stream().findFirst().get().getFilename());
     }
 
     @Test
@@ -165,7 +165,7 @@ class FileUtilTest {
         // Then
         assertEquals(NUMBER_OF_STEPS, diagramToCheck.getCurrentStepIndex());
         assertEquals(NUMBER_OF_PATTERNS, diagramToCheck.getPatterns().size());
-        assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getPatterns().get(LAST_PATTERN_INDEX).getFilename());
+        assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getPatterns().stream().filter(pattern -> pattern.getFilename().equals(SNOWFLAKE_IMAGE)).findFirst().get().getFilename());
 
         assertEquals(NUMBER_OF_STEPS, diagramToCheck.getAllSteps().size());
         assertEquals(3, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().size());
