@@ -20,6 +20,7 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
@@ -35,6 +36,7 @@ import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
@@ -114,6 +116,14 @@ public class App extends Application {
 
   @Override
   public void start(Stage primaryStage) {
+    Application.Parameters params = getParameters();
+    String filePath = "";
+
+    if (params.getRaw() != null && !params.getRaw().isEmpty()) {
+      filePath = String.join(" ", params.getRaw());
+      logger.info(filePath);
+    }
+
     this.primaryStage = primaryStage;
     primaryStage.initStyle(StageStyle.DECORATED);
 
@@ -133,6 +143,11 @@ public class App extends Application {
 
     logger.debug("Opening state window");
     showStateWindow(this);
+
+    if (!"".equals(filePath)) {
+      new FileUtil().buildUiFromLaceFile(this, new File(filePath));
+      this.getPrimaryStage().requestFocus();
+    }
   }
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
@@ -281,7 +296,7 @@ public class App extends Application {
       prefs.setStringValue(LOCALE_COUNTRY, DEFAULT_LOCALE_COUNTRY);
     }
 
-    launch();
+    launch(args);
   }
 
   public void initializeKeyboardShorcuts() {
