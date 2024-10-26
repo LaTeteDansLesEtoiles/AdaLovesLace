@@ -146,7 +146,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         // Given
         synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
         synchronizeTask(() -> drawASnowflake(robot));
-        synchronizeTask(() -> drawSecondSnowflakeWithoutFocusClick(robot));
+        synchronizeTask(() -> drawSecondSnowflake(robot));
 
         Point2D snowflakePoint = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
         synchronizeTask(() -> robot.moveTo(snowflakePoint));
@@ -181,7 +181,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> selectFirstSnowflake(robot));
 
         // When
-        synchronizeLongTask(() -> incrementSpinner(this.geometryWindow.getRotationSpinner3()));
+        synchronizeLongTask(() -> incrementSpinner(robot, this.geometryWindow.getRotationSpinner3()));
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 38d, FIRST_SNOWFLAKE_PIXEL_Y + 35d);
         synchronizeTask(() -> robot.moveTo(snowflakePoint));
@@ -206,7 +206,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> selectFirstSnowflake(robot));
 
         // When
-        synchronizeLongTask(() -> incrementSpinner(this.geometryWindow.getZoomSpinner3()));
+        synchronizeLongTask(() -> incrementSpinner(robot, this.geometryWindow.getZoomSpinner3()));
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 38d, FIRST_SNOWFLAKE_PIXEL_Y  + 35d);
         synchronizeLongTask(() -> robot.moveTo(snowflakePoint));

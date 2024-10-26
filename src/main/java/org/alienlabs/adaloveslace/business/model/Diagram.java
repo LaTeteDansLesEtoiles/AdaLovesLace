@@ -21,7 +21,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
@@ -37,9 +39,7 @@ import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Diagram {
 
-    private final List<Pattern> patterns;
-
-    private final List<Knot>    knots;
+    private final Set<Pattern> patterns;
 
     private Integer             currentStepIndex;
 
@@ -74,15 +74,13 @@ public class Diagram {
 
     // For JAXB
     public Diagram() {
-        this.patterns           = new ArrayList<>();
-        this.knots              = new ArrayList<>();
+        this.patterns           = new HashSet<>();
         this.currentMode        = MouseMode.DRAWING;
         this.currentStepIndex   = 0;
     }
 
     public Diagram(App app) {
-        this.patterns           = new ArrayList<>();
-        this.knots              = new ArrayList<>();
+        this.patterns           = new HashSet<>();
         this.currentMode        = MouseMode.DRAWING;
         this.currentStepIndex   = 0;
         Diagram.app             = app;
@@ -90,8 +88,7 @@ public class Diagram {
     }
 
     public Diagram(final Diagram diagram, App app) {
-        this.patterns               = new ArrayList<>(diagram.getPatterns());
-        this.knots                  = new ArrayList<>(diagram.getKnots());
+        this.patterns               = new HashSet<>(diagram.getPatterns());
         this.allSteps               = new ArrayList<>(diagram.getAllSteps());
         this.currentStepIndex       = diagram.getCurrentStepIndex();
         this.currentMode            = diagram.getCurrentMode();
@@ -103,12 +100,8 @@ public class Diagram {
         this.allSteps.add(new Step());
     }
 
-    public List<Pattern> getPatterns() {
+    public Set<Pattern> getPatterns() {
         return this.patterns;
-    }
-
-    public List<Knot> getKnots() {
-        return this.knots;
     }
 
     public void addPattern(final Pattern pattern) {
@@ -126,20 +119,18 @@ public class Diagram {
 
         if (!this.getAllSteps().isEmpty()) {
             for (Step s : this.getAllSteps().subList(
-                    this.getCurrentStepIndex(),
+                    this.getCurrentStepIndex() - 1,
                     this.getAllSteps().size())
             ) {
                 for (Knot k : s.getAllVisibleKnots()) {
-                    if (!this.getCurrentStep().getAllVisibleKnots().contains(k)) {
-                        nodeListToRemove.add(k.getImageView());
-                    }
+                   nodeListToRemove.add(k.getImageView());
                 }
 
             }
         }
 
-        List<Knot> copy = app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots();
-        List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+        List<Knot> displayedCopy = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+        List<Knot> selectedCopy = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
         for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
             if (!knot.isSelectable()) {
@@ -149,25 +140,35 @@ public class Diagram {
                 knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
                 knot.setSelection(null);
                 knot.setHovered(null);
+                knot.setHandle(null);
 
-                copy.remove(knot);
-                copy.add(knotCopy);
-                selectedKnots.remove(knot);
+                if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot)) {
+                    displayedCopy.remove(knot);
+                    displayedCopy.add(knotCopy);
+                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setDisplayedKnots(displayedCopy);
+                } else {
+                    selectedCopy.remove(knot);
+                    selectedCopy.add(knotCopy);
+                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedCopy);
+                }
             } else {
                 Knot knotCopy = new NodeUtil().copyKnot(knot);
 
                 knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
                 knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
 
-                if (knot.getSelection() != null) {
-                    selectedKnots.add(knotCopy);
-                    selectedKnots.remove(knot);
+                if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot)) {
+                    displayedCopy.remove(knot);
+                    displayedCopy.add(knotCopy);
+                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setDisplayedKnots(displayedCopy);
                 } else {
-                    copy.remove(knot);
-                    copy.add(knotCopy);
-                    selectedKnots.remove(knot);
+                    selectedCopy.remove(knot);
+                    selectedCopy.add(knotCopy);
+                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedCopy);
                 }
             }
+
+            nodeListToRemove.add(knot.getImageView());
         }
 
         if (layoutChildren) {
@@ -194,16 +195,13 @@ public class Diagram {
                     this.getCurrentStepIndex())
             ) {
                 for (Knot k : s.getAllVisibleKnots()) {
-                    if (!this.getCurrentStep().getAllVisibleKnots().contains(k)) {
-                        nodeListToRemove.add(k.getImageView());
-                    }
+                    nodeListToRemove.add(k.getImageView());
                 }
-
             }
         }
 
-        List<Knot> copy = app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots();
-        List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+        List<Knot> displayedCopy = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+        List<Knot> selectedCopy = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
 
         for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
             if (!knot.isSelectable()) {
@@ -214,24 +212,33 @@ public class Diagram {
                 knot.setSelection(null);
                 knot.setHovered(null);
 
-                copy.remove(knot);
-                copy.add(knotCopy);
-                selectedKnots.remove(knot);
+                if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot)) {
+                    displayedCopy.remove(knot);
+                    displayedCopy.add(knotCopy);
+                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setDisplayedKnots(displayedCopy);
+                } else {
+                    selectedCopy.remove(knot);
+                    selectedCopy.add(knotCopy);
+                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedCopy);
+                }
             } else {
                 Knot knotCopy = new NodeUtil().copyKnot(knot);
 
                 knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
                 knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
 
-                if (knot.getSelection() != null) {
-                    selectedKnots.add(knotCopy);
-                    selectedKnots.remove(knot);
+                if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot)) {
+                    displayedCopy.remove(knot);
+                    displayedCopy.add(knotCopy);
+                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setDisplayedKnots(displayedCopy);
                 } else {
-                    copy.remove(knot);
-                    copy.add(knotCopy);
-                    selectedKnots.remove(knot);
+                    selectedCopy.remove(knot);
+                    selectedCopy.add(knotCopy);
+                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedCopy);
                 }
             }
+
+            nodeListToRemove.add(knot.getImageView());
         }
 
         if (layoutChildren) {
@@ -250,6 +257,7 @@ public class Diagram {
                 layoutChildren, handle
         );
     }
+
     public void drawGrid(double w, double h, double desiredRadius, List<Shape> grid) {
         app.getOptionalDotGrid().hideGrid();
 

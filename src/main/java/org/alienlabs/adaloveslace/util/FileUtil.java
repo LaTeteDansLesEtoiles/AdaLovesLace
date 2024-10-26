@@ -164,7 +164,7 @@ public class FileUtil {
     private Diagram buildDiagram(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
         Diagram diagram = unmarshallXmlFile(zipFile, entry);
         buildAbsoluteFilenamesForKnots(diagram);
-        diagram.setCurrentPattern(diagram.getPatterns().getFirst());
+        diagram.setCurrentPattern(diagram.getPatterns().stream().findFirst().get());
         return diagram;
     }
 
@@ -175,8 +175,8 @@ public class FileUtil {
     }
 
     private void buildAbsoluteFilenamesForKnots(Diagram diagram) {
-        for (Knot k : diagram.getKnots()) {
-            k.getPattern().setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + k.getPattern().getFilename());
+        for (org.alienlabs.adaloveslace.business.model.Pattern p : diagram.getPatterns()) {
+            p.setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
         }
     }
 

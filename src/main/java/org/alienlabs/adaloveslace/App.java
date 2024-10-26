@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.BorderPane;
@@ -19,6 +20,7 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
@@ -34,6 +36,7 @@ import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
@@ -85,6 +88,7 @@ public class App extends Application {
   public static final String DEFAULT_LOCALE_LANGUAGE = "fr";
   public static final String DEFAULT_LOCALE_COUNTRY = "FR";
   public static final Duration TOOLTIPS_DURATION = Duration.seconds(60);
+  public static final double INITIAL_GRID_ZOOM_FACTOR = 1d;
 
   public static ResourceBundle resourceBundle = ResourceBundle.getBundle(
           ADA_LOVES_LACE,
@@ -97,7 +101,9 @@ public class App extends Application {
   private Stage toolboxStage;
   private Diagram diagram;
   private static MainWindow mainWindow;
+  private Group notCanvas;
   private Group root;
+  private Slider slider;
   private Scene scene;
   public Stage primaryStage;
   private Stage geometryStage;
@@ -110,7 +116,16 @@ public class App extends Application {
 
   @Override
   public void start(Stage primaryStage) {
+    Application.Parameters params = getParameters();
+    String filePath = "";
+
+    if (params.getRaw() != null && !params.getRaw().isEmpty()) {
+      filePath = String.join(" ", params.getRaw());
+      logger.info(filePath);
+    }
+
     this.primaryStage = primaryStage;
+    primaryStage.initStyle(StageStyle.DECORATED);
 
     // If we restart the app (for language change)
     if (this.diagram == null) {
@@ -128,6 +143,11 @@ public class App extends Application {
 
     logger.debug("Opening state window");
     showStateWindow(this);
+
+    if (!"".equals(filePath)) {
+      new FileUtil().buildUiFromLaceFile(this, new File(filePath));
+      this.getPrimaryStage().requestFocus();
+    }
   }
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
@@ -138,15 +158,17 @@ public class App extends Application {
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
 
+    notCanvas = new Group();
     root                      = new Group();
     TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
     StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, gridDotsRadius, this.diagram, root);
 
-    grid.getChildren().add(footer);
+    notCanvas.getChildren().add(footer);
     root.getChildren().add(grid);
+    notCanvas.getChildren().add(root);
     App.mainWindow.onMainWindowClicked(this, root);
 
-    scene = new Scene(root, windowWidth, windowHeight);
+    scene = new Scene(notCanvas, windowWidth, windowHeight);
     scene.setFill(Color.TRANSPARENT);
 
     // For multi-selection with "Control" key
@@ -170,11 +192,41 @@ public class App extends Application {
       Platform.exit();
     });
 
-    App.mainWindow.createMenuBar(root, this, primaryStage);
+    App.mainWindow.createMenuBar(notCanvas, this, primaryStage);
+    slider = createZoomSlider();
+
     this.getOptionalDotGrid().setDiagram(diagram);
     this.primaryStage = primaryStage;
 
     primaryStage.show();
+  }
+
+  private Slider createZoomSlider() {
+    slider = new Slider();
+    slider.setMin(0);
+    slider.setMax(100);
+    slider.setValue(50);
+    slider.setShowTickLabels(true);
+    slider.setShowTickMarks(true);
+    slider.setMajorTickUnit(10);
+    slider.setMinorTickCount(5);
+    slider.setBlockIncrement(1);
+    slider.setLayoutX(MAIN_WINDOW_WIDTH / 2d - 60d);
+    slider.valueProperty().addListener((ov, oldVal, newVal) -> {
+      if (newVal.doubleValue() < 50d) {
+        double zoomOutFactor = newVal.doubleValue() / 50d + 0.1d;
+        root.setScaleX(zoomOutFactor);
+        root.setScaleY(zoomOutFactor);
+      } else if (newVal.doubleValue() > 50d) {
+        double zoomInFactor = (newVal.doubleValue() - 40) / 10d;
+        root.setScaleX(zoomInFactor);
+        root.setScaleY(zoomInFactor);
+      } else {
+        root.setScaleX(INITIAL_GRID_ZOOM_FACTOR);
+        root.setScaleY(INITIAL_GRID_ZOOM_FACTOR);
+      }
+    });
+    return slider;
   }
 
   public ToolboxWindow showToolboxWindow(App app, Object classpathBase, String resourcesPath) {
@@ -244,7 +296,7 @@ public class App extends Application {
       prefs.setStringValue(LOCALE_COUNTRY, DEFAULT_LOCALE_COUNTRY);
     }
 
-    launch();
+    launch(args);
   }
 
   public void initializeKeyboardShorcuts() {
@@ -315,6 +367,10 @@ public class App extends Application {
 
   public Group getRoot() {
     return root;
+  }
+
+  public Slider getSlider() {
+    return slider;
   }
 
   public Scene getScene() {

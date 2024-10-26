@@ -24,8 +24,9 @@ Download AdaLovesLace here, it is free as in free speech and free as in free bee
 
 Et voici un diagramme de tricot d'exemple, à charger dans l'application pour commencer :
 
+[Diagramme de tricot](/tricotvierge.lace)
+
 
 And here is a knitting diagram, to load in the application in order to kickstart it:
 
-
-[Diagramme de tricot](/tricot.lace)
+[Knitting diagram](/tricotvierge.lace)

@@ -35,6 +35,7 @@ public class LoadButton extends ImageButton {
 
     if (file != null) {
       new FileUtil().buildUiFromLaceFile(app, file);
+      app.getPrimaryStage().requestFocus();
     }
   }
 

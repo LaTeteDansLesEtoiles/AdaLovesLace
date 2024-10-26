@@ -9,7 +9,6 @@ import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -205,14 +204,20 @@ public class Knot implements Comparable<Knot> {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Knot)) return false;
+    if (o == null || getClass() != o.getClass()) return false;
 
-    return uuid.equals(((Knot)o).uuid);
+    Knot knot = (Knot) o;
+    return Double.compare(x, knot.x) == 0 && Double.compare(y, knot.y) == 0 && visible == knot.visible && selectable == knot.selectable && pattern.equals(knot.pattern);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uuid);
+    int result = Double.hashCode(x);
+    result = 31 * result + Double.hashCode(y);
+    result = 31 * result + pattern.hashCode();
+    result = 31 * result + Boolean.hashCode(visible);
+    result = 31 * result + Boolean.hashCode(selectable);
+    return result;
   }
 
   @Override
