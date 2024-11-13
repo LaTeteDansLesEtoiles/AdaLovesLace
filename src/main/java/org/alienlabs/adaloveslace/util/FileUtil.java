@@ -205,9 +205,11 @@ public class FileUtil {
     }
 
     private void writeLaceFile(File file, Marshaller jaxbMarshaller, Diagram toSave, Integer currentStepIndex) throws JAXBException {
-        try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(file))) {
+        try (FileOutputStream fos = new FileOutputStream(file);
+                ZipOutputStream zipOut = new ZipOutputStream(fos)) {
             writePatternsToLaceFile(toSave, zipOut);
             writeDiagramToLaceFile(jaxbMarshaller, toSave, zipOut, currentStepIndex);
+            zipOut.closeEntry();
         } catch (IOException e) {
             logger.error("Error saving .lace file!", e);
         }

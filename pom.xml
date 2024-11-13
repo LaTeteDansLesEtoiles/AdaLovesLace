@@ -325,6 +325,14 @@
                   <administratorRequired>false</administratorRequired>
                   <platform>linux</platform>
                   <jrePath>${env.JAVA_HOME}</jrePath>
+                  <iconFile>/opt/adaloveslace/adaloveslace.png</iconFile>
+                  <fileAssociations>
+                    <fileAssociation>
+                      <description>AdaLovesLace diagram file</description>
+                      <extension>lace</extension>
+                      <mimeType>application/lace</mimeType>
+                    </fileAssociation>
+                  </fileAssociations>
                   <additionalResources>
                   </additionalResources>
                 </configuration>
@@ -360,6 +368,14 @@
                     <administratorRequired>false</administratorRequired>
                     <platform>windows</platform>
                     <jrePath>${env.JAVA_HOME}</jrePath>
+                    <iconFile>/opt/adaloveslace/adaloveslace.png</iconFile>
+                    <fileAssociations>
+                      <fileAssociation>
+                        <description>AdaLovesLace diagram file</description>
+                        <extension>lace</extension>
+                        <mimeType>application/lace</mimeType>
+                      </fileAssociation>
+                    </fileAssociations>
                     <winConfig>
                       <headerType>console</headerType>
                       <setupLanguages>
