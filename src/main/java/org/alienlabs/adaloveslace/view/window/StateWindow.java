@@ -25,7 +25,7 @@ import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.TOOLBOX_WINDO
 
 public class StateWindow {
 
-  public static final double STATE_WINDOW_GAP                = 20d;
+  public static final double STATE_WINDOW_GAP                = 10d;
   public static final double STATE_WINDOW_WIDTH              = 400d;
   public static final double STATE_WINDOW_HEIGHT             = 240d;
   public static final double GAP_BETWEEN_BUTTONS             = 5d;
@@ -42,6 +42,7 @@ public class StateWindow {
 
   public void createStateStage(Stage stateStage, Pane parent) {
     Scene stateScene = new Scene(parent, STATE_WINDOW_WIDTH, STATE_WINDOW_HEIGHT);
+    stateScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 
     this.stateStage = stateStage;
     stateStage.setTitle(resourceBundle.getString(STATE_TITLE));

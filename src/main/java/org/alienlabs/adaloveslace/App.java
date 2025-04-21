@@ -6,15 +6,17 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -60,7 +62,7 @@ public class App extends Application {
   public static final String STATE_TITLE              = "State";
   public static final String LACE_FILE_EXTENSION      = ".lace";
   public static final String LACE_FILE_MIME_TYPE      = "application/lace";
-  public static final String ADA_LOVES_LACE_WEB       = "https://dentelle.damemarieantoinette.art";
+  public static final String ADA_LOVES_LACE_WEB       = "http://192.168.1.100:18082";
   public static final String ADA_LOVES_LACE_WEB_SHARE_ENDPOINT       = "/api/diagrams/upload-diagram";
   public static final String EXPORT_IMAGE_FILE_FORMAT = "png";
 
@@ -73,10 +75,10 @@ public class App extends Application {
   public static final String GET_PRINTERS_BUTTON_NAME = "GetPrinters";
   public static final String PRINT_BUTTON_NAME        = "PrintDiagram";
 
-  public static final double  MAIN_WINDOW_Y           = 20d;
+  public static final double  MAIN_WINDOW_Y           = 5d;
   public static final double  MAIN_WINDOW_X           = 75d;
-  public static final double  MAIN_WINDOW_WIDTH       = 520d;
-  public static final double  MAIN_WINDOW_HEIGHT      = 680d;
+  public static final double  MAIN_WINDOW_WIDTH       = 525d;
+  public static final double  MAIN_WINDOW_HEIGHT      = 780d;
   public static final double  GRID_WIDTH              = 650d;
   public static final double  GRID_HEIGHT             = 650d;
   public static final int     ICON_SIZE               = 46;
@@ -101,7 +103,6 @@ public class App extends Application {
   private Stage toolboxStage;
   private Diagram diagram;
   private static MainWindow mainWindow;
-  private Group notCanvas;
   private Group root;
   private Slider slider;
   private Scene scene;
@@ -124,6 +125,7 @@ public class App extends Application {
       logger.info(filePath);
     }
 
+    Font.loadFont(getClass().getResource("/fonts/PatrickHand-Regular.ttf").toExternalForm(), 12);
     this.primaryStage = primaryStage;
     primaryStage.initStyle(StageStyle.DECORATED);
 
@@ -152,23 +154,25 @@ public class App extends Application {
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
                              double gridDotsRadius, Stage primaryStage, Diagram diagram) {
+    VBox notCanvas;
     App.mainWindow = new MainWindow();
     this.diagram = diagram;
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
 
-    notCanvas = new Group();
+    notCanvas = new VBox();
     root                      = new Group();
-    TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
+    MenuBar menuBar           = App.mainWindow.createMenuBar(notCanvas, this, primaryStage);
     StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, gridDotsRadius, this.diagram, root);
+    TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
 
-    notCanvas.getChildren().add(footer);
     root.getChildren().add(grid);
-    notCanvas.getChildren().add(root);
+    notCanvas.getChildren().addAll(root, footer);
     App.mainWindow.onMainWindowClicked(this, root);
 
     scene = new Scene(notCanvas, windowWidth, windowHeight);
+    scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
     scene.setFill(Color.TRANSPARENT);
 
     // For multi-selection with "Control" key
@@ -192,11 +196,14 @@ public class App extends Application {
       Platform.exit();
     });
 
-    App.mainWindow.createMenuBar(notCanvas, this, primaryStage);
     slider = createZoomSlider();
 
     this.getOptionalDotGrid().setDiagram(diagram);
     this.primaryStage = primaryStage;
+
+    grid.getStyleClass().add("grid");
+    footer.getStyleClass().add("footer");
+    menuBar.getStyleClass().add("main-menu");
 
     primaryStage.show();
   }
@@ -236,15 +243,11 @@ public class App extends Application {
     ScrollPane scrollPane = new ScrollPane(parent);
     scrollPane.setFitToHeight(true);
 
-    BorderPane borderPane = new BorderPane(scrollPane);
-    borderPane.setPadding(new Insets(15));
-    borderPane.getChildren().add(parent);
-
     toolboxWindow         = new ToolboxWindow();
     this.diagram          = toolboxWindow.createToolboxPane(parent, classpathBase, resourcesPath, app, this.diagram);
     int posY              = this.diagram.getPatterns().size() / 2 + 1;
     toolboxWindow.createToolboxButtons(parent, app, posY);
-    toolboxWindow.createToolboxStage(borderPane, this.toolboxStage, parent, app, posY);
+    toolboxWindow.createToolboxStage(this.toolboxStage, parent, app, posY);
     return toolboxWindow;
   }
 
