@@ -126,8 +126,8 @@ public class App extends Application {
     }
 
     Font.loadFont(getClass().getResource("/fonts/PatrickHand-Regular.ttf").toExternalForm(), 12);
-    this.primaryStage = primaryStage;
     primaryStage.initStyle(StageStyle.DECORATED);
+    this.primaryStage = primaryStage;
 
     // If we restart the app (for language change)
     if (this.diagram == null) {

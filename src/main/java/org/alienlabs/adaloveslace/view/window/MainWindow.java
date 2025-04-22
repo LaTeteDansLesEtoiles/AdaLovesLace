@@ -172,7 +172,7 @@ public class MainWindow {
       prefs.setStringValue(LOCALE_LANGUAGE, "fr");
       prefs.setStringValue(LOCALE_COUNTRY, "FR");
 
-      restartApp(app, primaryStage);
+      restartApp(app);
     } );
     frenchItem.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN));
 
@@ -185,7 +185,7 @@ public class MainWindow {
       prefs.setStringValue(LOCALE_LANGUAGE, "en");
       prefs.setStringValue(LOCALE_COUNTRY, "EN");
 
-      restartApp(app, primaryStage);
+      restartApp(app);
     });
     englishItem.setAccelerator(new KeyCodeCombination(KeyCode.U, KeyCombination.CONTROL_DOWN));
 
@@ -201,11 +201,12 @@ public class MainWindow {
     return menuBar;
   }
 
-  private void restartApp(App app, Stage primaryStage) {
+  private void restartApp(App app) {
     app.getGeometryWindow().getGeometryStage().close();
     app.getToolboxWindow().getToolboxStage().close();
+    app.getStateWindow().getStateStage().close();
     app.getPrimaryStage().close();
-    app.start(primaryStage);
+    app.start(new Stage());
   }
 
   public TilePane createFooter(String javafxVersion, String javaVersion) {
