@@ -450,7 +450,7 @@ public class OptionalDotGrid extends Pane {
     return knot.getImageView();
   }
 
-  private void drawGrid() {
+  public void drawGrid() {
     double top = (int) snappedTopInset() + TOP_MARGIN;
     double right = (int) snappedRightInset();
     double bottom = (int) snappedBottomInset();

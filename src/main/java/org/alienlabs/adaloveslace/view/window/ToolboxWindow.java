@@ -10,6 +10,7 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.PrintUtil;
+import org.alienlabs.adaloveslace.view.component.PrintersListView;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -255,9 +256,6 @@ public class ToolboxWindow {
      * Print diagram buttons.
      */
     public void buildPrintButtons(App app, GridPane parent, int posY) {
-        printersTextArea = new TextArea();
-        printersTextArea.setPrefColumnCount(8);
-
         Button getPrintersButton = new Button(resourceBundle.getString(GET_PRINTERS_BUTTON_NAME));
         final Tooltip tooltip = new Tooltip();
         tooltip.setText(resourceBundle.getString("GET_PRINTERS_BUTTON_TOOLTIP"));
@@ -272,10 +270,11 @@ public class ToolboxWindow {
 
         parent.add(getPrintersButton, 0, posY + 7);
         parent.add(printButton, 1, posY + 7);
-        parent.add(printersTextArea, 0, posY + 8);
+        PrintersListView listView = new PrintersListView();
+        parent.add(listView, 0, posY + 8);
 
         PrintUtil printer = new PrintUtil(app);
-        printer.printersButtonOnAction(printersTextArea, getPrintersButton);
+        printer.printersButtonOnAction(listView, getPrintersButton);
         printer.printButtonOnAction(printButton);
     }
 
