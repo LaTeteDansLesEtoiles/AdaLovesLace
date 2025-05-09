@@ -122,13 +122,12 @@ public class ToolboxWindow {
 
         if (i == 0) {
             this.colorWheelButton = button;
+            button.getStyleClass().add(PATTERN_AND_TEXT_BUTTON_SELECTED);
             diagram.setCurrentPattern(pattern);
         }
 
         if (i == 1) {
             this.snowflakeButton = button;
-            button.getStyleClass().add("pattern-button-selected");
-            diagram.setCurrentPattern(pattern);
         }
 
         diagram.addPattern(pattern);
