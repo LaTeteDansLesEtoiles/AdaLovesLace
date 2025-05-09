@@ -36,13 +36,13 @@ import static org.alienlabs.adaloveslace.App.*;
 public class FileUtil {
 
     public static final String JAVA_CLASS_PATH_PROPERTY       = System.getProperty("java.class.path", ".");
-    public static final String PATH_SEPARATOR_PROPERTY        = System.getProperty("path.separator");
-    public static final String PATH_SEPARATOR                 = File.separator;
+    public static final String PATH_SEPARATOR                 = File.pathSeparator;
+    public static final String FILE_SEPARATOR                 = File.separator;
     public static final String APP_FOLDER_IN_USER_HOME        = System.getProperty(USER_HOME) + File.separator +
         PROJECT_NAME + File.separator;
 
     // For code under test:
-    public static final String CLASSPATH_RESOURCES_PATH       = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*.jpg";
+    public static final String CLASSPATH_RESOURCES_PATH       = ".*org" + FILE_SEPARATOR + "alienlabs" + FILE_SEPARATOR + "adaloveslace" + FILE_SEPARATOR + ".*.jpg";
     public static final String HOME_DIRECTORY_RESOURCES_PATH  = ".+\\.(png|jpg|gif|bmp|jpeg|PNG|JPG|GIF|BMP|JPEG)$";
 
     public static final String XML_FILE_TO_SAVE_IN_LACE_FILE = "save.xml";
@@ -205,9 +205,11 @@ public class FileUtil {
     }
 
     private void writeLaceFile(File file, Marshaller jaxbMarshaller, Diagram toSave, Integer currentStepIndex) throws JAXBException {
-        try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(file))) {
+        try (FileOutputStream fos = new FileOutputStream(file);
+                ZipOutputStream zipOut = new ZipOutputStream(fos)) {
             writePatternsToLaceFile(toSave, zipOut);
             writeDiagramToLaceFile(jaxbMarshaller, toSave, zipOut, currentStepIndex);
+            zipOut.closeEntry();
         } catch (IOException e) {
             logger.error("Error saving .lace file!", e);
         }
@@ -267,7 +269,7 @@ public class FileUtil {
     }
 
     private void processClasspath(Pattern pattern, List<String> retval, String classPath) {
-        final String[] classPathElements = classPath.split(PATH_SEPARATOR_PROPERTY);
+        final String[] classPathElements = classPath.split(PATH_SEPARATOR);
         for (final String element : classPathElements) {
             logger.debug("element: {}, pattern: {}", element, pattern);
 

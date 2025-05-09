@@ -1,14 +1,18 @@
 package org.alienlabs.adaloveslace.util;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 import javafx.print.PageLayout;
 import javafx.print.Printer;
 import javafx.print.PrinterJob;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.view.component.PrintersListView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PrintUtil {
 
@@ -26,13 +30,16 @@ public class PrintUtil {
    * @param printersTextArea where to display found printers
    * @param getPrintersButton the button to listen to
    */
-  public void printersButtonOnAction(TextArea printersTextArea, Button getPrintersButton) {
+  public void printersButtonOnAction(PrintersListView printersTextArea, Button getPrintersButton) {
     getPrintersButton.setOnAction(event -> {
       printers = Printer.getAllPrinters();
+      List<String> elements = new ArrayList<>();
 
       for (Printer printer : printers) {
-        printersTextArea.appendText(printer.getName() + "\n");
+        elements.add(printer.getName());
       }
+
+      printersTextArea.setItems(FXCollections.observableArrayList(elements));
     });
   }
 
@@ -69,7 +76,8 @@ public class PrintUtil {
   public void print(PrinterJob job)
   {
     ImageUtil iu = new ImageUtil(app);
-    iu.hideTechnicalElementsFromRootGroup();
+    boolean isGridDisplayed = app.getOptionalDotGrid().isShowHideGrid();
+    iu.hideTechnicalElementsFromRootGroup(!isGridDisplayed);
 
     Printer printer = job.getPrinter();
     PageLayout pageLayout = printer.createPageLayout(job.getJobSettings().getPageLayout().getPaper(),
@@ -85,6 +93,6 @@ public class PrintUtil {
       logger.error("Printing diagram failed!");
     }
 
-    iu.showTechnicalElementsFromRootGroup();
+    iu.showTechnicalElementsFromRootGroup(isGridDisplayed);
   }
 }

@@ -13,6 +13,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
@@ -36,9 +37,8 @@ import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.Sho
 
 public class MainWindow {
 
-  private static final double FOOTER_X      = Double.parseDouble(resourceBundle.getString("FOOTER_X"));
   public static final double MENU_BAR_Y     = 0d;
-  public static final double  NEW_KNOT_GAP  = 15d;
+  public static final double NEW_KNOT_GAP  = 15d;
   public static final String LANGUAGE = "Language";
   public static final String TOOL = "Tool";
   public static final String EDIT = "Edit";
@@ -81,7 +81,7 @@ public class MainWindow {
     // Just to be able to unit test code using the UI without effectively instantiating the UI
   }
 
-  public void createMenuBar(Group parent, App app, Stage primaryStage) {
+  public MenuBar createMenuBar(VBox parent, App app, Stage primaryStage) {
     menuBar = new MenuBar();
 
     Menu fileMenu     = new Menu(resourceBundle.getString(FILE));
@@ -172,7 +172,7 @@ public class MainWindow {
       prefs.setStringValue(LOCALE_LANGUAGE, "fr");
       prefs.setStringValue(LOCALE_COUNTRY, "FR");
 
-      restartApp(app, primaryStage);
+      restartApp(app);
     } );
     frenchItem.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN));
 
@@ -185,7 +185,7 @@ public class MainWindow {
       prefs.setStringValue(LOCALE_LANGUAGE, "en");
       prefs.setStringValue(LOCALE_COUNTRY, "EN");
 
-      restartApp(app, primaryStage);
+      restartApp(app);
     });
     englishItem.setAccelerator(new KeyCodeCombination(KeyCode.U, KeyCombination.CONTROL_DOWN));
 
@@ -197,24 +197,30 @@ public class MainWindow {
     menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu, languageMenu);
     menuBar.setTranslateY(MENU_BAR_Y);
     parent.getChildren().addAll(menuBar);
+
+    return menuBar;
   }
 
-  private void restartApp(App app, Stage primaryStage) {
+  private void restartApp(App app) {
     app.getGeometryWindow().getGeometryStage().close();
     app.getToolboxWindow().getToolboxStage().close();
+    app.getStateWindow().getStateStage().close();
     app.getPrimaryStage().close();
-    app.start(primaryStage);
+    app.start(new Stage());
   }
 
   public TilePane createFooter(String javafxVersion, String javaVersion) {
     footer = new TilePane(Orientation.VERTICAL);
+    footer.setPrefHeight(250); // 👈 pour s’assurer qu’il prenne de la place
+    footer.setPrefWidth(700);  // ou Double.MAX_VALUE si tu veux qu’il remplisse
+    footer.getStyleClass().add("footer");
+
     footer.getChildren().addAll(new Label(resourceBundle.getString("Pitch")));
     footer.getChildren().addAll(new Label(resourceBundle.getString("Copyright")));
     footer.getChildren().addAll(new Label(resourceBundle.getString("License")));
     footer.getChildren().addAll(new Label("JavaFX " + javafxVersion + resourceBundle.getString("RunningWith") + javaVersion));
-    footer.setAlignment(Pos.BOTTOM_LEFT);
-    footer.setTranslateX(FOOTER_X);
-    footer.setTranslateY(MAIN_WINDOW_HEIGHT - 100d);
+    footer.setAlignment(Pos.CENTER);
+
     return footer;
   }
 

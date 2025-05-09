@@ -1,0 +1,147 @@
+.root, .toolbox {
+  -fx-background-color: #2b2b2b;
+  -fx-font-family: "Patrick Hand";
+  -fx-font-size: 14px;
+  -fx-text-fill: #f1f1f1;
+}
+
+.label {
+  -fx-text-fill: #f1f1f1;
+  -fx-font-weight: bold;
+}
+
+.button {
+  -fx-background-color: linear-gradient(to bottom, #3a3a3a, #2b2b2b);
+  -fx-text-fill: #f1f1f1;
+  -fx-border-color: #f1f1f1;
+  -fx-border-width: 2;
+  -fx-border-radius: 4;
+  -fx-background-radius: 4;
+  -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.3), 3, 1, 2, 2);
+}
+
+.button:hover {
+  -fx-background-color: #444;
+}
+
+.pattern-button {
+  -fx-background-color: #2b2b2b;
+  -fx-text-fill: #f1f1f1;
+  -fx-border-color: black;
+  -fx-border-width: 1;
+  -fx-border-radius: 4;
+  -fx-background-radius: 4;
+  -fx-padding: 8 12 8 12;
+  -fx-font-family: "Patrick Hand";
+  -fx-font-size: 14px;
+}
+
+.pattern-button:hover {
+  -fx-background-color: #3a3a3a;
+}
+
+.pattern-button-selected {
+  -fx-border-color: blue;
+}
+
+.text-field, .text-area {
+  -fx-background-color: #1e1e1e;
+  -fx-border-color: #f1f1f1;
+  -fx-border-width: 2;
+  -fx-border-radius: 4;
+  -fx-background-radius: 4;
+  -fx-text-fill: #f1f1f1;
+  -fx-prompt-text-fill: #aaaaaa;
+  -fx-padding: 6 8 6 8;
+}
+
+.text-field:focused, .text-area:focused {
+  -fx-border-color: #90caf9;
+}
+
+.checkbox, .radio-button {
+  -fx-text-fill: #f1f1f1;
+  -fx-border-color: #f1f1f1;
+  -fx-border-width: 1;
+}
+
+.scroll-pane {
+  -fx-background-color: #2b2b2b;
+  -fx-background: #2b2b2b;
+}
+
+.scroll-pane.geometry-scroll {
+  -fx-background-color: #2b2b2b;
+  -fx-background: #2b2b2b;
+}
+
+.scroll-pane .viewport {
+  -fx-background-color: #2b2b2b;
+}
+
+.geometry-pane {
+  -fx-background-color: #2b2b2b;
+}
+
+.grid-pane {
+  -fx-background-color: #2b2b2b;
+}
+
+.grid {
+  -fx-background-color: #ffffff;
+  -fx-text-fill: #f1f1f1;
+}
+
+.tile-pane.footer {
+  -fx-background-color: #444;
+  -fx-text-fill: #f1f1f1;
+}
+
+.menu-bar.main-menu {
+  -fx-background-color: #2b2b2b;
+  -fx-border-color: #444;
+  -fx-border-width: 0 0 2 0;
+  -fx-text-fill: #f1f1f1;
+}
+
+.menu {
+  -fx-text-fill: #f1f1f1;
+  -fx-background-color: #2b2b2b;
+}
+
+.menu-item {
+  -fx-text-fill: #f1f1f1;
+  -fx-background-color: #2b2b2b;
+}
+
+.menu-item:hover {
+  -fx-background-color: #3a3a3a;
+}
+
+.context-menu {
+  -fx-background-color: #2b2b2b;
+  -fx-text-fill: #f1f1f1;
+  -fx-border-color: #888;
+  -fx-border-width: 1;
+}
+
+.tooltip {
+  -fx-background-color: #1e1e1e;
+  -fx-border-color: #f1f1f1;
+  -fx-border-width: 1;
+  -fx-padding: 5;
+  -fx-text-fill: #f1f1f1;
+  -fx-font-style: italic;
+}
+
+.styled-list-view {
+  -fx-font-family: "Patrick Hand";
+  -fx-background-color: #2b2b2b;
+  -fx-control-inner-background: #2b2b2b;
+  -fx-text-fill: #f1f1f1;
+}
+
+.selected-line {
+  -fx-background-color: #4f6d7a;
+  -fx-text-fill: white;
+}

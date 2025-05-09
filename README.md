@@ -4,7 +4,7 @@ AdaLovesLace: A tatting lace patterns creation software
 
 This is Free Software, under [Affero GPL V3 license](license.md)
 
-© 2023 Zala GOUPIL
+© 2023-2025 Zala GOUPIL
 
 This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by applicable law.
 
@@ -191,3 +191,20 @@ Include this argument for hidpi displays on Linux (requires Java 9):
 -Dglass.gtk.uiScale=200%
 
     https://wiki.archlinux.org/title/HiDPI#JavaFX
+
+
+--------------------------------------------------------------------------------------------
+
+The CSS for the GitHub pages website:
+
+    https://markdowncss.github.io/?gost
+
+    https://github.com/markdowncss
+
+
+Markdown does not officially support video embeddings but you can embed raw HTML in it. 
+I tested out with GitHub Pages and it works flawlessly.
+
+    Go to the Video page on YouTube and click on the Share Button
+    Choose Embed
+    Copy and Paste the HTML snippet in your markdown
