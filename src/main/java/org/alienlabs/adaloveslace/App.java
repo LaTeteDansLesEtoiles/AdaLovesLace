@@ -46,6 +46,7 @@ import java.util.ResourceBundle;
 
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_BUTTONS;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON_SELECTED;
 
 /**
  * JavaFX App
@@ -74,6 +75,7 @@ public class App extends Application {
   public static final String ASSETS_DIRECTORY         = "assets/";
   public static final String GET_PRINTERS_BUTTON_NAME = "GetPrinters";
   public static final String PRINT_BUTTON_NAME        = "PrintDiagram";
+  public static final String TEXT_BUTTON_NAME         = "TextButton";
 
   public static final double  MAIN_WINDOW_Y           = 5d;
   public static final double  MAIN_WINDOW_X           = 75d;
@@ -323,6 +325,15 @@ public class App extends Application {
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F),
               FastMoveModeButton::onSwitchFastModeAction);
     });
+  }
+
+  public void unselectPatternsAndTextButtons() {
+    this.getToolboxWindow().getAllPatterns().forEach(toggleButton -> {
+      toggleButton.setSelected(false);
+      toggleButton.getStyleClass().remove(PATTERN_AND_TEXT_BUTTON_SELECTED);
+    });
+    this.getToolboxWindow().getTextButton().setSelected(false);
+    this.getToolboxWindow().getTextButton().getStyleClass().remove(PATTERN_AND_TEXT_BUTTON_SELECTED);
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

@@ -57,6 +57,7 @@ public class OptionalDotGrid extends Pane {
   private Knot dragOriginKnot;
 
   private App app;
+  private SimpleObjectProperty<PatternOrTextMode> currentPatternOrTextModeProperty;
 
   /**
    * We draw the dots on the grid using a Canvas.
@@ -484,6 +485,13 @@ public class OptionalDotGrid extends Pane {
           justification = "A JavaFX property is meant to be modified from the outside")
   public SimpleObjectProperty<Pattern> getCurrentPatternProperty() {
     return this.currentPatternProperty;
+  }
+
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+          value = "EI_EXPOSE_REP",
+          justification = "A JavaFX property is meant to be modified from the outside")
+  public SimpleObjectProperty<PatternOrTextMode> getCurrentPatternOrTextModeProperty() {
+    return this.currentPatternOrTextModeProperty;
   }
 
   public Diagram getDiagram() {
