@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,7 +34,7 @@ class StepTest {
     @Test
     void test_add_a_step() {
         // Given
-        Knot knot1 = new Knot(10, 15, new Pattern(), null);
+        Knot knot1 = new Knot(10, 15, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots1 = new ArrayList<>();
         knots1.add(knot1);
         List<Knot> selectedKnots1 = new ArrayList<>();
@@ -61,15 +62,15 @@ class StepTest {
         // Given a diagram with an empty step
 
         // When
-        Knot knot1 = new Knot(10, 15, new Pattern(), null);
+        Knot knot1 = new Knot(10, 15, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots1 = new ArrayList<>();
         knots1.add(knot1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
 
-        Knot knot2 = new Knot(20, 25, new Pattern(), null);
-        Knot knot3 = new Knot(30, 35, new Pattern(), null);
+        Knot knot2 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), null);
+        Knot knot3 = new Knot(30, 35, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots2 = new ArrayList<>();
         knots2.add(knot2);
         knots2.add(knot3);
@@ -77,7 +78,7 @@ class StepTest {
 
         app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
 
-        Knot knot4 = new Knot(40, 45, new Pattern(), null);
+        Knot knot4 = new Knot(40, 45, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots4 = new ArrayList<>();
         knots4.add(knot4);
         List<Knot> selectedKnots4 = new ArrayList<>();
@@ -141,15 +142,15 @@ class StepTest {
         // Given a diagram with an empty step
 
         // When
-        Knot knot1 = new Knot(10, 15, new Pattern(), null);
+        Knot knot1 = new Knot(10, 15, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots1 = new ArrayList<>();
         knots1.add(knot1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
 
-        Knot knot2 = new Knot(20, 25, new Pattern(), null);
-        Knot knot3 = new Knot(30, 35, new Pattern(), null);
+        Knot knot2 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), null);
+        Knot knot3 = new Knot(30, 35, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots2 = new ArrayList<>();
         knots2.add(knot2);
         knots2.add(knot3);
@@ -157,7 +158,7 @@ class StepTest {
 
         app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
 
-        Knot knot4 = new Knot(40, 45, new Pattern(), null);
+        Knot knot4 = new Knot(40, 45, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots4 = new ArrayList<>();
         knots4.add(knot4);
         List<Knot> selectedKnots4 = new ArrayList<>();
@@ -221,15 +222,15 @@ class StepTest {
         // Given a diagram with an empty step
 
         // When
-        Knot knot1 = new Knot(10, 15, new Pattern(), null);
+        Knot knot1 = new Knot(10, 15, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> selectedKnots1 = new ArrayList<>();
         selectedKnots1.add(knot1);
         List<Knot> knots1 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
 
-        Knot knot2 = new Knot(20, 25, new Pattern(), null);
-        Knot knot3 = new Knot(30, 35, new Pattern(), null);
+        Knot knot2 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), null);
+        Knot knot3 = new Knot(30, 35, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> selectedKnots2 = new ArrayList<>();
         selectedKnots2.add(knot2);
         selectedKnots2.add(knot3);
@@ -285,7 +286,7 @@ class StepTest {
     @Test
     void test_add_a_knot_to_a_step() {
         // Given
-        Knot knot1 = new Knot(10, 15, new Pattern(), null);
+        Knot knot1 = new Knot(10, 15, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots1 = new ArrayList<>();
         knots1.add(knot1);
         List<Knot> selectedKnots1 = new ArrayList<>();
@@ -293,7 +294,7 @@ class StepTest {
         app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
 
         // When
-        Knot knot2 = new Knot(20, 25, new Pattern(), null);
+        Knot knot2 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots2 = new ArrayList<>();
         knots2.add(knot2);
         List<Knot> selectedKnots2 = new ArrayList<>();
@@ -323,22 +324,22 @@ class StepTest {
     @Test
     void test_add_several_knots() {
         // Given
-        Knot knot1 = new Knot(10, 15, new Pattern(), null);
+        Knot knot1 = new Knot(10, 15, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots1 = new ArrayList<>();
         knots1.add(knot1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
 
-        Knot firstKnotsStep2 = new Knot(20, 25, new Pattern(), null);
+        Knot firstKnotsStep2 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots2 = new ArrayList<>();
         knots2.add(firstKnotsStep2);
         List<Knot> selectedKnots2 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
 
-        Knot firstKnotsStep3 = new Knot(30, 35, new Pattern(), null);
-        Knot secondKnotsStep3 = new Knot(40, 45, new Pattern(), null);
+        Knot firstKnotsStep3 = new Knot(30, 35, Optional.of(new Pattern()), Optional.of(""), null);
+        Knot secondKnotsStep3 = new Knot(40, 45, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots3 = new ArrayList<>();
         knots3.add(firstKnotsStep3);
         knots3.add(secondKnotsStep3);

@@ -20,10 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
@@ -288,7 +285,7 @@ public class Diagram {
             logger.debug("Top left corner of the knot {} is ({},{})", this.getCurrentPattern().getFilename(), x, y);
 
             app.getOptionalDotGrid().getRoot().getChildren().add(iv);
-            currentKnot = new Knot(x, y, this.getCurrentPattern(), iv);
+            currentKnot = new Knot(x, y, Optional.of(this.getCurrentPattern()), Optional.of(""), iv);
             this.setCurrentKnot(currentKnot);
 
             List<Knot> displayed = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());

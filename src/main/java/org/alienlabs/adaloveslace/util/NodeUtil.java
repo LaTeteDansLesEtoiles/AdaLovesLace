@@ -4,6 +4,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.business.model.Knot;
 
+import java.util.Optional;
+
 import static org.alienlabs.adaloveslace.util.Events.app;
 
 public class NodeUtil {
@@ -25,14 +27,14 @@ public class NodeUtil {
   }
 
   public Knot copyKnot(Knot knot) {
-    Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), knot.getImageView());
+    Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), Optional.of(""), knot.getImageView());
     copy(knot, copy);
 
     return copy;
   }
 
   public Knot copyKnotCloningImageView(Knot knot) {
-    Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), new ImageView(knot.getImageView().getImage()));
+    Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), Optional.of(""), new ImageView(knot.getImageView().getImage()));
     copy(knot, copy);
     copy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
     copy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
@@ -50,8 +52,8 @@ public class NodeUtil {
 
     copy.getImageView().setX(knot.getX());
     copy.getImageView().setY(knot.getY());
-    copy.getImageView().setFitHeight(knot.getPattern().getHeight());
-    copy.getImageView().setFitWidth(knot.getPattern().getWidth());
+    copy.getImageView().setFitHeight(knot.getPattern().get().getHeight());
+    copy.getImageView().setFitWidth(knot.getPattern().get().getWidth());
 
     if (knot.getHovered() != null) {
       copy.setHovered(knot.getHovered());

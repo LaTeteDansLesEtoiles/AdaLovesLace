@@ -267,7 +267,7 @@ public class MainWindow {
       hasClickedOnAGivenKnot = new NodeUtil().isMouseOverKnot(knot);
 
       if (hasClickedOnAGivenKnot && (knot.getSelection() == null)) {
-        logger.debug("Clicked Knot {} in order to select it", knot.getPattern().getFilename());
+        logger.debug("Clicked Knot {} in order to select it", knot.getPattern().get().getFilename());
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
@@ -291,9 +291,9 @@ public class MainWindow {
         break;
       } else if (hasClickedOnAGivenKnot) {
         logger.debug("Clicked Knot displayed {}, pattern {} in order to unselect it",
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot), knot.getPattern().getFilename());
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot), knot.getPattern().get().getFilename());
         logger.debug("Clicked Knot selected {}, pattern {} in order to unselect it",
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot), knot.getPattern().getFilename());
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot), knot.getPattern().get().getFilename());
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {

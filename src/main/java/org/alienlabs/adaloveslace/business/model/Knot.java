@@ -1,14 +1,13 @@
 package org.alienlabs.adaloveslace.business.model;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -37,7 +36,13 @@ public class Knot implements Comparable<Knot> {
 
   private int zoomFactor;
 
-  private Pattern pattern;
+  @XmlElement
+  @XmlJavaTypeAdapter(OptionalPatternAdapter.class)
+  private Optional<Pattern> pattern = Optional.empty();
+
+  @XmlElement
+  @XmlJavaTypeAdapter(OptionalStringAdapter.class)
+  private Optional<String> text = Optional.of("");
 
   private boolean visible = true;
 
@@ -70,10 +75,17 @@ public class Knot implements Comparable<Knot> {
     this.uuid                 = UUID.randomUUID();
   }
 
-  public Knot(final double x, final double y, final Pattern pattern, final ImageView imageView) {
+  public Knot(
+          final double x,
+          final double y,
+          final Optional<Pattern> pattern,
+          final Optional<String> text,
+          final ImageView imageView
+  ) {
     this.x                    = x;
     this.y                    = y;
     this.pattern              = pattern;
+    this.text                 = text;
     this.imageView            = imageView;
 
     this.uuid                 = UUID.randomUUID();
@@ -91,10 +103,6 @@ public class Knot implements Comparable<Knot> {
 
   public double getY() {
     return this.y;
-  }
-
-  public Pattern getPattern() {
-    return this.pattern;
   }
 
   public void setX(double x) {
@@ -121,8 +129,20 @@ public class Knot implements Comparable<Knot> {
     this.zoomFactor = zoomFactor;
   }
 
-  public void setPattern(Pattern pattern) {
+  public Optional<Pattern> getPattern() {
+    return this.pattern;
+  }
+
+  public void setPattern(Optional<Pattern> pattern) {
     this.pattern = pattern;
+  }
+
+  public Optional<String> getText() {
+    return this.text;
+  }
+
+  public void setText(Optional<String> text) {
+    this.text = text;
   }
 
   public ImageView getImageView() {
@@ -223,7 +243,7 @@ public class Knot implements Comparable<Knot> {
   @Override
   public String toString() {
     return "Knot{" +
-      "pattern=" + pattern.getFilename() +
+      "pattern=" + pattern.get().getFilename() +
       ", isHovered=" + hoveredKnot +
       ", uuid=" + uuid +
       ", x=" + x +

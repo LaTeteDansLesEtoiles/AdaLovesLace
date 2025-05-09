@@ -169,9 +169,9 @@ class FileUtilTest {
 
         assertEquals(NUMBER_OF_STEPS, diagramToCheck.getAllSteps().size());
         assertEquals(3, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().size());
-        assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().get(0).getPattern().getFilename());
-        assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().get(1).getPattern().getFilename());
-        assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().get(2).getPattern().getFilename());
+        assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().get(0).getPattern().get().getFilename());
+        assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().get(1).getPattern().get().getFilename());
+        assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().get(2).getPattern().get().getFilename());
 
         assertEquals(2, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().get(1).getZoomFactor());
         assertEquals(70, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().get(2).getRotationAngle());

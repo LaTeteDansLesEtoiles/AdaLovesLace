@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,28 +35,28 @@ class UndoRedoStepTest {
     @Test
     void test_add_several_knots_then_undo_a_step_then_make_another_step() {
         // Given
-        Knot knotStep1 = new Knot(10, 15, new Pattern(), null);
+        Knot knotStep1 = new Knot(10, 15, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots1 = new ArrayList<>();
         knots1.add(knotStep1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
 
-        Knot knotStep2 = new Knot(20, 25, new Pattern(), null);
+        Knot knotStep2 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots2 = new ArrayList<>();
         knots1.add(knotStep2);
         List<Knot> selectedKnots2 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
 
-        Knot knotStep3 = new Knot(30, 35, new Pattern(), null);
+        Knot knotStep3 = new Knot(30, 35, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots3 = new ArrayList<>();
         knots1.add(knotStep3);
         List<Knot> selectedKnots3 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots3, selectedKnots3, false);
 
-        Knot knotStep4 = new Knot(50, 55, new Pattern(), null);
+        Knot knotStep4 = new Knot(50, 55, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots4 = new ArrayList<>();
         knots1.add(knotStep4);
         List<Knot> selectedKnots4 = new ArrayList<>();
@@ -65,21 +66,21 @@ class UndoRedoStepTest {
         // When
         this.diagram.undoLastStep(app, false);
 
-        Knot knotStep31 = new Knot(10, 15, new Pattern(), null);
+        Knot knotStep31 = new Knot(10, 15, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots31 = new ArrayList<>();
         knots31.add(knotStep31);
         List<Knot> selectedKnots31 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots31, selectedKnots31, false);
 
-        Knot knotStep32 = new Knot(20, 25, new Pattern(), null);
+        Knot knotStep32 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots32 = new ArrayList<>();
         knots32.add(knotStep32);
         List<Knot> selectedKnots32 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots32, selectedKnots32, false);
 
-        Knot knotStep33 = new Knot(30, 35, new Pattern(), null);
+        Knot knotStep33 = new Knot(30, 35, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots33 = new ArrayList<>();
         knots33.add(knotStep33);
 
@@ -87,7 +88,7 @@ class UndoRedoStepTest {
 
         app.getOptionalDotGrid().getDiagram().newStep(knots33, selectedKnots33, false);
 
-        Knot knotStep34 = new Knot(40, 45, new Pattern(), null);
+        Knot knotStep34 = new Knot(40, 45, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> displayedKnots = new ArrayList<>();
         displayedKnots.add(knotStep31);
         displayedKnots.add(knotStep32);
@@ -176,21 +177,21 @@ class UndoRedoStepTest {
     @Test
     void test_add_several_knots_then_undo_a_step_then_redo_this_step() {
         // Given
-        Knot knotStep1 = new Knot(10, 15, new Pattern(), new ImageView());
+        Knot knotStep1 = new Knot(10, 15, Optional.of(new Pattern()), Optional.of(""), new ImageView());
         List<Knot> knots1 = new ArrayList<>();
         knots1.add(knotStep1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
 
-        Knot knotStep2 = new Knot(20, 25, new Pattern(), new ImageView());
+        Knot knotStep2 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), new ImageView());
         List<Knot> knots2 = new ArrayList<>();
         knots2.add(knotStep2);
         List<Knot> selectedKnots2 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
 
-        Knot knotStep3 = new Knot(30, 35, new Pattern(), new ImageView());
+        Knot knotStep3 = new Knot(30, 35, Optional.of(new Pattern()), Optional.of(""), new ImageView());
         List<Knot> knots3 = new ArrayList<>();
         knots3.add(knotStep3);
         List<Knot> selectedKnots3 = new ArrayList<>();
@@ -233,21 +234,21 @@ class UndoRedoStepTest {
     @Test
     void test_add_several_selected_knots_then_undo_a_step_then_redo_this_step() {
         // Given
-        Knot knotStep1 = new Knot(10, 15, new Pattern(), new ImageView());
+        Knot knotStep1 = new Knot(10, 15, Optional.of(new Pattern()), Optional.of(""), new ImageView());
         List<Knot> knots1 = new ArrayList<>();
         knots1.add(knotStep1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
 
-        Knot knotStep2 = new Knot(20, 25, new Pattern(), new ImageView());
+        Knot knotStep2 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), new ImageView());
         List<Knot> knots2 = new ArrayList<>();
         knots2.add(knotStep2);
         List<Knot> selectedKnots2 = new ArrayList<>();
 
         app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
 
-        Knot knotStep3 = new Knot(30, 35, new Pattern(), new ImageView());
+        Knot knotStep3 = new Knot(30, 35, Optional.of(new Pattern()), Optional.of(""), new ImageView());
         List<Knot> selectedKnots3 = new ArrayList<>();
         selectedKnots3.add(knotStep3);
         List<Knot> knots3 = new ArrayList<>();

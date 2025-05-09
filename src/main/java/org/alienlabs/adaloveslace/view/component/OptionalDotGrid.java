@@ -80,7 +80,7 @@ public class OptionalDotGrid extends Pane {
     }
 
     currentPatternProperty.addListener(observable -> this.diagram.setCurrentPattern(currentPatternProperty.getValue()));
-
+    currentPatternOrTextModeProperty = new SimpleObjectProperty<>(PatternOrTextMode.PATTERN);
     showHideGridProperty = new SimpleBooleanProperty(this.showHideGrid);
     showHideGridProperty.addListener(observable -> {
       this.showHideGrid = showHideGridProperty.getValue();
@@ -254,14 +254,14 @@ public class OptionalDotGrid extends Pane {
   private Circle newHandle(Knot knot, Color handleColor, Rectangle rec) {
     Circle circle = new Circle(
             knot.getImageView().getBoundsInParent().getCenterX() -
-                    (knot.getPattern().getWidth() / 2 * rec.getScaleX()) *
+                    (knot.getPattern().get().getWidth() / 2 * rec.getScaleX()) *
                             Math.cos(Math.toRadians(knot.getRotationAngle())) +
-                    (knot.getPattern().getHeight() / 2 * rec.getScaleY()) *
+                    (knot.getPattern().get().getHeight() / 2 * rec.getScaleY()) *
                             Math.sin(Math.toRadians(knot.getRotationAngle())),
             knot.getImageView().getBoundsInParent().getCenterY() -
-                    (knot.getPattern().getWidth() / 2 * rec.getScaleX()) *
+                    (knot.getPattern().get().getWidth() / 2 * rec.getScaleX()) *
                             Math.sin(Math.toRadians(knot.getRotationAngle())) -
-                    (knot.getPattern().getHeight() / 2 * rec.getScaleY()) *
+                    (knot.getPattern().get().getHeight() / 2 * rec.getScaleY()) *
                             Math.cos(Math.toRadians(knot.getRotationAngle())),
             HANDLE_SIZE * computeZoomFactor(knot),
             handleColor);
@@ -273,8 +273,8 @@ public class OptionalDotGrid extends Pane {
     Rectangle rec = new Rectangle(
             knot.getX(),
             knot.getY(),
-            knot.getPattern().getWidth(),
-            knot.getPattern().getHeight()
+            knot.getPattern().get().getWidth(),
+            knot.getPattern().get().getHeight()
     );
     rec.setId(UUID.randomUUID().toString());
     rec.setStroke(color);
@@ -369,7 +369,7 @@ public class OptionalDotGrid extends Pane {
 
     knot.setImageView(iv);
 
-    logger.debug("drawing top left corner of knot {} to ({},{})", knot.getPattern().getFilename(), x, y);
+    logger.debug("drawing top left corner of knot {} to ({},{})", knot.getPattern().get().getFilename(), x, y);
   }
 
   private void drawSelectedKnot(Step step, Knot knot) {
@@ -385,7 +385,7 @@ public class OptionalDotGrid extends Pane {
 
     drawGuideLines(step, knot);
 
-    logger.debug("drawing top left corner of knot {} to ({},{})", knot.getPattern().getFilename(), x, y);
+    logger.debug("drawing top left corner of knot {} to ({},{})", knot.getPattern().get().getFilename(), x, y);
   }
 
   // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
@@ -402,7 +402,7 @@ public class OptionalDotGrid extends Pane {
     knot.getImageView().setScaleY(scaleFactor);
 
     logger.debug("zoomed knot {} at zoom factor {} and scale factor {}",
-            knot.getPattern().getFilename(), knot.getZoomFactor(), scaleFactor);
+            knot.getPattern().get().getFilename(), knot.getZoomFactor(), scaleFactor);
 
     return scaleFactor;
   }
@@ -410,8 +410,8 @@ public class OptionalDotGrid extends Pane {
     Rotate rot = new Rotate();
     rot.setAxis(axis);
     rot.setAngle(flip ? 180d : 0d);
-    rot.setPivotX(knot.getX() + knot.getPattern().getCenterX());
-    rot.setPivotY(knot.getY() + knot.getPattern().getCenterY());
+    rot.setPivotX(knot.getX() + knot.getPattern().get().getCenterX());
+    rot.setPivotY(knot.getY() + knot.getPattern().get().getCenterY());
 
     knot.getImageView().getTransforms().add(rot);
   }
@@ -432,7 +432,7 @@ public class OptionalDotGrid extends Pane {
   private ImageView rotateKnot(Knot knot) {
     if (knot.getImageView() == null) {
       try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
-              + knot.getPattern().getFilename())) {
+              + knot.getPattern().get().getFilename())) {
         new FileUtil().buildKnotImageView(knot, fis);
       } catch (IOException e) {
         logger.error("Problem with pattern resource file!", e);
@@ -446,7 +446,7 @@ public class OptionalDotGrid extends Pane {
       root.getChildren().add(knot.getImageView());
     }
 
-    logger.debug("rotated knot {} at angle {}", knot.getPattern().getFilename(), knot.getRotationAngle());
+    logger.debug("rotated knot {} at angle {}", knot.getPattern().get().getFilename(), knot.getRotationAngle());
 
     return knot.getImageView();
   }

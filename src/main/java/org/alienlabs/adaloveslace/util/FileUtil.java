@@ -104,37 +104,43 @@ public class FileUtil {
     private void buildKnotsImageViews(Diagram diagram) {
         for (Step step : diagram.getAllSteps()) {
             for (Knot knot : step.getDisplayedKnots()) {
-                try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
-                    + knot.getPattern().getFilename())) {
-                    buildKnotImageView(knot, fis);
-                } catch (IOException e) {
-                    logger.error("Problem with pattern resource file!", e);
+                if (knot.getPattern().isPresent()) {
+                    try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
+                            + knot.getPattern().get().getFilename())) {
+                        buildKnotImageView(knot, fis);
+                    } catch (IOException e) {
+                        logger.error("Problem with pattern resource file!", e);
+                    }
                 }
             }
 
             for (Knot knot : step.getSelectedKnots()) {
-                try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
-                    + knot.getPattern().getFilename())) {
-                    buildKnotImageView(knot, fis);
-                } catch (IOException e) {
-                    logger.error("Problem with pattern resource file!", e);
+                if (knot.getPattern().isPresent()) {
+                    try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
+                            + knot.getPattern().get().getFilename())) {
+                        buildKnotImageView(knot, fis);
+                    } catch (IOException e) {
+                        logger.error("Problem with pattern resource file!", e);
+                    }
                 }
             }
         }
     }
 
     public void buildKnotImageView(Knot knot, FileInputStream fis) {
-        Image image = new Image(fis);
-        ImageView iv = new ImageView(image);
+        if (knot.getPattern().isPresent()) {
+            Image image = new Image(fis);
+            ImageView iv = new ImageView(image);
 
-        iv.setX(knot.getX());
-        iv.setY(knot.getY());
-        iv.setFitHeight(knot.getPattern().getHeight());
-        iv.setFitWidth(knot.getPattern().getWidth());
+            iv.setX(knot.getX());
+            iv.setY(knot.getY());
+            iv.setFitHeight(knot.getPattern().get().getHeight());
+            iv.setFitWidth(knot.getPattern().get().getWidth());
 
-        iv.setRotate(knot.getRotationAngle());
+            iv.setRotate(knot.getRotationAngle());
 
-        knot.setImageView(iv);
+            knot.setImageView(iv);
+        }
     }
 
     private void deleteXmlFile() throws IOException {
