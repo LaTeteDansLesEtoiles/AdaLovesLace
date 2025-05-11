@@ -314,7 +314,12 @@ public class Diagram {
         this.setCurrentKnot(currentKnot);
 
         List<Knot> displayed = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-        if (oldCurrentKnot != null && displayed.contains(oldCurrentKnot)) {
+        if (oldCurrentKnot != null &&
+                displayed.contains(oldCurrentKnot) &&
+                pattern == null &&
+                oldCurrentKnot.getText().isPresent() &&
+                !oldCurrentKnot.getText().get().isEmpty()
+        ) {
             app.getRoot().getChildren().remove(oldCurrentKnot.getImageView());
             displayed.remove(oldCurrentKnot);
         }

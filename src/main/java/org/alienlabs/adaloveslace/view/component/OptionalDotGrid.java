@@ -394,10 +394,12 @@ public class OptionalDotGrid extends Pane {
     double y = knot.getY();
 
     if (knot.getText().isPresent()) {
-      imageView = drawTextImageView(knot, x, y);
+      drawTextImageView(knot, x, y);
+      imageView = rotateTextKnot(knot);
+      zoomAndFlipTextKnot(knot);
     } else {
-      imageView = rotateKnot(knot);
-      zoomAndFlipKnot(knot);
+      imageView = rotatePatternKnot(knot);
+      zoomAndFlipPatternKnot(knot);
     }
 
     imageView.setX(x);
@@ -434,11 +436,13 @@ public class OptionalDotGrid extends Pane {
     double x = knot.getX();
     double y = knot.getY();
 
-    if (knot.getText().isPresent() && !knot.getText().get().isEmpty()) {
-      imageView = drawTextImageView(knot, x, y);
+    if (knot.getText().isPresent()) {
+      drawTextImageView(knot, x, y);
+      imageView = rotateTextKnot(knot);
+      zoomAndFlipTextKnot(knot);
     } else {
-      imageView = rotateKnot(knot);
-      zoomAndFlipKnot(knot);
+      imageView = rotatePatternKnot(knot);
+      zoomAndFlipPatternKnot(knot);
     }
 
     imageView.setX(x);
@@ -455,14 +459,22 @@ public class OptionalDotGrid extends Pane {
   }
 
   // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
-  public double zoomAndFlipKnot(Knot knot) {
-    flip(knot.isFlippedVertically(), Rotate.Y_AXIS, knot);
-    flip(knot.isFlippedHorizontally(), Rotate.X_AXIS, knot);
+  public double zoomAndFlipPatternKnot(Knot knot) {
+    flipPattern(knot.isFlippedVertically(), Rotate.Y_AXIS, knot);
+    flipPattern(knot.isFlippedHorizontally(), Rotate.X_AXIS, knot);
 
-    return zoom(knot);
+    return zoomPattern(knot);
   }
 
-  private double zoom(Knot knot) {
+  // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
+  public double zoomAndFlipTextKnot(Knot knot) {
+    flipText(knot.isFlippedVertically(), Rotate.Y_AXIS, knot);
+    flipText(knot.isFlippedHorizontally(), Rotate.X_AXIS, knot);
+
+    return zoomText(knot);
+  }
+
+  private double zoomPattern(Knot knot) {
     double scaleFactor = computeZoomFactor(knot);
     knot.getImageView().setScaleX(scaleFactor);
     knot.getImageView().setScaleY(scaleFactor);
@@ -472,7 +484,29 @@ public class OptionalDotGrid extends Pane {
 
     return scaleFactor;
   }
-  private void flip(boolean flip, Point3D axis, Knot knot) {
+
+  private double zoomText(Knot knot) {
+    double scaleFactor = computeZoomFactor(knot);
+    knot.getImageView().setScaleX(scaleFactor);
+    knot.getImageView().setScaleY(scaleFactor);
+
+    logger.debug("zoomed knot {} at zoom factor {} and scale factor {}",
+            knot.getText().toString(), knot.getZoomFactor(), scaleFactor);
+
+    return scaleFactor;
+  }
+
+  private void flipPattern(boolean flip, Point3D axis, Knot knot) {
+    Rotate rot = new Rotate();
+    rot.setAxis(axis);
+    rot.setAngle(flip ? 180d : 0d);
+    rot.setPivotX(knot.getX() + knot.getPattern().get().getCenterX());
+    rot.setPivotY(knot.getY() + knot.getPattern().get().getCenterY());
+
+    knot.getImageView().getTransforms().add(rot);
+  }
+
+  private void flipText(boolean flip, Point3D axis, Knot knot) {
     Rotate rot = new Rotate();
     rot.setAxis(axis);
     rot.setAngle(flip ? 180d : 0d);
@@ -494,8 +528,8 @@ public class OptionalDotGrid extends Pane {
     return computeZoomFactor(knot.getZoomFactor());
   }
 
-  // Rotate knot with an angle in degrees
-  private ImageView rotateKnot(Knot knot) {
+  // Rotate Pattern knot with an angle in degrees
+  private ImageView rotatePatternKnot(Knot knot) {
     if (knot.getImageView() == null) {
       try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
               + knot.getPattern().get().getFilename())) {
@@ -513,9 +547,23 @@ public class OptionalDotGrid extends Pane {
     }
 
     logger.debug("rotated knot {} at angle {}",
-            knot.getPattern().isPresent() ?
-                    knot.getPattern().get().getFilename() :
-                    knot.getText().toString(),
+            knot.getPattern().get().getFilename(),
+            knot.getRotationAngle());
+
+    return knot.getImageView();
+  }
+
+  // Rotate Text knot with an angle in degrees
+  private ImageView rotateTextKnot(Knot knot) {
+    knot.getImageView().getTransforms().clear();
+    knot.getImageView().setRotate(knot.getRotationAngle());
+
+    if (!root.getChildren().contains(knot.getImageView())) {
+      root.getChildren().add(knot.getImageView());
+    }
+
+    logger.debug("rotated knot {} at angle {}",
+            knot.getText().toString(),
             knot.getRotationAngle());
 
     return knot.getImageView();

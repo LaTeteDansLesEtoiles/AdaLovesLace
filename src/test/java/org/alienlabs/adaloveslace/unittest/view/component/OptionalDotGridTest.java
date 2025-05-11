@@ -29,7 +29,7 @@ class OptionalDotGridTest {
     knot.setZoomFactor(Integer.parseInt(settedZoomFactor));
 
     // When
-    double actualZoomFactor = new OptionalDotGrid(null, new Diagram(null), null).zoomAndFlipKnot(knot);
+    double actualZoomFactor = new OptionalDotGrid(null, new Diagram(null), null).zoomAndFlipPatternKnot(knot);
 
     // Then
     assertEquals(Double.valueOf(expectedZoomFactor), actualZoomFactor);
