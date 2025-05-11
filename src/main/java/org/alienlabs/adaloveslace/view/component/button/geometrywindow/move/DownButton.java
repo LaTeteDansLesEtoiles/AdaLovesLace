@@ -29,18 +29,23 @@ public class DownButton extends Button {
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
     List<Knot> copiedKnots = new ArrayList<>();
+    List<Knot> toRemoveKnots = new ArrayList<>();
 
     for (Knot knot : selectedKnots) {
       knot.setY(knot.getY() + FastMoveModeButton.getMoveSpeed());
       Knot copiedKnot = new NodeUtil().copyKnot(knot);
 
-      displayedKnots.remove(knot);
+      toRemoveKnots.add(knot);
+      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView());
       copiedKnots.add(copiedKnot);
 
       logger.debug("Moving down knot {}", knot);
     }
 
-    newStep(displayedKnots, copiedKnots, true);
+    selectedKnots.removeAll(toRemoveKnots);
+    displayedKnots.removeAll(toRemoveKnots);
+    selectedKnots.addAll(copiedKnots);
+    newStep(displayedKnots, selectedKnots, true);
   }
 
 }

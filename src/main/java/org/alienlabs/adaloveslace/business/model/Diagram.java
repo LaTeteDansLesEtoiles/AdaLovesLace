@@ -77,7 +77,8 @@ public class Diagram {
     private static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
     public static StringBuilder typedText = new StringBuilder();
     public static EventHandler<KeyEvent> keyHandler;
-    private boolean shouldUpdate;
+    public static boolean shouldUpdate;
+    public static Runnable updateImage;
 
     // For JAXB
     public Diagram() {
@@ -340,41 +341,13 @@ public class Diagram {
         }
 
         shouldUpdate = true;
-        Runnable updateImage = () -> {
+        updateImage = () -> {
             logger.info("updated text -> {}", typedText);
             text.setText(typedText.toString());
             WritableImage s = text.snapshot(params, null);
             imageView.setImage(s);
             createImageViewWithStep(x, y, imageView);
         };
-
-        if (keyHandler == null) {
-            keyHandler = event -> {
-                logger.info("key pressed -> {}", event.getCode());
-
-                switch (event.getCode()) {
-                    case BACK_SPACE:
-                        if (typedText.length() > 0)
-                            typedText.deleteCharAt(typedText.length() - 1);
-                        break;
-                    case ENTER:
-                        typedText.append("\n");
-                        break;
-                    default:
-                        if (!event.isControlDown() && event.getText().length() > 0) {
-                            typedText.append(event.getText());
-                        } else if (event.isControlDown()) {
-                            shouldUpdate = false;
-                        }
-                }
-
-                if (shouldUpdate) {
-                    updateImage.run();
-                }
-            };
-
-            app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
-        }
 
         return click ? null : imageView;
     }
