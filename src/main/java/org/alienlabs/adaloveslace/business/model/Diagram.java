@@ -289,29 +289,33 @@ public class Diagram {
         if (PatternOrTextMode.PATTERN
                 .equals(app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get())) {
             iv = drawPattern(x, y);
+
+            if (null != iv) {
+                createImageViewWithStep(x, y, iv, this.getCurrentPattern());
+            }
         } else {
             iv = drawText(x, y);
-        }
-
-        if (null != iv) {
-            createImageViewWithStep(x, y, iv);
+            if (null != iv) {
+                createImageViewWithStep(x, y, iv, null);
+            }
         }
     }
 
-    private void createImageViewWithStep(double x, double y, ImageView iv) {
+    private void createImageViewWithStep(double x, double y, ImageView iv, Pattern pattern) {
         Knot oldCurrentKnot = this.getCurrentKnot();
 
         currentKnot = new Knot(
                 x,
                 y,
-                Optional.of(this.getCurrentPattern()),
-                Optional.of(typedText.toString()),
+                pattern == null ? Optional.empty() : Optional.of(pattern),
+                pattern == null ? Optional.of(typedText.toString()) : Optional.empty(),
                 iv
         );
         this.setCurrentKnot(currentKnot);
 
         List<Knot> displayed = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-        if (!currentKnot.getText().orElse("").isEmpty()) {
+        if (oldCurrentKnot != null && displayed.contains(oldCurrentKnot)) {
+            app.getRoot().getChildren().remove(oldCurrentKnot.getImageView());
             displayed.remove(oldCurrentKnot);
         }
         displayed.add(currentKnot);
@@ -346,7 +350,7 @@ public class Diagram {
             text.setText(typedText.toString());
             WritableImage s = text.snapshot(params, null);
             imageView.setImage(s);
-            createImageViewWithStep(x, y, imageView);
+            createImageViewWithStep(x, y, imageView, null);
         };
 
         return click ? null : imageView;

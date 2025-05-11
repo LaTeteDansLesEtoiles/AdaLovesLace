@@ -32,11 +32,11 @@ public class GuideLinesUtil {
     if (knot.getX() - MAGNET_SIZE_X <= otherKnot.getX() && knot.getX() + MAGNET_SIZE_X >= otherKnot.getX()) {
 
       if (knot.getY() >= otherKnot.getY()) {
-        line = new Line(knot.getX(), knot.getY() + knot.getPattern().get().getHeight() + PADDING_HEIGHT,
+        line = new Line(knot.getX(), knot.getY() + knot.getImageView().getBoundsInParent().getHeight() + PADDING_HEIGHT,
                 knot.getX(), otherKnot.getY() - PADDING_HEIGHT);
       } else {
         line = new Line(knot.getX(), knot.getY() - PADDING_HEIGHT,
-                knot.getX(), otherKnot.getY() + knot.getPattern().get().getHeight() + PADDING_HEIGHT);
+                knot.getX(), otherKnot.getY() + knot.getImageView().getBoundsInParent().getHeight() + PADDING_HEIGHT);
       }
       line.setStroke(Color.BLACK);
 
@@ -48,15 +48,15 @@ public class GuideLinesUtil {
   private void lineXRightRight(Knot knot, Knot otherKnot, Group root) {
     Line line = null;
 
-    if (knot.getX() + knot.getPattern().get().getWidth() - MAGNET_SIZE_X <= otherKnot.getX() + otherKnot.getPattern().get().getWidth() &&
-      knot.getX() + knot.getPattern().get().getWidth() + MAGNET_SIZE_X >= otherKnot.getX() + otherKnot.getPattern().get().getWidth()) {
+    if (knot.getX() + knot.getImageView().getBoundsInParent().getWidth() - MAGNET_SIZE_X <= otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getWidth() &&
+      knot.getX() + knot.getImageView().getBoundsInParent().getWidth() + MAGNET_SIZE_X >= otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getWidth()) {
 
       if (knot.getY() >= otherKnot.getY()) {
-        line = new Line(knot.getX() + knot.getPattern().get().getWidth(), knot.getY() + knot.getPattern().get().getHeight() + PADDING_HEIGHT,
-          knot.getX() + knot.getPattern().get().getWidth(), otherKnot.getY() - PADDING_HEIGHT);
+        line = new Line(knot.getX() + knot.getImageView().getBoundsInParent().getWidth(), knot.getY() + knot.getImageView().getBoundsInParent().getHeight() + PADDING_HEIGHT,
+          knot.getX() + knot.getImageView().getBoundsInParent().getWidth(), otherKnot.getY() - PADDING_HEIGHT);
       } else {
-        line = new Line(knot.getX() + knot.getPattern().get().getWidth(), knot.getY() - PADDING_HEIGHT,
-          knot.getX() + knot.getPattern().get().getWidth(), otherKnot.getY() + knot.getPattern().get().getHeight() + PADDING_HEIGHT);
+        line = new Line(knot.getX() + knot.getImageView().getBoundsInParent().getWidth(), knot.getY() - PADDING_HEIGHT,
+          knot.getX() + knot.getImageView().getBoundsInParent().getWidth(), otherKnot.getY() + knot.getImageView().getBoundsInParent().getHeight() + PADDING_HEIGHT);
       }
       line.setStroke(Color.BLACK);
 
@@ -68,14 +68,14 @@ public class GuideLinesUtil {
   private void lineXLeftRight(Knot knot, Knot otherKnot, Group root) {
     Line line = null;
 
-    if (knot.getX() - MAGNET_SIZE_X <= otherKnot.getX() + otherKnot.getPattern().get().getWidth() && knot.getX() + MAGNET_SIZE_X >= otherKnot.getX() + otherKnot.getPattern().get().getWidth()) {
+    if (knot.getX() - MAGNET_SIZE_X <= otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getWidth() && knot.getX() + MAGNET_SIZE_X >= otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getWidth()) {
 
       if (knot.getY() >= otherKnot.getY()) {
-        line = new Line(knot.getX(), knot.getY() + knot.getPattern().get().getHeight() + PADDING_HEIGHT,
+        line = new Line(knot.getX(), knot.getY() + knot.getImageView().getBoundsInParent().getHeight() + PADDING_HEIGHT,
           knot.getX(), otherKnot.getY() - PADDING_HEIGHT);
       } else {
         line = new Line(knot.getX(), knot.getY() - PADDING_HEIGHT,
-          knot.getX(), otherKnot.getY() + knot.getPattern().get().getHeight() + PADDING_HEIGHT);
+          knot.getX(), otherKnot.getY() + knot.getImageView().getBoundsInParent().getHeight() + PADDING_HEIGHT);
       }
       line.setStroke(Color.BLACK);
 
@@ -87,15 +87,15 @@ public class GuideLinesUtil {
   private void lineXRightLeft(Knot knot, Knot otherKnot, Group root) {
     Line line = null;
 
-    if (knot.getX() + knot.getPattern().get().getWidth() - MAGNET_SIZE_X <= otherKnot.getX() &&
-      knot.getX() + knot.getPattern().get().getWidth() + MAGNET_SIZE_X >= otherKnot.getX()) {
+    if (knot.getX() + knot.getImageView().getBoundsInParent().getWidth() - MAGNET_SIZE_X <= otherKnot.getX() &&
+      knot.getX() + knot.getImageView().getBoundsInParent().getWidth() + MAGNET_SIZE_X >= otherKnot.getX()) {
 
       if (knot.getY() >= otherKnot.getY()) {
-        line = new Line(knot.getX() + knot.getPattern().get().getWidth(), knot.getY() + knot.getPattern().get().getHeight() + PADDING_HEIGHT,
-          knot.getX() + knot.getPattern().get().getWidth(), otherKnot.getY() - PADDING_HEIGHT);
+        line = new Line(knot.getX() + knot.getImageView().getBoundsInParent().getWidth(), knot.getY() + knot.getImageView().getBoundsInParent().getHeight() + PADDING_HEIGHT,
+          knot.getX() + knot.getImageView().getBoundsInParent().getWidth(), otherKnot.getY() - PADDING_HEIGHT);
       } else {
-        line = new Line(knot.getX() + knot.getPattern().get().getWidth(), knot.getY() - PADDING_HEIGHT,
-          knot.getX() + knot.getPattern().get().getWidth(), otherKnot.getY() + knot.getPattern().get().getHeight() + PADDING_HEIGHT);
+        line = new Line(knot.getX() + knot.getImageView().getBoundsInParent().getWidth(), knot.getY() - PADDING_HEIGHT,
+          knot.getX() + knot.getImageView().getBoundsInParent().getWidth(), otherKnot.getY() + knot.getImageView().getBoundsInParent().getHeight() + PADDING_HEIGHT);
       }
       line.setStroke(Color.BLACK);
 
@@ -111,10 +111,10 @@ public class GuideLinesUtil {
       knot.getY() + MAGNET_SIZE_Y >= otherKnot.getY()) {
 
       if (knot.getX() >= otherKnot.getX()) {
-        line = new Line(knot.getX() + knot.getPattern().get().getWidth() + PADDING_WIDTH, knot.getY(),
+        line = new Line(knot.getX() + knot.getImageView().getBoundsInParent().getWidth() + PADDING_WIDTH, knot.getY(),
           otherKnot.getX() - PADDING_WIDTH, knot.getY());
       } else {
-        line = new Line(otherKnot.getX() + otherKnot.getPattern().get().getWidth() + PADDING_WIDTH, knot.getY(),
+        line = new Line(otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getWidth() + PADDING_WIDTH, knot.getY(),
           knot.getX() - PADDING_WIDTH, knot.getY());
       }
       line.setStroke(Color.BLACK);
@@ -127,15 +127,15 @@ public class GuideLinesUtil {
   private void lineYBottomBottom(Knot knot, Knot otherKnot, Group root) {
     Line line = null;
 
-    if (knot.getY() + knot.getPattern().get().getHeight() - MAGNET_SIZE_Y <= otherKnot.getY() + otherKnot.getPattern().get().getHeight() &&
-      knot.getY() + knot.getPattern().get().getHeight() + MAGNET_SIZE_Y >= otherKnot.getY() + otherKnot.getPattern().get().getHeight()) {
+    if (knot.getY() + knot.getImageView().getBoundsInParent().getHeight() - MAGNET_SIZE_Y <= otherKnot.getY() + otherKnot.getImageView().getBoundsInParent().getHeight() &&
+      knot.getY() + knot.getImageView().getBoundsInParent().getHeight() + MAGNET_SIZE_Y >= otherKnot.getY() + otherKnot.getImageView().getBoundsInParent().getHeight()) {
 
       if (knot.getX() >= otherKnot.getX()) {
-        line = new Line(knot.getX() + knot.getPattern().get().getWidth() + PADDING_WIDTH, knot.getY() + knot.getPattern().get().getHeight(),
-          otherKnot.getX() - PADDING_WIDTH, knot.getY() + otherKnot.getPattern().get().getHeight());
+        line = new Line(knot.getX() + knot.getImageView().getBoundsInParent().getWidth() + PADDING_WIDTH, knot.getY() + knot.getImageView().getBoundsInParent().getHeight(),
+          otherKnot.getX() - PADDING_WIDTH, knot.getY() + otherKnot.getImageView().getBoundsInParent().getHeight());
       } else {
-        line = new Line(otherKnot.getX() + otherKnot.getPattern().get().getWidth() + PADDING_WIDTH, knot.getY() + knot.getPattern().get().getHeight(),
-          knot.getX() - PADDING_WIDTH, knot.getY() + knot.getPattern().get().getHeight());
+        line = new Line(otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getWidth() + PADDING_WIDTH, knot.getY() + knot.getImageView().getBoundsInParent().getHeight(),
+          knot.getX() - PADDING_WIDTH, knot.getY() + knot.getImageView().getBoundsInParent().getHeight());
       }
       line.setStroke(Color.BLACK);
 
@@ -148,15 +148,15 @@ public class GuideLinesUtil {
   private void lineYTopBottom(Knot knot, Knot otherKnot, Group root) {
     Line line = null;
 
-    if (knot.getY() - MAGNET_SIZE_Y <= otherKnot.getY() + otherKnot.getPattern().get().getHeight() &&
-      knot.getY() + MAGNET_SIZE_Y >= otherKnot.getY() + otherKnot.getPattern().get().getHeight()) {
+    if (knot.getY() - MAGNET_SIZE_Y <= otherKnot.getY() + otherKnot.getImageView().getBoundsInParent().getHeight() &&
+      knot.getY() + MAGNET_SIZE_Y >= otherKnot.getY() + otherKnot.getImageView().getBoundsInParent().getHeight()) {
 
       if (knot.getX() >= otherKnot.getX()) {
-        line = new Line(knot.getX() + knot.getPattern().get().getWidth() + PADDING_WIDTH, otherKnot.getY() + otherKnot.getPattern().get().getHeight(),
-          otherKnot.getX() - PADDING_WIDTH, otherKnot.getY() + otherKnot.getPattern().get().getHeight());
+        line = new Line(knot.getX() + knot.getImageView().getBoundsInParent().getWidth() + PADDING_WIDTH, otherKnot.getY() + otherKnot.getImageView().getBoundsInParent().getHeight(),
+          otherKnot.getX() - PADDING_WIDTH, otherKnot.getY() + otherKnot.getImageView().getBoundsInParent().getHeight());
       } else {
-        line = new Line(otherKnot.getX() + otherKnot.getPattern().get().getWidth() + PADDING_WIDTH, otherKnot.getY() + otherKnot.getPattern().get().getHeight(),
-          knot.getX() - PADDING_WIDTH, otherKnot.getY() + otherKnot.getPattern().get().getHeight());
+        line = new Line(otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getWidth() + PADDING_WIDTH, otherKnot.getY() + otherKnot.getImageView().getBoundsInParent().getHeight(),
+          knot.getX() - PADDING_WIDTH, otherKnot.getY() + otherKnot.getImageView().getBoundsInParent().getHeight());
       }
       line.setStroke(Color.BLACK);
 
@@ -168,15 +168,15 @@ public class GuideLinesUtil {
   private void lineYBottomTop(Knot knot, Knot otherKnot, Group root) {
     Line line = null;
 
-    if (knot.getY() + knot.getPattern().get().getHeight() - MAGNET_SIZE_Y <= otherKnot.getY() &&
-      knot.getY() + knot.getPattern().get().getHeight() + MAGNET_SIZE_Y >= otherKnot.getY()) {
+    if (knot.getY() + knot.getImageView().getBoundsInParent().getHeight() - MAGNET_SIZE_Y <= otherKnot.getY() &&
+      knot.getY() + knot.getImageView().getBoundsInParent().getHeight() + MAGNET_SIZE_Y >= otherKnot.getY()) {
 
       if (knot.getX() >= otherKnot.getX()) {
-        line = new Line(knot.getX() + knot.getPattern().get().getWidth() + PADDING_WIDTH, knot.getY() + knot.getPattern().get().getHeight(),
-          otherKnot.getX() - PADDING_WIDTH, knot.getY() + knot.getPattern().get().getHeight());
+        line = new Line(knot.getX() + knot.getImageView().getBoundsInParent().getWidth() + PADDING_WIDTH, knot.getY() + knot.getImageView().getBoundsInParent().getHeight(),
+          otherKnot.getX() - PADDING_WIDTH, knot.getY() + knot.getImageView().getBoundsInParent().getHeight());
       } else {
-        line = new Line(knot.getX() - knot.getPattern().get().getWidth() - PADDING_WIDTH, knot.getY() + knot.getPattern().get().getHeight(),
-          otherKnot.getX() + otherKnot.getPattern().get().getWidth() + PADDING_WIDTH, knot.getY() + knot.getPattern().get().getHeight());
+        line = new Line(knot.getX() - knot.getImageView().getBoundsInParent().getWidth() - PADDING_WIDTH, knot.getY() + knot.getImageView().getBoundsInParent().getHeight(),
+          otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getWidth() + PADDING_WIDTH, knot.getY() + knot.getImageView().getBoundsInParent().getHeight());
       }
       line.setStroke(Color.BLACK);
 
@@ -188,16 +188,16 @@ public class GuideLinesUtil {
   private void lineXCenterCenter(Knot knot, Knot otherKnot, Group root) {
     Line line = null;
 
-    if (knot.getX() + knot.getPattern().get().getCenterX() - MAGNET_SIZE_X <= otherKnot.getX() + otherKnot.getPattern().get().getCenterX() &&
+    if (knot.getX() + knot.getImageView().getBoundsInParent().getCenterX() - MAGNET_SIZE_X <= otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getCenterX() &&
 
-      knot.getX() + knot.getPattern().get().getCenterX() + MAGNET_SIZE_X >= otherKnot.getX() + otherKnot.getPattern().get().getCenterX()) {
+      knot.getX() + knot.getImageView().getBoundsInParent().getCenterX() + MAGNET_SIZE_X >= otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getCenterX()) {
 
       if (knot.getY() >= otherKnot.getY()) {
-        line = new Line(knot.getX() + knot.getPattern().get().getCenterX(), knot.getY() + knot.getPattern().get().getHeight() + PADDING_HEIGHT,
-          knot.getX() + knot.getPattern().get().getCenterX(), otherKnot.getY() - PADDING_HEIGHT);
+        line = new Line(knot.getX() + knot.getImageView().getBoundsInParent().getCenterX(), knot.getY() + knot.getImageView().getBoundsInParent().getHeight() + PADDING_HEIGHT,
+          knot.getX() + knot.getImageView().getBoundsInParent().getCenterX(), otherKnot.getY() - PADDING_HEIGHT);
       } else {
-        line = new Line(knot.getX() + knot.getPattern().get().getCenterX(), knot.getY() - PADDING_HEIGHT,
-          knot.getX() + knot.getPattern().get().getCenterX(), otherKnot.getY() + knot.getPattern().get().getHeight() + PADDING_HEIGHT);
+        line = new Line(knot.getX() + knot.getImageView().getBoundsInParent().getCenterX(), knot.getY() - PADDING_HEIGHT,
+          knot.getX() + knot.getImageView().getBoundsInParent().getCenterX(), otherKnot.getY() + knot.getImageView().getBoundsInParent().getHeight() + PADDING_HEIGHT);
       }
       line.setStroke(Color.BLACK);
 
@@ -209,15 +209,15 @@ public class GuideLinesUtil {
   private void lineYCenterCenter(Knot knot, Knot otherKnot, Group root) {
     Line line = null;
 
-    if (knot.getY() + knot.getPattern().get().getCenterY() - MAGNET_SIZE_Y <= otherKnot.getY() + otherKnot.getPattern().get().getCenterY() &&
-      knot.getY() + knot.getPattern().get().getCenterY() + MAGNET_SIZE_Y >= otherKnot.getY() + otherKnot.getPattern().get().getCenterY()) {
+    if (knot.getY() + knot.getImageView().getBoundsInParent().getCenterY() - MAGNET_SIZE_Y <= otherKnot.getY() + otherKnot.getImageView().getBoundsInParent().getCenterY() &&
+      knot.getY() + knot.getImageView().getBoundsInParent().getCenterY() + MAGNET_SIZE_Y >= otherKnot.getY() + otherKnot.getImageView().getBoundsInParent().getCenterY()) {
 
       if (knot.getX() >= otherKnot.getX()) {
-        line = new Line(knot.getX() + knot.getPattern().get().getWidth() + PADDING_WIDTH, knot.getY() + knot.getPattern().get().getCenterY(),
-          otherKnot.getX() - PADDING_WIDTH, knot.getY() + knot.getPattern().get().getCenterY());
+        line = new Line(knot.getX() + knot.getImageView().getBoundsInParent().getWidth() + PADDING_WIDTH, knot.getY() + knot.getImageView().getBoundsInParent().getCenterY(),
+          otherKnot.getX() - PADDING_WIDTH, knot.getY() + knot.getImageView().getBoundsInParent().getCenterY());
       } else {
-        line = new Line(otherKnot.getX() + otherKnot.getPattern().get().getWidth() + PADDING_WIDTH, knot.getY() + knot.getPattern().get().getCenterY(),
-          knot.getX() - PADDING_WIDTH, knot.getY() + knot.getPattern().get().getCenterY());
+        line = new Line(otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getWidth() + PADDING_WIDTH, knot.getY() + knot.getImageView().getBoundsInParent().getCenterY(),
+          knot.getX() - PADDING_WIDTH, knot.getY() + knot.getImageView().getBoundsInParent().getCenterY());
       }
       line.setStroke(Color.BLACK);
 

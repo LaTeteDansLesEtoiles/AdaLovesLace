@@ -267,7 +267,10 @@ public class MainWindow {
       hasClickedOnAGivenKnot = new NodeUtil().isMouseOverKnot(knot);
 
       if (hasClickedOnAGivenKnot && (knot.getSelection() == null)) {
-        logger.debug("Clicked Knot {} in order to select it", knot.getPattern().get().getFilename());
+        logger.debug("Clicked Knot {} in order to select it",
+                knot.getPattern().isPresent() ?
+                        knot.getPattern().get().getFilename() :
+                        knot.getText().get().toString());
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {

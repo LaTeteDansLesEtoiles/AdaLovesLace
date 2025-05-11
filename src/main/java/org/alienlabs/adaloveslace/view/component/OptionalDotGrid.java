@@ -244,8 +244,14 @@ public class OptionalDotGrid extends Pane {
 
       // Only the first knot of a multi-selection has a handle
       getDiagram().deleteHandlesFromCurrentStep(getRoot());
+      Circle handle;
 
-      Circle handle = newHandle(knot, Color.rgb(0,0,255, 0.3), rec);
+      if (knot.getPattern().isPresent()) {
+        handle = newHandleForPattern(knot, Color.rgb(0, 0, 255, 0.3), rec);
+      } else {
+        handle = newHandleForText(knot, Color.rgb(0, 0, 255, 0.3), rec);
+      }
+
       knot.setHandle(handle);
       root.getChildren().add(handle);
 
@@ -258,7 +264,7 @@ public class OptionalDotGrid extends Pane {
   // The handle is the top left corner of the rectangle of the zoomed, rotated knot
   // @see https://stackoverflow.com/questions/41898990/find-corners-of-a-rotated-rectangle-given-its-center-point-and-rotation
   // And invert "TOP LEFT VERTEX:" & "BOTTOM LEFT VERTEX:" (small error from the author)
-  private Circle newHandle(Knot knot, Color handleColor, Rectangle rec) {
+  private Circle newHandleForPattern(Knot knot, Color handleColor, Rectangle rec) {
     Circle circle = new Circle(
             knot.getImageView().getBoundsInParent().getCenterX() -
                     (knot.getPattern().get().getWidth() / 2 * rec.getScaleX()) *
@@ -269,6 +275,24 @@ public class OptionalDotGrid extends Pane {
                     (knot.getPattern().get().getWidth() / 2 * rec.getScaleX()) *
                             Math.sin(Math.toRadians(knot.getRotationAngle())) -
                     (knot.getPattern().get().getHeight() / 2 * rec.getScaleY()) *
+                            Math.cos(Math.toRadians(knot.getRotationAngle())),
+            HANDLE_SIZE * computeZoomFactor(knot),
+            handleColor);
+    circle.setId(UUID.randomUUID().toString());
+    return circle;
+  }
+
+  private Circle newHandleForText(Knot knot, Color handleColor, Rectangle rec) {
+    Circle circle = new Circle(
+            knot.getImageView().getBoundsInParent().getCenterX() -
+                    (knot.getImageView().getBoundsInParent().getWidth() / 2 * rec.getScaleX()) *
+                            Math.cos(Math.toRadians(knot.getRotationAngle())) +
+                    (knot.getImageView().getBoundsInParent().getHeight() / 2 * rec.getScaleY()) *
+                            Math.sin(Math.toRadians(knot.getRotationAngle())),
+            knot.getImageView().getBoundsInParent().getCenterY() -
+                    (knot.getImageView().getBoundsInParent().getWidth() / 2 * rec.getScaleX()) *
+                            Math.sin(Math.toRadians(knot.getRotationAngle())) -
+                    (knot.getImageView().getBoundsInParent().getHeight() / 2 * rec.getScaleY()) *
                             Math.cos(Math.toRadians(knot.getRotationAngle())),
             HANDLE_SIZE * computeZoomFactor(knot),
             handleColor);
@@ -369,7 +393,7 @@ public class OptionalDotGrid extends Pane {
     double x = knot.getX();
     double y = knot.getY();
 
-    if (knot.getText().isPresent() && !knot.getText().get().isEmpty()) {
+    if (knot.getText().isPresent()) {
       imageView = drawTextImageView(knot, x, y);
     } else {
       imageView = rotateKnot(knot);
@@ -400,10 +424,6 @@ public class OptionalDotGrid extends Pane {
     WritableImage snapshot = text.snapshot(params, null);
     imageView.setImage(snapshot);
 
-    if (root.getChildren().contains(knot.getImageView())) {
-      root.getChildren().remove(knot.getImageView());
-    }
-
     knot.setImageView(imageView);
     root.getChildren().add(knot.getImageView());
     return imageView;
@@ -427,7 +447,11 @@ public class OptionalDotGrid extends Pane {
 
     drawGuideLines(step, knot);
 
-    logger.debug("drawing top left corner of knot {} to ({},{})", knot.getPattern().get().getFilename(), x, y);
+    logger.debug("drawing top left corner of knot {} to ({},{})",
+            knot.getPattern().isPresent() ?
+                    knot.getPattern().get().getFilename() :
+                    knot.getText().toString(),
+            x, y);
   }
 
   // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
@@ -452,8 +476,8 @@ public class OptionalDotGrid extends Pane {
     Rotate rot = new Rotate();
     rot.setAxis(axis);
     rot.setAngle(flip ? 180d : 0d);
-    rot.setPivotX(knot.getX() + knot.getPattern().get().getCenterX());
-    rot.setPivotY(knot.getY() + knot.getPattern().get().getCenterY());
+    rot.setPivotX(knot.getX() + knot.getImageView().getBoundsInParent().getCenterX());
+    rot.setPivotY(knot.getY() + knot.getImageView().getBoundsInParent().getCenterY());
 
     knot.getImageView().getTransforms().add(rot);
   }
@@ -488,7 +512,11 @@ public class OptionalDotGrid extends Pane {
       root.getChildren().add(knot.getImageView());
     }
 
-    logger.debug("rotated knot {} at angle {}", knot.getPattern().get().getFilename(), knot.getRotationAngle());
+    logger.debug("rotated knot {} at angle {}",
+            knot.getPattern().isPresent() ?
+                    knot.getPattern().get().getFilename() :
+                    knot.getText().toString(),
+            knot.getRotationAngle());
 
     return knot.getImageView();
   }

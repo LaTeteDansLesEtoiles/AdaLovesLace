@@ -222,23 +222,15 @@ public class Knot implements Comparable<Knot> {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+  public final boolean equals(Object o) {
+    if (!(o instanceof Knot knot)) return false;
 
-    Knot knot = (Knot) o;
-    return Double.compare(x, knot.x) == 0 && Double.compare(y, knot.y) == 0 && visible == knot.visible && selectable == knot.selectable && pattern.equals(knot.pattern);
+    return uuid.equals(knot.uuid);
   }
 
   @Override
   public int hashCode() {
-    int result = Double.hashCode(x);
-    result = 31 * result + Double.hashCode(y);
-    result = 31 * result + pattern.hashCode();
-    result = 31 * result + text.hashCode();
-    result = 31 * result + Boolean.hashCode(visible);
-    result = 31 * result + Boolean.hashCode(selectable);
-    return result;
+    return uuid.hashCode();
   }
 
   @Override
