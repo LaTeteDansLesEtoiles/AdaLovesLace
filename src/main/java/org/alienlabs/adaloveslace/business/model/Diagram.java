@@ -4,13 +4,19 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
@@ -22,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
+import static org.alienlabs.adaloveslace.App.CANVAS_TEXT_FONT_SIZE;
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 
@@ -68,6 +75,9 @@ public class Diagram {
 
     @XmlTransient
     private static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
+    public static StringBuilder typedText = new StringBuilder();
+    public static EventHandler<KeyEvent> keyHandler;
+    private boolean shouldUpdate;
 
     // For JAXB
     public Diagram() {
@@ -273,28 +283,119 @@ public class Diagram {
 
     public void drawKnot(double x, double y) {
         logger.debug("Current pattern  -> {}", this.getCurrentPattern());
+        ImageView iv;
+
+        if (PatternOrTextMode.PATTERN
+                .equals(app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get())) {
+            iv = drawPattern(x, y);
+        } else {
+            iv = drawText(x, y);
+        }
+
+        if (null != iv) {
+            createImageViewWithStep(x, y, iv);
+        }
+    }
+
+    private void createImageViewWithStep(double x, double y, ImageView iv) {
+        Knot oldCurrentKnot = this.getCurrentKnot();
+
+        currentKnot = new Knot(
+                x,
+                y,
+                Optional.of(this.getCurrentPattern()),
+                Optional.of(typedText.toString()),
+                iv
+        );
+        this.setCurrentKnot(currentKnot);
+
+        List<Knot> displayed = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+        if (!currentKnot.getText().orElse("").isEmpty()) {
+            displayed.remove(oldCurrentKnot);
+        }
+        displayed.add(currentKnot);
+
+        newStep(displayed, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots(), true);
+    }
+
+    public ImageView drawText(double x, double y) {
+        logger.info("text -> {}", typedText);
+
+        Text text = new Text();
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+        ImageView imageView = new ImageView();
+        boolean click = true;
+
+        if (keyHandler != null) {
+            click = false;
+            text.setText(typedText.toString());
+            text.setFont(new Font(CANVAS_TEXT_FONT_SIZE));
+            text.setFill(Color.BLACK);
+            text.setX(x);
+            text.setY(y);
+
+            WritableImage snapshot = text.snapshot(params, null);
+            imageView.setImage(snapshot);
+        }
+
+        shouldUpdate = true;
+        Runnable updateImage = () -> {
+            logger.info("updated text -> {}", typedText);
+            text.setText(typedText.toString());
+            WritableImage s = text.snapshot(params, null);
+            imageView.setImage(s);
+            createImageViewWithStep(x, y, imageView);
+        };
+
+        if (keyHandler == null) {
+            keyHandler = event -> {
+                logger.info("key pressed -> {}", event.getCode());
+
+                switch (event.getCode()) {
+                    case BACK_SPACE:
+                        if (typedText.length() > 0)
+                            typedText.deleteCharAt(typedText.length() - 1);
+                        break;
+                    case ENTER:
+                        typedText.append("\n");
+                        break;
+                    default:
+                        if (!event.isControlDown() && event.getText().length() > 0) {
+                            typedText.append(event.getText());
+                        } else if (event.isControlDown()) {
+                            shouldUpdate = false;
+                        }
+                }
+
+                if (shouldUpdate) {
+                    updateImage.run();
+                }
+            };
+
+            app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
+        }
+
+        return click ? null : imageView;
+    }
+
+    private ImageView drawPattern(double x, double y) {
+        ImageView iv = null;
 
         try (FileInputStream fis = new FileInputStream(new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, this.getCurrentPattern().getFilename()))) {
             Image image = new Image(fis);
-            ImageView iv = new ImageView(image);
+            iv = new ImageView(image);
 
             iv.setX(x);
             iv.setY(y);
             iv.setRotate(0d);
 
             logger.debug("Top left corner of the knot {} is ({},{})", this.getCurrentPattern().getFilename(), x, y);
-
-            app.getOptionalDotGrid().getRoot().getChildren().add(iv);
-            currentKnot = new Knot(x, y, Optional.of(this.getCurrentPattern()), Optional.of(""), iv);
-            this.setCurrentKnot(currentKnot);
-
-            List<Knot> displayed = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-            displayed.add(currentKnot);
-
-            newStep(displayed, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots(), true);
         } catch (IOException e) {
             logger.error("Problem with pattern resource file!", e);
         }
+
+        return iv;
     }
 
     public void deleteNodesFromFollowingSteps(App app, Knot knot) {
@@ -382,6 +483,10 @@ public class Diagram {
 
     public void setApp(App app) {
         Diagram.app = app;
+    }
+
+    public void resetText() {
+        typedText = new StringBuilder();
     }
 
 }

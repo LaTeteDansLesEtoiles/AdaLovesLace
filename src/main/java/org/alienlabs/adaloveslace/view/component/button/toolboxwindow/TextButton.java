@@ -23,7 +23,8 @@ public class TextButton extends ToggleButton {
 
     this.setOnMouseClicked(event -> {
       app.unselectPatternsAndTextButtons();
-
+      app.getOptionalDotGrid().getDiagram().resetText();
+      app.getOptionalDotGrid().getRoot().setOnKeyPressed(null);
       this.setSelected(true);
       this.getStyleClass().add(PATTERN_AND_TEXT_BUTTON_SELECTED);
       app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().set(PatternOrTextMode.TEXT);

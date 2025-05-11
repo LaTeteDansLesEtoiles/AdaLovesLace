@@ -3,12 +3,15 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.alienlabs.adaloveslace.business.model.PatternOrTextMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.alienlabs.adaloveslace.business.model.Diagram.keyHandler;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON_SELECTED;
 
@@ -33,6 +36,10 @@ public class PatternButton extends ToggleButton {
     this.getStyleClass().add(PATTERN_AND_TEXT_BUTTON); // 👈 relie au style CSS
     this.setSelected(false);
 
+    if (null != keyHandler) {
+      app.getScene().removeEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
+    }
+
     this.setOnMouseClicked(event -> {
       app.unselectPatternsAndTextButtons();
 
@@ -44,6 +51,7 @@ public class PatternButton extends ToggleButton {
 
       app.getOptionalDotGrid().getCurrentPatternProperty().set(newCurrentPattern);
       app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().set(PatternOrTextMode.PATTERN);
+      Diagram.typedText = new StringBuilder();
     });
   }
 

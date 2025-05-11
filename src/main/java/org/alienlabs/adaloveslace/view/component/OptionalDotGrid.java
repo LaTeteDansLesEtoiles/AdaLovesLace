@@ -6,14 +6,18 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.*;
@@ -27,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
+import static org.alienlabs.adaloveslace.App.CANVAS_TEXT_FONT_SIZE;
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 import static org.alienlabs.adaloveslace.util.NodeUtil.HANDLE_SIZE;
@@ -219,8 +224,10 @@ public class OptionalDotGrid extends Pane {
               && knot.getHovered() != null) {
         Platform.runLater(() -> {
           logger.debug("Removing node {} and hover {} from hovered {}", knot, knot.getHovered(), root.getChildren().remove(knot.getHovered()));
+
+          root.getChildren().remove(knot.getHovered());
+          knot.setHoveredKnot(false);
           knot.setHovered(null);
-          layoutChildren();
         });
       }
     }
@@ -273,8 +280,8 @@ public class OptionalDotGrid extends Pane {
     Rectangle rec = new Rectangle(
             knot.getX(),
             knot.getY(),
-            knot.getPattern().get().getWidth(),
-            knot.getPattern().get().getHeight()
+            knot.getImageView().getBoundsInParent().getWidth(),
+            knot.getImageView().getBoundsInParent().getHeight()
     );
     rec.setId(UUID.randomUUID().toString());
     rec.setStroke(color);
@@ -358,30 +365,65 @@ public class OptionalDotGrid extends Pane {
   }
 
   private void drawDisplayedKnot(Knot knot) {
-    ImageView iv = rotateKnot(knot);
-    zoomAndFlipKnot(knot);
-
+    ImageView imageView;
     double x = knot.getX();
     double y = knot.getY();
 
-    iv.setX(x);
-    iv.setY(y);
+    if (knot.getText().isPresent() && !knot.getText().get().isEmpty()) {
+      imageView = drawTextImageView(knot, x, y);
+    } else {
+      imageView = rotateKnot(knot);
+      zoomAndFlipKnot(knot);
+    }
 
-    knot.setImageView(iv);
+    imageView.setX(x);
+    imageView.setY(y);
 
-    logger.debug("drawing top left corner of knot {} to ({},{})", knot.getPattern().get().getFilename(), x, y);
+    logger.debug("drawing top left corner of knot {} to ({},{})", knot, x, y);
+  }
+
+  private ImageView drawTextImageView(Knot knot, double x, double y) {
+    ImageView imageView;
+    Text text = new Text();
+    text.setText(knot.getText().get());
+    text.setFont(new Font(CANVAS_TEXT_FONT_SIZE));
+    text.setFill(Color.BLACK);
+    SnapshotParameters params = new SnapshotParameters();
+    params.setFill(Color.TRANSPARENT);
+    text.setX(x);
+    text.setY(y);
+
+    imageView = new ImageView();
+    imageView.setScaleX(computeZoomFactor(knot));
+    imageView.setScaleY(computeZoomFactor(knot));
+    imageView.setRotate(knot.getRotationAngle());
+    WritableImage snapshot = text.snapshot(params, null);
+    imageView.setImage(snapshot);
+
+    if (root.getChildren().contains(knot.getImageView())) {
+      root.getChildren().remove(knot.getImageView());
+    }
+
+    knot.setImageView(imageView);
+    root.getChildren().add(knot.getImageView());
+    return imageView;
   }
 
   private void drawSelectedKnot(Step step, Knot knot) {
-    ImageView iv = rotateKnot(knot);
-    zoomAndFlipKnot(knot);
-
+    ImageView imageView;
     double x = knot.getX();
     double y = knot.getY();
 
-    iv.setX(x);
-    iv.setY(y);
-    knot.setImageView(iv);
+    if (knot.getText().isPresent() && !knot.getText().get().isEmpty()) {
+      imageView = drawTextImageView(knot, x, y);
+    } else {
+      imageView = rotateKnot(knot);
+      zoomAndFlipKnot(knot);
+    }
+
+    imageView.setX(x);
+    imageView.setY(y);
+    knot.setImageView(imageView);
 
     drawGuideLines(step, knot);
 

@@ -235,21 +235,10 @@ public class Knot implements Comparable<Knot> {
     int result = Double.hashCode(x);
     result = 31 * result + Double.hashCode(y);
     result = 31 * result + pattern.hashCode();
+    result = 31 * result + text.hashCode();
     result = 31 * result + Boolean.hashCode(visible);
     result = 31 * result + Boolean.hashCode(selectable);
     return result;
-  }
-
-  @Override
-  public String toString() {
-    return "Knot{" +
-      "pattern=" + pattern.get().getFilename() +
-      ", isHovered=" + hoveredKnot +
-      ", uuid=" + uuid +
-      ", x=" + x +
-      ", y=" + y +
-      ", visible=" + visible +
-      '}';
   }
 
   @Override

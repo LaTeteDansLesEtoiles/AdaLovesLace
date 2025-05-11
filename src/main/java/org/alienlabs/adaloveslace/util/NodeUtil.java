@@ -3,8 +3,8 @@ package org.alienlabs.adaloveslace.util;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.business.model.Knot;
-
-import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.util.Events.app;
 
@@ -12,6 +12,7 @@ public class NodeUtil {
 
   public static final int KNOT_PADDING  = 10;   // https://stackoverflow.com/questions/36294985/javafx-get-the-x-and-y-pixel-coordinates-clicked-on-an-imageview
   public static final int HANDLE_SIZE   = 25;
+  private static final Logger logger = LoggerFactory.getLogger(NodeUtil.class);
 
 
   public NodeUtil() {
@@ -20,21 +21,19 @@ public class NodeUtil {
 
   public boolean isMouseOverKnot(Knot knot) {
     return (knot.getImageView().isHover())
-            || ((knot.getHovered() != null)
-            && (knot.getHovered().isHover())
-            || ((knot.getSelection() != null)
-            && (knot.getSelection().isHover())));
+            || ((knot.getHovered() != null) && (knot.getHovered().isHover()))
+            || ((knot.getSelection() != null) && (knot.getSelection().isHover()));
   }
 
   public Knot copyKnot(Knot knot) {
-    Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), Optional.of(""), knot.getImageView());
+    Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), knot.getText(), knot.getImageView());
     copy(knot, copy);
 
     return copy;
   }
 
   public Knot copyKnotCloningImageView(Knot knot) {
-    Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), Optional.of(""), new ImageView(knot.getImageView().getImage()));
+    Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), knot.getText(), new ImageView(knot.getImageView().getImage()));
     copy(knot, copy);
     copy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
     copy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
@@ -52,8 +51,8 @@ public class NodeUtil {
 
     copy.getImageView().setX(knot.getX());
     copy.getImageView().setY(knot.getY());
-    copy.getImageView().setFitHeight(knot.getPattern().get().getHeight());
-    copy.getImageView().setFitWidth(knot.getPattern().get().getWidth());
+    copy.getImageView().setFitHeight(knot.getImageView().getBoundsInParent().getHeight());
+    copy.getImageView().setFitWidth(knot.getImageView().getBoundsInParent().getWidth());
 
     if (knot.getHovered() != null) {
       copy.setHovered(knot.getHovered());

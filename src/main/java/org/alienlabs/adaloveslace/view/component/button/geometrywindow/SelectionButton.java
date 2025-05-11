@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
+import static org.alienlabs.adaloveslace.business.model.Diagram.keyHandler;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class SelectionButton extends ToggleButton {
@@ -34,7 +36,11 @@ public class SelectionButton extends ToggleButton {
 
   public static void onSetSelectionModeAction(App app, GeometryWindow window) {
     logger.debug("Setting selection mode");
+
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
+    if (null != keyHandler) {
+      app.getScene().removeEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
+    }
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
       if (knot.isSelectable()) {

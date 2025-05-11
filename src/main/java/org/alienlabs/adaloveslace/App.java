@@ -85,6 +85,7 @@ public class App extends Application {
   public static final double  GRID_HEIGHT             = 650d;
   public static final int     ICON_SIZE               = 46;
   public static final int     SMALL_ICON_SIZE         = 23;
+  public static final int     CANVAS_TEXT_FONT_SIZE   = 32;
 
   public static final double  GRID_DOTS_RADIUS        = 2.5d;// The dots from the grid are ellipses, this is their radius
   public static final String LOCALE_LANGUAGE = "LOCALE_LANGUAGE";
