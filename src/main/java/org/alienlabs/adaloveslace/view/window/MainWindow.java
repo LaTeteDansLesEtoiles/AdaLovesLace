@@ -294,9 +294,11 @@ public class MainWindow {
         break;
       } else if (hasClickedOnAGivenKnot) {
         logger.debug("Clicked Knot displayed {}, pattern {} in order to unselect it",
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot), knot.getPattern().get().getFilename());
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot),
+                knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : knot.getText().get().toString());
         logger.debug("Clicked Knot selected {}, pattern {} in order to unselect it",
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot), knot.getPattern().get().getFilename());
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot),
+                knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : knot.getText().get().toString());
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {

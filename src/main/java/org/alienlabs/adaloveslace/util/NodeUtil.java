@@ -51,8 +51,6 @@ public class NodeUtil {
 
     copy.getImageView().setX(knot.getX());
     copy.getImageView().setY(knot.getY());
-    copy.getImageView().setFitHeight(knot.getImageView().getBoundsInParent().getHeight());
-    copy.getImageView().setFitWidth(knot.getImageView().getBoundsInParent().getWidth());
 
     if (knot.getHovered() != null) {
       copy.setHovered(knot.getHovered());

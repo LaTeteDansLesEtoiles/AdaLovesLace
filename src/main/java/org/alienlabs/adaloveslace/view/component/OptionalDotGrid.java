@@ -191,7 +191,7 @@ public class OptionalDotGrid extends Pane {
       } else if (knot.isHoveredKnot()) {
         // If hovered & not selected: gray
         Platform.runLater(() -> {
-          Rectangle rec = newRectangle(knot, Color.GRAY);
+          Rectangle rec = newHoverRectangle(knot);
           knot.setHovered(rec);
           logger.debug("Adding hover {} for Knot {}", rec, knot);
           root.getChildren().add(rec);
@@ -304,9 +304,27 @@ public class OptionalDotGrid extends Pane {
     Rectangle rec = new Rectangle(
             knot.getX(),
             knot.getY(),
+            knot.getImageView().getImage().getWidth(),
+            knot.getImageView().getImage().getHeight()
+    );
+    setRectangleProperties(knot, color, rec);
+
+    return rec;
+  }
+
+  private Rectangle newHoverRectangle(Knot knot) {
+    Rectangle rec = new Rectangle(
+            knot.getX(),
+            knot.getY(),
             knot.getImageView().getBoundsInParent().getWidth(),
             knot.getImageView().getBoundsInParent().getHeight()
     );
+    setRectangleProperties(knot, Color.GRAY, rec);
+
+    return rec;
+  }
+
+  private void setRectangleProperties(Knot knot, Color color, Rectangle rec) {
     rec.setId(UUID.randomUUID().toString());
     rec.setStroke(color);
     rec.setStrokeWidth(2d);
@@ -314,8 +332,6 @@ public class OptionalDotGrid extends Pane {
     rec.setScaleX(computeZoomFactor(knot));
     rec.setScaleY(computeZoomFactor(knot));
     rec.setRotate(knot.getRotationAngle());
-
-    return rec;
   }
 
   public void drawGuideLines(final Step step, final Knot knot) {
