@@ -42,7 +42,7 @@ public class Knot implements Comparable<Knot> {
 
   @XmlElement
   @XmlJavaTypeAdapter(OptionalStringAdapter.class)
-  private Optional<String> text = Optional.of("");
+  private Optional<String> text = Optional.empty();
 
   private boolean visible = true;
 

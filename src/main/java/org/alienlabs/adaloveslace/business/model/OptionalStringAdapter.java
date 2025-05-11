@@ -8,7 +8,7 @@ public class OptionalStringAdapter  extends XmlAdapter<String, Optional<String>>
 
     @Override
     public Optional<String> unmarshal(String v) {
-        return Optional.ofNullable(v);
+        return v.isEmpty() ? Optional.empty() : Optional.of(v);
     }
 
     @Override

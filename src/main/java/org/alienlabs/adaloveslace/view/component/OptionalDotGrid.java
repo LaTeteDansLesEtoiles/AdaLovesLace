@@ -405,7 +405,7 @@ public class OptionalDotGrid extends Pane {
   }
 
   private void drawDisplayedKnot(Knot knot) {
-    ImageView imageView;
+    ImageView imageView = null;
     double x = knot.getX();
     double y = knot.getY();
 
@@ -413,18 +413,20 @@ public class OptionalDotGrid extends Pane {
       drawTextImageView(knot, x, y);
       imageView = rotateTextKnot(knot);
       zoomAndFlipTextKnot(knot);
-    } else {
+    } else if (knot.getPattern().isPresent()) {
       imageView = rotatePatternKnot(knot);
       zoomAndFlipPatternKnot(knot);
     }
 
-    imageView.setX(x);
-    imageView.setY(y);
+    if (null != imageView) {
+      imageView.setX(x);
+      imageView.setY(y);
 
-    logger.debug("drawing top left corner of knot {} to ({},{})", knot, x, y);
+      logger.debug("drawing top left corner of knot {} to ({},{})", knot, x, y);
+    }
   }
 
-  private ImageView drawTextImageView(Knot knot, double x, double y) {
+  public ImageView drawTextImageView(Knot knot, double x, double y) {
     ImageView imageView;
     Text text = new Text();
     text.setText(knot.getText().get());
