@@ -38,6 +38,7 @@ public class ToolboxWindow {
 
     public static final String THE_FOLLOWING_FOLDER_STRING      = "The following folder: '";
     public static final String PATTERN_AND_TEXT_BUTTON_SELECTED = "pattern-and-text-button-selected";
+    public static final String PATTERN_AND_TEXT_BUTTON_WAITING_SELECTION = "pattern-and-text-button-waiting-selection";
     public static final String PATTERN_AND_TEXT_BUTTON          = "pattern-and-text-button";
 
     private List<String> classpathResourceFiles;

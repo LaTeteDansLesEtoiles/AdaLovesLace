@@ -44,6 +44,10 @@
   -fx-border-color: blue;
 }
 
+.pattern-and-text-button-waiting-selection {
+  -fx-border-color: green;
+}
+
 .text-field, .text-area {
   -fx-background-color: #1e1e1e;
   -fx-border-color: #f1f1f1;

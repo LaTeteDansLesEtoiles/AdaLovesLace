@@ -314,18 +314,19 @@ public class Diagram {
         this.setCurrentKnot(currentKnot);
 
         List<Knot> displayed = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-        if (oldCurrentKnot != null &&
-                displayed.contains(oldCurrentKnot) &&
-                pattern == null &&
-                oldCurrentKnot.getText().isPresent() &&
-                !oldCurrentKnot.getText().get().isEmpty()
-        ) {
-            app.getRoot().getChildren().remove(oldCurrentKnot.getImageView());
-            displayed.remove(oldCurrentKnot);
-        }
-        displayed.add(currentKnot);
+        if (app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get().equals(PatternOrTextMode.TEXT) &&
+                oldCurrentKnot != null) {
+            if (!typedText.isEmpty()) {
+                app.getRoot().getChildren().remove(oldCurrentKnot.getImageView());
+                displayed.remove(oldCurrentKnot);
+            }
 
-        newStep(displayed, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots(), true);
+            displayed.add(currentKnot);
+            newStep(displayed, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots(), true);
+        } else if (app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get().equals(PatternOrTextMode.PATTERN)) {
+            displayed.add(currentKnot);
+            newStep(displayed, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots(), true);
+        }
     }
 
     public ImageView drawText(double x, double y) {
@@ -349,7 +350,8 @@ public class Diagram {
             imageView.setImage(snapshot);
         }
 
-        shouldUpdate = true;
+        shouldUpdate = false;
+
         updateImage = () -> {
             logger.info("updated text -> {}", typedText);
             text.setText(typedText.toString());
