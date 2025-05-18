@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
@@ -269,7 +270,7 @@ public class Diagram {
     public void drawGrid(double w, double h, double desiredRadius, List<Shape> grid) {
         app.getOptionalDotGrid().hideGrid();
 
-        for (double x = 10d; x < (w - 138d); x += SPACING_X) {
+        for (double x = 10d; x < w; x += SPACING_X) {
             for (double y = 10d; y < (h - 50d); y += SPACING_Y) {
                 double offsetY = (y % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
                 Ellipse ell = new Ellipse(x - desiredRadius + offsetY,y - desiredRadius, desiredRadius, desiredRadius); // A dot
@@ -389,7 +390,7 @@ public class Diagram {
         knot.getGuideLines().clear();
     }
 
-    public void deleteNodesFromFollowingSteps(Group root) {
+    public void deleteNodesFromFollowingSteps(Pane root) {
         root.getChildren().removeAll(root.getChildren().stream().filter(node ->
                 (node instanceof Line ||
                         node instanceof Rectangle ||
@@ -472,5 +473,4 @@ public class Diagram {
     public void resetText() {
         typedText = new StringBuilder();
     }
-
 }

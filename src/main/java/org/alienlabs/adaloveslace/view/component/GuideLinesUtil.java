@@ -1,6 +1,6 @@
 package org.alienlabs.adaloveslace.view.component;
 
-import javafx.scene.Group;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import org.alienlabs.adaloveslace.business.model.Knot;
@@ -12,7 +12,7 @@ public class GuideLinesUtil {
   public static final double PADDING_HEIGHT = 60d;
   public static final double PADDING_WIDTH  = 60d;
 
-  public GuideLinesUtil(Knot knot, Knot otherKnot, Group root) {
+  public GuideLinesUtil(Knot knot, Knot otherKnot, Pane root) {
     lineXLeftLeft     (knot, otherKnot, root);
     lineXRightRight   (knot, otherKnot, root);
     lineXLeftRight    (knot, otherKnot, root);
@@ -26,7 +26,7 @@ public class GuideLinesUtil {
     lineYCenterCenter (knot, otherKnot, root);
   }
 
-  private void lineXLeftLeft(Knot knot, Knot otherKnot, Group root) {
+  private void lineXLeftLeft(Knot knot, Knot otherKnot, Pane root) {
     Line line = null;
 
     if (knot.getX() - MAGNET_SIZE_X <= otherKnot.getX() && knot.getX() + MAGNET_SIZE_X >= otherKnot.getX()) {
@@ -45,7 +45,7 @@ public class GuideLinesUtil {
     }
   }
 
-  private void lineXRightRight(Knot knot, Knot otherKnot, Group root) {
+  private void lineXRightRight(Knot knot, Knot otherKnot, Pane root) {
     Line line = null;
 
     if (knot.getX() + knot.getImageView().getBoundsInParent().getWidth() - MAGNET_SIZE_X <= otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getWidth() &&
@@ -65,7 +65,7 @@ public class GuideLinesUtil {
     }
   }
 
-  private void lineXLeftRight(Knot knot, Knot otherKnot, Group root) {
+  private void lineXLeftRight(Knot knot, Knot otherKnot, Pane root) {
     Line line = null;
 
     if (knot.getX() - MAGNET_SIZE_X <= otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getWidth() && knot.getX() + MAGNET_SIZE_X >= otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getWidth()) {
@@ -84,7 +84,7 @@ public class GuideLinesUtil {
     }
   }
 
-  private void lineXRightLeft(Knot knot, Knot otherKnot, Group root) {
+  private void lineXRightLeft(Knot knot, Knot otherKnot, Pane root) {
     Line line = null;
 
     if (knot.getX() + knot.getImageView().getBoundsInParent().getWidth() - MAGNET_SIZE_X <= otherKnot.getX() &&
@@ -104,7 +104,7 @@ public class GuideLinesUtil {
     }
   }
 
-  private void lineYTopTop(Knot knot, Knot otherKnot, Group root) {
+  private void lineYTopTop(Knot knot, Knot otherKnot, Pane root) {
     Line line = null;
 
     if (knot.getY() - MAGNET_SIZE_Y <= otherKnot.getY() &&
@@ -124,7 +124,7 @@ public class GuideLinesUtil {
     }
   }
 
-  private void lineYBottomBottom(Knot knot, Knot otherKnot, Group root) {
+  private void lineYBottomBottom(Knot knot, Knot otherKnot, Pane root) {
     Line line = null;
 
     if (knot.getY() + knot.getImageView().getBoundsInParent().getHeight() - MAGNET_SIZE_Y <= otherKnot.getY() + otherKnot.getImageView().getBoundsInParent().getHeight() &&
@@ -145,7 +145,7 @@ public class GuideLinesUtil {
   }
 
 
-  private void lineYTopBottom(Knot knot, Knot otherKnot, Group root) {
+  private void lineYTopBottom(Knot knot, Knot otherKnot, Pane root) {
     Line line = null;
 
     if (knot.getY() - MAGNET_SIZE_Y <= otherKnot.getY() + otherKnot.getImageView().getBoundsInParent().getHeight() &&
@@ -165,7 +165,7 @@ public class GuideLinesUtil {
     }
   }
 
-  private void lineYBottomTop(Knot knot, Knot otherKnot, Group root) {
+  private void lineYBottomTop(Knot knot, Knot otherKnot, Pane root) {
     Line line = null;
 
     if (knot.getY() + knot.getImageView().getBoundsInParent().getHeight() - MAGNET_SIZE_Y <= otherKnot.getY() &&
@@ -185,7 +185,7 @@ public class GuideLinesUtil {
     }
   }
 
-  private void lineXCenterCenter(Knot knot, Knot otherKnot, Group root) {
+  private void lineXCenterCenter(Knot knot, Knot otherKnot, Pane root) {
     Line line = null;
 
     if (knot.getX() + knot.getImageView().getBoundsInParent().getCenterX() - MAGNET_SIZE_X <= otherKnot.getX() + otherKnot.getImageView().getBoundsInParent().getCenterX() &&
@@ -206,7 +206,7 @@ public class GuideLinesUtil {
     }
   }
 
-  private void lineYCenterCenter(Knot knot, Knot otherKnot, Group root) {
+  private void lineYCenterCenter(Knot knot, Knot otherKnot, Pane root) {
     Line line = null;
 
     if (knot.getY() + knot.getImageView().getBoundsInParent().getCenterY() - MAGNET_SIZE_Y <= otherKnot.getY() + otherKnot.getImageView().getBoundsInParent().getCenterY() &&

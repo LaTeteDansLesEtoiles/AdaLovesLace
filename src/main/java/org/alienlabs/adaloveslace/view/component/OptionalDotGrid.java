@@ -46,9 +46,9 @@ public class OptionalDotGrid extends Pane {
   double GRID_HEIGHT                    = 600d;
   public static final double TOP_MARGIN = -70d;
 
-  private final SimpleBooleanProperty   showHideGridProperty;
+  private final SimpleBooleanProperty showHideGridProperty;
   private final SimpleObjectProperty<Pattern> currentPatternProperty;
-  private boolean showHideGrid          = true;
+  private boolean showHideGrid = true;
   private boolean gridNeedsToBeRedrawn;
 
   private double desiredRadius;
@@ -58,7 +58,6 @@ public class OptionalDotGrid extends Pane {
   private final List<Shape> grid = new ArrayList<>();
 
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
-  private final Group root;
   private Knot dragOriginKnot;
 
   private App app;
@@ -70,11 +69,12 @@ public class OptionalDotGrid extends Pane {
    * @see Canvas
    *
    */
-  public OptionalDotGrid(App app, Diagram diagram, Group root) {
+  public OptionalDotGrid(App app, Diagram diagram, Pane root) {
     this.app = app;
     this.root = root;
     this.diagram = Objects.requireNonNullElseGet(diagram, () -> new Diagram(app));
 
+    this.root.getStyleClass().add("grid");
     this.desiredRadius = RADIUS;
 
     if (!this.diagram.getPatterns().isEmpty()) {
@@ -95,7 +95,7 @@ public class OptionalDotGrid extends Pane {
     this.gridNeedsToBeRedrawn = true;
   }
 
-  public OptionalDotGrid(App app, double width, double height, double desiredRadius, Diagram diagram, Group root) {
+  public OptionalDotGrid(App app, double width, double height, double desiredRadius, Diagram diagram, Pane root) {
     this(app, diagram, root);
     GRID_WIDTH = width;
     GRID_HEIGHT = height;
@@ -588,14 +588,15 @@ public class OptionalDotGrid extends Pane {
   }
 
   public void drawGrid() {
+    this.root.setPrefWidth(app.getPrimaryStage().getWidth());
+    this.root.setPrefHeight(app.getPrimaryStage().getHeight() - 150);
+
     double top = (int) snappedTopInset() + TOP_MARGIN;
-    double right = (int) snappedRightInset();
     double bottom = (int) snappedBottomInset();
-    double left = (int) snappedLeftInset();
-    double width = (int) getWidth() - left - right;
-    double height = (int) getHeight() - top - bottom - 20d;
-    root.setLayoutX(left);
-    root.setLayoutY(top);
+    double width = (int) app.getPrimaryStage().getWidth();
+    double height = (int) app.getPrimaryStage().getHeight() - 150 - top - bottom - 20d;
+
+    logger.debug("grid width: {}, height: {}", width, height);
 
     if (this.showHideGrid && this.gridNeedsToBeRedrawn) {
       this.diagram.drawGrid(width, height, desiredRadius, grid);
@@ -653,7 +654,7 @@ public class OptionalDotGrid extends Pane {
     this.showHideGrid = showHideGrid;
   }
 
-  public Group getRoot() {
+  public Pane getRoot() {
     return this.root;
   }
 

@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.unittest.business.model;
 
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
@@ -28,7 +29,7 @@ class UndoRedoStepTest {
         app = new App();
         app.setMainWindow(new MainWindow());
         this.diagram = new Diagram(app);
-        app.setOptionalDotGrid(new OptionalDotGrid(app, this.diagram, new Group()));
+        app.setOptionalDotGrid(new OptionalDotGrid(app, this.diagram, new Pane()));
         app.setDiagram(this.diagram);
     }
 

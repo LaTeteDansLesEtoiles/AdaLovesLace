@@ -5,16 +5,15 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.print.Printer;
 import javafx.print.PrinterJob;
-import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
@@ -81,7 +80,7 @@ public class MainWindow {
     // Just to be able to unit test code using the UI without effectively instantiating the UI
   }
 
-  public MenuBar createMenuBar(VBox parent, App app, Stage primaryStage) {
+  public MenuBar createMenuBar(VBox parent, App app) {
     menuBar = new MenuBar();
 
     Menu fileMenu     = new Menu(resourceBundle.getString(FILE));
@@ -211,21 +210,21 @@ public class MainWindow {
 
   public TilePane createFooter(String javafxVersion, String javaVersion) {
     footer = new TilePane(Orientation.VERTICAL);
-    footer.setPrefHeight(250); // 👈 pour s’assurer qu’il prenne de la place
-    footer.setPrefWidth(700);  // ou Double.MAX_VALUE si tu veux qu’il remplisse
+    footer.setPrefHeight(100);
+    footer.setPrefWidth(Double.MAX_VALUE);
     footer.getStyleClass().add("footer");
 
     footer.getChildren().addAll(new Label(resourceBundle.getString("Pitch")));
     footer.getChildren().addAll(new Label(resourceBundle.getString("Copyright")));
     footer.getChildren().addAll(new Label(resourceBundle.getString("License")));
     footer.getChildren().addAll(new Label("JavaFX " + javafxVersion + resourceBundle.getString("RunningWith") + javaVersion));
-    footer.setAlignment(Pos.CENTER);
+    footer.setAlignment(Pos.BOTTOM_CENTER);
 
     return footer;
   }
 
   public StackPane createGrid(App app, final double width, final double height, final double radius,
-                              final Diagram diagram, final Group canvas) {
+                              final Diagram diagram, final Pane canvas) {
     if (width == 0d || height == 0d) {
       this.optionalDotGrid = new OptionalDotGrid(app, diagram, canvas);
     } else {
@@ -244,7 +243,7 @@ public class MainWindow {
     return grid;
   }
 
-  public void onMainWindowClicked(final App app, final Group canvas) {
+  public void onMainWindowClicked(final App app, final Pane canvas) {
     canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
   }
 

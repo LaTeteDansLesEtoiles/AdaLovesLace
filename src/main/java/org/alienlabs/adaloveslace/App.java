@@ -1,20 +1,17 @@
 package org.alienlabs.adaloveslace;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -101,12 +98,13 @@ public class App extends Application {
                   DEFAULT_LOCALE_COUNTRY)
   );
 
+  private final PauseTransition resizePause = new PauseTransition(Duration.millis(700));
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   private Stage toolboxStage;
   private Diagram diagram;
   private static MainWindow mainWindow;
-  private Group root;
+  private Pane root;
   private Slider slider;
   private Scene scene;
   public Stage primaryStage;
@@ -165,11 +163,13 @@ public class App extends Application {
     var javaVersion   = SystemInfo.javaVersion();
 
     notCanvas = new VBox();
-    root                      = new Group();
-    MenuBar menuBar           = App.mainWindow.createMenuBar(notCanvas, this, primaryStage);
+    root                      = new Pane();
+
+    MenuBar menuBar           = App.mainWindow.createMenuBar(notCanvas, this);
     StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, gridDotsRadius, this.diagram, root);
     TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
 
+    VBox.setVgrow(root, Priority.ALWAYS);
     root.getChildren().add(grid);
     notCanvas.getChildren().addAll(root, footer);
     App.mainWindow.onMainWindowClicked(this, root);
@@ -198,6 +198,25 @@ public class App extends Application {
       logger.debug("You shall close the app by closing this window!");
       Platform.exit();
     });
+
+    resizePause.setOnFinished(e -> {
+      this.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+      this.getOptionalDotGrid().layoutChildren();
+    });
+
+    primaryStage.widthProperty().addListener((obs, oldVal, newVal) ->
+            {
+              logger.debug("Window width: {}", newVal);
+              resizePause.playFromStart();
+            }
+    );
+
+    primaryStage.heightProperty().addListener((obs, oldVal, newVal) ->
+            {
+              logger.debug("Window height: {}", newVal);
+              resizePause.playFromStart();
+            }
+    );
 
     slider = createZoomSlider();
 
@@ -380,7 +399,7 @@ public class App extends Application {
     return this.stateWindow;
   }
 
-  public Group getRoot() {
+  public Pane getRoot() {
     return root;
   }
 
