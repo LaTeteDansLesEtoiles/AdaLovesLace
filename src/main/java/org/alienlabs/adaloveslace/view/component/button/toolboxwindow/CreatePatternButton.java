@@ -1,6 +1,7 @@
 package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -10,7 +11,6 @@ import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.ImageUtil;
-import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +21,7 @@ import java.util.List;
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
+import static org.alienlabs.adaloveslace.view.component.OptionalDotGrid.CREATE_PATTERN_MARGIN;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class CreatePatternButton extends ImageButton {
@@ -80,16 +81,17 @@ public class CreatePatternButton extends ImageButton {
         if (mouseClicks == 2) {
             removeRectangle(app);
             mouseClicks = 0;
-            new ImageUtil(app).buildImage(firstClickX, firstClickY + OptionalDotGrid.TOP_MARGIN, rectangleWidth, rectangleHeight);
+            new ImageUtil(app).buildImage(firstClickX, firstClickY + CREATE_PATTERN_MARGIN, rectangleWidth, rectangleHeight);
         }
 
         if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.CREATE_PATTERN) {
             mouseMovedListener = mouseEvent -> {
-                logger.debug("Create Pattern => MouseEvent moved: X= {}, Y= {}", mouseEvent.getX(), mouseEvent.getY());
+                Point2D mouseInParent = app.getOptionalDotGrid().getRoot().sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+                logger.debug("Create Pattern => MouseEvent moved: X= {}, Y= {}", mouseInParent.getX(), mouseInParent.getY());
 
                 if (mouseClicks == 1) {
-                    computeRectangleX(mouseEvent.getX(), firstClickX);
-                    computeRectangleY(mouseEvent.getY(), firstClickY);
+                    computeRectangleX(mouseInParent.getX(), firstClickX);
+                    computeRectangleY(mouseInParent.getY(), firstClickY);
 
                     removeRectangle(app);
 
@@ -99,26 +101,30 @@ public class CreatePatternButton extends ImageButton {
             };
 
             mouseClickedListener = mouseEvent -> {
-                logger.debug("Create Pattern => MouseEvent pressed: X= {}, Y= {}", mouseEvent.getX(), mouseEvent.getY());
+                Point2D mouseInParent = app.getOptionalDotGrid().getRoot().sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+                logger.debug("Create Pattern => MouseEvent pressed: X= {}, Y= {}, source= {}",
+                        mouseInParent.getX(),
+                        mouseInParent.getY(),
+                        mouseEvent.getSource());
 
                 mouseClicks++;
 
                 if (mouseClicks == 1) {
-                    rectangleX = mouseEvent.getX();
-                    rectangleY = mouseEvent.getY();
-                    firstClickX = mouseEvent.getX();
-                    firstClickY = mouseEvent.getY();
+                    rectangleX = mouseInParent.getX();
+                    rectangleY = mouseInParent.getY();
+                    firstClickX = mouseInParent.getX();
+                    firstClickY = mouseInParent.getY();
                 } else if (mouseClicks == 2) {
-                    rectangleX = mouseEvent.getX();
-                    rectangleY = mouseEvent.getY();
+                    rectangleX = mouseInParent.getX();
+                    rectangleY = mouseInParent.getY();
                     rectangleWidth  = (rectangleX >= firstClickX) ? rectangleX - firstClickX : firstClickX - rectangleX;
                     rectangleHeight = (rectangleY >= firstClickY) ? rectangleY - firstClickY : firstClickY - rectangleY;
                 } else if (mouseClicks > 2) {
                     mouseClicks = 1;
-                    rectangleX = mouseEvent.getX();
-                    rectangleY = mouseEvent.getY();
-                    firstClickX = mouseEvent.getX();
-                    firstClickY = mouseEvent.getY();
+                    rectangleX = mouseInParent.getX();
+                    rectangleY = mouseInParent.getY();
+                    firstClickX = mouseInParent.getX();
+                    firstClickY = mouseInParent.getY();
 
                     removeRectangle(app);
                 }
@@ -131,7 +137,7 @@ public class CreatePatternButton extends ImageButton {
 
     private static Rectangle newRectangle() {
         Rectangle rec = new Rectangle(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
-        rec.setStroke(Color.YELLOW);
+        rec.setStroke(Color.DARKGREEN);
         rec.setStrokeWidth(2d);
         rec.setFill(Color.TRANSPARENT);
 

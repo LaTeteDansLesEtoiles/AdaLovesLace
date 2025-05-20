@@ -46,6 +46,7 @@ public class OptionalDotGrid extends Pane {
   double GRID_WIDTH                     = 1400d;
   double GRID_HEIGHT                    = 600d;
   public static final double TOP_MARGIN = -70d;
+  public static final double CREATE_PATTERN_MARGIN = 30;
 
   private boolean showHideGrid = true;
   private boolean gridNeedsToBeRedrawn;
