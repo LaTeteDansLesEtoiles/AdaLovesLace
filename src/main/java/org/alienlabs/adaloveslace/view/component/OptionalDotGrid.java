@@ -340,10 +340,6 @@ public class OptionalDotGrid extends Pane {
     getDiagram().getCurrentStep().getSelectedKnots().stream().forEach(knot -> root.getChildren().remove(knot.getHovered()));
   }
 
-  public void clearHandles() {
-    getDiagram().getCurrentStep().getSelectedKnots().stream().forEach(knot -> root.getChildren().remove(knot.getHandle()));
-  }
-
   public void clearAllGuideLines() {
     for (Knot knot : getDiagram().getCurrentStep().getSelectedKnots()) {
       clearGuideLines(knot);
@@ -384,9 +380,6 @@ public class OptionalDotGrid extends Pane {
     text.setLayoutY(y);
 
     imageView = new ImageView();
-    imageView.setScaleX(computeZoomFactor(knot));
-    imageView.setScaleY(computeZoomFactor(knot));
-    imageView.setRotate(knot.getRotationAngle());
     WritableImage snapshot = text.snapshot(params, null);
     imageView.setImage(snapshot);
 
