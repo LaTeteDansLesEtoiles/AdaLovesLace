@@ -40,7 +40,7 @@ class StepTest {
         List<Knot> selectedKnots1 = new ArrayList<>();
 
         // When
-        app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
+        Diagram.newStep(knots1, selectedKnots1, false);
 
         // Then
         assertEquals(2,
@@ -67,7 +67,7 @@ class StepTest {
         knots1.add(knot1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
-        app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
+        Diagram.newStep(knots1, selectedKnots1, false);
 
         Knot knot2 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), null);
         Knot knot3 = new Knot(30, 35, Optional.of(new Pattern()), Optional.of(""), null);
@@ -76,14 +76,14 @@ class StepTest {
         knots2.add(knot3);
         List<Knot> selectedKnots2 = new ArrayList<>();
 
-        app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
+        Diagram.newStep(knots2, selectedKnots2, false);
 
         Knot knot4 = new Knot(40, 45, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots4 = new ArrayList<>();
         knots4.add(knot4);
         List<Knot> selectedKnots4 = new ArrayList<>();
 
-        app.getOptionalDotGrid().getDiagram().newStep(knots4, selectedKnots4, false);
+        Diagram.newStep(knots4, selectedKnots4, false);
 
         // Then
         assertEquals(4,
@@ -147,7 +147,7 @@ class StepTest {
         knots1.add(knot1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
-        app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
+        Diagram.newStep(knots1, selectedKnots1, false);
 
         Knot knot2 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), null);
         Knot knot3 = new Knot(30, 35, Optional.of(new Pattern()), Optional.of(""), null);
@@ -156,14 +156,14 @@ class StepTest {
         knots2.add(knot3);
         List<Knot> selectedKnots2 = new ArrayList<>();
 
-        app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
+        Diagram.newStep(knots2, selectedKnots2, false);
 
         Knot knot4 = new Knot(40, 45, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots4 = new ArrayList<>();
         knots4.add(knot4);
         List<Knot> selectedKnots4 = new ArrayList<>();
 
-        app.getOptionalDotGrid().getDiagram().newStep(knots4, selectedKnots4, false);
+        Diagram.newStep(knots4, selectedKnots4, false);
 
         // Then
         assertEquals(4,
@@ -227,7 +227,7 @@ class StepTest {
         selectedKnots1.add(knot1);
         List<Knot> knots1 = new ArrayList<>();
 
-        app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
+        Diagram.newStep(knots1, selectedKnots1, false);
 
         Knot knot2 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), null);
         Knot knot3 = new Knot(30, 35, Optional.of(new Pattern()), Optional.of(""), null);
@@ -236,13 +236,13 @@ class StepTest {
         selectedKnots2.add(knot3);
         List<Knot> knots2 = new ArrayList<>();
 
-        app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
+        Diagram.newStep(knots2, selectedKnots2, false);
 
         List<Knot> knots3 = new ArrayList<>();
         knots3.add(knot3);
         List<Knot> selectedKnots3 = new ArrayList<>();
 
-        app.getOptionalDotGrid().getDiagram().newStep(knots3, selectedKnots3, false);
+        Diagram.newStep(knots3, selectedKnots3, false);
 
         // Then
         assertEquals(4,
@@ -291,7 +291,7 @@ class StepTest {
         knots1.add(knot1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
-        app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
+        Diagram.newStep(knots1, selectedKnots1, false);
 
         // When
         Knot knot2 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), null);
@@ -299,7 +299,7 @@ class StepTest {
         knots2.add(knot2);
         List<Knot> selectedKnots2 = new ArrayList<>();
 
-        app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
+        Diagram.newStep(knots2, selectedKnots2, false);
 
         // Then
         assertEquals(3,
@@ -329,14 +329,14 @@ class StepTest {
         knots1.add(knot1);
         List<Knot> selectedKnots1 = new ArrayList<>();
 
-        app.getOptionalDotGrid().getDiagram().newStep(knots1, selectedKnots1, false);
+        Diagram.newStep(knots1, selectedKnots1, false);
 
         Knot firstKnotsStep2 = new Knot(20, 25, Optional.of(new Pattern()), Optional.of(""), null);
         List<Knot> knots2 = new ArrayList<>();
         knots2.add(firstKnotsStep2);
         List<Knot> selectedKnots2 = new ArrayList<>();
 
-        app.getOptionalDotGrid().getDiagram().newStep(knots2, selectedKnots2, false);
+        Diagram.newStep(knots2, selectedKnots2, false);
 
         Knot firstKnotsStep3 = new Knot(30, 35, Optional.of(new Pattern()), Optional.of(""), null);
         Knot secondKnotsStep3 = new Knot(40, 45, Optional.of(new Pattern()), Optional.of(""), null);
@@ -346,7 +346,7 @@ class StepTest {
         List<Knot> selectedKnots3 = new ArrayList<>();
 
         // When
-        app.getOptionalDotGrid().getDiagram().newStep(knots3, selectedKnots3, false);
+        Diagram.newStep(knots3, selectedKnots3, false);
 
         // Then
         assertEquals(4,

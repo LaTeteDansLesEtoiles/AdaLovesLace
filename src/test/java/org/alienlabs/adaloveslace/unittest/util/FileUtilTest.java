@@ -1,6 +1,7 @@
 package org.alienlabs.adaloveslace.unittest.util;
 
 import jakarta.xml.bind.JAXBException;
+import javafx.scene.layout.Pane;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Pattern;
@@ -153,7 +154,7 @@ class FileUtilTest {
         resourceBundle = ResourceBundle.getBundle(ADA_LOVES_LACE, locale);
         App.setResourceBundle(resourceBundle);
 
-        OptionalDotGrid grid = new OptionalDotGrid(app, diagramToSave, null);
+        OptionalDotGrid grid = new OptionalDotGrid(app, diagramToSave, new Pane());
         MainWindow mainWindow = new MainWindow();
         mainWindow.setOptionalDotGrid(grid);
         app.setMainWindow(mainWindow);
