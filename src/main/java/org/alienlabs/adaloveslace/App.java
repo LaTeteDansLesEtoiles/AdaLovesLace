@@ -99,22 +99,23 @@ public class App extends Application {
   );
 
   private final PauseTransition resizePause = new PauseTransition(Duration.millis(700));
+  private final Map<KeyCode, Boolean> currentlyActiveKeys = new EnumMap<>(KeyCode.class);
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   private Stage toolboxStage;
   private Diagram diagram;
   private static MainWindow mainWindow;
-  private Pane root;
   private Slider slider;
   private Scene scene;
-  public Stage primaryStage;
   private Stage geometryStage;
   private GeometryWindow geometryWindow;
   private Stage stateStage;
   private StateWindow stateWindow;
   private ToolboxWindow toolboxWindow;
 
-  private final Map<KeyCode, Boolean> currentlyActiveKeys = new EnumMap<>(KeyCode.class);
+
+  public Pane root;
+  public Stage primaryStage;
 
   @Override
   public void start(Stage primaryStage) {
@@ -147,7 +148,7 @@ public class App extends Application {
     logger.debug("Opening state window");
     showStateWindow(this);
 
-    if (!"".equals(filePath)) {
+    if (!filePath.isEmpty()) {
       new FileUtil().buildUiFromLaceFile(this, new File(filePath));
       this.getPrimaryStage().requestFocus();
     }
@@ -421,10 +422,6 @@ public class App extends Application {
 
   public Stage getStateStage() {
     return this.stateStage;
-  }
-
-  public void setStateStage(Stage stateStage) {
-    this.stateStage = stateStage;
   }
 
   public static void setResourceBundle(ResourceBundle resourceBundle) {

@@ -31,7 +31,6 @@ import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.util.Events.moveDraggedAndDroppedNodes;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
@@ -247,11 +246,6 @@ public class MainWindow {
     canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
   }
 
-  public void onDragOverHandleWithSelectionMode(App app, double x, double y) {
-    Circle handle = (Circle)app.getOptionalDotGrid().getDragOriginKnot().getHandle();
-    moveDraggedAndDroppedNodes(app, x, y, handle);
-  }
-
   public void onClickWithSelectionMode(App app) {
     Iterator<Knot> it = optionalDotGrid.getDiagram().getCurrentStep().getAllVisibleKnots().iterator();
     boolean hasClickedOnAGivenKnot = false;
@@ -269,7 +263,7 @@ public class MainWindow {
         logger.debug("Clicked Knot {} in order to select it",
                 knot.getPattern().isPresent() ?
                         knot.getPattern().get().getFilename() :
-                        knot.getText().get().toString());
+                        knot.getText().get());
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
@@ -294,10 +288,10 @@ public class MainWindow {
       } else if (hasClickedOnAGivenKnot) {
         logger.debug("Clicked Knot displayed {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot),
-                knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : knot.getText().get().toString());
+                knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : knot.getText().get());
         logger.debug("Clicked Knot selected {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot),
-                knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : knot.getText().get().toString());
+                knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : knot.getText().get());
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
@@ -344,7 +338,7 @@ public class MainWindow {
 
   private void removeKnotIfClicked(App app, Diagram diagram, Knot knot) {
     app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView());
-    app.getOptionalDotGrid().getDiagram().deleteNodesFromFollowingSteps(app, knot);
+    app.getOptionalDotGrid().getDiagram().deleteKnotDecorationsFromFollowingSteps(app, knot);
 
     List<Knot> displayedKnotsToFilterOut = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
     displayedKnotsToFilterOut.remove(knot);

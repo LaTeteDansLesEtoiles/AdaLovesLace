@@ -139,8 +139,8 @@ public class FileUtil {
             Image image = new Image(fis);
             ImageView iv = new ImageView(image);
 
-            iv.setX(knot.getX());
-            iv.setY(knot.getY());
+            iv.setLayoutX(knot.getX());
+            iv.setLayoutY(knot.getY());
             iv.setFitHeight(knot.getPattern().get().getHeight());
             iv.setFitWidth(knot.getPattern().get().getWidth());
 

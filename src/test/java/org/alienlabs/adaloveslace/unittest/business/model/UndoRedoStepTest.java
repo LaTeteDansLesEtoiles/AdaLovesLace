@@ -1,6 +1,5 @@
 package org.alienlabs.adaloveslace.unittest.business.model;
 
-import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import org.alienlabs.adaloveslace.App;

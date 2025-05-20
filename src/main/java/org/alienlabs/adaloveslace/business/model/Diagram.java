@@ -5,7 +5,6 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
@@ -15,7 +14,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.alienlabs.adaloveslace.App;
@@ -44,7 +46,7 @@ import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Diagram {
 
-    private final Set<Pattern> patterns;
+    private final Set<Pattern>  patterns;
 
     private Integer             currentStepIndex;
 
@@ -128,13 +130,93 @@ public class Diagram {
 
         if (!this.getAllSteps().isEmpty()) {
             for (Step s : this.getAllSteps().subList(
-                    this.getCurrentStepIndex() - 1,
-                    this.getAllSteps().size())
+                    this.getCurrentStepIndex(),
+                    this.getAllSteps().size())) {
+                for (Knot k : s.getAllVisibleKnots()) {
+                    nodeListToRemove.add(k.getImageView());
+                    removeKnotDecorations(nodeListToRemove, k);
+                }
+            }
+        }
+
+        List<Knot> displayedKnots = new ArrayList<>(this.getCurrentStep().getDisplayedKnots());
+        List<Knot> displayedCopy = new ArrayList<>();
+        List<Knot> selectedCopy = new ArrayList<>();
+
+        for (Knot knot : this.getCurrentStep().getAllVisibleKnots()) {
+            if (!knot.isSelectable()) {
+                Knot knotCopy = new NodeUtil().copyKnot(knot);
+
+                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+                knot.setSelection(null);
+                knot.setHovered(null);
+                knot.setHandle(null);
+
+                if (displayedKnots.contains(knot)) {
+                    displayedCopy.add(knotCopy);
+                } else {
+                    selectedCopy.add(knotCopy);
+                }
+            } else {
+                Knot knotCopy = new NodeUtil().copyKnot(knot);
+
+                knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+                knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+
+                if (displayedKnots.contains(knot)) {
+                    displayedCopy.add(knotCopy);
+                } else {
+                    selectedCopy.add(knotCopy);
+                    nodeListToRemove.add(knot.getHandle());
+                }
+            }
+
+            nodeListToRemove.add(knot.getImageView());
+        }
+
+        app.getRoot().getChildren().removeAll(nodeListToRemove);
+        this.getCurrentStep().setDisplayedKnots(displayedCopy);
+        this.getCurrentStep().setSelectedKnots(selectedCopy);
+
+        if (layoutChildren) {
+            app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
+        }
+
+        logger.debug("Undo step, new step={}", this.getCurrentStepIndex());
+    }
+
+    public void removeKnotDecorations(List<Node> nodeListToRemove, Knot k) {
+        if (k.getHovered() != null) {
+            nodeListToRemove.add(k.getHovered());
+        }
+        if (k.getSelection() != null) {
+            nodeListToRemove.add(k.getSelection());
+        }
+        if (k.getHandle() != null) {
+            nodeListToRemove.add(k.getHandle());
+        }
+    }
+
+    public void redoLastStep(App app, boolean layoutChildren) {
+        logger.debug("Redo 0 step, current step={}", this.getCurrentStepIndex());
+
+        if (this.getCurrentStepIndex() <
+                this.getAllSteps().size()) {
+            this.setCurrentStepIndex(this.getCurrentStepIndex() + 1);
+        }
+
+        List<Node> nodeListToRemove = new ArrayList<>();
+
+        if (!this.getAllSteps().isEmpty()) {
+            for (Step s : this.getAllSteps().subList(
+                    0,
+                    this.getCurrentStepIndex())
             ) {
                 for (Knot k : s.getAllVisibleKnots()) {
-                   nodeListToRemove.add(k.getImageView());
+                    nodeListToRemove.add(k.getImageView());
+                    removeKnotDecorations(nodeListToRemove, k);
                 }
-
             }
         }
 
@@ -163,9 +245,11 @@ public class Diagram {
             } else {
                 Knot knotCopy = new NodeUtil().copyKnot(knot);
 
-                knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-                knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
-
+                if (knotCopy.getHandle() != null) {
+                    knotCopy.getHandle().setOnMousePressed(Events.getDragInitiatedOverHandleEventHandler());
+                    knotCopy.getHandle().setOnMouseDragged(Events.getMouseDragOverHandleEventHandler());
+                    knotCopy.getHandle().setOnMouseReleased(Events.getMouseDragDroppedHandleEventHandler());
+                }
                 if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot)) {
                     displayedCopy.remove(knot);
                     displayedCopy.add(knotCopy);
@@ -178,76 +262,7 @@ public class Diagram {
             }
 
             nodeListToRemove.add(knot.getImageView());
-        }
-
-        if (layoutChildren) {
-            app.getRoot().getChildren().removeAll(nodeListToRemove);
-            app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
-        }
-
-        logger.debug("Undo step, new step={}", this.getCurrentStepIndex());
-    }
-
-    public void redoLastStep(App app, boolean layoutChildren) {
-        logger.debug("Redo 0 step, current step={}", this.getCurrentStepIndex());
-
-        if (this.getCurrentStepIndex() <
-                this.getAllSteps().size()) {
-            this.setCurrentStepIndex(this.getCurrentStepIndex() + 1);
-        }
-
-        List<Node> nodeListToRemove = new ArrayList<>();
-
-        if (!this.getAllSteps().isEmpty()) {
-            for (Step s : this.getAllSteps().subList(
-                    0,
-                    this.getCurrentStepIndex())
-            ) {
-                for (Knot k : s.getAllVisibleKnots()) {
-                    nodeListToRemove.add(k.getImageView());
-                }
-            }
-        }
-
-        List<Knot> displayedCopy = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-        List<Knot> selectedCopy = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-
-        for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
-            if (!knot.isSelectable()) {
-                Knot knotCopy = new NodeUtil().copyKnot(knot);
-
-                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
-                knot.setSelection(null);
-                knot.setHovered(null);
-
-                if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot)) {
-                    displayedCopy.remove(knot);
-                    displayedCopy.add(knotCopy);
-                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setDisplayedKnots(displayedCopy);
-                } else {
-                    selectedCopy.remove(knot);
-                    selectedCopy.add(knotCopy);
-                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedCopy);
-                }
-            } else {
-                Knot knotCopy = new NodeUtil().copyKnot(knot);
-
-                knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-                knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
-
-                if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot)) {
-                    displayedCopy.remove(knot);
-                    displayedCopy.add(knotCopy);
-                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setDisplayedKnots(displayedCopy);
-                } else {
-                    selectedCopy.remove(knot);
-                    selectedCopy.add(knotCopy);
-                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedCopy);
-                }
-            }
-
-            nodeListToRemove.add(knot.getImageView());
+            removeKnotDecorations(nodeListToRemove, knot);
         }
 
         if (layoutChildren) {
@@ -258,12 +273,13 @@ public class Diagram {
         logger.debug("Redo 2 step, new step={}", this.getCurrentStepIndex());
     }
 
-    public static void newStep(List<Knot> displayedKnots, List<Knot> selectedKnots, boolean layoutChildren, Circle... handle) {
-        new Step(app,
+    public static void newStep(List<Knot> displayedKnots, List<Knot> selectedKnots, boolean layoutChildren) {
+        new Step(
+                app,
                 app.getOptionalDotGrid().getDiagram(),
                 displayedKnots,
                 selectedKnots,
-                layoutChildren, handle
+                layoutChildren
         );
     }
 
@@ -344,8 +360,8 @@ public class Diagram {
             text.setText(typedText.toString());
             text.setFont(new Font(CANVAS_TEXT_FONT_SIZE));
             text.setFill(Color.BLACK);
-            text.setX(x);
-            text.setY(y);
+            text.setLayoutX(x);
+            text.setLayoutY(y);
 
             WritableImage snapshot = text.snapshot(params, null);
             imageView.setImage(snapshot);
@@ -371,8 +387,8 @@ public class Diagram {
             Image image = new Image(fis);
             iv = new ImageView(image);
 
-            iv.setX(x);
-            iv.setY(y);
+            iv.setLayoutX(x);
+            iv.setLayoutY(y);
             iv.setRotate(0d);
 
             logger.debug("Top left corner of the knot {} is ({},{})", this.getCurrentPattern().getFilename(), x, y);
@@ -383,22 +399,17 @@ public class Diagram {
         return iv;
     }
 
-    public void deleteNodesFromFollowingSteps(App app, Knot knot) {
+    public void deleteKnotDecorationsFromFollowingSteps(App app, Knot knot) {
         app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
         app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
         app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
         knot.getGuideLines().clear();
     }
 
-    public void deleteNodesFromFollowingSteps(Pane root) {
+    public void deleteKnotDecorationsFromFollowingSteps(Pane root) {
         root.getChildren().removeAll(root.getChildren().stream().filter(node ->
-                (node instanceof Line ||
-                        node instanceof Rectangle ||
-                        node instanceof Circle)).toList());
-    }
-
-    public void deleteHandlesFromCurrentStep(Group root) {
-        root.getChildren().removeAll(root.getChildren().stream().filter(Circle.class::isInstance).toList());
+                (node instanceof Line || node instanceof Rectangle)
+        ).toList());
     }
 
     // We don't lose the undo / redo history

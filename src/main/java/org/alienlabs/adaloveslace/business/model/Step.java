@@ -4,7 +4,6 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
-import javafx.scene.shape.Circle;
 import org.alienlabs.adaloveslace.App;
 
 import java.util.ArrayList;
@@ -33,9 +32,6 @@ public class Step implements Comparable<Step> {
     private List<Knot> selectedKnots = new ArrayList<>();
 
     @XmlTransient
-    private Circle[] handle;
-
-    @XmlTransient
     private static final int MAX_NUMBER_OF_STEPS = 1000;
 
     // For JAXB
@@ -55,13 +51,11 @@ public class Step implements Comparable<Step> {
                 Diagram diagram,
                 List<Knot> displayedKnots,
                 List<Knot> selectedKnots,
-                boolean layoutChildren,
-                Circle... handle) {
+                boolean layoutChildren) {
         this.app = app;
 
         this.displayedKnots = displayedKnots;
         this.selectedKnots = selectedKnots;
-        this.handle = handle;
 
         this.displayedKnots.removeAll(this.selectedKnots);
         this.selectedKnots.removeAll(this.displayedKnots);
@@ -72,8 +66,6 @@ public class Step implements Comparable<Step> {
         diagram.getAllSteps().add(this);
         this.stepIndex = diagram.getAllSteps().size();
         diagram.setCurrentStepIndex(this.stepIndex);
-
-        this.handle = handle;
 
         // For testability
         if (layoutChildren) {
