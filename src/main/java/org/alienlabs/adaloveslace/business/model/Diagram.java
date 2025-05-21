@@ -4,7 +4,6 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
@@ -33,6 +32,7 @@ import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.CANVAS_TEXT_FONT_SIZE;
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
+import static org.alienlabs.adaloveslace.util.Events.keyHandler;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 
 /**
@@ -79,8 +79,6 @@ public class Diagram {
     @XmlTransient
     private static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
     public static StringBuilder typedText = new StringBuilder();
-    public static EventHandler<KeyEvent> keyHandler;
-    public static boolean shouldUpdate;
     public static Runnable updateImage;
 
     // For JAXB
@@ -303,18 +301,14 @@ public class Diagram {
         logger.debug("Current pattern  -> {}", this.getCurrentPattern());
         ImageView iv;
 
-        if (PatternOrTextMode.PATTERN
-                .equals(app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get())) {
+        if (PatternOrTextMode.PATTERN == app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get()) {
             iv = drawPattern(x, y);
 
             if (null != iv) {
                 createImageViewWithStep(x, y, iv, this.getCurrentPattern());
             }
         } else {
-            iv = drawText(x, y);
-            if (null != iv) {
-                createImageViewWithStep(x, y, iv, null);
-            }
+            drawText(x, y);
         }
     }
 
@@ -328,56 +322,56 @@ public class Diagram {
                 pattern == null ? Optional.of(typedText.toString()) : Optional.empty(),
                 iv
         );
-        this.setCurrentKnot(currentKnot);
 
+        this.setCurrentKnot(currentKnot);
         List<Knot> displayed = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-        if (app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get().equals(PatternOrTextMode.TEXT) &&
-                oldCurrentKnot != null) {
-            if (!typedText.isEmpty()) {
+
+        if (app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get() == PatternOrTextMode.TEXT) {
+            if (!typedText.isEmpty() && oldCurrentKnot != null) {
                 app.getRoot().getChildren().remove(oldCurrentKnot.getImageView());
                 displayed.remove(oldCurrentKnot);
             }
 
             displayed.add(currentKnot);
-            newStep(displayed, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots(), true);
+            newStep(
+                    displayed,
+                    new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()),
+                    true
+            );
         } else if (app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get().equals(PatternOrTextMode.PATTERN)) {
             displayed.add(currentKnot);
-            newStep(displayed, app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots(), true);
+            newStep(
+                    displayed,
+                    new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots()),
+                    true
+            );
         }
     }
 
-    public ImageView drawText(double x, double y) {
+    public void drawText(double x, double y) {
         logger.info("text -> {}", typedText);
+        app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
 
-        Text text = new Text();
-        SnapshotParameters params = new SnapshotParameters();
-        params.setFill(Color.TRANSPARENT);
-        ImageView imageView = new ImageView();
-        boolean click = true;
+        updateImage = () -> {
+            logger.info("updated text -> {}", typedText);
+            ImageView imageView = new ImageView();
 
-        if (keyHandler != null) {
-            click = false;
+            final Text text = new Text();
+            SnapshotParameters params = new SnapshotParameters();
+            params.setFill(Color.TRANSPARENT);
+
             text.setText(typedText.toString());
             text.setFont(new Font(CANVAS_TEXT_FONT_SIZE));
             text.setFill(Color.BLACK);
             text.setLayoutX(x);
             text.setLayoutY(y);
 
-            WritableImage snapshot = text.snapshot(params, null);
-            imageView.setImage(snapshot);
-        }
-
-        shouldUpdate = false;
-
-        updateImage = () -> {
-            logger.info("updated text -> {}", typedText);
-            text.setText(typedText.toString());
             WritableImage s = text.snapshot(params, null);
             imageView.setImage(s);
             createImageViewWithStep(x, y, imageView, null);
         };
 
-        return click ? null : imageView;
+        updateImage.run();
     }
 
     private ImageView drawPattern(double x, double y) {

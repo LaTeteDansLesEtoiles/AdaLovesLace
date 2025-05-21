@@ -11,7 +11,7 @@ import org.alienlabs.adaloveslace.business.model.PatternOrTextMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.alienlabs.adaloveslace.business.model.Diagram.keyHandler;
+import static org.alienlabs.adaloveslace.util.Events.keyHandler;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON_SELECTED;
 
@@ -35,10 +35,7 @@ public class PatternButton extends ToggleButton {
 
     this.getStyleClass().add(PATTERN_AND_TEXT_BUTTON); // 👈 relie au style CSS
     this.setSelected(false);
-
-    if (null != keyHandler) {
-      app.getScene().removeEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
-    }
+    app.getScene().removeEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
 
     this.setOnMouseClicked(event -> {
       app.unselectPatternsAndTextButtons();

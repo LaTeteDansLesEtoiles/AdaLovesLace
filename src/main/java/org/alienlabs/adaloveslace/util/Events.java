@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.util;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
 import org.alienlabs.adaloveslace.App;
@@ -13,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
+import static org.alienlabs.adaloveslace.business.model.Diagram.*;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.MOUSE_CLICKED;
 
 public class Events {
@@ -23,11 +24,38 @@ public class Events {
   private static double offsetX;
   private static double offsetY;
 
+  private static MouseMode previousMouseMode;
   private static final Logger logger = LoggerFactory.getLogger(Events.class);
 
   private Events() {
     // Not accessible on purpose since all the events are static
   }
+
+  public static final EventHandler<KeyEvent> keyHandler = event -> {
+    if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.DRAWING) {
+      logger.info("key pressed -> {}", event.getCode());
+
+      switch (event.getCode()) {
+        case BACK_SPACE:
+          if (!typedText.isEmpty()) {
+            typedText.deleteCharAt(typedText.length() - 1);
+          }
+          updateImage.run();
+
+          break;
+        case ENTER:
+          typedText.append("\n");
+          updateImage.run();
+
+          break;
+        default:
+          if (!event.isControlDown() && !event.getText().isEmpty()) {
+            typedText.append(event.getText());
+            updateImage.run();
+          }
+      }
+    }
+  };
 
   public static final EventHandler<MouseEvent> mouseClickEventHandler = event -> {
     String eType = event.getEventType().toString();
@@ -67,6 +95,7 @@ public class Events {
     offsetY = event.getY() - ((Circle) event.getSource()).getLayoutY();
 
     app.getOptionalDotGrid().getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+    previousMouseMode = app.getOptionalDotGrid().getDiagram().getCurrentMode();
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MOVE);
 
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
@@ -154,8 +183,13 @@ public class Events {
             event.getSceneY()
     );
 
-    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
+    app.getOptionalDotGrid().getDiagram().setCurrentMode(previousMouseMode);
     app.getOptionalDotGrid().layoutChildren();
+
+    if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.DRAWING) {
+      app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+    }
+
     event.consume();
   };
 

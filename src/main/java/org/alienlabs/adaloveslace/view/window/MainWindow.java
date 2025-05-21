@@ -274,6 +274,7 @@ public class MainWindow {
           selectedKnots.add(copiedKnot);
 
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
         } else {
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
@@ -281,6 +282,7 @@ public class MainWindow {
           displayedKnots.remove(knot);
 
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
         }
 
@@ -302,6 +304,7 @@ public class MainWindow {
           displayedKnots.remove(knot);
 
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
 
           break;
@@ -312,6 +315,7 @@ public class MainWindow {
           displayedKnots.add(copiedKnot);
 
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
           break;
         }
@@ -321,9 +325,19 @@ public class MainWindow {
     // If we have clicked elsewhere, we deselect all knots
     if (!hasClickedOnAGivenKnot) {
       displayedKnots.addAll(new ArrayList<>(selectedKnots));
+      hideHandlesForNotSelectedKnots(app, displayedKnots);
       selectedKnots.clear();
 
       newStep(displayedKnots, selectedKnots, true);
+    }
+  }
+
+  private void hideHandlesForNotSelectedKnots(App app, List<Knot> displayedKnots) {
+    for (Knot knot : displayedKnots) {
+      if (knot.getHandle() != null) {
+        app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHandle());
+        knot.setHandle(null);
+      }
     }
   }
 

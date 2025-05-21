@@ -192,10 +192,13 @@ public class OptionalDotGrid extends Pane {
           addSelectionAndHandleToAKnot(knot, BLUE_HANDLE);
       } else {
         Platform.runLater(() -> {
-          logger.debug("Removing node {} and hover {} from hovered {}", knot, knot.getHovered(), root.getChildren().remove(knot.getHovered()));
+          logger.debug("Removing node {} and hover {}", knot, knot.getHovered());
 
-          root.getChildren().remove(knot.getHovered());
-          knot.setHovered(null);
+          if (knot.getHovered() != null) {
+            root.getChildren().remove(knot.getHovered());
+            knot.setHovered(null);
+            layoutChildren();
+          }
         });
       }
     }

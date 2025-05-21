@@ -11,6 +11,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -85,11 +86,12 @@ public class App extends Application {
   public static final int     CANVAS_TEXT_FONT_SIZE   = 32;
 
   public static final double  GRID_DOTS_RADIUS        = 2.5d;// The dots from the grid are ellipses, this is their radius
-  public static final String LOCALE_LANGUAGE = "LOCALE_LANGUAGE";
-  public static final String LOCALE_COUNTRY = "LOCALE_COUNTRY";
-  public static final String DEFAULT_LOCALE_LANGUAGE = "fr";
-  public static final String DEFAULT_LOCALE_COUNTRY = "FR";
-  public static final Duration TOOLTIPS_DURATION = Duration.seconds(60);
+  public static final String LOCALE_LANGUAGE          = "LOCALE_LANGUAGE";
+  public static final String LOCALE_COUNTRY           = "LOCALE_COUNTRY";
+  public static final String DEFAULT_LOCALE_LANGUAGE  = "fr";
+  public static final String DEFAULT_LOCALE_COUNTRY   = "FR";
+  public static final Duration TOOLTIPS_DURATION      = Duration.seconds(60);
+  public static final int KEYBOARD_PAST_DELAY         = 300;
   public static final double INITIAL_GRID_ZOOM_FACTOR = 1d;
 
   public static ResourceBundle resourceBundle = ResourceBundle.getBundle(
@@ -335,15 +337,15 @@ public class App extends Application {
         () -> LeftButton.onMoveKnotLeftAction   (this));
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT),
         () -> RightButton.onMoveKnotRightAction (this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.S),
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN),
         () -> SelectableButton.onSetSelectableModeAction(this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.T),
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN),
         () -> UnselectableButton.onSetUnselectableModeAction(this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.V),
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN),
         () -> VisibleButton.onSetVisibleAction   (this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.W),
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN),
         () -> InvisibleButton.onSetInvisibleAction (this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F),
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN),
               FastMoveModeButton::onSwitchFastModeAction);
     });
   }
