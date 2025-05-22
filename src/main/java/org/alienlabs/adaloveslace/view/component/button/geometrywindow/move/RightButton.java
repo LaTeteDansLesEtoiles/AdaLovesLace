@@ -34,6 +34,10 @@ public class RightButton extends Button {
       knot.setX(knot.getX() + FastMoveModeButton.getMoveSpeed());
       Knot copiedKnot = new NodeUtil().copyKnot(knot);
 
+      if (copiedKnot.getHandle() != null) {
+        copiedKnot.getHandle().setLayoutX(copiedKnot.getHandle().getLayoutX() + FastMoveModeButton.getMoveSpeed());
+      }
+
       displayedKnots.remove(knot);
       copiedKnots.add(copiedKnot);
 

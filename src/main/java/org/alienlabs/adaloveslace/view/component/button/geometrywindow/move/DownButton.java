@@ -35,6 +35,10 @@ public class DownButton extends Button {
       knot.setY(knot.getY() + FastMoveModeButton.getMoveSpeed());
       Knot copiedKnot = new NodeUtil().copyKnot(knot);
 
+      if (copiedKnot.getHandle() != null) {
+        copiedKnot.getHandle().setLayoutY(copiedKnot.getHandle().getLayoutY() + FastMoveModeButton.getMoveSpeed());
+      }
+
       toRemoveKnots.add(knot);
       app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView());
       copiedKnots.add(copiedKnot);

@@ -35,6 +35,11 @@ public class DownLeftButton extends Button {
       knot.setY(knot.getY() + FastMoveModeButton.getMoveSpeed());
       Knot copiedKnot = new NodeUtil().copyKnot(knot);
 
+      if (copiedKnot.getHandle() != null) {
+        copiedKnot.getHandle().setLayoutX(copiedKnot.getHandle().getLayoutX() - FastMoveModeButton.getMoveSpeed());
+        copiedKnot.getHandle().setLayoutY(copiedKnot.getHandle().getLayoutY() + FastMoveModeButton.getMoveSpeed());
+      }
+
       displayedKnots.remove(knot);
       copiedKnots.add(copiedKnot);
 
