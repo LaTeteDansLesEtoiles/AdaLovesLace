@@ -91,7 +91,6 @@ public class App extends Application {
   public static final String DEFAULT_LOCALE_LANGUAGE  = "fr";
   public static final String DEFAULT_LOCALE_COUNTRY   = "FR";
   public static final Duration TOOLTIPS_DURATION      = Duration.seconds(60);
-  public static final int KEYBOARD_PAST_DELAY         = 300;
   public static final double INITIAL_GRID_ZOOM_FACTOR = 1d;
 
   public static ResourceBundle resourceBundle = ResourceBundle.getBundle(
