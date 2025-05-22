@@ -11,11 +11,11 @@
     <java.version>21</java.version>
     <javafx.version>21</javafx.version>
     <test-plugins.version>3.3.0</test-plugins.version>
-    <itext.version>8.0.2</itext.version>
+    <itext.version>9.2.0</itext.version>
     <testfx.version>4.0.17</testfx.version>
     <junit.version>5.10.1</junit.version>
-    <logback.version>1.4.14</logback.version>
-    <dependency-check-maven.version>10.0.3</dependency-check-maven.version>
+    <logback.version>1.5.18</logback.version>
+    <dependency-check-maven.version>12.1.1</dependency-check-maven.version>
   </properties>
 
   <dependencies>
@@ -244,6 +244,8 @@
           </execution>
         </executions>
         <configuration>
+          <nvdApiKey>PUT_YOUR_KEY_HERE</nvdApiKey>
+          <nvdApiDelay>3000</nvdApiDelay>
           <failBuildOnCVSS>7</failBuildOnCVSS>
         </configuration>
       </plugin>
