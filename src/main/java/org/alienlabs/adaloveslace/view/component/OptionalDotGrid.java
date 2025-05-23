@@ -383,7 +383,7 @@ public class OptionalDotGrid extends Pane {
     if (knot.getText().isPresent()) {
       drawTextImageView(knot, x, y);
       imageView = rotateTextKnot(knot);
-      zoomAndFlipTextKnot(knot);
+      zoomTextKnot(knot);
     } else if (knot.getPattern().isPresent()) {
       imageView = rotatePatternKnot(knot);
       zoomAndFlipPatternKnot(knot);
@@ -425,7 +425,7 @@ public class OptionalDotGrid extends Pane {
     if (knot.getText().isPresent()) {
       drawTextImageView(knot, x, y);
       imageView = rotateTextKnot(knot);
-      zoomAndFlipTextKnot(knot);
+      zoomTextKnot(knot);
     } else {
       imageView = rotatePatternKnot(knot);
       zoomAndFlipPatternKnot(knot);
@@ -452,14 +452,6 @@ public class OptionalDotGrid extends Pane {
     return zoomPattern(knot);
   }
 
-  // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
-  public void zoomAndFlipTextKnot(Knot knot) {
-    flipText(knot.isFlippedVertically(), Rotate.Y_AXIS, knot);
-    flipText(knot.isFlippedHorizontally(), Rotate.X_AXIS, knot);
-
-    zoomText(knot);
-  }
-
   private double zoomPattern(Knot knot) {
     double scaleFactor = computeZoomFactor(knot);
     knot.getImageView().setScaleX(scaleFactor);
@@ -471,7 +463,8 @@ public class OptionalDotGrid extends Pane {
     return scaleFactor;
   }
 
-  private void zoomText(Knot knot) {
+  // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
+  private void zoomTextKnot(Knot knot) {
     double scaleFactor = computeZoomFactor(knot);
     knot.getImageView().setScaleX(scaleFactor);
     knot.getImageView().setScaleY(scaleFactor);
@@ -484,18 +477,8 @@ public class OptionalDotGrid extends Pane {
     Rotate rot = new Rotate();
     rot.setAxis(axis);
     rot.setAngle(flip ? 180d : 0d);
-    rot.setPivotX(knot.getX() + knot.getPattern().get().getCenterX());
-    rot.setPivotY(knot.getY() + knot.getPattern().get().getCenterY());
-
-    knot.getImageView().getTransforms().add(rot);
-  }
-
-  private void flipText(boolean flip, Point3D axis, Knot knot) {
-    Rotate rot = new Rotate();
-    rot.setAxis(axis);
-    rot.setAngle(flip ? 180d : 0d);
-    rot.setPivotX(knot.getX() + knot.getImageView().getBoundsInParent().getCenterX());
-    rot.setPivotY(knot.getY() + knot.getImageView().getBoundsInParent().getCenterY());
+    rot.setPivotX(knot.getPattern().get().getWidth() / 2);
+    rot.setPivotY(knot.getPattern().get().getHeight() / 2);
 
     knot.getImageView().getTransforms().add(rot);
   }
