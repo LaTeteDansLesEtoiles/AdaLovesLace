@@ -96,7 +96,7 @@ public class Events {
 
     app.getOptionalDotGrid().getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
     previousMouseMode = app.getOptionalDotGrid().getDiagram().getCurrentMode();
-    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MOVE);
+    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAG_AND_DROP);
 
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
@@ -210,7 +210,7 @@ public class Events {
     logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
     if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.SELECTION
-    || app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.MOVE) {
+    || app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.DRAG_AND_DROP) {
       List<Knot> allKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots());
       boolean isMouseOverAGivenKnot = false;
 

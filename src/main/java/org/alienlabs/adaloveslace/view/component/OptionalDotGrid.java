@@ -140,7 +140,7 @@ public class OptionalDotGrid extends Pane {
     Step step = this.diagram.getCurrentStep();
 
     for (Knot k : step.getSelectedKnots()) {
-      if (!app.getOptionalDotGrid().getDiagram().getCurrentMode().equals(MouseMode.MOVE)) {
+      if (!app.getOptionalDotGrid().getDiagram().getCurrentMode().equals(MouseMode.DRAG_AND_DROP)) {
         app.getOptionalDotGrid().getDiagram().removeKnotDecorations(nodeListToRemove, k);
       }
     }
@@ -213,12 +213,12 @@ public class OptionalDotGrid extends Pane {
       knot.setSelection(rec);
       root.getChildren().add(rec);
 
-      if (root.getChildren().contains(knot.getHandle()) && !app.getOptionalDotGrid().getDiagram().getCurrentMode().equals(MouseMode.MOVE)) {
+      if (root.getChildren().contains(knot.getHandle()) && !app.getOptionalDotGrid().getDiagram().getCurrentMode().equals(MouseMode.DRAG_AND_DROP)) {
         root.getChildren().remove(knot.getHandle());
         knot.setHandle(null);
       }
 
-      if (!app.getOptionalDotGrid().getDiagram().getCurrentMode().equals(MouseMode.MOVE)) {
+      if (!app.getOptionalDotGrid().getDiagram().getCurrentMode().equals(MouseMode.DRAG_AND_DROP)) {
         Circle handle;
 
         if (knot.getPattern().isPresent()) {
@@ -314,9 +314,7 @@ public class OptionalDotGrid extends Pane {
     clearGuideLines(knot);
 
     Platform.runLater(() -> {
-      if ((diagram.getCurrentMode() == MouseMode.SELECTION) || (diagram.getCurrentMode() == MouseMode.DELETION)
-              || (diagram.getCurrentMode() == MouseMode.MOVE) || (diagram.getCurrentMode() == MouseMode.DRAWING)
-              || (diagram.getCurrentMode() == MouseMode.DUPLICATION)) {
+      if ((diagram.getCurrentMode() != MouseMode.CREATE_PATTERN) && (diagram.getCurrentMode() != MouseMode.MIRROR)) {
 
         // The black, thick lines that we use as guides
         getDiagram().deleteKnotDecorationsFromFollowingSteps(root);
