@@ -30,7 +30,7 @@ public class TextButton extends ToggleButton {
   private final EventHandler<MouseEvent> onTextButtonClicked = event -> {
     app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().set(PatternOrTextMode.TEXT);
     app.unselectPatternsAndTextButtons();
-    app.getOptionalDotGrid().getDiagram().resetText();
+    app.getOptionalDotGrid().getDiagram().resetKnotsText();
     app.getOptionalDotGrid().getRoot().setOnKeyPressed(null);
     this.setSelected(true);
     this.getStyleClass().add(PATTERN_AND_TEXT_BUTTON_WAITING_SELECTION);

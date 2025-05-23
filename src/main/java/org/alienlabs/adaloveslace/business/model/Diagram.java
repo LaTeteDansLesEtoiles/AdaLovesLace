@@ -68,6 +68,9 @@ public class Diagram {
     private MouseMode           currentMode;
 
     @XmlTransient
+    private MouseMode           oldMode;
+
+    @XmlTransient
     private static final Logger logger = LoggerFactory.getLogger(Diagram.class);
 
     @XmlTransient
@@ -115,6 +118,10 @@ public class Diagram {
 
     public void addPattern(final Pattern pattern) {
         this.patterns.add(pattern);
+    }
+
+    public void resetKnotsText() {
+        typedText = new StringBuilder();
     }
 
     public void undoLastStep(App app, boolean layoutChildren) {
@@ -300,6 +307,7 @@ public class Diagram {
     public void drawKnot(double x, double y) {
         logger.debug("Current pattern  -> {}", this.getCurrentPattern());
         ImageView iv;
+        this.resetKnotsText();
 
         if (PatternOrTextMode.PATTERN == app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get()) {
             iv = drawPattern(x, y);
@@ -349,6 +357,7 @@ public class Diagram {
     }
 
     public void drawText(double x, double y) {
+        this.resetKnotsText();
         logger.info("text -> {}", typedText);
         app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
 
@@ -443,6 +452,14 @@ public class Diagram {
         this.currentMode = currentMode;
     }
 
+    public MouseMode getOldMode() {
+        return oldMode;
+    }
+
+    public void setOldMode(MouseMode oldMode) {
+        this.oldMode = oldMode;
+    }
+
     public Integer getCurrentStepIndex() {
         return this.currentStepIndex;
     }
@@ -475,7 +492,4 @@ public class Diagram {
         Diagram.app = app;
     }
 
-    public void resetText() {
-        typedText = new StringBuilder();
-    }
 }

@@ -5,7 +5,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.alienlabs.adaloveslace.business.model.PatternOrTextMode;
 import org.slf4j.Logger;
@@ -48,7 +47,7 @@ public class PatternButton extends ToggleButton {
 
       app.getOptionalDotGrid().getCurrentPatternProperty().set(newCurrentPattern);
       app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().set(PatternOrTextMode.PATTERN);
-      Diagram.typedText = new StringBuilder();
+      app.getOptionalDotGrid().getDiagram().resetKnotsText();
     });
   }
 

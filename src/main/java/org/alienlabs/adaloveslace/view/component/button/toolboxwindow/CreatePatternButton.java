@@ -74,7 +74,7 @@ public class CreatePatternButton extends ImageButton {
         app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
 
         if (Events.getGridHoverEventHandler(app) != null) {
-            app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+            app.getRoot().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
         }
         newStep(displayedKnots, selectedKnots, true);
 
@@ -130,8 +130,8 @@ public class CreatePatternButton extends ImageButton {
                 }
             };
 
-            app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_MOVED, mouseMovedListener);
-            app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_CLICKED, mouseClickedListener);
+            app.getRoot().addEventHandler(MouseEvent.MOUSE_MOVED, mouseMovedListener);
+            app.getRoot().addEventHandler(MouseEvent.MOUSE_CLICKED, mouseClickedListener);
         }
     }
 

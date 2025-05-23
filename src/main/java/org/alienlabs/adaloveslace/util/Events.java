@@ -1,5 +1,6 @@
 package org.alienlabs.adaloveslace.util;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyEvent;
@@ -24,7 +25,6 @@ public class Events {
   private static double offsetX;
   private static double offsetY;
 
-  private static MouseMode previousMouseMode;
   private static final Logger logger = LoggerFactory.getLogger(Events.class);
 
   private Events() {
@@ -94,8 +94,8 @@ public class Events {
     offsetX = event.getX() - ((Circle) event.getSource()).getLayoutX();
     offsetY = event.getY() - ((Circle) event.getSource()).getLayoutY();
 
-    app.getOptionalDotGrid().getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
-    previousMouseMode = app.getOptionalDotGrid().getDiagram().getCurrentMode();
+    app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+    app.getOptionalDotGrid().getDiagram().setOldMode(app.getOptionalDotGrid().getDiagram().getCurrentMode());
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAG_AND_DROP);
 
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
@@ -115,10 +115,11 @@ public class Events {
 
   public static final EventHandler<MouseEvent> dragOverHandleWithSelectionMode = event -> {
     String eType = event.getEventType().toString();
+    Circle sourceHandle = (Circle)event.getSource();
     logger.debug(
             "Event type dragOverHandleWithSelectionMode -> {}, source {} current Step index {}, current mode: {}",
             eType,
-            event.getSource(),
+            sourceHandle,
             app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
             app.getOptionalDotGrid().getDiagram().getCurrentMode()
     );
@@ -129,7 +130,12 @@ public class Events {
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
     List<Knot> copiedKnots = new ArrayList<>();
 
-    Knot eventSourceKnot = selectedKnots.stream().filter(knot -> knot.getHandle().equals(event.getSource())).findFirst().orElse(null);
+    Knot eventSourceKnot = selectedKnots.stream().filter(knot -> knot.getHandle().equals(sourceHandle)).findFirst().orElse(null);
+    if (null == eventSourceKnot) {
+      event.consume();
+      return;
+    }
+
     double knotX = eventSourceKnot.getX() - event.getSceneX();
     double knotY = eventSourceKnot.getY() - event.getSceneY();
 
@@ -183,14 +189,12 @@ public class Events {
             event.getSceneY()
     );
 
-    app.getOptionalDotGrid().getDiagram().setCurrentMode(previousMouseMode);
+    app.getOptionalDotGrid().getDiagram().setCurrentMode(app.getOptionalDotGrid().getDiagram().getOldMode());
     app.getOptionalDotGrid().layoutChildren();
 
-    if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.DRAWING) {
-      app.getMainWindow().getGrid().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
-    }
-
     event.consume();
+    Platform.runLater(() ->
+            app.getRoot().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app)));
   };
 
   private static void processMouseClick(double x, double y) {
@@ -201,6 +205,8 @@ public class Events {
       case DUPLICATION      -> {}
       case CREATE_PATTERN   -> {} // This is managed in CreatePatternButton
       case MIRROR           -> {} // This is managed in CreatePatternButton
+      case MOVE             -> {} // This is managed in the various [Arrow]Button
+      case DRAG_AND_DROP    -> {} // This is managed in Events#dragInitiatedOverOnHandle()
       default -> throw new IllegalArgumentException("Please provide a valid mode, not: " +
         app.getOptionalDotGrid().getDiagram().getCurrentMode());
     }

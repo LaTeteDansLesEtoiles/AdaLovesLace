@@ -1,5 +1,6 @@
 package org.alienlabs.adaloveslace.view.component;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -18,6 +19,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
+import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.*;
 import org.alienlabs.adaloveslace.util.Events;
@@ -33,6 +35,7 @@ import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.CANVAS_TEXT_FONT_SIZE;
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
+import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 import static org.alienlabs.adaloveslace.util.NodeUtil.HANDLE_SIZE;
 
@@ -56,6 +59,8 @@ public class OptionalDotGrid extends Pane {
   private final List<Shape> grid = new ArrayList<>();
   private final Pane root;
   private final App app;
+
+  public static final PauseTransition moveKnotPause = new PauseTransition(Duration.millis(750));
 
   private final SimpleBooleanProperty showHideGridProperty;
   private final SimpleObjectProperty<Pattern> currentPatternProperty;
@@ -90,6 +95,22 @@ public class OptionalDotGrid extends Pane {
     showHideGridProperty.addListener(observable -> {
       this.showHideGrid = showHideGridProperty.getValue();
       setNeedsLayout(true);
+    });
+
+    moveKnotPause.setOnFinished(e -> {
+      List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+      List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+      List<Knot> copiedKnots = new ArrayList<>();
+
+      for (Knot knot : selectedKnots) {
+        Knot copiedKnot = new NodeUtil().copyKnot(knot);
+
+        displayedKnots.remove(knot);
+        copiedKnots.add(copiedKnot);
+      }
+
+      newStep(displayedKnots, copiedKnots, true);
+      app.getOptionalDotGrid().getDiagram().setCurrentMode(app.getOptionalDotGrid().getDiagram().getOldMode());
     });
 
     this.gridNeedsToBeRedrawn = true;
@@ -140,7 +161,7 @@ public class OptionalDotGrid extends Pane {
     Step step = this.diagram.getCurrentStep();
 
     for (Knot k : step.getSelectedKnots()) {
-      if (!app.getOptionalDotGrid().getDiagram().getCurrentMode().equals(MouseMode.DRAG_AND_DROP)) {
+      if (app.getOptionalDotGrid().getDiagram().getCurrentMode() != MouseMode.DRAG_AND_DROP) {
         app.getOptionalDotGrid().getDiagram().removeKnotDecorations(nodeListToRemove, k);
       }
     }
@@ -171,8 +192,10 @@ public class OptionalDotGrid extends Pane {
 
         if (firstKnot.isPresent()) {
           logger.debug("Adding red rectangle for Knot {}", knot);
+          getDiagram().resetKnotsText();
           addSelectionAndHandleToAKnot(knot, Color.rgb(255, 0, 0, 0.5));
         } else {
+          getDiagram().resetKnotsText();
           Platform.runLater(() -> {
             Rectangle rec = newRectangle(knot, Color.BLUE);
             knot.setSelection(rec);
@@ -182,6 +205,7 @@ public class OptionalDotGrid extends Pane {
         }
       } else if (hovered) {
         // If hovered & not selected: gray
+        getDiagram().resetKnotsText();
         Platform.runLater(() -> {
           Rectangle rec = newHoverRectangle(knot);
           knot.setHovered(rec);
@@ -189,7 +213,8 @@ public class OptionalDotGrid extends Pane {
           root.getChildren().add(rec);
         });
       } else if (getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
-          addSelectionAndHandleToAKnot(knot, BLUE_HANDLE);
+        getDiagram().resetKnotsText();
+        addSelectionAndHandleToAKnot(knot, BLUE_HANDLE);
       } else {
         Platform.runLater(() -> {
           logger.debug("Removing node {} and hover {}", knot, knot.getHovered());
@@ -213,12 +238,12 @@ public class OptionalDotGrid extends Pane {
       knot.setSelection(rec);
       root.getChildren().add(rec);
 
-      if (root.getChildren().contains(knot.getHandle()) && !app.getOptionalDotGrid().getDiagram().getCurrentMode().equals(MouseMode.DRAG_AND_DROP)) {
+      if (root.getChildren().contains(knot.getHandle()) && app.getOptionalDotGrid().getDiagram().getCurrentMode() != MouseMode.DRAG_AND_DROP) {
         root.getChildren().remove(knot.getHandle());
         knot.setHandle(null);
       }
 
-      if (!app.getOptionalDotGrid().getDiagram().getCurrentMode().equals(MouseMode.DRAG_AND_DROP)) {
+      if (app.getOptionalDotGrid().getDiagram().getCurrentMode() != MouseMode.DRAG_AND_DROP) {
         Circle handle;
 
         if (knot.getPattern().isPresent()) {

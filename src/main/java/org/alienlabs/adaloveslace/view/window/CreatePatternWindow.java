@@ -51,8 +51,8 @@ public class CreatePatternWindow {
     if (result.isPresent() && result.get() == createPatternButton) {
       logger.debug("Accepted pattern creation");
 
-      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_MOVED, CreatePatternButton.getMouseMovedListener());
-      app.getMainWindow().getGrid().removeEventHandler(MouseEvent.MOUSE_CLICKED, CreatePatternButton.getMouseClickedListener());
+      app.getRoot().removeEventHandler(MouseEvent.MOUSE_MOVED, CreatePatternButton.getMouseMovedListener());
+      app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, CreatePatternButton.getMouseClickedListener());
       app.getPrimaryStage().close();
       app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
         app.getPrimaryStage(), app.getOptionalDotGrid().getDiagram());

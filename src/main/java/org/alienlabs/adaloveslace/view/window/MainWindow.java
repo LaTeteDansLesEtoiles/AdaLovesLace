@@ -268,13 +268,13 @@ public class MainWindow {
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          removeNodeAndDecorationsForNowDisplayedKnots(app, selectedKnots);
           displayedKnots.addAll(new ArrayList<>(selectedKnots));
           displayedKnots.remove(knot);
           selectedKnots.clear();
           selectedKnots.add(copiedKnot);
 
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
-          hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
         } else {
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
@@ -325,11 +325,23 @@ public class MainWindow {
     // If we have clicked elsewhere, we deselect all knots
     if (!hasClickedOnAGivenKnot) {
       displayedKnots.addAll(new ArrayList<>(selectedKnots));
-      hideHandlesForNotSelectedKnots(app, displayedKnots);
+      removeNodeAndDecorationsForNowDisplayedKnots(app, displayedKnots);
       selectedKnots.clear();
 
       newStep(displayedKnots, selectedKnots, true);
     }
+  }
+
+  private static void removeNodeAndDecorationsForNowDisplayedKnots(App app, List<Knot> nowDisplayedKnots) {
+    nowDisplayedKnots.forEach(k -> {
+      app.getOptionalDotGrid().getRoot().getChildren().remove(k.getSelection());
+      k.setSelection(null);
+      app.getOptionalDotGrid().getRoot().getChildren().remove(k.getHovered());
+      k.setHovered(null);
+      app.getOptionalDotGrid().getRoot().getChildren().remove(k.getHandle());
+      k.setHandle(null);
+      app.getOptionalDotGrid().getRoot().getChildren().remove(k.getImageView());
+    });
   }
 
   private void hideHandlesForNotSelectedKnots(App app, List<Knot> displayedKnots) {

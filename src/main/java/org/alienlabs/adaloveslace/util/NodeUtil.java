@@ -50,9 +50,6 @@ public class NodeUtil {
     copy.setFlippedVertically(knot.isFlippedVertically());
     copy.setFlippedHorizontally(knot.isFlippedHorizontally());
 
-    copy.getImageView().setLayoutX(knot.getImageView().getLayoutX());
-    copy.getImageView().setLayoutY(knot.getImageView().getLayoutY());
-
     if (knot.getHovered() != null) {
       copy.setHovered(knot.getHovered());
     }
