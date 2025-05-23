@@ -302,27 +302,30 @@ public class OptionalDotGrid extends Pane {
   }
 
   private Rectangle newRectangle(Knot knot, Color color) {
-    Rectangle rec = new Rectangle(
-            knot.getX(),
-            knot.getY(),
-            knot.getImageView().getImage().getWidth(),
-            knot.getImageView().getImage().getHeight()
-    );
+    Rectangle rec;
+
+    if (knot.getText().isPresent()) {
+      rec = new Rectangle(
+              knot.getX(),
+              knot.getY(),
+              knot.getImageView().getImage().getWidth(),
+              knot.getImageView().getImage().getHeight()
+      );
+    } else {
+      rec = new Rectangle(
+              knot.getX(),
+              knot.getY(),
+              knot.getPattern().get().getWidth(),
+              knot.getPattern().get().getHeight()
+      );
+    }
     setRectangleProperties(knot, color, rec);
 
     return rec;
   }
 
   private Rectangle newHoverRectangle(Knot knot) {
-    Rectangle rec = new Rectangle(
-            knot.getX(),
-            knot.getY(),
-            knot.getImageView().getBoundsInParent().getWidth(),
-            knot.getImageView().getBoundsInParent().getHeight()
-    );
-    setRectangleProperties(knot, Color.GRAY, rec);
-
-    return rec;
+    return newRectangle(knot, Color.GRAY);
   }
 
   private void setRectangleProperties(Knot knot, Color color, Rectangle rec) {
