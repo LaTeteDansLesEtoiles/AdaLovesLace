@@ -163,9 +163,12 @@ public class OptionalDotGrid extends Pane {
     for (Knot k : step.getSelectedKnots()) {
       if (app.getOptionalDotGrid().getDiagram().getCurrentMode() != MouseMode.DRAG_AND_DROP) {
         app.getOptionalDotGrid().getDiagram().removeKnotDecorations(nodeListToRemove, k);
+        root.getChildren().removeAll(nodeListToRemove);
+        app.getOptionalDotGrid().getDiagram().removeAllHandles();
       }
     }
 
+    nodeListToRemove = new ArrayList<>();
     Step s = this.diagram.getCurrentStep();
     for (Knot k : s.getAllVisibleKnots()) {
       nodeListToRemove.add(k.getImageView());

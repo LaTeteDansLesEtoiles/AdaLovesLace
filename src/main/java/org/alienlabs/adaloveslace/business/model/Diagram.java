@@ -13,10 +13,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.alienlabs.adaloveslace.App;
@@ -201,6 +198,14 @@ public class Diagram {
         if (k.getHandle() != null) {
             nodeListToRemove.add(k.getHandle());
         }
+    }
+
+    // Workaround for move mode, lest handles without knots appear on the grid
+    public void removeAllHandles() {
+        app.getOptionalDotGrid().getRoot().getChildren().removeAll(
+                app.getOptionalDotGrid().getRoot().getChildren().stream()
+                        .filter(Circle.class::isInstance).toList()
+        );
     }
 
     public void redoLastStep(App app, boolean layoutChildren) {
