@@ -180,8 +180,7 @@ public class OptionalDotGrid extends Pane {
   public void drawHoveredOverOrSelectedDecorations(List<Knot> knots) {
     for (Knot knot : knots) {
 
-      if (!knot.isSelectable() &&
-              app.getOptionalDotGrid().getDiagram().getCurrentMode() != MouseMode.DELETION) {
+      if (!knot.isSelectable()) {
         continue;
       }
 

@@ -355,6 +355,10 @@ public class MainWindow {
 
   public void onClickWithDeletionMode(App app, Diagram diagram) {
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
+      if (!knot.isSelectable()) {
+        continue;
+      }
+
       if (new NodeUtil().isMouseOverKnot(knot)) {
         removeKnotIfClicked(app, diagram, knot);
         break;
