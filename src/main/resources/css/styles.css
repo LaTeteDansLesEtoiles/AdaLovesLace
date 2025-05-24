@@ -24,7 +24,7 @@
   -fx-background-color: #444;
 }
 
-.pattern-button {
+.pattern-and-text-button {
   -fx-background-color: #2b2b2b;
   -fx-text-fill: #f1f1f1;
   -fx-border-color: black;
@@ -36,12 +36,16 @@
   -fx-font-size: 14px;
 }
 
-.pattern-button:hover {
+.pattern-and-text-button:hover {
   -fx-background-color: #3a3a3a;
 }
 
-.pattern-button-selected {
+.pattern-and-text-button-selected {
   -fx-border-color: blue;
+}
+
+.pattern-and-text-button-waiting-selection {
+  -fx-border-color: green;
 }
 
 .text-field, .text-area {

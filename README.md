@@ -1,6 +1,6 @@
-Ada Aime la Dentelle : un logiciel de création de diagrammes de dentelle
+Ada Aime la Dentelle : un logiciel de création de diagrammes de techniques de fils
 
-AdaLovesLace: A tatting lace patterns creation software 
+AdaLovesLace: A thread-based techniques patterns creation software 
 
 This is Free Software, under [Affero GPL V3 license](license.md)
 
@@ -57,11 +57,11 @@ Feel free to run the Maven wrapper generation command again if Java version used
 then:
 
     
-    export JAVA_HOME=/usr/lib/jvm/jdk-20
+    export JAVA_HOME=/usr/lib/jvm/jdk-21
 
     Windows:
-    export JAVA_HOME=/C/Program\ Files/Java/jdk-20/
-    /C/Program\ Files/Java/jdk-19/bin/java -jar target/adaloveslace-0.4.0.jar
+    export JAVA_HOME=/C/Program\ Files/Java/jdk-21/
+    /C/Program\ Files/Java/jdk-21/bin/java -jar target/adaloveslace-0.4.0.jar
     ./mvnw clean install -Pwindows          -DskipUTs=true -DskipFTs=true
 
     Linux:

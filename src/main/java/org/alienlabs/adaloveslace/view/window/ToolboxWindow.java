@@ -36,7 +36,10 @@ public class ToolboxWindow {
     public static final double TOOLBOX_WINDOW_X = 600d;
     public static final double TOOLBOX_WINDOW_WIDTH = 550d;
 
-    public static final String THE_FOLLOWING_FOLDER_STRING = "The following folder: '";
+    public static final String THE_FOLLOWING_FOLDER_STRING      = "The following folder: '";
+    public static final String PATTERN_AND_TEXT_BUTTON_SELECTED = "pattern-and-text-button-selected";
+    public static final String PATTERN_AND_TEXT_BUTTON_WAITING_SELECTION = "pattern-and-text-button-waiting-selection";
+    public static final String PATTERN_AND_TEXT_BUTTON          = "pattern-and-text-button";
 
     private List<String> classpathResourceFiles;
 
@@ -50,6 +53,7 @@ public class ToolboxWindow {
     private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
     private TextArea printersTextArea;
     private Stage toolboxStage;
+    private TextButton textButton;
 
     public ToolboxWindow() {
         this.allPatterns = new ArrayList<>();
@@ -69,6 +73,13 @@ public class ToolboxWindow {
             // i / 2 = as many rows as necessary
             parent.add(buildPatternButton(app, diagram, i), i % 2, i / 2);
         }
+
+        this.textButton = new TextButton(app);
+        parent.add(
+                this.textButton,
+                this.classpathResourceFiles.size() % 2,
+                this.classpathResourceFiles.size() / 2
+        );
 
         return diagram;
     }
@@ -112,13 +123,12 @@ public class ToolboxWindow {
 
         if (i == 0) {
             this.colorWheelButton = button;
+            button.getStyleClass().add(PATTERN_AND_TEXT_BUTTON_SELECTED);
             diagram.setCurrentPattern(pattern);
         }
 
         if (i == 1) {
             this.snowflakeButton = button;
-            button.getStyleClass().add("pattern-button-selected");
-            diagram.setCurrentPattern(pattern);
         }
 
         diagram.addPattern(pattern);
@@ -353,6 +363,10 @@ public class ToolboxWindow {
 
     public List<ToggleButton> getAllPatterns() {
         return this.allPatterns;
+    }
+
+    public TextButton getTextButton() {
+        return this.textButton;
     }
 
     public ToggleButton getSnowflakeButton() {

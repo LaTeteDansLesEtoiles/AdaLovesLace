@@ -1,20 +1,18 @@
 package org.alienlabs.adaloveslace;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -46,6 +44,7 @@ import java.util.ResourceBundle;
 
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_BUTTONS;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON_SELECTED;
 
 /**
  * JavaFX App
@@ -74,6 +73,7 @@ public class App extends Application {
   public static final String ASSETS_DIRECTORY         = "assets/";
   public static final String GET_PRINTERS_BUTTON_NAME = "GetPrinters";
   public static final String PRINT_BUTTON_NAME        = "PrintDiagram";
+  public static final String TEXT_BUTTON_NAME         = "TextButton";
 
   public static final double  MAIN_WINDOW_Y           = 5d;
   public static final double  MAIN_WINDOW_X           = 75d;
@@ -83,13 +83,14 @@ public class App extends Application {
   public static final double  GRID_HEIGHT             = 650d;
   public static final int     ICON_SIZE               = 46;
   public static final int     SMALL_ICON_SIZE         = 23;
+  public static final int     CANVAS_TEXT_FONT_SIZE   = 32;
 
   public static final double  GRID_DOTS_RADIUS        = 2.5d;// The dots from the grid are ellipses, this is their radius
-  public static final String LOCALE_LANGUAGE = "LOCALE_LANGUAGE";
-  public static final String LOCALE_COUNTRY = "LOCALE_COUNTRY";
-  public static final String DEFAULT_LOCALE_LANGUAGE = "fr";
-  public static final String DEFAULT_LOCALE_COUNTRY = "FR";
-  public static final Duration TOOLTIPS_DURATION = Duration.seconds(60);
+  public static final String LOCALE_LANGUAGE          = "LOCALE_LANGUAGE";
+  public static final String LOCALE_COUNTRY           = "LOCALE_COUNTRY";
+  public static final String DEFAULT_LOCALE_LANGUAGE  = "fr";
+  public static final String DEFAULT_LOCALE_COUNTRY   = "FR";
+  public static final Duration TOOLTIPS_DURATION      = Duration.seconds(60);
   public static final double INITIAL_GRID_ZOOM_FACTOR = 1d;
 
   public static ResourceBundle resourceBundle = ResourceBundle.getBundle(
@@ -98,22 +99,24 @@ public class App extends Application {
                   DEFAULT_LOCALE_COUNTRY)
   );
 
+  private final PauseTransition resizePause = new PauseTransition(Duration.millis(700));
+  private final Map<KeyCode, Boolean> currentlyActiveKeys = new EnumMap<>(KeyCode.class);
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   private Stage toolboxStage;
   private Diagram diagram;
   private static MainWindow mainWindow;
-  private Group root;
   private Slider slider;
   private Scene scene;
-  public Stage primaryStage;
   private Stage geometryStage;
   private GeometryWindow geometryWindow;
   private Stage stateStage;
   private StateWindow stateWindow;
   private ToolboxWindow toolboxWindow;
 
-  private final Map<KeyCode, Boolean> currentlyActiveKeys = new EnumMap<>(KeyCode.class);
+
+  public Pane root;
+  public Stage primaryStage;
 
   @Override
   public void start(Stage primaryStage) {
@@ -146,7 +149,7 @@ public class App extends Application {
     logger.debug("Opening state window");
     showStateWindow(this);
 
-    if (!"".equals(filePath)) {
+    if (!filePath.isEmpty()) {
       new FileUtil().buildUiFromLaceFile(this, new File(filePath));
       this.getPrimaryStage().requestFocus();
     }
@@ -162,11 +165,13 @@ public class App extends Application {
     var javaVersion   = SystemInfo.javaVersion();
 
     notCanvas = new VBox();
-    root                      = new Group();
-    MenuBar menuBar           = App.mainWindow.createMenuBar(notCanvas, this, primaryStage);
+    root                      = new Pane();
+
+    MenuBar menuBar           = App.mainWindow.createMenuBar(notCanvas, this);
     StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, gridDotsRadius, this.diagram, root);
     TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
 
+    VBox.setVgrow(root, Priority.ALWAYS);
     root.getChildren().add(grid);
     notCanvas.getChildren().addAll(root, footer);
     App.mainWindow.onMainWindowClicked(this, root);
@@ -195,6 +200,25 @@ public class App extends Application {
       logger.debug("You shall close the app by closing this window!");
       Platform.exit();
     });
+
+    resizePause.setOnFinished(e -> {
+      this.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+      this.getOptionalDotGrid().layoutChildren();
+    });
+
+    primaryStage.widthProperty().addListener((obs, oldVal, newVal) ->
+            {
+              logger.debug("Window width: {}", newVal);
+              resizePause.playFromStart();
+            }
+    );
+
+    primaryStage.heightProperty().addListener((obs, oldVal, newVal) ->
+            {
+              logger.debug("Window height: {}", newVal);
+              resizePause.playFromStart();
+            }
+    );
 
     slider = createZoomSlider();
 
@@ -312,17 +336,26 @@ public class App extends Application {
         () -> LeftButton.onMoveKnotLeftAction   (this));
       getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT),
         () -> RightButton.onMoveKnotRightAction (this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.S),
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN),
         () -> SelectableButton.onSetSelectableModeAction(this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.T),
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN),
         () -> UnselectableButton.onSetUnselectableModeAction(this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.V),
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN),
         () -> VisibleButton.onSetVisibleAction   (this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.W),
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN),
         () -> InvisibleButton.onSetInvisibleAction (this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F),
+      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN),
               FastMoveModeButton::onSwitchFastModeAction);
     });
+  }
+
+  public void unselectPatternsAndTextButtons() {
+    this.getToolboxWindow().getAllPatterns().forEach(toggleButton -> {
+      toggleButton.setSelected(false);
+      toggleButton.getStyleClass().remove(PATTERN_AND_TEXT_BUTTON_SELECTED);
+    });
+    this.getToolboxWindow().getTextButton().setSelected(false);
+    this.getToolboxWindow().getTextButton().getStyleClass().remove(PATTERN_AND_TEXT_BUTTON_SELECTED);
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
@@ -368,7 +401,7 @@ public class App extends Application {
     return this.stateWindow;
   }
 
-  public Group getRoot() {
+  public Pane getRoot() {
     return root;
   }
 
@@ -390,10 +423,6 @@ public class App extends Application {
 
   public Stage getStateStage() {
     return this.stateStage;
-  }
-
-  public void setStateStage(Stage stateStage) {
-    this.stateStage = stateStage;
   }
 
   public static void setResourceBundle(ResourceBundle resourceBundle) {

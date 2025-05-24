@@ -49,9 +49,17 @@ public class UnselectableButton extends ImageButton {
       knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
 
       selectedKnots.remove(knot);
+
       displayedKnots.add(copy);
+
+      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
       copy.setSelection(null);
+
+      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
       copy.setHovered(null);
+
+      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHandle());
+      copy.setHandle(null);
     }
 
     newStep(displayedKnots, selectedKnots, true);

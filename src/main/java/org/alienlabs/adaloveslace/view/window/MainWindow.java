@@ -5,16 +5,15 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.print.Printer;
 import javafx.print.PrinterJob;
-import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
@@ -32,7 +31,6 @@ import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.util.Events.moveDraggedAndDroppedNodes;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 
 public class MainWindow {
@@ -81,7 +79,7 @@ public class MainWindow {
     // Just to be able to unit test code using the UI without effectively instantiating the UI
   }
 
-  public MenuBar createMenuBar(VBox parent, App app, Stage primaryStage) {
+  public MenuBar createMenuBar(VBox parent, App app) {
     menuBar = new MenuBar();
 
     Menu fileMenu     = new Menu(resourceBundle.getString(FILE));
@@ -211,21 +209,21 @@ public class MainWindow {
 
   public TilePane createFooter(String javafxVersion, String javaVersion) {
     footer = new TilePane(Orientation.VERTICAL);
-    footer.setPrefHeight(250); // 👈 pour s’assurer qu’il prenne de la place
-    footer.setPrefWidth(700);  // ou Double.MAX_VALUE si tu veux qu’il remplisse
+    footer.setPrefHeight(100);
+    footer.setPrefWidth(Double.MAX_VALUE);
     footer.getStyleClass().add("footer");
 
     footer.getChildren().addAll(new Label(resourceBundle.getString("Pitch")));
     footer.getChildren().addAll(new Label(resourceBundle.getString("Copyright")));
     footer.getChildren().addAll(new Label(resourceBundle.getString("License")));
     footer.getChildren().addAll(new Label("JavaFX " + javafxVersion + resourceBundle.getString("RunningWith") + javaVersion));
-    footer.setAlignment(Pos.CENTER);
+    footer.setAlignment(Pos.BOTTOM_CENTER);
 
     return footer;
   }
 
   public StackPane createGrid(App app, final double width, final double height, final double radius,
-                              final Diagram diagram, final Group canvas) {
+                              final Diagram diagram, final Pane canvas) {
     if (width == 0d || height == 0d) {
       this.optionalDotGrid = new OptionalDotGrid(app, diagram, canvas);
     } else {
@@ -244,13 +242,8 @@ public class MainWindow {
     return grid;
   }
 
-  public void onMainWindowClicked(final App app, final Group canvas) {
+  public void onMainWindowClicked(final App app, final Pane canvas) {
     canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
-  }
-
-  public void onDragOverHandleWithSelectionMode(App app, double x, double y) {
-    Circle handle = (Circle)app.getOptionalDotGrid().getDragOriginKnot().getHandle();
-    moveDraggedAndDroppedNodes(app, x, y, handle);
   }
 
   public void onClickWithSelectionMode(App app) {
@@ -267,11 +260,15 @@ public class MainWindow {
       hasClickedOnAGivenKnot = new NodeUtil().isMouseOverKnot(knot);
 
       if (hasClickedOnAGivenKnot && (knot.getSelection() == null)) {
-        logger.debug("Clicked Knot {} in order to select it", knot.getPattern().getFilename());
+        logger.debug("Clicked Knot {} in order to select it",
+                knot.getPattern().isPresent() ?
+                        knot.getPattern().get().getFilename() :
+                        knot.getText().get());
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          removeNodeAndDecorationsForNowDisplayedKnots(app, selectedKnots);
           displayedKnots.addAll(new ArrayList<>(selectedKnots));
           displayedKnots.remove(knot);
           selectedKnots.clear();
@@ -285,15 +282,18 @@ public class MainWindow {
           displayedKnots.remove(knot);
 
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
         }
 
         break;
       } else if (hasClickedOnAGivenKnot) {
         logger.debug("Clicked Knot displayed {}, pattern {} in order to unselect it",
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot), knot.getPattern().getFilename());
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot),
+                knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : knot.getText().get());
         logger.debug("Clicked Knot selected {}, pattern {} in order to unselect it",
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot), knot.getPattern().getFilename());
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot),
+                knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : knot.getText().get());
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
@@ -304,6 +304,7 @@ public class MainWindow {
           displayedKnots.remove(knot);
 
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
 
           break;
@@ -314,6 +315,7 @@ public class MainWindow {
           displayedKnots.add(copiedKnot);
 
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
           break;
         }
@@ -323,9 +325,31 @@ public class MainWindow {
     // If we have clicked elsewhere, we deselect all knots
     if (!hasClickedOnAGivenKnot) {
       displayedKnots.addAll(new ArrayList<>(selectedKnots));
+      removeNodeAndDecorationsForNowDisplayedKnots(app, displayedKnots);
       selectedKnots.clear();
 
       newStep(displayedKnots, selectedKnots, true);
+    }
+  }
+
+  private static void removeNodeAndDecorationsForNowDisplayedKnots(App app, List<Knot> nowDisplayedKnots) {
+    nowDisplayedKnots.forEach(k -> {
+      app.getOptionalDotGrid().getRoot().getChildren().remove(k.getSelection());
+      k.setSelection(null);
+      app.getOptionalDotGrid().getRoot().getChildren().remove(k.getHovered());
+      k.setHovered(null);
+      app.getOptionalDotGrid().getRoot().getChildren().remove(k.getHandle());
+      k.setHandle(null);
+      app.getOptionalDotGrid().getRoot().getChildren().remove(k.getImageView());
+    });
+  }
+
+  private void hideHandlesForNotSelectedKnots(App app, List<Knot> displayedKnots) {
+    for (Knot knot : displayedKnots) {
+      if (knot.getHandle() != null) {
+        app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHandle());
+        knot.setHandle(null);
+      }
     }
   }
 
@@ -340,7 +364,10 @@ public class MainWindow {
 
   private void removeKnotIfClicked(App app, Diagram diagram, Knot knot) {
     app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView());
-    app.getOptionalDotGrid().getDiagram().deleteNodesFromFollowingSteps(app, knot);
+    app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
+    app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHandle());
+    app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
+    app.getOptionalDotGrid().getDiagram().deleteKnotDecorationsFromFollowingSteps(app, knot);
 
     List<Knot> displayedKnotsToFilterOut = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
     displayedKnotsToFilterOut.remove(knot);
