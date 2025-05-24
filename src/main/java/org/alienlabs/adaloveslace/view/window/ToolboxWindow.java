@@ -236,9 +236,10 @@ public class ToolboxWindow {
         toolboxStage.setScene(toolboxScene);
         toolboxStage.setTitle(resourceBundle.getString(TOOLBOX_TITLE));
 
-        toolboxStage.setOnCloseRequest(windowEvent ->
-                logger.debug("You shall not close the toolbox window directly!")
-        );
+        toolboxStage.setOnCloseRequest(windowEvent -> {
+            logger.debug("You shall not close the toolbox window directly!");
+            windowEvent.consume();
+        });
 
         toolboxStage.show();
     }
