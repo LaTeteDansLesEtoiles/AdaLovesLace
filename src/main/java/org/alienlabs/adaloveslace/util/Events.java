@@ -22,10 +22,11 @@ public class Events {
 
   static App app;
 
-  private static double offsetX;
-  private static double offsetY;
+  private static double handleOffsetX;
+  private static double handleOffsetY;
+  private static Point2D previousEvent;
 
-  private static final Logger logger = LoggerFactory.getLogger(Events.class);
+    private static final Logger logger = LoggerFactory.getLogger(Events.class);
 
   private Events() {
     // Not accessible on purpose since all the events are static
@@ -91,8 +92,11 @@ public class Events {
             event.getY()
     );
 
-    offsetX = event.getX() - ((Circle) event.getSource()).getLayoutX();
-    offsetY = event.getY() - ((Circle) event.getSource()).getLayoutY();
+    Circle handleSource = (Circle)event.getSource();
+    Point2D handleCenterInScene = handleSource.localToScene(handleSource.getCenterX(), handleSource.getCenterY());
+    handleOffsetX = event.getSceneX() - handleCenterInScene.getX();
+    handleOffsetY = event.getSceneY() - handleCenterInScene.getY();
+    previousEvent = null;
 
     app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
     app.getOptionalDotGrid().getDiagram().setOldMode(app.getOptionalDotGrid().getDiagram().getCurrentMode());
@@ -124,8 +128,21 @@ public class Events {
             app.getOptionalDotGrid().getDiagram().getCurrentMode()
     );
 
-    logger.debug("Coordinate X     -> {}", offsetX);
-    logger.debug("Coordinate Y     -> {}", offsetY);
+    double targetCircleCenterXScene = event.getSceneX() - handleOffsetX;
+    double targetCircleCenterYScene = event.getSceneY() - handleOffsetY;
+    Point2D currentEvent = new Point2D(targetCircleCenterXScene, targetCircleCenterYScene);
+
+    if (previousEvent == null) {
+      previousEvent = new Point2D(targetCircleCenterXScene, targetCircleCenterYScene);
+      currentEvent = currentEvent.subtract(previousEvent);
+    } else {
+      if (!previousEvent.equals(currentEvent)) {
+        currentEvent = currentEvent.subtract(previousEvent);
+        previousEvent = new Point2D(targetCircleCenterXScene, targetCircleCenterYScene);
+      } else {
+        currentEvent = new Point2D(0, 0);
+      }
+    }
 
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
     List<Knot> copiedKnots = new ArrayList<>();
@@ -136,35 +153,19 @@ public class Events {
       return;
     }
 
-    double knotX = eventSourceKnot.getX() - event.getSceneX();
-    double knotY = eventSourceKnot.getY() - event.getSceneY();
-
     for (Knot knot : selectedKnots) {
       Knot copiedKnot = new NodeUtil().copyKnot(knot);
 
-      if (knot.equals(eventSourceKnot)) {
-        copiedKnot.setX(event.getSceneX());
-        copiedKnot.setY(event.getSceneY());
-        copiedKnot.getImageView().setLayoutX(event.getSceneX());
-        copiedKnot.getImageView().setLayoutY(event.getSceneY());
-        copiedKnot.getHandle().setLayoutX(event.getSceneX() - offsetX);
-        copiedKnot.getHandle().setLayoutY(event.getSceneY() - offsetY);
-        copiedKnot.getSelection().setLayoutX(event.getSceneX());
-        copiedKnot.getSelection().setLayoutY(event.getSceneY());
-        copiedKnot.getHovered().setLayoutX(event.getSceneX());
-        copiedKnot.getHovered().setLayoutY(event.getSceneY());
-      } else {
-        copiedKnot.setX(knot.getX() - knotX);
-        copiedKnot.setY(knot.getY() - knotY);
-        copiedKnot.getImageView().setLayoutX(knot.getImageView().getLayoutX() - knotX);
-        copiedKnot.getImageView().setLayoutY(knot.getImageView().getLayoutY() - knotY);
-        copiedKnot.getHandle().setLayoutX(knot.getHandle().getLayoutX() - knotX);
-        copiedKnot.getHandle().setLayoutY(knot.getHandle().getLayoutY() - knotY);
-        copiedKnot.getSelection().setLayoutX(knot.getSelection().getLayoutX() - knotX);
-        copiedKnot.getSelection().setLayoutY(knot.getSelection().getLayoutY() - knotY);
-        copiedKnot.getHovered().setLayoutX(knot.getSelection().getLayoutX() - knotX);
-        copiedKnot.getHovered().setLayoutY(knot.getSelection().getLayoutY() - knotY);
-      }
+      copiedKnot.setX(knot.getX() + currentEvent.getX());
+      copiedKnot.setY(knot.getY() + currentEvent.getY());
+      copiedKnot.getImageView().setLayoutX(copiedKnot.getX());
+      copiedKnot.getImageView().setLayoutY(copiedKnot.getY());
+      copiedKnot.getHandle().setLayoutX(copiedKnot.getHandle().getLayoutX() + currentEvent.getX());
+      copiedKnot.getHandle().setLayoutY(copiedKnot.getHandle().getLayoutY() + currentEvent.getY());
+      copiedKnot.getSelection().setLayoutX(copiedKnot.getX());
+      copiedKnot.getSelection().setLayoutY(copiedKnot.getY());
+      copiedKnot.getHovered().setLayoutX(copiedKnot.getX());
+      copiedKnot.getHovered().setLayoutY(copiedKnot.getY());
 
       copiedKnots.add(copiedKnot);
       Events.logger.debug("Knot to move");

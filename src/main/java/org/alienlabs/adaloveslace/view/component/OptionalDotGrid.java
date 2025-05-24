@@ -283,17 +283,20 @@ public class OptionalDotGrid extends Pane {
     return circle;
   }
 
+  // The handle is the top left corner of the rectangle of the zoomed, rotated knot
+  // @see https://stackoverflow.com/questions/41898990/find-corners-of-a-rotated-rectangle-given-its-center-point-and-rotation
+  // And invert "TOP LEFT VERTEX:" & "BOTTOM LEFT VERTEX:" (small error from the author)
   private Circle newHandleForText(Knot knot, Rectangle rec) {
     Circle circle = new Circle(
             knot.getImageView().getBoundsInParent().getCenterX() -
-                    (knot.getImageView().getBoundsInParent().getWidth() / 2 * rec.getScaleX()) *
+                    (knot.getImageView().getImage().getWidth() / 2 * rec.getScaleX()) *
                             Math.cos(Math.toRadians(knot.getRotationAngle())) +
-                    (knot.getImageView().getBoundsInParent().getHeight() / 2 * rec.getScaleY()) *
+                    (knot.getImageView().getImage().getHeight() / 2 * rec.getScaleY()) *
                             Math.sin(Math.toRadians(knot.getRotationAngle())),
             knot.getImageView().getBoundsInParent().getCenterY() -
-                    (knot.getImageView().getBoundsInParent().getWidth() / 2 * rec.getScaleX()) *
+                    (knot.getImageView().getImage().getWidth() / 2 * rec.getScaleX()) *
                             Math.sin(Math.toRadians(knot.getRotationAngle())) -
-                    (knot.getImageView().getBoundsInParent().getHeight() / 2 * rec.getScaleY()) *
+                    (knot.getImageView().getImage().getHeight() / 2 * rec.getScaleY()) *
                             Math.cos(Math.toRadians(knot.getRotationAngle())),
             HANDLE_SIZE * computeZoomFactor(knot),
             BLUE_HANDLE);
