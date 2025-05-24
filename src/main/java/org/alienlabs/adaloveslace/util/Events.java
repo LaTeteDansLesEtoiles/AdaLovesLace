@@ -217,7 +217,8 @@ public class Events {
     logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
     if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.SELECTION
-    || app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.DRAG_AND_DROP) {
+            || app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.DRAG_AND_DROP
+            || app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.DELETION) {
       List<Knot> allKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots());
       boolean isMouseOverAGivenKnot = false;
 

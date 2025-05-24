@@ -364,6 +364,9 @@ public class MainWindow {
 
   private void removeKnotIfClicked(App app, Diagram diagram, Knot knot) {
     app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getImageView());
+    app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
+    app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHandle());
+    app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
     app.getOptionalDotGrid().getDiagram().deleteKnotDecorationsFromFollowingSteps(app, knot);
 
     List<Knot> displayedKnotsToFilterOut = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
