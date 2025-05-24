@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
+import static org.alienlabs.adaloveslace.view.component.OptionalDotGrid.moveKnotPause;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class UpButton extends Button {
@@ -24,23 +25,37 @@ public class UpButton extends Button {
   }
 
   public static void onMoveKnotUpAction(App app) {
-    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MOVE);
+    if (app.getOptionalDotGrid().getDiagram().getCurrentMode() != MouseMode.MOVE) {
+      app.getOptionalDotGrid().getDiagram().setOldMode(app.getOptionalDotGrid().getDiagram().getCurrentMode());
+    }
 
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-    List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    List<Knot> selectedKnots = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
     List<Knot> copiedKnots = new ArrayList<>();
+    List<Knot> toRemoveKnots = new ArrayList<>();
 
     for (Knot knot : selectedKnots) {
       knot.setY(knot.getY() - FastMoveModeButton.getMoveSpeed());
       Knot copiedKnot = new NodeUtil().copyKnot(knot);
 
-      displayedKnots.remove(knot);
+      toRemoveKnots.add(knot);
       copiedKnots.add(copiedKnot);
+      moveKnotPause.playFromStart();
 
       logger.debug("Moving up knot {}", knot);
     }
 
-    newStep(displayedKnots, copiedKnots, true);
+
+    displayedKnots.removeAll(toRemoveKnots);
+
+    if (app.getOptionalDotGrid().getDiagram().getCurrentMode() != MouseMode.MOVE) {
+      app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MOVE);
+      newStep(displayedKnots, copiedKnots, true);
+    } else {
+      app.getOptionalDotGrid().getDiagram().getCurrentStep().setDisplayedKnots(displayedKnots);
+      app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(copiedKnots);
+      app.getOptionalDotGrid().layoutChildren();
+    }
   }
 
 }

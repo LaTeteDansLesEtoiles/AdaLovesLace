@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace.view.window;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -32,7 +33,7 @@ public class GeometryWindow {
 
   public static final double GEOMETRY_WINDOW_X                  = 1150d;
   public static final double GEOMETRY_WINDOW_WIDTH              = 400d;
-  public static final double GEOMETRY_WINDOW_HEIGHT             = 670d;
+  public static final double GEOMETRY_WINDOW_HEIGHT             = 760d;
   public static final double GAP_BETWEEN_BUTTONS                = 10d;
 
   public static final double GEOMETRY_BUTTONS_HEIGHT            = 50d;
@@ -64,11 +65,22 @@ public class GeometryWindow {
   private Stage geometryStage;
 
   public void createGeometryStage(Stage geometryStage, Pane parent) {
-    Scene geometryScene = new Scene(parent, GEOMETRY_WINDOW_WIDTH, GEOMETRY_WINDOW_HEIGHT);
+    ScrollPane scrollPane = new ScrollPane(parent);
+    scrollPane.setFitToWidth(true); // le contenu prend toute la largeur
+    scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+    scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+    scrollPane.getStyleClass().add("geometry-scroll");
+    parent.getStyleClass().add("geometry-pane");
+
+    Scene geometryScene = new Scene(scrollPane, GEOMETRY_WINDOW_WIDTH, GEOMETRY_WINDOW_HEIGHT);
+    geometryScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+
 
     this.geometryStage = geometryStage;
     geometryStage.setTitle(resourceBundle.getString(GEOMETRY_TITLE));
-    geometryStage.setOnCloseRequest(windowEvent -> logger.debug("You shall not close the geometry window directly!"));    geometryStage.setX(GEOMETRY_WINDOW_X);
+    geometryStage.setOnCloseRequest(windowEvent -> logger.debug("You shall not close the geometry window directly!"));
+    geometryStage.setX(GEOMETRY_WINDOW_X);
     geometryStage.setY(MAIN_WINDOW_Y);
     geometryStage.setScene(geometryScene);
     geometryStage.show();

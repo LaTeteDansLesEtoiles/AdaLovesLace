@@ -36,13 +36,13 @@ import static org.alienlabs.adaloveslace.App.*;
 public class FileUtil {
 
     public static final String JAVA_CLASS_PATH_PROPERTY       = System.getProperty("java.class.path", ".");
-    public static final String PATH_SEPARATOR_PROPERTY        = System.getProperty("path.separator");
-    public static final String PATH_SEPARATOR                 = File.separator;
+    public static final String PATH_SEPARATOR                 = File.pathSeparator;
+    public static final String FILE_SEPARATOR                 = File.separator;
     public static final String APP_FOLDER_IN_USER_HOME        = System.getProperty(USER_HOME) + File.separator +
         PROJECT_NAME + File.separator;
 
     // For code under test:
-    public static final String CLASSPATH_RESOURCES_PATH       = ".*org" + PATH_SEPARATOR + "alienlabs" + PATH_SEPARATOR + "adaloveslace" + PATH_SEPARATOR + ".*.jpg";
+    public static final String CLASSPATH_RESOURCES_PATH       = ".*org" + FILE_SEPARATOR + "alienlabs" + FILE_SEPARATOR + "adaloveslace" + FILE_SEPARATOR + ".*.jpg";
     public static final String HOME_DIRECTORY_RESOURCES_PATH  = ".+\\.(png|jpg|gif|bmp|jpeg|PNG|JPG|GIF|BMP|JPEG)$";
 
     public static final String XML_FILE_TO_SAVE_IN_LACE_FILE = "save.xml";
@@ -92,7 +92,7 @@ public class FileUtil {
             }
 
             if (null != diagram) {
-                buildKnotsImageViews(diagram);
+                buildKnotsImageViews(app, diagram);
             }
         } catch (JAXBException | IOException e) {
             logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
@@ -101,40 +101,53 @@ public class FileUtil {
         return diagram;
     }
 
-    private void buildKnotsImageViews(Diagram diagram) {
+    private void buildKnotsImageViews(App app, Diagram diagram) {
         for (Step step : diagram.getAllSteps()) {
             for (Knot knot : step.getDisplayedKnots()) {
-                try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
-                    + knot.getPattern().getFilename())) {
-                    buildKnotImageView(knot, fis);
-                } catch (IOException e) {
-                    logger.error("Problem with pattern resource file!", e);
+                if (knot.getPattern().isPresent()) {
+                    String filename = APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
+                            + knot.getPattern().get().getFilename();
+
+                    try (FileInputStream fis = new FileInputStream(filename)) {
+                        buildKnotImageView(knot, fis);
+                        knot.getPattern().get().setAbsoluteFilename(filename);
+                    } catch (IOException e) {
+                        logger.error("Problem with pattern resource file!", e);
+                    }
+                } else {
+                    knot.setImageView(app.getOptionalDotGrid().drawTextImageView(knot, knot.getX(), knot.getY()));
                 }
             }
 
             for (Knot knot : step.getSelectedKnots()) {
-                try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
-                    + knot.getPattern().getFilename())) {
-                    buildKnotImageView(knot, fis);
-                } catch (IOException e) {
-                    logger.error("Problem with pattern resource file!", e);
+                if (knot.getPattern().isPresent()) {
+                    try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
+                            + knot.getPattern().get().getFilename())) {
+                        buildKnotImageView(knot, fis);
+                    } catch (IOException e) {
+                        logger.error("Problem with pattern resource file!", e);
+                    }
+                } else {
+                    knot.setImageView(app.getOptionalDotGrid().drawTextImageView(knot, knot.getX(), knot.getY()));
                 }
             }
         }
     }
 
     public void buildKnotImageView(Knot knot, FileInputStream fis) {
-        Image image = new Image(fis);
-        ImageView iv = new ImageView(image);
+        if (knot.getPattern().isPresent()) {
+            Image image = new Image(fis);
+            ImageView iv = new ImageView(image);
 
-        iv.setX(knot.getX());
-        iv.setY(knot.getY());
-        iv.setFitHeight(knot.getPattern().getHeight());
-        iv.setFitWidth(knot.getPattern().getWidth());
+            iv.setLayoutX(knot.getX());
+            iv.setLayoutY(knot.getY());
+            iv.setFitHeight(knot.getPattern().get().getHeight());
+            iv.setFitWidth(knot.getPattern().get().getWidth());
 
-        iv.setRotate(knot.getRotationAngle());
+            iv.setRotate(knot.getRotationAngle());
 
-        knot.setImageView(iv);
+            knot.setImageView(iv);
+        }
     }
 
     private void deleteXmlFile() throws IOException {
@@ -163,7 +176,7 @@ public class FileUtil {
 
     private Diagram buildDiagram(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
         Diagram diagram = unmarshallXmlFile(zipFile, entry);
-        buildAbsoluteFilenamesForKnots(diagram);
+        buildAbsoluteFilenamesForPatternsAndKnots(diagram);
         diagram.setCurrentPattern(diagram.getPatterns().stream().findFirst().get());
         return diagram;
     }
@@ -174,9 +187,28 @@ public class FileUtil {
         return (Diagram) jaxbUnmarshaller.unmarshal(zipFile.getInputStream(entry));
     }
 
-    private void buildAbsoluteFilenamesForKnots(Diagram diagram) {
+    private void buildAbsoluteFilenamesForPatternsAndKnots(Diagram diagram) {
         for (org.alienlabs.adaloveslace.business.model.Pattern p : diagram.getPatterns()) {
             p.setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
+        }
+
+        for (Step s : diagram.getAllSteps()) {
+            for (Knot k : s.getDisplayedKnots()) {
+                if (k.getPattern().isPresent()) {
+                    k.getPattern().get().setAbsoluteFilename(
+                            APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
+                                    k.getPattern().get().getFilename()
+                    );
+                }
+            }
+            for (Knot k : s.getSelectedKnots()) {
+                if (k.getPattern().isPresent()) {
+                    k.getPattern().get().setAbsoluteFilename(
+                            APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
+                                    k.getPattern().get().getFilename()
+                    );
+                }
+            }
         }
     }
 
@@ -205,9 +237,11 @@ public class FileUtil {
     }
 
     private void writeLaceFile(File file, Marshaller jaxbMarshaller, Diagram toSave, Integer currentStepIndex) throws JAXBException {
-        try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(file))) {
+        try (FileOutputStream fos = new FileOutputStream(file);
+                ZipOutputStream zipOut = new ZipOutputStream(fos)) {
             writePatternsToLaceFile(toSave, zipOut);
             writeDiagramToLaceFile(jaxbMarshaller, toSave, zipOut, currentStepIndex);
+            zipOut.closeEntry();
         } catch (IOException e) {
             logger.error("Error saving .lace file!", e);
         }
@@ -217,6 +251,15 @@ public class FileUtil {
         toSave.setCurrentStepIndex(currentStepIndex); // Not -1 because of the empty step at the beginning
         File xmlFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
                 XML_FILE_TO_SAVE_IN_LACE_FILE);
+
+        for (Step s : toSave.getAllSteps()) {
+            s.getDisplayedKnots().removeAll(s.getDisplayedKnots().stream().filter(knot ->
+                    (knot.getText().isPresent()) && (knot.getText().get().isEmpty())).toList());
+
+            s.getSelectedKnots().removeAll(s.getSelectedKnots().stream().filter(knot ->
+                    (knot.getText().isPresent()) && (knot.getText().get().isEmpty())).toList());
+        }
+
         jaxbMarshaller.marshal(toSave, xmlFile);
 
         zipOut.putNextEntry(new ZipEntry(XML_FILE_TO_SAVE_IN_LACE_FILE));
@@ -267,7 +310,7 @@ public class FileUtil {
     }
 
     private void processClasspath(Pattern pattern, List<String> retval, String classPath) {
-        final String[] classPathElements = classPath.split(PATH_SEPARATOR_PROPERTY);
+        final String[] classPathElements = classPath.split(PATH_SEPARATOR);
         for (final String element : classPathElements) {
             logger.debug("element: {}, pattern: {}", element, pattern);
 

@@ -1,10 +1,10 @@
-Ada Aime la Dentelle : un logiciel de création de diagrammes de dentelle
+Ada Aime la Dentelle : un logiciel de création de diagrammes de techniques de fils
 
-AdaLovesLace: A tatting lace patterns creation software 
+AdaLovesLace: A thread-based techniques patterns creation software 
 
 This is Free Software, under [Affero GPL V3 license](license.md)
 
-© 2023 Zala GOUPIL
+© 2023-2025 Zala GOUPIL
 
 This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by applicable law.
 
@@ -57,11 +57,11 @@ Feel free to run the Maven wrapper generation command again if Java version used
 then:
 
     
-    export JAVA_HOME=/usr/lib/jvm/jdk-20
+    export JAVA_HOME=/usr/lib/jvm/jdk-21
 
     Windows:
-    export JAVA_HOME=/C/Program\ Files/Java/jdk-20/
-    /C/Program\ Files/Java/jdk-19/bin/java -jar target/adaloveslace-0.4.0.jar
+    export JAVA_HOME=/C/Program\ Files/Java/jdk-21/
+    /C/Program\ Files/Java/jdk-21/bin/java -jar target/adaloveslace-0.4.0.jar
     ./mvnw clean install -Pwindows          -DskipUTs=true -DskipFTs=true
 
     Linux:
@@ -191,3 +191,20 @@ Include this argument for hidpi displays on Linux (requires Java 9):
 -Dglass.gtk.uiScale=200%
 
     https://wiki.archlinux.org/title/HiDPI#JavaFX
+
+
+--------------------------------------------------------------------------------------------
+
+The CSS for the GitHub pages website:
+
+    https://markdowncss.github.io/?gost
+
+    https://github.com/markdowncss
+
+
+Markdown does not officially support video embeddings but you can embed raw HTML in it. 
+I tested out with GitHub Pages and it works flawlessly.
+
+    Go to the Video page on YouTube and click on the Share Button
+    Choose Embed
+    Copy and Paste the HTML snippet in your markdown

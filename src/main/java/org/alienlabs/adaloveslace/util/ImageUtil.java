@@ -44,11 +44,12 @@ public class ImageUtil {
     }
 
     public File buildWritableImageWithoutTechnicalElements(String pathname) {
-        this.hideTechnicalElementsFromRootGroup();
+        boolean isGridDisplayed = app.getOptionalDotGrid().isShowHideGrid();
+        this.hideTechnicalElementsFromRootGroup(false);
 
         File image = buildImage(pathname);
 
-        this.showTechnicalElementsFromRootGroup();
+        this.showTechnicalElementsFromRootGroup(isGridDisplayed);
         logger.debug("Snapshot done!");
 
         return image;
@@ -148,22 +149,29 @@ public class ImageUtil {
         });
     }
 
-    public void hideTechnicalElementsFromRootGroup() {
-        manageTechnicalElementsFromRootGroup(false);
+    public void hideTechnicalElementsFromRootGroup(boolean showGrid) {
+        manageTechnicalElementsFromRootGroup(false, showGrid);
     }
 
-    public void showTechnicalElementsFromRootGroup() {
-        manageTechnicalElementsFromRootGroup(true);
+    public void showTechnicalElementsFromRootGroup(boolean showGrid) {
+        manageTechnicalElementsFromRootGroup(true, showGrid);
     }
 
-    private void manageTechnicalElementsFromRootGroup(boolean show) {
-        this.app.getMainWindow().getMenuBar().setVisible(show);
-        this.app.getMainWindow().getFooter().setVisible(show);
+    private void manageTechnicalElementsFromRootGroup(boolean showElements, boolean showGrid) {
+        this.app.getMainWindow().getMenuBar().setVisible(showElements);
+        this.app.getMainWindow().getFooter().setVisible(showElements);
 
-        if (!show) {
+        if (!showElements) {
             app.getOptionalDotGrid().clearSelections();
             app.getOptionalDotGrid().clearAllGuideLines();
             app.getOptionalDotGrid().clearHovered();
+        }
+
+        if (showGrid) {
+            app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+            app.getOptionalDotGrid().layoutChildren();
+        } else {
+            app.getOptionalDotGrid().hideGrid();
         }
     }
 

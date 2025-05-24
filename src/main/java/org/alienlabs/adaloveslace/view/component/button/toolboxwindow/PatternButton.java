@@ -2,17 +2,23 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Pattern;
+import org.alienlabs.adaloveslace.business.model.PatternOrTextMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.alienlabs.adaloveslace.util.Events.keyHandler;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON_SELECTED;
 
 public class PatternButton extends ToggleButton {
 
   private final Pattern pattern;
-  private static final double BUTTONS_PREF_WIDTH = 200d;
-  private static final double BUTTONS_PREF_HEIGHT = 60d;
+  private static final double BUTTONS_PREF_WIDTH = 24d;
+  private static final double BUTTONS_PREF_HEIGHT = 24d;
 
   private static final Logger logger = LoggerFactory.getLogger(PatternButton.class);
 
@@ -20,33 +26,28 @@ public class PatternButton extends ToggleButton {
     super(cleanButtonLabel(buttonLabel));
     this.pattern = pattern;
 
-    BackgroundImage backgroundImage = new BackgroundImage(image,
-      BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-      new BackgroundSize(90d, 90d, true, true, true, false));
-    Background background = new Background(backgroundImage);
-    this.setPrefSize(BUTTONS_PREF_WIDTH, BUTTONS_PREF_HEIGHT);
-    this.setBackground(background);
+    ImageView imageView = new ImageView(image);
+    imageView.setFitWidth(BUTTONS_PREF_WIDTH);
+    imageView.setFitHeight(BUTTONS_PREF_HEIGHT);
+    this.setGraphic(imageView);
+    this.setGraphicTextGap(10d);
 
-    this.setStyle("-fx-border-color: black;");
+    this.getStyleClass().add(PATTERN_AND_TEXT_BUTTON); // 👈 relie au style CSS
     this.setSelected(false);
+    app.getScene().removeEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
 
     this.setOnMouseClicked(event -> {
-      // Unselect all Pattern Buttons
-      app.getToolboxWindow().getAllPatterns().forEach(toggleButton -> {
-        toggleButton.setSelected(false);
-        toggleButton.setStyle("-fx-border-color: black;");
-      });
+      app.unselectPatternsAndTextButtons();
 
-      // Treat click on the Pattern Button: set it as current Pattern of the Diagram
-      // (So it is selected)
-      String eType = event.getEventType().toString();
+      this.setSelected(true);
+      this.getStyleClass().add(PATTERN_AND_TEXT_BUTTON_SELECTED);
+
       Pattern newCurrentPattern = ((PatternButton) event.getSource()).getPattern();
-      PatternButton.this.setSelected(true);
-      PatternButton.this.setStyle("-fx-border-color: blue;");
-
-      logger.debug("Event type -> {}, new current Pattern -> {}", eType, newCurrentPattern);
+      logger.debug("Event type -> {}, new current Pattern -> {}", event.getEventType(), newCurrentPattern);
 
       app.getOptionalDotGrid().getCurrentPatternProperty().set(newCurrentPattern);
+      app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().set(PatternOrTextMode.PATTERN);
+      app.getOptionalDotGrid().getDiagram().resetKnotsText();
     });
   }
 

@@ -4,12 +4,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.PrintUtil;
+import org.alienlabs.adaloveslace.view.component.PrintersListView;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,327 +33,352 @@ import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
 public class ToolboxWindow {
 
-  public static final double TOOLBOX_WINDOW_X             = 600d;
-  public static final double TOOLBOX_WINDOW_WIDTH         = 550d;
+    public static final double TOOLBOX_WINDOW_X = 600d;
+    public static final double TOOLBOX_WINDOW_WIDTH = 550d;
 
-  public static final String THE_FOLLOWING_FOLDER_STRING  = "The following folder: '";
+    public static final String THE_FOLLOWING_FOLDER_STRING      = "The following folder: '";
+    public static final String PATTERN_AND_TEXT_BUTTON_SELECTED = "pattern-and-text-button-selected";
+    public static final String PATTERN_AND_TEXT_BUTTON_WAITING_SELECTION = "pattern-and-text-button-waiting-selection";
+    public static final String PATTERN_AND_TEXT_BUTTON          = "pattern-and-text-button";
 
-  private List<String>        classpathResourceFiles;
+    private List<String> classpathResourceFiles;
 
-  private UndoKnotButton      undoKnotButton;
-  private RedoKnotButton      redoKnotButton;
-  private ResetDiagramButton  resetDiagramButton;
-  private ToggleButton        snowflakeButton;
-  private ToggleButton        colorWheelButton;
-  private final List<ToggleButton>  allPatterns;
+    private UndoKnotButton undoKnotButton;
+    private RedoKnotButton redoKnotButton;
+    private ResetDiagramButton resetDiagramButton;
+    private ToggleButton snowflakeButton;
+    private ToggleButton colorWheelButton;
+    private final List<ToggleButton> allPatterns;
 
-  private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
-  private TextArea printersTextArea;
-  private Stage toolboxStage;
-  private CreatePatternButton createPatternButton;
+    private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
+    private TextArea printersTextArea;
+    private Stage toolboxStage;
+    private TextButton textButton;
 
-  public ToolboxWindow() {
-    this.allPatterns = new ArrayList<>();
-  }
-
-  public Diagram createToolboxPane(GridPane parent, Object classpathBase, String resourcesPath, App app, final Diagram diagram) {
-    this.classpathResourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
-
-    if (classpathBase.equals(app)) {
-      createProjectHomeDirectory(new File(System.getProperty(USER_HOME) + File.separator + PROJECT_NAME));
-      File patternsDirectoryResourcesPath = createPatternDirectory();
-      managePatternResourceFiles(patternsDirectoryResourcesPath);
+    public ToolboxWindow() {
+        this.allPatterns = new ArrayList<>();
     }
 
-    for (int i = 0; i < this.classpathResourceFiles.size(); i++) {
-      // i % 2 = 2 columns
-      // i / 2 = as many rows as necessary
-      parent.add(buildPatternButton(app, diagram, i), i % 2, i / 2);
+    public Diagram createToolboxPane(GridPane parent, Object classpathBase, String resourcesPath, App app, final Diagram diagram) {
+        this.classpathResourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
+
+        if (classpathBase.equals(app)) {
+            createProjectHomeDirectory(new File(System.getProperty(USER_HOME) + File.separator + PROJECT_NAME));
+            File patternsDirectoryResourcesPath = createPatternDirectory();
+            managePatternResourceFiles(patternsDirectoryResourcesPath);
+        }
+
+        for (int i = 0; i < this.classpathResourceFiles.size(); i++) {
+            // i % 2 = 2 columns
+            // i / 2 = as many rows as necessary
+            parent.add(buildPatternButton(app, diagram, i), i % 2, i / 2);
+        }
+
+        this.textButton = new TextButton(app);
+        parent.add(
+                this.textButton,
+                this.classpathResourceFiles.size() % 2,
+                this.classpathResourceFiles.size() / 2
+        );
+
+        return diagram;
     }
 
-    return diagram;
-  }
+    // Add a Pattern button to the toolbox for each image present in the home pattern folder
+    private ToggleButton buildPatternButton(App app, Diagram diagram, int buttonIndex) {
+        String filename = this.classpathResourceFiles.get(buttonIndex);
+        File file = new File(filename);
 
-  // Add a Pattern button to the toolbox for each image present in the home pattern folder
-  private ToggleButton buildPatternButton(App app, Diagram diagram, int buttonIndex) {
-    String filename = this.classpathResourceFiles.get(buttonIndex);
-    File file = new File(filename);
+        if (file.exists()) {
+            String label = file.getName();
 
-    if (file.exists()) {
-      String label = file.getName();
+            try (FileInputStream fis = new FileInputStream(filename)) {
+                return buildPatternButton(app, diagram, buttonIndex, filename, label, fis);
+            } catch (IOException e) {
+                logger.error("Exception reading toolbox file!", e);
+            }
+        }
 
-      try (FileInputStream fis = new FileInputStream(filename)) {
-        return buildPatternButton(app, diagram, buttonIndex, filename, label, fis);
-      } catch (IOException e) {
-        logger.error("Exception reading toolbox file!", e);
-      }
+        return null;
     }
 
-    return null;
-  }
+    // The Pattern button itself
+    private ToggleButton buildPatternButton(App app, Diagram diagram, int i, String filename, String label, FileInputStream fis) {
+        org.alienlabs.adaloveslace.business.model.Pattern pattern = new org.alienlabs.adaloveslace.business.model.Pattern(filename);
 
-  // The Pattern button itself
-  private ToggleButton buildPatternButton(App app, Diagram diagram, int i, String filename, String label, FileInputStream fis) {
-    org.alienlabs.adaloveslace.business.model.Pattern pattern = new org.alienlabs.adaloveslace.business.model.Pattern(filename);
+        Image img = new Image(fis);
 
-    Image img = new Image(fis);
+        if (diagram.getCurrentPattern() == null) {
+            diagram.setCurrentPattern(pattern);
+        }
 
-    if (diagram.getCurrentPattern() == null) {
-      diagram.setCurrentPattern(pattern);
+        pattern.setCenterX(img.getWidth() / 2);
+        pattern.setCenterY(img.getHeight() / 2);
+        pattern.setWidth(img.getWidth());
+        pattern.setHeight(img.getHeight());
+
+        ToggleButton button = new PatternButton(app, label, img, pattern);
+        button.setId(TOOLBOX_BUTTON + (i + 1));
+        this.allPatterns.add(button);
+
+        if (i == 0) {
+            this.colorWheelButton = button;
+            button.getStyleClass().add(PATTERN_AND_TEXT_BUTTON_SELECTED);
+            diagram.setCurrentPattern(pattern);
+        }
+
+        if (i == 1) {
+            this.snowflakeButton = button;
+        }
+
+        diagram.addPattern(pattern);
+        return button;
     }
 
-    pattern.setCenterX(img.getWidth() / 2);
-    pattern.setCenterY(img.getHeight() / 2);
-    pattern.setWidth(img.getWidth());
-    pattern.setHeight(img.getHeight());
+    private void managePatternResourceFiles(File patternsDirectoryResourcesPath) {
+        List<String> homeDirectoryResourceFiles;
+        homeDirectoryResourceFiles = loadPatternsFolderResourcesFiles(HOME_DIRECTORY_RESOURCES_PATH,
+                patternsDirectoryResourcesPath);
 
-    ToggleButton button = new PatternButton(app, label, img, pattern);
-    button.setId(TOOLBOX_BUTTON + (i + 1));
-    this.allPatterns.add(button);
-
-    if (i == 0) {
-      this.colorWheelButton = button;
-      diagram.setCurrentPattern(pattern);
+        if (homeDirectoryResourceFiles == null || homeDirectoryResourceFiles.isEmpty()) {
+            showEmptyPatternDirectoryDialog(patternsDirectoryResourcesPath);
+        } else {
+            // We don't add duplicated resources to our toolbox buttons (i.e. filename must be different in both
+            // classpathResourceFiles & homeDirectoryResourceFiles
+            this.classpathResourceFiles.addAll(
+                    getAllResourceFilesWithoutDuplicates(homeDirectoryResourceFiles));
+        }
     }
 
-    if (i == 1) {
-      this.snowflakeButton = button;
-      button.setStyle("-fx-border-color: blue;");
-      diagram.setCurrentPattern(pattern);
+    // We don't add duplicated resources to our toolbox buttons (i.e. filename must be different in both
+    // classpathResourceFiles & homeDirectoryResourceFiles
+    private List<String> getAllResourceFilesWithoutDuplicates(List<String> homeDirectoryResourceFiles) {
+        return homeDirectoryResourceFiles.stream().filter(patternDirectoryResource -> classpathResourceFiles.stream().noneMatch(
+                classpathResource -> patternDirectoryResource.split(String.valueOf(File.separatorChar))
+                        [patternDirectoryResource.split((String.valueOf(File.separatorChar))).length - 1]
+                        .equals(classpathResource.split((String.valueOf(File.separatorChar)))
+                                [classpathResource.split((String.valueOf(File.separatorChar))).length - 1]))).toList();
     }
 
-    diagram.addPattern(pattern);
-    return button;
-  }
+    private File createPatternDirectory() {
+        File patternsDirectoryResourcesPath = new File(System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
+        if (!patternsDirectoryResourcesPath.exists() && !patternsDirectoryResourcesPath.mkdir()) {
+            showNoPatternDirectoryDialog(patternsDirectoryResourcesPath);
+        }
 
-  private void managePatternResourceFiles(File patternsDirectoryResourcesPath) {
-    List<String> homeDirectoryResourceFiles;
-    homeDirectoryResourceFiles = loadPatternsFolderResourcesFiles(HOME_DIRECTORY_RESOURCES_PATH,
-      patternsDirectoryResourcesPath);
+        if (!patternsDirectoryResourcesPath.canWrite()) {
+            showNoPatternDirectoryDialog(patternsDirectoryResourcesPath);
+        }
 
-    if (homeDirectoryResourceFiles == null || homeDirectoryResourceFiles.isEmpty()) {
-      showEmptyPatternDirectoryDialog(patternsDirectoryResourcesPath);
-    } else {
-      // We don't add duplicated resources to our toolbox buttons (i.e. filename must be different in both
-      // classpathResourceFiles & homeDirectoryResourceFiles
-      this.classpathResourceFiles.addAll(
-        getAllResourceFilesWithoutDuplicates(homeDirectoryResourceFiles));
-    }
-  }
-
-  // We don't add duplicated resources to our toolbox buttons (i.e. filename must be different in both
-  // classpathResourceFiles & homeDirectoryResourceFiles
-  private List<String> getAllResourceFilesWithoutDuplicates(List<String> homeDirectoryResourceFiles) {
-    return homeDirectoryResourceFiles.stream().filter(patternDirectoryResource -> classpathResourceFiles.stream().noneMatch(
-      classpathResource -> patternDirectoryResource.split(String.valueOf(File.separatorChar))
-              [patternDirectoryResource.split((String.valueOf(File.separatorChar))).length - 1]
-        .equals(classpathResource.split((String.valueOf(File.separatorChar)))
-                [classpathResource.split((String.valueOf(File.separatorChar))).length - 1]))).toList();
-  }
-
-  private File createPatternDirectory() {
-    File patternsDirectoryResourcesPath = new File(System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
-    if (!patternsDirectoryResourcesPath.exists() && !patternsDirectoryResourcesPath.mkdir()) {
-        showNoPatternDirectoryDialog(patternsDirectoryResourcesPath);
+        return patternsDirectoryResourcesPath;
     }
 
-    if (!patternsDirectoryResourcesPath.canWrite()) {
-      showNoPatternDirectoryDialog(patternsDirectoryResourcesPath);
+    private void createProjectHomeDirectory(File projectHomeDirectory) {
+        if (!projectHomeDirectory.exists() && !projectHomeDirectory.mkdir()) {
+            showNoHomeDirectoryDialog(projectHomeDirectory);
+        }
+
+        if (!projectHomeDirectory.canWrite()) {
+            showNoHomeDirectoryDialog(projectHomeDirectory);
+        }
     }
 
-    return patternsDirectoryResourcesPath;
-  }
+    /**
+     * Gets sorted (by String's default sort) Pattern list resources from classpath.
+     *
+     * @param resourcesPath the classpath resource pattern to load
+     * @param classpathBase the main app, needed for tests
+     * @return the sorted Pattern list from classpath, by name
+     */
+    public List<String> loadPatternsResourcesFiles(String resourcesPath, Object classpathBase) {
+        List<String> resourceFiles = new FileUtil().getResources(classpathBase, Pattern.compile(resourcesPath));
+        Collections.sort(resourceFiles);
 
-  private void createProjectHomeDirectory(File projectHomeDirectory) {
-    if (!projectHomeDirectory.exists() && !projectHomeDirectory.mkdir()) {
-        showNoHomeDirectoryDialog(projectHomeDirectory);
+        return resourceFiles;
     }
 
-    if (!projectHomeDirectory.canWrite()) {
-      showNoHomeDirectoryDialog(projectHomeDirectory);
+    /**
+     * Gets sorted (by String's default sort) Pattern list resources from folder.
+     *
+     * @param resourcesPath the folder resource pattern to load
+     * @param classpathBase the main app, needed for tests
+     * @return the sorted Pattern list from folder, by name
+     */
+    public List<String> loadPatternsFolderResourcesFiles(String resourcesPath, File classpathBase) {
+        List<String> resourceFiles = new FileUtil().getDirectoryResources(classpathBase, Pattern.compile(resourcesPath));
+        Collections.sort(resourceFiles);
+
+        return resourceFiles;
     }
-  }
 
-  /**
-   * Gets sorted (by String's default sort) Pattern list resources from classpath.
-   *
-   * @param resourcesPath the classpath resource pattern to load
-   * @param classpathBase the main app, needed for tests
-   * @return the sorted Pattern list from classpath, by name
-   */
-  public List<String> loadPatternsResourcesFiles(String resourcesPath, Object classpathBase) {
-    List<String> resourceFiles = new FileUtil().getResources(classpathBase, Pattern.compile(resourcesPath));
-    Collections.sort(resourceFiles);
+    public void createToolboxStage(Stage toolboxStage, GridPane parent, App app, int posY) {
+        this.toolboxStage = toolboxStage;
 
-    return resourceFiles;
-  }
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(parent);
+        scrollPane.setFitToWidth(true); // pour que le contenu prenne toute la largeur
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // pas de défilement horizontal
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED); // barre verticale optionnelle
 
-  /**
-   * Gets sorted (by String's default sort) Pattern list resources from folder.
-   *
-   * @param resourcesPath the folder resource pattern to load
-   * @param classpathBase the main app, needed for tests
-   * @return the sorted Pattern list from folder, by name
-   */
-  public List<String> loadPatternsFolderResourcesFiles(String resourcesPath, File classpathBase) {
-    List<String> resourceFiles = new FileUtil().getDirectoryResources(classpathBase, Pattern.compile(resourcesPath));
-    Collections.sort(resourceFiles);
+        VBox root = new VBox(scrollPane);
+        root.setPrefSize(TOOLBOX_WINDOW_WIDTH, computeWindowHeight(app));
+        root.getStyleClass().add("toolbox");
 
-    return resourceFiles;
-  }
+        buildPrintButtons(app, parent, posY);
 
-  public void createToolboxStage(Pane root, Stage toolboxStage, GridPane parent, App app, int posY) {
-    this.toolboxStage = toolboxStage;
-    buildPrintButtons(app, parent, posY);
+        Scene toolboxScene = new Scene(root);
+        toolboxScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 
-    Scene toolboxScene = new Scene(root);
-    toolboxStage.setX(TOOLBOX_WINDOW_X);
-    this.toolboxStage.setY(MAIN_WINDOW_Y);
-    this.toolboxStage.setWidth(TOOLBOX_WINDOW_WIDTH);
-    this.toolboxStage.setHeight(computeWindowHeight(app));
-    this.toolboxStage.setScene(toolboxScene);
-    this.toolboxStage.show();
+        toolboxStage.setX(TOOLBOX_WINDOW_X);
+        toolboxStage.setY(MAIN_WINDOW_Y);
+        toolboxStage.setWidth(TOOLBOX_WINDOW_WIDTH);
+        toolboxStage.setHeight(computeWindowHeight(app));
+        toolboxStage.setScene(toolboxScene);
+        toolboxStage.setTitle(resourceBundle.getString(TOOLBOX_TITLE));
 
-    this.toolboxStage.setTitle(resourceBundle.getString(TOOLBOX_TITLE));
-    this.toolboxStage.setOnCloseRequest(windowEvent ->
-            logger.debug("You shall not close the toolbox window directly!")
-    );
-  }
+        toolboxStage.setOnCloseRequest(windowEvent ->
+                logger.debug("You shall not close the toolbox window directly!")
+        );
 
-  private int computeWindowHeight(App app) {
-    if (app.getOptionalDotGrid().getDiagram().getPatterns().isEmpty()) {
-      return 900;
-    } else {
-      if (app.getOptionalDotGrid().getDiagram().getPatterns().size() > 12) {
-        return 900;
-      }
-
-      return app.getOptionalDotGrid().getDiagram().getPatterns().size() * 200;
+        toolboxStage.show();
     }
-  }
 
-  public void createToolboxButtons(GridPane parent, App app, int posY) {
-    buildFileButtons(app, parent, posY);
-    buildEditButtons(app, parent, posY);
-    buildShowHideGridButton(app, parent, posY);
-    buildQuitButton(parent, posY);
-  }
+    private int computeWindowHeight(App app) {
+        if (app.getOptionalDotGrid().getDiagram().getPatterns().isEmpty()) {
+            return 900;
+        } else {
+            if (app.getOptionalDotGrid().getDiagram().getPatterns().size() > 12) {
+                return 900;
+            }
 
-  /** Print diagram buttons.
-   *
-   */
-  public void buildPrintButtons(App  app, GridPane parent, int posY) {
-    printersTextArea = new TextArea();
-    printersTextArea.setPrefColumnCount(8);
+            return app.getOptionalDotGrid().getDiagram().getPatterns().size() * 200;
+        }
+    }
 
-    Button getPrintersButton    = new Button(resourceBundle.getString(GET_PRINTERS_BUTTON_NAME));
-    final Tooltip tooltip       = new Tooltip();
-    tooltip.setText(resourceBundle.getString("GET_PRINTERS_BUTTON_TOOLTIP"));
-    tooltip.setShowDuration(TOOLTIPS_DURATION);
-    getPrintersButton.setTooltip(tooltip);
+    public void createToolboxButtons(GridPane parent, App app, int posY) {
+        buildFileButtons(app, parent, posY);
+        buildEditButtons(app, parent, posY);
+        buildShowHideGridButton(app, parent, posY);
+        buildQuitButton(parent, posY);
+    }
 
-    Button printButton          = new Button(resourceBundle.getString(PRINT_BUTTON_NAME));
-    final Tooltip tooltip2      = new Tooltip();
-    tooltip2.setText(resourceBundle.getString("PRINT_BUTTON_TOOLTIP"));
-    tooltip2.setShowDuration(TOOLTIPS_DURATION);
-    printButton.setTooltip(tooltip2);
+    /**
+     * Print diagram buttons.
+     */
+    public void buildPrintButtons(App app, GridPane parent, int posY) {
+        Button getPrintersButton = new Button(resourceBundle.getString(GET_PRINTERS_BUTTON_NAME));
+        final Tooltip tooltip = new Tooltip();
+        tooltip.setText(resourceBundle.getString("GET_PRINTERS_BUTTON_TOOLTIP"));
+        tooltip.setShowDuration(TOOLTIPS_DURATION);
+        getPrintersButton.setTooltip(tooltip);
 
-    parent.add(getPrintersButton,   0, posY + 7);
-    parent.add(printButton,         1, posY + 7);
-    parent.add(printersTextArea,    0, posY + 8);
+        Button printButton = new Button(resourceBundle.getString(PRINT_BUTTON_NAME));
+        final Tooltip tooltip2 = new Tooltip();
+        tooltip2.setText(resourceBundle.getString("PRINT_BUTTON_TOOLTIP"));
+        tooltip2.setShowDuration(TOOLTIPS_DURATION);
+        printButton.setTooltip(tooltip2);
 
-    PrintUtil printer = new PrintUtil(app);
-    printer.printersButtonOnAction(printersTextArea, getPrintersButton);
-    printer.printButtonOnAction(printButton);
-  }
+        parent.add(getPrintersButton, 0, posY + 7);
+        parent.add(printButton, 1, posY + 7);
+        PrintersListView listView = new PrintersListView();
+        parent.add(listView, 0, posY + 8);
 
-  private void buildQuitButton(GridPane buttonsPane, int posY) {
-    QuitButton showQuitButton = new QuitButton(resourceBundle.getString(QUIT_APP));
-    buttonsPane.add(showQuitButton, 0, posY + 6);
-  }
+        PrintUtil printer = new PrintUtil(app);
+        printer.printersButtonOnAction(listView, getPrintersButton);
+        printer.printButtonOnAction(printButton);
+    }
 
-  private void buildShowHideGridButton(App app, GridPane buttonsPane, int posY) {
-    buttonsPane.add(new ShowHideGridButton  (resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME), app), 1, posY + 5);
-  }
+    private void buildQuitButton(GridPane buttonsPane, int posY) {
+        QuitButton showQuitButton = new QuitButton(resourceBundle.getString(QUIT_APP));
+        buttonsPane.add(showQuitButton, 0, posY + 6);
+    }
 
-  private void buildEditButtons(App app, GridPane buttonsPane, int posY) {
-    this.undoKnotButton           = new UndoKnotButton      (resourceBundle.getString(UNDO_KNOT), app);
-    this.redoKnotButton           = new RedoKnotButton      (resourceBundle.getString(REDO_KNOT), app);
-    this.createPatternButton      = new CreatePatternButton (resourceBundle.getString(CREATE_PATTERN_BUTTON), app);
-    this.resetDiagramButton       = new ResetDiagramButton  (resourceBundle.getString(RESET_DIAGRAM), app);
-    buttonsPane.add(this.undoKnotButton,      0, posY + 3);
-    buttonsPane.add(this.redoKnotButton,      1, posY + 3);
-    buttonsPane.add(this.createPatternButton, 0, posY + 4);
-    buttonsPane.add(this.resetDiagramButton,  0, posY + 5);
-  }
+    private void buildShowHideGridButton(App app, GridPane buttonsPane, int posY) {
+        buttonsPane.add(new ShowHideGridButton(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME), app), 1, posY + 5);
+    }
 
-  private void buildFileButtons(App app, GridPane buttonsPane, int posY) {
-    SaveButton          saveButton          = new SaveButton          (app, resourceBundle.getString(SAVE_FILE));
-    SaveAsButton        saveAsButton        = new SaveAsButton        (app, resourceBundle.getString(SAVE_FILE_AS));
-    LoadButton          loadButton          = new LoadButton          (app, resourceBundle.getString(LOAD_FILE));
-    ShareButton         shareButton         = new ShareButton         (app, resourceBundle.getString(SHARE_BUTTON_NAME));
-    ExportImageButton   exportImageButton   = new ExportImageButton   (app, resourceBundle.getString(EXPORT_IMAGE));
-    ExportPdfButton     exportPdfButton     = new ExportPdfButton     (app, resourceBundle.getString(EXPORT_PDF_BUTTON_NAME));
+    private void buildEditButtons(App app, GridPane buttonsPane, int posY) {
+        this.undoKnotButton = new UndoKnotButton(resourceBundle.getString(UNDO_KNOT), app);
+        this.redoKnotButton = new RedoKnotButton(resourceBundle.getString(REDO_KNOT), app);
+        CreatePatternButton createPatternButton = new CreatePatternButton(resourceBundle.getString(CREATE_PATTERN_BUTTON), app);
+        this.resetDiagramButton = new ResetDiagramButton(resourceBundle.getString(RESET_DIAGRAM), app);
+        buttonsPane.add(this.undoKnotButton, 0, posY + 3);
+        buttonsPane.add(this.redoKnotButton, 1, posY + 3);
+        buttonsPane.add(createPatternButton, 0, posY + 4);
+        buttonsPane.add(this.resetDiagramButton, 0, posY + 5);
+    }
 
-    buttonsPane.add(saveButton, 0, posY);
-    buttonsPane.add(saveAsButton, 1, posY);
-    buttonsPane.add(loadButton, 0, posY + 1);
-    buttonsPane.add(shareButton, 1, posY + 1);
-    buttonsPane.add(exportImageButton, 0, posY + 2);
-    buttonsPane.add(exportPdfButton, 1, posY + 2);
-  }
+    private void buildFileButtons(App app, GridPane buttonsPane, int posY) {
+        SaveButton saveButton = new SaveButton(app, resourceBundle.getString(SAVE_FILE));
+        SaveAsButton saveAsButton = new SaveAsButton(app, resourceBundle.getString(SAVE_FILE_AS));
+        LoadButton loadButton = new LoadButton(app, resourceBundle.getString(LOAD_FILE));
+        ShareButton shareButton = new ShareButton(app, resourceBundle.getString(SHARE_BUTTON_NAME));
+        ExportImageButton exportImageButton = new ExportImageButton(app, resourceBundle.getString(EXPORT_IMAGE));
+        ExportPdfButton exportPdfButton = new ExportPdfButton(app, resourceBundle.getString(EXPORT_PDF_BUTTON_NAME));
 
-  private void showNoHomeDirectoryDialog(final File directory) {
-    showErrorDialog(THE_FOLLOWING_FOLDER_STRING + directory.getAbsolutePath() + "' shall be used as an " + ADA_LOVES_LACE + " home folder and it is either non-existent either non-writable!");
-  }
+        buttonsPane.add(saveButton, 0, posY);
+        buttonsPane.add(saveAsButton, 1, posY);
+        buttonsPane.add(loadButton, 0, posY + 1);
+        buttonsPane.add(shareButton, 1, posY + 1);
+        buttonsPane.add(exportImageButton, 0, posY + 2);
+        buttonsPane.add(exportPdfButton, 1, posY + 2);
+    }
 
-  private void showNoPatternDirectoryDialog(final File directory) {
-    showErrorDialog(THE_FOLLOWING_FOLDER_STRING + directory.getAbsolutePath() + "' shall be used for storing pattern images and it is either non-existent either non-writable!");
-  }
+    private void showNoHomeDirectoryDialog(final File directory) {
+        showErrorDialog(THE_FOLLOWING_FOLDER_STRING + directory.getAbsolutePath() + "' shall be used as an " + ADA_LOVES_LACE + " home folder and it is either non-existent either non-writable!");
+    }
 
-  private void showEmptyPatternDirectoryDialog(final File directory) {
-    showErrorDialog(THE_FOLLOWING_FOLDER_STRING + directory.getAbsolutePath() + "' shall be used for storing pattern images and it is empty!");
-  }
+    private void showNoPatternDirectoryDialog(final File directory) {
+        showErrorDialog(THE_FOLLOWING_FOLDER_STRING + directory.getAbsolutePath() + "' shall be used for storing pattern images and it is either non-existent either non-writable!");
+    }
 
-  private void showErrorDialog(String text) {
-    Alert alert = new Alert(Alert.AlertType.ERROR);
-    alert.setTitle(ADA_LOVES_LACE);
-    alert.setHeaderText(ERROR);
-    alert.setContentText(text);
+    private void showEmptyPatternDirectoryDialog(final File directory) {
+        showErrorDialog(THE_FOLLOWING_FOLDER_STRING + directory.getAbsolutePath() + "' shall be used for storing pattern images and it is empty!");
+    }
 
-    alert.showAndWait();
-  }
+    private void showErrorDialog(String text) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(ADA_LOVES_LACE);
+        alert.setHeaderText(ERROR);
+        alert.setContentText(text);
 
-  public ResetDiagramButton getResetDiagramButton() {
-    return this.resetDiagramButton;
-  }
+        alert.showAndWait();
+    }
 
-  public UndoKnotButton getUndoKnotButton() {
-    return this.undoKnotButton;
-  }
+    public ResetDiagramButton getResetDiagramButton() {
+        return this.resetDiagramButton;
+    }
 
-  public RedoKnotButton getRedoKnotButton() {
-    return this.redoKnotButton;
-  }
+    public UndoKnotButton getUndoKnotButton() {
+        return this.undoKnotButton;
+    }
 
-  public TextArea getPrintersTextArea() {
-    return this.printersTextArea;
-  }
+    public RedoKnotButton getRedoKnotButton() {
+        return this.redoKnotButton;
+    }
 
-  public List<ToggleButton> getAllPatterns() {
-    return this.allPatterns;
-  }
+    public TextArea getPrintersTextArea() {
+        return this.printersTextArea;
+    }
 
-  public ToggleButton getSnowflakeButton() {
-    return this.snowflakeButton;
-  }
+    public List<ToggleButton> getAllPatterns() {
+        return this.allPatterns;
+    }
 
-  public ToggleButton getColorWheelButton() {
-    return this.colorWheelButton;
-  }
+    public TextButton getTextButton() {
+        return this.textButton;
+    }
 
-  public Stage getToolboxStage() {
-    return this.toolboxStage;
-  }
+    public ToggleButton getSnowflakeButton() {
+        return this.snowflakeButton;
+    }
+
+    public ToggleButton getColorWheelButton() {
+        return this.colorWheelButton;
+    }
+
+    public Stage getToolboxStage() {
+        return this.toolboxStage;
+    }
 
 }

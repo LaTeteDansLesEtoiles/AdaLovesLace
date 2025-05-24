@@ -1,0 +1,5 @@
+.selected-line {
+    -fx-background-color: #4f6d7a;
+    -fx-text-fill: white;
+    -fx-font-family: "Comic Sans MS", cursive;
+}

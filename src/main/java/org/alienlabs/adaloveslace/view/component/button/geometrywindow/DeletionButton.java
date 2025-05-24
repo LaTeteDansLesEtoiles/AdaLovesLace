@@ -2,8 +2,10 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +39,8 @@ public class DeletionButton extends ToggleButton {
     window.getSelectionButton()   .setSelected(false);
     window.getDeletionButton()    .setSelected(true);
     window.getDuplicationButton() .setSelected(false);
+
+    app.getOptionalDotGrid().getRoot().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
   }
 
 }

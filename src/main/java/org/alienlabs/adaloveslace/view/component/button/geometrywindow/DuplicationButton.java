@@ -48,8 +48,8 @@ public class DuplicationButton extends ToggleButton {
       Knot copiedKnot = new NodeUtil().copyKnotCloningImageView(knot);
       copiedKnot.setX(knot.getX() + (NEW_KNOT_GAP * selectedKnots.size()));
       copiedKnot.setY(knot.getY() + (NEW_KNOT_GAP * selectedKnots.size()));
-      copiedKnot.getImageView().setX(knot.getX() + (NEW_KNOT_GAP * selectedKnots.size()));
-      copiedKnot.getImageView().setY(knot.getY() + (NEW_KNOT_GAP * selectedKnots.size()));
+      copiedKnot.getImageView().setLayoutX(knot.getX() + (NEW_KNOT_GAP * selectedKnots.size()));
+      copiedKnot.getImageView().setLayoutY(knot.getY() + (NEW_KNOT_GAP * selectedKnots.size()));
 
       displayedKnots.remove(knot);
       displayedKnots.remove(copiedKnot);
