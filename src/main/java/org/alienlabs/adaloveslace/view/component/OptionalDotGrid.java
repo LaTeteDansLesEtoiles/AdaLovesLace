@@ -345,8 +345,6 @@ public class OptionalDotGrid extends Pane {
   }
 
   public void drawGuideLines(final Step step, final Knot knot) {
-    clearGuideLines(knot);
-
     Platform.runLater(() -> {
       if ((diagram.getCurrentMode() != MouseMode.CREATE_PATTERN) && (diagram.getCurrentMode() != MouseMode.MIRROR)) {
 
