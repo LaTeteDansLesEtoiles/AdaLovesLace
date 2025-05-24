@@ -165,6 +165,7 @@ public class ImageUtil {
             app.getOptionalDotGrid().clearSelections();
             app.getOptionalDotGrid().clearAllGuideLines();
             app.getOptionalDotGrid().clearHovered();
+            app.getOptionalDotGrid().clearHandles();
         }
 
         if (showGrid) {
