@@ -324,7 +324,7 @@ public class MainWindow {
 
     // If we have clicked elsewhere, we deselect all knots
     if (!hasClickedOnAGivenKnot) {
-      displayedKnots.addAll(new ArrayList<>(selectedKnots));
+      displayedKnots.addAll(selectedKnots.stream().map(knot -> new NodeUtil().copyKnot(knot)).toList());
       removeNodeAndDecorationsForNowDisplayedKnots(app, displayedKnots);
       selectedKnots.clear();
 

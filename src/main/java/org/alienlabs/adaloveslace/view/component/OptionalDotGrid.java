@@ -195,10 +195,8 @@ public class OptionalDotGrid extends Pane {
 
         if (firstKnot.isPresent()) {
           logger.debug("Adding red rectangle for Knot {}", knot);
-          getDiagram().resetKnotsText();
           addSelectionAndHandleToAKnot(knot, Color.rgb(255, 0, 0, 0.5));
         } else {
-          getDiagram().resetKnotsText();
           Platform.runLater(() -> {
             Rectangle rec = newRectangle(knot, Color.BLUE);
             knot.setSelection(rec);
@@ -208,7 +206,6 @@ public class OptionalDotGrid extends Pane {
         }
       } else if (hovered) {
         // If hovered & not selected: gray
-        getDiagram().resetKnotsText();
         Platform.runLater(() -> {
           Rectangle rec = newHoverRectangle(knot);
           knot.setHovered(rec);
@@ -216,7 +213,6 @@ public class OptionalDotGrid extends Pane {
           root.getChildren().add(rec);
         });
       } else if (getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
-        getDiagram().resetKnotsText();
         addSelectionAndHandleToAKnot(knot, BLUE_HANDLE);
       } else {
         Platform.runLater(() -> {
@@ -289,7 +285,7 @@ public class OptionalDotGrid extends Pane {
   // The handle is the top left corner of the rectangle of the zoomed, rotated knot
   // @see https://stackoverflow.com/questions/41898990/find-corners-of-a-rotated-rectangle-given-its-center-point-and-rotation
   // And invert "TOP LEFT VERTEX:" & "BOTTOM LEFT VERTEX:" (small error from the author)
-  private Circle newHandleForText(Knot knot, Rectangle rec) {
+  public Circle newHandleForText(Knot knot, Rectangle rec) {
     Circle circle = new Circle(
             knot.getImageView().getBoundsInParent().getCenterX() -
                     (knot.getImageView().getImage().getWidth() / 2 * rec.getScaleX()) *
@@ -307,7 +303,7 @@ public class OptionalDotGrid extends Pane {
     return circle;
   }
 
-  private Rectangle newRectangle(Knot knot, Color color) {
+  public Rectangle newRectangle(Knot knot, Color color) {
     Rectangle rec;
 
     if (knot.getText().isPresent()) {

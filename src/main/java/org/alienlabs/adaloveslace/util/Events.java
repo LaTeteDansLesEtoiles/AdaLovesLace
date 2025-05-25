@@ -33,13 +33,16 @@ public class Events {
   }
 
   public static final EventHandler<KeyEvent> keyHandler = event -> {
-    if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.DRAWING) {
+    if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.DRAWING ||
+            app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.SELECTION) {
       logger.info("key pressed -> {}", event.getCode());
 
       switch (event.getCode()) {
         case BACK_SPACE:
           if (!typedText.isEmpty()) {
             typedText.deleteCharAt(typedText.length() - 1);
+          } else {
+            typedText.append(NEW_TEXT);
           }
           updateImage.run();
 

@@ -35,8 +35,6 @@ public class DrawingButton extends ToggleButton {
   public static void onSetDrawModeAction(App app, GeometryWindow window) {
     logger.info("Setting draw mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
-    app.getOptionalDotGrid().clearHovered();
-
     app.getRoot().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {

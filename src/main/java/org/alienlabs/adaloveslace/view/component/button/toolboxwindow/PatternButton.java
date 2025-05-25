@@ -47,7 +47,6 @@ public class PatternButton extends ToggleButton {
 
       app.getOptionalDotGrid().getCurrentPatternProperty().set(newCurrentPattern);
       app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().set(PatternOrTextMode.PATTERN);
-      app.getOptionalDotGrid().getDiagram().resetKnotsText();
     });
   }
 
