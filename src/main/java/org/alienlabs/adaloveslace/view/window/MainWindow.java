@@ -312,6 +312,7 @@ public class MainWindow {
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
           copiedKnot.setSelection(null);
           selectedKnots.remove(knot);
+          displayedKnots.remove(knot);
           displayedKnots.add(copiedKnot);
 
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);

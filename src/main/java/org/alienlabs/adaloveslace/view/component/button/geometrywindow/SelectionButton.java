@@ -44,16 +44,7 @@ public class SelectionButton extends ToggleButton {
     app.getRoot().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
-      if (knot.isSelectable()) {
-        knot.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-        knot.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
-
-        if (knot.getHandle() != null) {
-          knot.getHandle().setOnMousePressed(Events.getDragInitiatedOverHandleEventHandler());
-          knot.getHandle().setOnMouseDragged(Events.getMouseDragOverHandleEventHandler());
-          knot.getHandle().setOnMouseReleased(Events.getMouseDragDroppedHandleEventHandler());
-        }
-      }
+      putAllEventsOnKnot(app, knot);
     }
 
     app.getRoot().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
@@ -62,6 +53,19 @@ public class SelectionButton extends ToggleButton {
     window.getSelectionButton()   .setSelected(true);
     window.getDeletionButton()    .setSelected(false);
     window.getDuplicationButton() .setSelected(false);
+  }
+
+  public static void putAllEventsOnKnot(App app, Knot knot) {
+    if (knot.isSelectable()) {
+      knot.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+      knot.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+
+      if (knot.getHandle() != null) {
+        knot.getHandle().setOnMousePressed(Events.getDragInitiatedOverHandleEventHandler());
+        knot.getHandle().setOnMouseDragged(Events.getMouseDragOverHandleEventHandler());
+        knot.getHandle().setOnMouseReleased(Events.getMouseDragDroppedHandleEventHandler());
+      }
+    }
   }
 
 }
