@@ -68,7 +68,7 @@ public class App extends Application {
   public static final String EXPORT_IMAGE_CONTENT_TYPE= "image/png";
   public static final String EXPORT_IMAGE_FILE_TYPE   = ".png";
   public static final String EXPORT_PDF_FILE_TYPE     = ".pdf";
-  public static final String PATTERNS_DIRECTORY_NAME  = "patterns";
+  public static final String PATTERNS_DIRECTORY_NAME  = "knots";
   public static final String ERROR                    = "Error!";
   public static final String ASSETS_DIRECTORY         = "assets/";
   public static final String GET_PRINTERS_BUTTON_NAME = "GetPrinters";
