@@ -68,6 +68,15 @@ public class Knot implements Comparable<Knot> {
   @XmlTransient
   private final List<Node> guideLines = new ArrayList<>();
 
+  @XmlTransient
+  private UUID textId;
+
+  @XmlTransient
+  public static final StringBuilder NEW_TEXT = new StringBuilder(" ");
+
+  @XmlTransient
+  public StringBuilder typedText = new StringBuilder(NEW_TEXT);
+
   public Knot() {
     this.uuid                 = UUID.randomUUID();
   }
@@ -208,6 +217,22 @@ public class Knot implements Comparable<Knot> {
 
   public void setFlippedHorizontally(boolean flippedHorizontally) {
     this.flippedHorizontally = flippedHorizontally;
+  }
+
+  public UUID getTextId() {
+    return textId;
+  }
+
+  public void setTextId(UUID textId) {
+    this.textId = textId;
+  }
+
+  public StringBuilder getTypedText() {
+    return this.typedText;
+  }
+
+  public void setTypedText(StringBuilder typedText) {
+    this.typedText = typedText;
   }
 
   @Override

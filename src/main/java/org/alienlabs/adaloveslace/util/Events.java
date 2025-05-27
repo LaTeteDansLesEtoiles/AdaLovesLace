@@ -15,7 +15,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.alienlabs.adaloveslace.business.model.Diagram.*;
+import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
+import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.MOUSE_CLICKED;
 
 public class Events {
@@ -37,6 +38,8 @@ public class Events {
             app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.SELECTION) {
       logger.info("key pressed -> {}", event.getCode());
 
+      StringBuilder typedText = app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText();
+
       switch (event.getCode()) {
         case BACK_SPACE:
           if (!typedText.isEmpty()) {
@@ -44,18 +47,21 @@ public class Events {
           } else {
             typedText.append(NEW_TEXT);
           }
-          updateImage.run();
+          app.getOptionalDotGrid().getDiagram().getCurrentKnot().setTypedText(typedText);
+          app.getOptionalDotGrid().getDiagram().getUpdateImage().run();
 
           break;
         case ENTER:
           typedText.append("\n");
-          updateImage.run();
+          app.getOptionalDotGrid().getDiagram().getCurrentKnot().setTypedText(typedText);
+          app.getOptionalDotGrid().getDiagram().getUpdateImage().run();
 
           break;
         default:
           if (!event.isControlDown() && !event.getText().isEmpty()) {
             typedText.append(event.getText());
-            updateImage.run();
+            app.getOptionalDotGrid().getDiagram().getCurrentKnot().setTypedText(typedText);
+            app.getOptionalDotGrid().getDiagram().getUpdateImage().run();
           }
       }
     }

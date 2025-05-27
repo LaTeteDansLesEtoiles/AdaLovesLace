@@ -38,7 +38,6 @@ public class SelectionButton extends ToggleButton {
     logger.debug("Setting selection mode");
 
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
-    app.getOptionalDotGrid().getDiagram().resetKnotsText();
     app.getScene().removeEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
     app.getOptionalDotGrid().getRoot().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
     app.getRoot().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
@@ -64,6 +63,10 @@ public class SelectionButton extends ToggleButton {
         knot.getHandle().setOnMousePressed(Events.getDragInitiatedOverHandleEventHandler());
         knot.getHandle().setOnMouseDragged(Events.getMouseDragOverHandleEventHandler());
         knot.getHandle().setOnMouseReleased(Events.getMouseDragDroppedHandleEventHandler());
+      }
+
+      if (knot.getPattern().isEmpty()) {
+        app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
       }
     }
   }

@@ -31,7 +31,6 @@ public class TextButton extends ToggleButton {
   private final EventHandler<MouseEvent> onTextButtonClicked = event -> {
     app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().set(PatternOrTextMode.TEXT);
     app.unselectPatternsAndTextButtons();
-    app.getOptionalDotGrid().getDiagram().resetKnotsText();
     app.getOptionalDotGrid().getRoot().setOnKeyPressed(null);
     app.getOptionalDotGrid().getRoot().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
     this.setSelected(true);

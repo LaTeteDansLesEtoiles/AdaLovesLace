@@ -36,6 +36,7 @@ import java.util.*;
 import static org.alienlabs.adaloveslace.App.CANVAS_TEXT_FONT_SIZE;
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
+import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 import static org.alienlabs.adaloveslace.util.NodeUtil.HANDLE_SIZE;
 
@@ -264,7 +265,7 @@ public class OptionalDotGrid extends Pane {
   // The handle is the top left corner of the rectangle of the zoomed, rotated knot
   // @see https://stackoverflow.com/questions/41898990/find-corners-of-a-rotated-rectangle-given-its-center-point-and-rotation
   // And invert "TOP LEFT VERTEX:" & "BOTTOM LEFT VERTEX:" (small error from the author)
-  private Circle newHandleForPattern(Knot knot, Rectangle rec) {
+  public Circle newHandleForPattern(Knot knot, Rectangle rec) {
     Circle circle = new Circle(
             knot.getImageView().getBoundsInParent().getCenterX() -
                     (knot.getPattern().get().getWidth() / 2 * rec.getScaleX()) *
@@ -306,24 +307,27 @@ public class OptionalDotGrid extends Pane {
   public Rectangle newRectangle(Knot knot, Color color) {
     Rectangle rec;
 
-    if (knot.getText().isPresent()) {
+    if (knot.getText().isPresent() && (knot.getPattern().isEmpty())) {
       rec = new Rectangle(
               knot.getX(),
               knot.getY(),
               knot.getImageView().getImage().getWidth(),
               knot.getImageView().getImage().getHeight()
       );
-    } else {
+      setRectangleProperties(knot, color, rec);
+      return rec;
+    } else if (knot.getPattern().isPresent()) {
       rec = new Rectangle(
               knot.getX(),
               knot.getY(),
               knot.getPattern().get().getWidth(),
               knot.getPattern().get().getHeight()
       );
+      setRectangleProperties(knot, color, rec);
+      return rec;
     }
-    setRectangleProperties(knot, color, rec);
 
-    return rec;
+    return null;
   }
 
   private Rectangle newHoverRectangle(Knot knot) {
@@ -384,7 +388,7 @@ public class OptionalDotGrid extends Pane {
     double x = knot.getX();
     double y = knot.getY();
 
-    if (knot.getText().isPresent()) {
+    if (knot.getText().isPresent() && !knot.getText().get().contentEquals(NEW_TEXT)) {
       drawTextImageView(knot, x, y);
       imageView = rotateTextKnot(knot);
       zoomTextKnot(knot);
@@ -426,20 +430,26 @@ public class OptionalDotGrid extends Pane {
     double x = knot.getX();
     double y = knot.getY();
 
-    if (knot.getText().isPresent()) {
+    if (knot.getPattern().isEmpty()) {
       drawTextImageView(knot, x, y);
       imageView = rotateTextKnot(knot);
       zoomTextKnot(knot);
-    } else {
+
+      imageView.setLayoutX(x);
+      imageView.setLayoutY(y);
+      knot.setImageView(imageView);
+
+      drawGuideLines(step, knot);
+    } else if (knot.getPattern().isPresent()) {
       imageView = rotatePatternKnot(knot);
       zoomAndFlipPatternKnot(knot);
+
+      imageView.setLayoutX(x);
+      imageView.setLayoutY(y);
+      knot.setImageView(imageView);
+
+      drawGuideLines(step, knot);
     }
-
-    imageView.setLayoutX(x);
-    imageView.setLayoutY(y);
-    knot.setImageView(imageView);
-
-    drawGuideLines(step, knot);
 
     logger.debug("drawing top left corner of knot {} to ({},{})",
             knot.getPattern().isPresent() ?

@@ -29,6 +29,7 @@ import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.CANVAS_TEXT_FONT_SIZE;
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
+import static org.alienlabs.adaloveslace.business.model.Knot.*;
 import static org.alienlabs.adaloveslace.util.Events.keyHandler;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton.putAllEventsOnKnot;
@@ -49,6 +50,12 @@ public class Diagram {
     private Integer             currentStepIndex;
 
     private List<Step>          allSteps = new ArrayList<>();
+
+    private double              x;
+
+    private double              y;
+
+    public static boolean       isNewText;
 
     @XmlTransient
     private Pattern             currentPattern;
@@ -78,22 +85,17 @@ public class Diagram {
     private static final double SPACING_Y = 10d; // The Y space between the dots
 
     @XmlTransient
-    public static final StringBuilder NEW_TEXT = new StringBuilder(" ");
-
-    @XmlTransient
     private static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
 
     @XmlTransient
-    public static StringBuilder typedText = new StringBuilder(Diagram.NEW_TEXT);
-
-    public static Runnable updateImage;
-    public static boolean newText;
+    public Runnable updateImage;
 
     // For JAXB
     public Diagram() {
         this.patterns           = new HashSet<>();
         this.currentMode        = MouseMode.DRAWING;
         this.currentStepIndex   = 0;
+        setUpdateImage();
     }
 
     public Diagram(App app) {
@@ -102,6 +104,7 @@ public class Diagram {
         this.currentStepIndex   = 0;
         Diagram.app             = app;
         this.allSteps.add(new Step());
+        setUpdateImage();
     }
 
     public Diagram(final Diagram diagram, App app) {
@@ -115,6 +118,17 @@ public class Diagram {
         this.currentStepIndex       = 0;
         Diagram.app                 = app;
         this.allSteps.add(new Step());
+        setUpdateImage();
+    }
+
+    private void setUpdateImage() {
+        updateImage = () -> {
+            getCurrentStep().getAllVisibleKnots().forEach(
+                    knot -> putAllEventsOnKnot(app, knot)
+            );
+
+            createImageViewWithStep(this.x, this.y, null, null);
+        };
     }
 
     public Set<Pattern> getPatterns() {
@@ -123,10 +137,6 @@ public class Diagram {
 
     public void addPattern(final Pattern pattern) {
         this.patterns.add(pattern);
-    }
-
-    public void resetKnotsText() {
-        typedText = new StringBuilder(NEW_TEXT);
     }
 
     public void undoLastStep(App app, boolean layoutChildren) {
@@ -310,10 +320,10 @@ public class Diagram {
     public void drawGrid(double w, double h, double desiredRadius, List<Shape> grid) {
         app.getOptionalDotGrid().hideGrid();
 
-        for (double x = 10d; x < w; x += SPACING_X) {
-            for (double y = 10d; y < (h - 50d); y += SPACING_Y) {
-                double offsetY = (y % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
-                Ellipse ell = new Ellipse(x - desiredRadius + offsetY,y - desiredRadius, desiredRadius, desiredRadius); // A dot
+        for (double gridX = 10d; gridX < w; gridX += SPACING_X) {
+            for (double gridY = 10d; gridY < (h - 50d); gridY += SPACING_Y) {
+                double offsetY = (gridY % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
+                Ellipse ell = new Ellipse(gridX - desiredRadius + offsetY,gridY - desiredRadius, desiredRadius, desiredRadius); // A dot
                 ell.setFill(GRID_COLOR);
                 ell.toFront();
 
@@ -326,55 +336,100 @@ public class Diagram {
     public void drawKnot(double x, double y) {
         logger.debug("Current pattern  -> {}", this.getCurrentPattern());
         ImageView iv;
-        newText = true;
 
         if (PatternOrTextMode.PATTERN == app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get()) {
             iv = drawPattern(x, y);
 
             if (null != iv) {
+                isNewText = false;
                 createImageViewWithStep(x, y, iv, this.getCurrentPattern());
             }
         } else {
+            isNewText = true;
             drawText(x, y);
         }
     }
 
-    private void createImageViewWithStep(double x, double y, ImageView iv, Pattern pattern) {
-        Knot oldCurrentSelectedKnot = (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().isEmpty())
-                ? new Knot(x, y, Optional.empty(), Optional.empty(), iv)
-                : app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().getLast();
+    private void createImageViewWithStep(double x, double y, ImageView imageView, Pattern pattern) {
+        Knot oldCurrentKnot = (app.getOptionalDotGrid().getDiagram().getCurrentKnot() == null)
+                ? null
+                : this.getCurrentKnot();
+
+
+        if (null == imageView) {
+            imageView = new ImageView();
+
+            final Text text = new Text();
+            SnapshotParameters params = new SnapshotParameters();
+            params.setFill(Color.TRANSPARENT);
+
+            text.setText(getCurrentKnot() == null ? NEW_TEXT.toString() : getCurrentKnot().getTypedText().toString());
+            text.setFont(new Font(CANVAS_TEXT_FONT_SIZE));
+            text.setFill(Color.BLACK);
+            text.setLayoutX(x);
+            text.setLayoutY(y);
+
+            WritableImage s = text.snapshot(params, null);
+            imageView.setImage(s);
+        }
 
         currentKnot = new Knot(
-                x,
-                y,
+                isNewText || getCurrentKnot() == null || pattern != null ? x : getCurrentKnot().getX(),
+                isNewText || getCurrentKnot() == null || pattern != null ? y : getCurrentKnot().getY(),
                 pattern == null ? Optional.empty() : Optional.of(pattern),
-                pattern == null ? Optional.of(typedText.toString()) : Optional.empty(),
-                iv
+                pattern == null && !isNewText
+                        ? Optional.of(getCurrentKnot().getTypedText().toString())
+                        : Optional.of(NEW_TEXT.toString()),
+                imageView
         );
-        currentKnot.setSelection(app.getOptionalDotGrid().newRectangle(currentKnot, Color.BLUE));
-        currentKnot.setHandle(app.getOptionalDotGrid().newHandleForText(currentKnot, (Rectangle)currentKnot.getSelection()));
-        putAllEventsOnKnot(app, currentKnot);
+        if (isNewText && currentKnot.getPattern().isEmpty()) {
+            currentKnot.setTextId(UUID.randomUUID());
+        } else if (currentKnot.getPattern().isEmpty()) {
+            currentKnot.setTextId(oldCurrentKnot.getTextId());
+            currentKnot.setTypedText(oldCurrentKnot.getTypedText());
+        }
 
-        app.getRoot().getChildren().remove(oldCurrentSelectedKnot.getImageView());
-        app.getRoot().getChildren().remove(oldCurrentSelectedKnot.getSelection());
-        app.getRoot().getChildren().remove(oldCurrentSelectedKnot.getHovered());
-        app.getRoot().getChildren().remove(oldCurrentSelectedKnot.getHandle());
-
-        List<Knot> displayedKnots = new ArrayList<>(this.getCurrentStep().getDisplayedKnots());
-        List<Knot> selectedKnots = new ArrayList<>();
-        selectedKnots.add(currentKnot);
-
-        if (newText) {
-            if (oldCurrentSelectedKnot.getPattern().isPresent()) {
-                displayedKnots.add(oldCurrentSelectedKnot);
-            }
-            if (oldCurrentSelectedKnot.getText().isPresent()) {
-                displayedKnots.add(oldCurrentSelectedKnot);
-            }
+        if (currentKnot.getPattern().isEmpty()) {
+            currentKnot.setRotationAngle(oldCurrentKnot == null ? DEFAULT_ROTATION : oldCurrentKnot.getRotationAngle());
+            currentKnot.setZoomFactor(oldCurrentKnot == null ? DEFAULT_ZOOM : oldCurrentKnot.getZoomFactor());
         }
 
         this.setCurrentKnot(currentKnot);
-        newText = false;
+        currentKnot.setSelection(app.getOptionalDotGrid().newRectangle(currentKnot, Color.BLUE));
+
+        if (pattern == null) {
+            currentKnot.setHandle(app.getOptionalDotGrid().newHandleForText(currentKnot, (Rectangle) currentKnot.getSelection()));
+        } else {
+            currentKnot.setHandle(app.getOptionalDotGrid().newHandleForPattern(currentKnot, (Rectangle) currentKnot.getSelection()));
+        }
+
+        putAllEventsOnKnot(app, currentKnot);
+
+        if (null != oldCurrentKnot) {
+            if ((oldCurrentKnot.getPattern().isPresent() && isNewText) ||
+                    (oldCurrentKnot.getPattern().isEmpty() && !isNewText)) {
+                app.getRoot().getChildren().remove(oldCurrentKnot.getImageView());
+            }
+        }
+
+
+        List<Knot> displayedKnots = new ArrayList<>(this.getCurrentStep().getDisplayedKnots());
+        displayedKnots.addAll(
+                this.getCurrentStep().getSelectedKnots().stream().filter(
+                                knot -> (
+                                        (!displayedKnots.contains(knot) && knot.getPattern().isPresent())
+                                                || (currentKnot.getTextId() == null)
+                                                || (knot.getTextId() != null
+                                                    && currentKnot.getTextId() != null
+                                                    && !currentKnot.getTextId().equals(knot.getTextId())))
+                        )
+                        .toList()
+        );
+
+        List<Knot> selectedKnots = new ArrayList<>();
+        selectedKnots.add(currentKnot);
+
+        isNewText = false;
 
         newStep(
                 displayedKnots,
@@ -383,10 +438,11 @@ public class Diagram {
         );
     }
 
-    public void drawText(double x, double y) {
-        this.resetKnotsText();
 
-        logger.info("text -> {}", typedText);
+    public void drawText(double x, double y) {
+        this.x = x;
+        this.y = y;
+
         app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
         app.getOptionalDotGrid().getDiagram()           .setCurrentMode(MouseMode.SELECTION);
         app.getGeometryWindow().getDrawingButton()      .setSelected(false);
@@ -394,31 +450,7 @@ public class Diagram {
         app.getGeometryWindow().getDeletionButton()     .setSelected(false);
         app.getGeometryWindow().getDuplicationButton()  .setSelected(false);
 
-        updateImage = () -> {
-            logger.info("updated text -> {}", typedText);
-            ImageView imageView = new ImageView();
-
-            final Text text = new Text();
-            SnapshotParameters params = new SnapshotParameters();
-            params.setFill(Color.TRANSPARENT);
-
-            text.setText(typedText.toString());
-            text.setFont(new Font(CANVAS_TEXT_FONT_SIZE));
-            text.setFill(Color.BLACK);
-            text.setLayoutX(x);
-            text.setLayoutY(y);
-
-            WritableImage s = text.snapshot(params, null);
-            imageView.setImage(s);
-
-            getCurrentStep().getAllVisibleKnots().forEach(
-                    knot -> putAllEventsOnKnot(app, knot)
-            );
-
-            createImageViewWithStep(x, y, imageView, null);
-        };
-
-        updateImage.run();
+        getUpdateImage().run();
     }
 
     private ImageView drawPattern(double x, double y) {
@@ -460,6 +492,26 @@ public class Diagram {
         app.getOptionalDotGrid().clearSelections();
         this.getAllSteps().clear();
         this.currentStepIndex = -1;
+    }
+
+    public double getX() {
+        return this.x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return this.y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public Runnable getUpdateImage() {
+        return this.updateImage;
     }
 
     public Pattern getCurrentPattern() {
