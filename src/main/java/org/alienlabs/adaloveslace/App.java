@@ -151,8 +151,9 @@ public class App extends Application {
 
     if (!filePath.isEmpty()) {
       new FileUtil().buildUiFromLaceFile(this, new File(filePath));
-      this.getPrimaryStage().requestFocus();
     }
+
+    this.getPrimaryStage().requestFocus();
   }
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
