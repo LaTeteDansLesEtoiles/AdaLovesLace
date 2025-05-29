@@ -321,7 +321,7 @@ public class Diagram {
         app.getOptionalDotGrid().hideGrid();
 
         for (double gridX = 10d; gridX < w; gridX += SPACING_X) {
-            for (double gridY = 50d; gridY < (h - 50d); gridY += SPACING_Y) {
+            for (double gridY = 0d; gridY < (h - 50d); gridY += SPACING_Y) {
                 double offsetY = (gridY % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
                 Ellipse ell = new Ellipse(gridX - desiredRadius + offsetY,gridY - desiredRadius, desiredRadius, desiredRadius); // A dot
                 ell.setFill(GRID_COLOR);

@@ -61,17 +61,26 @@ public class FileUtil {
     public void buildUiFromLaceFile(App app, File file) {
         Diagram diagram = loadFromLaceFile(app, file);
 
-        app.getPrimaryStage().close();
-        app.showMainWindow(app, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
-            app.getPrimaryStage(), diagram);
-        app.getOptionalDotGrid().setDiagram(diagram);
-        app.initializeKeyboardShorcuts();
+        preparePrimaryStage(app, diagram);
+        prepareGeometryAndToolbox(app, diagram);
+    }
+
+    private static void prepareGeometryAndToolbox(App app, Diagram diagram) {
         app.getToolboxStage().close();
         app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
 
         diagram.setApp(app);
         app.getOptionalDotGrid().layoutChildren();
         DrawingButton.onSetDrawModeAction(app, app.getGeometryWindow());
+    }
+
+    private static void preparePrimaryStage(App app, Diagram diagram) {
+        app.getPrimaryStage().close();
+        app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
+            app.getPrimaryStage(), diagram);
+        app.getOptionalDotGrid().setDiagram(diagram);
+        app.initializeKeyboardShorcuts();
+        app.onDoMainWindowResize();
     }
 
     public Diagram loadFromLaceFile(App app, File file) {

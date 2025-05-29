@@ -100,7 +100,7 @@ public class App extends Application {
                   DEFAULT_LOCALE_COUNTRY)
   );
 
-  private final PauseTransition resizePause = new PauseTransition(Duration.millis(700));
+  private final PauseTransition resizePause = new PauseTransition(Duration.millis(600));
   private final Map<KeyCode, Boolean> currentlyActiveKeys = new EnumMap<>(KeyCode.class);
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
@@ -118,6 +118,8 @@ public class App extends Application {
 
   public Pane movablePane;
   public Stage primaryStage;
+  private double maxHeight = GRID_HEIGHT;
+  private double maxWidth = GRID_WIDTH;
 
   @Override
   public void start(Stage primaryStage) {
@@ -139,7 +141,7 @@ public class App extends Application {
     }
 
     logger.debug("Starting app: opening main window");
-    showMainWindow(this, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage, diagram);
+    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage, diagram);
 
     logger.debug("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
@@ -157,7 +159,7 @@ public class App extends Application {
     this.getPrimaryStage().requestFocus();
   }
 
-  public void showMainWindow(App app, double windowWidth, double windowHeight, double gridWidth, double gridHeight,
+  public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
                              double gridDotsRadius, Stage primaryStage, Diagram diagram) {
     BorderPane root;
     App.mainWindow = new MainWindow();
@@ -234,11 +236,45 @@ public class App extends Application {
     this.getOptionalDotGrid().setDiagram(diagram);
     this.primaryStage = primaryStage;
 
+  public void onDoMainWindowResize() {
+    onDoResize();
+    onDoChangeWidth(this.getPrimaryStage().widthProperty(), "Window width: {}");
+    onDoChangeHeight(this.getPrimaryStage().heightProperty(), "Window height: {}");
+  }
+
+  private static void setMainWindowCssClasses(StackPane grid, TilePane footer, MenuBar menuBar) {
     grid.getStyleClass().add("grid");
     footer.getStyleClass().add("footer");
     menuBar.getStyleClass().add("main-menu");
+  }
+
+  private void onDoChangeHeight(ReadOnlyDoubleProperty primaryStage, String s) {
+    primaryStage.addListener((obs, oldVal, newVal) ->
+            {
+              logger.debug(s, newVal);
+              resizePause.playFromStart();
+              this.maxHeight = Math.max((double) newVal, this.maxHeight);
+            }
+    );
+  }
 
     primaryStage.show();
+  private void onDoChangeWidth(ReadOnlyDoubleProperty primaryStage, String s) {
+        primaryStage.addListener((obs, oldVal, newVal) ->
+            {
+              logger.debug(s, newVal);
+              resizePause.playFromStart();
+              this.maxWidth = Math.max((double) newVal, this.maxWidth);
+            }
+    );
+  }
+
+  private void onDoResize() {
+    resizePause.setOnFinished(e -> {
+      this.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+      this.getOptionalDotGrid().layoutChildren();
+    });
+  }
   }
 
   private Slider createZoomSlider() {
@@ -432,6 +468,14 @@ public class App extends Application {
 
   public Stage getStateStage() {
     return this.stateStage;
+  }
+
+  public double getMaxHeight() {
+    return this.maxHeight;
+  }
+
+  public double getMaxWidth() {
+    return this.maxWidth;
   }
 
   public static void setResourceBundle(ResourceBundle resourceBundle) {
