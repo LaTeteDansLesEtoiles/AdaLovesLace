@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -188,53 +189,27 @@ public class App extends Application {
     scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
     scene.setFill(Color.TRANSPARENT);
 
-    // For multi-selection with "Control" key
-    scene.setOnKeyPressed(event -> {
-      KeyCode codeString = event.getCode();
-      if (!currentlyActiveKeys.containsKey(codeString)) {
-        currentlyActiveKeys.put(codeString, true);
-      }
-    });
-    scene.setOnKeyReleased(event ->
-      currentlyActiveKeys.remove(event.getCode())
-    );
+    onSceneKeyPressed();
+    onSceneKeyReleased();
 
     // On double right-click, center the grid
-    scene.setOnMouseClicked(getMouseDoubleRightClickOnGridEventHendler(app));
+    scene.setOnMouseClicked(getMouseDoubleRightClickOnGridEventHendler(this));
 
     primaryStage.setScene(scene);
     primaryStage.setX(MAIN_WINDOW_X);
     primaryStage.setY(MAIN_WINDOW_Y);
     primaryStage.setTitle(resourceBundle.getString(MAIN_WINDOW_TITLE));
 
-    primaryStage.setOnCloseRequest(windowEvent -> {
-      logger.debug("You shall close the app by closing this window!");
-      Platform.exit();
-    });
-
-    resizePause.setOnFinished(e -> {
-      this.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
-      this.getOptionalDotGrid().layoutChildren();
-    });
-
-    primaryStage.widthProperty().addListener((obs, oldVal, newVal) ->
-            {
-              logger.debug("Window width: {}", newVal);
-              resizePause.playFromStart();
-            }
-    );
-
-    primaryStage.heightProperty().addListener((obs, oldVal, newVal) ->
-            {
-              logger.debug("Window height: {}", newVal);
-              resizePause.playFromStart();
-            }
-    );
+    onCloseApplication(primaryStage);
+    onDoMainWindowResize();
 
     slider = createZoomSlider();
-
     this.getOptionalDotGrid().setDiagram(diagram);
     this.primaryStage = primaryStage;
+    setMainWindowCssClasses(grid, footer, menuBar);
+
+    primaryStage.show();
+  }
 
   public void onDoMainWindowResize() {
     onDoResize();
@@ -258,7 +233,6 @@ public class App extends Application {
     );
   }
 
-    primaryStage.show();
   private void onDoChangeWidth(ReadOnlyDoubleProperty primaryStage, String s) {
         primaryStage.addListener((obs, oldVal, newVal) ->
             {
@@ -275,6 +249,28 @@ public class App extends Application {
       this.getOptionalDotGrid().layoutChildren();
     });
   }
+
+  private static void onCloseApplication(Stage primaryStage) {
+    primaryStage.setOnCloseRequest(windowEvent -> {
+      logger.debug("You shall close the app by closing this window!");
+      Platform.exit();
+    });
+  }
+
+  private void onSceneKeyPressed() {
+    // For multi-selection with "Control" key
+    scene.setOnKeyPressed(event -> {
+      KeyCode codeString = event.getCode();
+      if (!currentlyActiveKeys.containsKey(codeString)) {
+        currentlyActiveKeys.put(codeString, true);
+      }
+    });
+  }
+
+  private void onSceneKeyReleased() {
+    scene.setOnKeyReleased(event ->
+      currentlyActiveKeys.remove(event.getCode())
+    );
   }
 
   private Slider createZoomSlider() {
@@ -356,7 +352,11 @@ public class App extends Application {
 
   public static void main(String[] args) {
     Preferences prefs = new Preferences();
+    setLocale(prefs);
+    launch(args);
+  }
 
+  private static void setLocale(Preferences prefs) {
     if ((!prefs.getStringValue(LOCALE_LANGUAGE).isEmpty()) && (!prefs.getStringValue(LOCALE_COUNTRY).isEmpty())) {
       Locale locale = new Locale(prefs.getStringValue(LOCALE_LANGUAGE), prefs.getStringValue(LOCALE_COUNTRY));
       resourceBundle = ResourceBundle.getBundle(ADA_LOVES_LACE, locale);
@@ -367,8 +367,6 @@ public class App extends Application {
       prefs.setStringValue(LOCALE_LANGUAGE, DEFAULT_LOCALE_LANGUAGE);
       prefs.setStringValue(LOCALE_COUNTRY, DEFAULT_LOCALE_COUNTRY);
     }
-
-    launch(args);
   }
 
   public void initializeKeyboardShorcuts() {

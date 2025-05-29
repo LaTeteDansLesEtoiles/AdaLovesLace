@@ -68,7 +68,6 @@ public class FileUtil {
     private static void prepareGeometryAndToolbox(App app, Diagram diagram) {
         app.getToolboxStage().close();
         app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
-
         diagram.setApp(app);
         app.getOptionalDotGrid().layoutChildren();
         DrawingButton.onSetDrawModeAction(app, app.getGeometryWindow());
@@ -85,7 +84,12 @@ public class FileUtil {
 
     public Diagram loadFromLaceFile(App app, File file) {
         Diagram diagram = null;
+        diagram = buildZip(app, file, diagram);
 
+        return diagram;
+    }
+
+    private Diagram buildZip(App app, File file, Diagram diagram) {
         try (ZipFile zipFile = new ZipFile(file)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
@@ -106,57 +110,76 @@ public class FileUtil {
         } catch (JAXBException | IOException e) {
             logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
         }
-
         return diagram;
     }
 
     private void buildKnotsImageViews(App app, Diagram diagram) {
         for (Step step : diagram.getAllSteps()) {
             for (Knot knot : step.getDisplayedKnots()) {
-                if (knot.getPattern().isPresent()) {
-                    String filename = APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
-                            + knot.getPattern().get().getFilename();
-
-                    try (FileInputStream fis = new FileInputStream(filename)) {
-                        buildKnotImageView(knot, fis);
-                        knot.getPattern().get().setAbsoluteFilename(filename);
-                    } catch (IOException e) {
-                        logger.error("Problem with pattern resource file!", e);
-                    }
-                } else {
-                    knot.setImageView(app.getOptionalDotGrid().drawTextImageView(knot, knot.getX(), knot.getY()));
-                }
+                prepareImageViews(app, knot);
             }
 
             for (Knot knot : step.getSelectedKnots()) {
-                if (knot.getPattern().isPresent()) {
-                    try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
-                            + knot.getPattern().get().getFilename())) {
-                        buildKnotImageView(knot, fis);
-                    } catch (IOException e) {
-                        logger.error("Problem with pattern resource file!", e);
-                    }
-                } else {
-                    knot.setImageView(app.getOptionalDotGrid().drawTextImageView(knot, knot.getX(), knot.getY()));
-                }
+                preparePatterns(app, knot);
             }
+        }
+    }
+
+    private void preparePatterns(App app, Knot knot) {
+        if (knot.getPattern().isPresent()) {
+            loadImageView(knot);
+        } else {
+            knot.setImageView(app.getOptionalDotGrid().drawTextImageView(knot, knot.getX(), knot.getY()));
+        }
+    }
+
+    private void loadImageView(Knot knot) {
+        try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
+                + knot.getPattern().get().getFilename())) {
+            buildKnotImageView(knot, fis);
+        } catch (IOException e) {
+            logger.error("Problem with pattern resource file!", e);
+        }
+    }
+
+    private void prepareImageViews(App app, Knot knot) {
+        if (knot.getPattern().isPresent()) {
+            loadPattern(knot);
+        } else {
+            knot.setImageView(app.getOptionalDotGrid().drawTextImageView(knot, knot.getX(), knot.getY()));
+        }
+    }
+
+    private void loadPattern(Knot knot) {
+        String filename = APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
+                + knot.getPattern().get().getFilename();
+
+        try (FileInputStream fis = new FileInputStream(filename)) {
+            buildKnotImageView(knot, fis);
+            knot.getPattern().get().setAbsoluteFilename(filename);
+        } catch (IOException e) {
+            logger.error("Problem with pattern resource file!", e);
         }
     }
 
     public void buildKnotImageView(Knot knot, FileInputStream fis) {
         if (knot.getPattern().isPresent()) {
-            Image image = new Image(fis);
-            ImageView iv = new ImageView(image);
-
-            iv.setLayoutX(knot.getX());
-            iv.setLayoutY(knot.getY());
-            iv.setFitHeight(knot.getPattern().get().getHeight());
-            iv.setFitWidth(knot.getPattern().get().getWidth());
-
-            iv.setRotate(knot.getRotationAngle());
-
-            knot.setImageView(iv);
+            loadImageView(knot, fis);
         }
+    }
+
+    private static void loadImageView(Knot knot, FileInputStream fis) {
+        Image image = new Image(fis);
+        ImageView iv = new ImageView(image);
+
+        iv.setLayoutX(knot.getX());
+        iv.setLayoutY(knot.getY());
+        iv.setFitHeight(knot.getPattern().get().getHeight());
+        iv.setFitWidth(knot.getPattern().get().getWidth());
+
+        iv.setRotate(knot.getRotationAngle());
+
+        knot.setImageView(iv);
     }
 
     private void deleteXmlFile() throws IOException {
@@ -170,16 +193,20 @@ public class FileUtil {
 
     private void copyPattern(File file, ZipFile zipFile, ZipEntry entry) {
         try (InputStream initialStream = zipFile.getInputStream(entry)) {
-            File targetFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + entry.getName());
-
-            if (!targetFile.exists()) {
-                Files.copy(
-                    initialStream,
-                    targetFile.toPath(),
-                    StandardCopyOption.REPLACE_EXISTING);
-            }
+            copyTargetFile(entry, initialStream);
         } catch (IOException e) {
             logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
+        }
+    }
+
+    private static void copyTargetFile(ZipEntry entry, InputStream initialStream) throws IOException {
+        File targetFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + entry.getName());
+
+        if (!targetFile.exists()) {
+            Files.copy(
+                    initialStream,
+                targetFile.toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
@@ -202,21 +229,18 @@ public class FileUtil {
         }
 
         for (Step s : diagram.getAllSteps()) {
-            for (Knot k : s.getDisplayedKnots()) {
-                if (k.getPattern().isPresent()) {
-                    k.getPattern().get().setAbsoluteFilename(
-                            APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
-                                    k.getPattern().get().getFilename()
-                    );
-                }
-            }
-            for (Knot k : s.getSelectedKnots()) {
-                if (k.getPattern().isPresent()) {
-                    k.getPattern().get().setAbsoluteFilename(
-                            APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
-                                    k.getPattern().get().getFilename()
-                    );
-                }
+            loadPatterns(s.getDisplayedKnots());
+            loadPatterns(s.getSelectedKnots());
+        }
+    }
+
+    private static void loadPatterns(List<Knot> s) {
+        for (Knot k : s) {
+            if (k.getPattern().isPresent()) {
+                k.getPattern().get().setAbsoluteFilename(
+                        APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
+                                k.getPattern().get().getFilename()
+                );
             }
         }
     }
@@ -227,12 +251,7 @@ public class FileUtil {
         }
 
         try {
-            JAXBContext context = JAXBContext.newInstance(Diagram.class);
-            Marshaller jaxbMarshaller = context.createMarshaller();
-            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
-            writeLaceFile(file, jaxbMarshaller, diagram, currentStepIndex);
-            deleteXmlFile();
+            marshallLaceFile(file, diagram, currentStepIndex);
         } catch (JAXBException e) {
             logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
         } catch (CompletionException e) {
@@ -243,6 +262,15 @@ public class FileUtil {
 
 
         return file;
+    }
+
+    private void marshallLaceFile(File file, Diagram diagram, Integer currentStepIndex) throws JAXBException, IOException {
+        JAXBContext context = JAXBContext.newInstance(Diagram.class);
+        Marshaller jaxbMarshaller = context.createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+        writeLaceFile(file, jaxbMarshaller, diagram, currentStepIndex);
+        deleteXmlFile();
     }
 
     private void writeLaceFile(File file, Marshaller jaxbMarshaller, Diagram toSave, Integer currentStepIndex) throws JAXBException {
@@ -260,7 +288,14 @@ public class FileUtil {
         toSave.setCurrentStepIndex(currentStepIndex); // Not -1 because of the empty step at the beginning
         File xmlFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
                 XML_FILE_TO_SAVE_IN_LACE_FILE);
+        removeEmptyTexts(toSave);
+        jaxbMarshaller.marshal(toSave, xmlFile);
 
+        zipOut.putNextEntry(new ZipEntry(XML_FILE_TO_SAVE_IN_LACE_FILE));
+        Files.copy(xmlFile.toPath(), zipOut);
+    }
+
+    private static void removeEmptyTexts(Diagram toSave) {
         for (Step s : toSave.getAllSteps()) {
             s.getDisplayedKnots().removeAll(s.getDisplayedKnots().stream().filter(knot ->
                     (knot.getText().isPresent()) && (knot.getText().get().isEmpty())).toList());
@@ -268,11 +303,6 @@ public class FileUtil {
             s.getSelectedKnots().removeAll(s.getSelectedKnots().stream().filter(knot ->
                     (knot.getText().isPresent()) && (knot.getText().get().isEmpty())).toList());
         }
-
-        jaxbMarshaller.marshal(toSave, xmlFile);
-
-        zipOut.putNextEntry(new ZipEntry(XML_FILE_TO_SAVE_IN_LACE_FILE));
-        Files.copy(xmlFile.toPath(), zipOut);
     }
 
     private void writePatternsToLaceFile(Diagram toSave, ZipOutputStream zipOut) throws IOException {
@@ -367,8 +397,10 @@ public class FileUtil {
     }
 
     private Collection<String> getResourcesFromJarFile(final File file, final Pattern pattern) {
-        final List<String> retval = new ArrayList<>();
+        return prepareZipFile(file, pattern, new ArrayList<>());
+    }
 
+    private List<String> prepareZipFile(File file, Pattern pattern, List<String> retval) {
         ZipFile zf;
         try {
             zf = new ZipFile(file);
@@ -376,6 +408,10 @@ public class FileUtil {
             logger.debug("Error reading classpath .jar file!", e);
             return retval;
         }
+        return getStrings(pattern, zf, retval);
+    }
+
+    private List<String> getStrings(Pattern pattern, ZipFile zf, List<String> retval) {
         final Enumeration<? extends ZipEntry> e = zf.entries();
 
         while(e.hasMoreElements()) {
