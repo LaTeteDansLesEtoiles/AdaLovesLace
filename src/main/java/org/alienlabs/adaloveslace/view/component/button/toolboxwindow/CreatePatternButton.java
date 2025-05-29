@@ -56,6 +56,11 @@ public class CreatePatternButton extends ImageButton {
 
     public static void onCreatePatternModeAction(App app) {
         logger.debug("Setting create pattern mode");
+
+        if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.CREATE_PATTERN && mouseClicks == 0) {
+            return;
+        }
+
         app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.CREATE_PATTERN);
 
         app.getGeometryWindow().getDrawingButton().setSelected(false);
@@ -130,9 +135,10 @@ public class CreatePatternButton extends ImageButton {
                 }
             };
 
-            app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, mouseMovedListener);
-            app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, mouseClickedListener);
         }
+
+        app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, mouseMovedListener);
+        app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, mouseClickedListener);
     }
 
     private static Rectangle newRectangle() {

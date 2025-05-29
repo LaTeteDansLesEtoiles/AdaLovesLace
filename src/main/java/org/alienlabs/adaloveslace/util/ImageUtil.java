@@ -128,14 +128,20 @@ public class ImageUtil {
             app.getOptionalDotGrid().layoutChildren();
         }
 
+        if (width > 0d && height > 0d) {
+            createPattern(x, y, width, height);
+        }
+    }
+
+    private void createPattern(double x, double y, double width, double height) {
         Platform.runLater(() -> {
             try {
                 WritableImage snapshot = app.getPrimaryStage().getScene().snapshot(null);
                 WritableImage croppedImage = new WritableImage(snapshot.getPixelReader(),
-                    Double.valueOf(x).intValue(),
-                    Double.valueOf(y).intValue(),
-                    Double.valueOf(width).intValue(),
-                    Double.valueOf(height).intValue());
+                        Double.valueOf(x).intValue(),
+                        Double.valueOf(y).intValue(),
+                        Double.valueOf(width).intValue(),
+                        Double.valueOf(height).intValue());
                 ImageIO.write(SwingFXUtils.fromFXImage(croppedImage, null), EXPORT_IMAGE_FILE_FORMAT, OUTPUT);
             } catch (IOException e) {
                 logger.error("Problem writing new pattern image file!", e);
