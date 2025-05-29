@@ -561,7 +561,7 @@ public class OptionalDotGrid extends Pane {
 
     double top = (int) snappedTopInset() + TOP_MARGIN;
     double bottom = (int) snappedBottomInset();
-    double width = (int) app.getPrimaryStage().getWidth();
+    double width = (int) app.getMovablePane().getWidth();
     double height = (int) app.getPrimaryStage().getHeight() - 150 - top - bottom - 20d;
 
     logger.debug("grid width: {}, height: {}", width, height);
