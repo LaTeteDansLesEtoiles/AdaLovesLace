@@ -26,7 +26,7 @@ class UndoRedoStepTest {
     @BeforeEach
     void beforeEach() {
         app = new App();
-        app.root = new Pane();
+        app.movablePane = new Pane();
         app.setMainWindow(new MainWindow());
         this.diagram = new Diagram(app);
         app.setOptionalDotGrid(new OptionalDotGrid(app, this.diagram, new Pane()));

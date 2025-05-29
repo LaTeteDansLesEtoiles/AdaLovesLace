@@ -13,7 +13,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
@@ -79,7 +78,7 @@ public class MainWindow {
     // Just to be able to unit test code using the UI without effectively instantiating the UI
   }
 
-  public MenuBar createMenuBar(VBox parent, App app) {
+  public MenuBar createMenuBar(App app) {
     menuBar = new MenuBar();
 
     Menu fileMenu     = new Menu(resourceBundle.getString(FILE));
@@ -194,7 +193,6 @@ public class MainWindow {
 
     menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu, languageMenu);
     menuBar.setTranslateY(MENU_BAR_Y);
-    parent.getChildren().addAll(menuBar);
 
     return menuBar;
   }
@@ -242,8 +240,10 @@ public class MainWindow {
     return grid;
   }
 
-  public void onMainWindowClicked(final App app, final Pane canvas) {
-    canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+  public void onMainWindowClicked(final App app, final Pane movablePane) {
+    movablePane.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+    movablePane.setOnMousePressed(Events.getMouseRightClickEventHandler(app));
+    movablePane.setOnMouseDragged(Events.getGridDraggedEventHandler(app));
   }
 
   public void onClickWithSelectionMode(App app) {

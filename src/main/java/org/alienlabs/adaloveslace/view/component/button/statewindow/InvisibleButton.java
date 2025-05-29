@@ -40,7 +40,7 @@ public class InvisibleButton extends ImageButton {
     app.getOptionalDotGrid().clearAllGuideLines();
 
     if (Events.getGridHoverEventHandler(app) != null) {
-      app.getRoot().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+      app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
     }
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {

@@ -199,7 +199,7 @@ public class Diagram {
             nodeListToRemove.add(knot.getImageView());
         }
 
-        app.getRoot().getChildren().removeAll(nodeListToRemove);
+        app.getMovablePane().getChildren().removeAll(nodeListToRemove);
         this.getCurrentStep().setDisplayedKnots(displayedCopy);
         this.getCurrentStep().setSelectedKnots(selectedCopy);
 
@@ -300,7 +300,7 @@ public class Diagram {
         }
 
         if (layoutChildren) {
-            app.getRoot().getChildren().removeAll(nodeListToRemove);
+            app.getMovablePane().getChildren().removeAll(nodeListToRemove);
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
         }
 
@@ -321,7 +321,7 @@ public class Diagram {
         app.getOptionalDotGrid().hideGrid();
 
         for (double gridX = 10d; gridX < w; gridX += SPACING_X) {
-            for (double gridY = 10d; gridY < (h - 50d); gridY += SPACING_Y) {
+            for (double gridY = 50d; gridY < (h - 50d); gridY += SPACING_Y) {
                 double offsetY = (gridY % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
                 Ellipse ell = new Ellipse(gridX - desiredRadius + offsetY,gridY - desiredRadius, desiredRadius, desiredRadius); // A dot
                 ell.setFill(GRID_COLOR);
@@ -408,7 +408,7 @@ public class Diagram {
         if (null != oldCurrentKnot) {
             if ((oldCurrentKnot.getPattern().isPresent() && isNewText) ||
                     (oldCurrentKnot.getPattern().isEmpty() && !isNewText)) {
-                app.getRoot().getChildren().remove(oldCurrentKnot.getImageView());
+                app.getMovablePane().getChildren().remove(oldCurrentKnot.getImageView());
             }
         }
 
@@ -487,7 +487,7 @@ public class Diagram {
 
     // We don't lose the undo / redo history
     public void resetDiagram(App app) {
-        app.getRoot().getChildren().removeAll(this.getCurrentStep().getDisplayedKnots().stream().
+        app.getMovablePane().getChildren().removeAll(this.getCurrentStep().getDisplayedKnots().stream().
             map(Knot::getImageView).toList());
         app.getOptionalDotGrid().clearSelections();
         this.getAllSteps().clear();

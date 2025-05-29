@@ -42,6 +42,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import static org.alienlabs.adaloveslace.util.Events.getMouseDoubleRightClickOnGridEventHendler;
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_BUTTONS;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON_SELECTED;
@@ -80,7 +81,7 @@ public class App extends Application {
   public static final double  MAIN_WINDOW_WIDTH       = 525d;
   public static final double  MAIN_WINDOW_HEIGHT      = 780d;
   public static final double  GRID_WIDTH              = 650d;
-  public static final double  GRID_HEIGHT             = 650d;
+  public static final double  GRID_HEIGHT             = 550d;
   public static final int     ICON_SIZE               = 46;
   public static final int     SMALL_ICON_SIZE         = 23;
   public static final int     CANVAS_TEXT_FONT_SIZE   = 32;
@@ -115,7 +116,7 @@ public class App extends Application {
   private ToolboxWindow toolboxWindow;
 
 
-  public Pane root;
+  public Pane movablePane;
   public Stage primaryStage;
 
   @Override
@@ -138,7 +139,7 @@ public class App extends Application {
     }
 
     logger.debug("Starting app: opening main window");
-    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage, diagram);
+    showMainWindow(this, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage, diagram);
 
     logger.debug("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
@@ -156,28 +157,32 @@ public class App extends Application {
     this.getPrimaryStage().requestFocus();
   }
 
-  public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
+  public void showMainWindow(App app, double windowWidth, double windowHeight, double gridWidth, double gridHeight,
                              double gridDotsRadius, Stage primaryStage, Diagram diagram) {
-    VBox notCanvas;
+    BorderPane root;
     App.mainWindow = new MainWindow();
     this.diagram = diagram;
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
 
-    notCanvas = new VBox();
-    root                      = new Pane();
+    movablePane               = new Pane();
+    movablePane.getStyleClass().add("grid");
 
-    MenuBar menuBar           = App.mainWindow.createMenuBar(notCanvas, this);
-    StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, gridDotsRadius, this.diagram, root);
+    MenuBar menuBar           = App.mainWindow.createMenuBar(this);
+    StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, gridDotsRadius, this.diagram, movablePane);
     TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
 
-    VBox.setVgrow(root, Priority.ALWAYS);
-    root.getChildren().add(grid);
-    notCanvas.getChildren().addAll(root, footer);
-    App.mainWindow.onMainWindowClicked(this, root);
+    root                      = new BorderPane();
+    root.getStyleClass().add("grid");
+    root.setTop(menuBar);
+    movablePane.getChildren().add(grid);
+    root.setCenter(movablePane);
+    root.setBottom(footer);
 
-    scene = new Scene(notCanvas, windowWidth, windowHeight);
+    App.mainWindow.onMainWindowClicked(this, movablePane);
+
+    scene = new Scene(root, windowWidth, windowHeight);
     scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
     scene.setFill(Color.TRANSPARENT);
 
@@ -191,6 +196,9 @@ public class App extends Application {
     scene.setOnKeyReleased(event ->
       currentlyActiveKeys.remove(event.getCode())
     );
+
+    // On double right-click, center the grid
+    scene.setOnMouseClicked(getMouseDoubleRightClickOnGridEventHendler(app));
 
     primaryStage.setScene(scene);
     primaryStage.setX(MAIN_WINDOW_X);
@@ -247,15 +255,15 @@ public class App extends Application {
     slider.valueProperty().addListener((ov, oldVal, newVal) -> {
       if (newVal.doubleValue() < 50d) {
         double zoomOutFactor = newVal.doubleValue() / 50d + 0.1d;
-        root.setScaleX(zoomOutFactor);
-        root.setScaleY(zoomOutFactor);
+        movablePane.setScaleX(zoomOutFactor);
+        movablePane.setScaleY(zoomOutFactor);
       } else if (newVal.doubleValue() > 50d) {
         double zoomInFactor = (newVal.doubleValue() - 40) / 10d;
-        root.setScaleX(zoomInFactor);
-        root.setScaleY(zoomInFactor);
+        movablePane.setScaleX(zoomInFactor);
+        movablePane.setScaleY(zoomInFactor);
       } else {
-        root.setScaleX(INITIAL_GRID_ZOOM_FACTOR);
-        root.setScaleY(INITIAL_GRID_ZOOM_FACTOR);
+        movablePane.setScaleX(INITIAL_GRID_ZOOM_FACTOR);
+        movablePane.setScaleY(INITIAL_GRID_ZOOM_FACTOR);
       }
     });
     return slider;
@@ -402,8 +410,8 @@ public class App extends Application {
     return this.stateWindow;
   }
 
-  public Pane getRoot() {
-    return root;
+  public Pane getMovablePane() {
+    return movablePane;
   }
 
   public Slider getSlider() {

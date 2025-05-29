@@ -625,4 +625,5 @@ public class OptionalDotGrid extends Pane {
   public Pane getRoot() {
     return this.root;
   }
+
 }

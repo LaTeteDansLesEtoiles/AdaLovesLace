@@ -2,9 +2,12 @@ package org.alienlabs.adaloveslace.util;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
@@ -26,8 +29,9 @@ public class Events {
   private static double handleOffsetX;
   private static double handleOffsetY;
   private static Point2D previousEvent;
+  private static Point2D dragStart;
 
-    private static final Logger logger = LoggerFactory.getLogger(Events.class);
+  private static final Logger logger = LoggerFactory.getLogger(Events.class);
 
   private Events() {
     // Not accessible on purpose since all the events are static
@@ -75,7 +79,7 @@ public class Events {
             app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
             app.getOptionalDotGrid().getDiagram().getCurrentMode());
 
-    if (eType.equals(MOUSE_CLICKED)) {
+    if (eType.equals(MOUSE_CLICKED) && event.getButton() == MouseButton.PRIMARY) {
       Point2D mouseInParent = app.getOptionalDotGrid().getRoot().sceneToLocal(event.getSceneX(), event.getSceneY());
       Double x = mouseInParent.getX();
       Double y = mouseInParent.getY();
@@ -84,6 +88,41 @@ public class Events {
       logger.info("Coordinate Y     -> {}", y);
 
       processMouseClick(x, y);
+    }
+  };
+
+  public static final EventHandler<MouseEvent> mouseRightClickEventHandler = event -> {
+    if (event.getButton() == MouseButton.SECONDARY) {
+                dragStart = new Point2D(event.getSceneX(), event.getSceneY());
+            }
+  };
+
+  public static final EventHandler<MouseEvent> mouseGridDraggedEventHandler = event -> {
+    if (event.getButton() == MouseButton.SECONDARY && dragStart != null) {
+      double dx = event.getSceneX() - dragStart.getX();
+      double dy = event.getSceneY() - dragStart.getY();
+
+      Pane movablePane = app.getMovablePane();
+      movablePane.setTranslateX(movablePane.getTranslateX() + dx);
+      movablePane.setTranslateY(movablePane.getTranslateY() + dy);
+
+      dragStart = new Point2D(event.getSceneX(), event.getSceneY());
+    }
+  };
+
+  public static final EventHandler<MouseEvent> mouseDoubleClickOnGridEventHendler =  event -> {
+    if (event.getButton() == MouseButton.SECONDARY && event.getClickCount() == 2) {
+
+      double sceneCenterX = app.getScene().getWidth() / 2;
+      double sceneCenterY = app.getScene().getHeight() / 2;
+
+      Pane movablePane = app.getMovablePane();
+      Bounds paneBounds = movablePane.getLayoutBounds();
+      double paneCenterX = paneBounds.getWidth() / 2;
+      double paneCenterY = paneBounds.getHeight() / 2;
+
+      movablePane.setTranslateX(sceneCenterX - paneCenterX);
+      movablePane.setTranslateY(sceneCenterY - paneCenterY);
     }
   };
 
@@ -107,7 +146,7 @@ public class Events {
     handleOffsetY = event.getSceneY() - handleCenterInScene.getY();
     previousEvent = null;
 
-    app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+    app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
     app.getOptionalDotGrid().getDiagram().setOldMode(app.getOptionalDotGrid().getDiagram().getCurrentMode());
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAG_AND_DROP);
 
@@ -204,7 +243,7 @@ public class Events {
 
     event.consume();
     Platform.runLater(() ->
-            app.getRoot().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app)));
+            app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app)));
   };
 
   private static void processMouseClick(double x, double y) {
@@ -255,6 +294,21 @@ public class Events {
   public static EventHandler<MouseEvent> getMouseClickEventHandler(App app) {
     Events.app = app;
     return mouseClickEventHandler;
+  }
+
+  public static EventHandler<MouseEvent> getMouseRightClickEventHandler(App app) {
+    Events.app = app;
+    return mouseRightClickEventHandler;
+  }
+
+  public static EventHandler<MouseEvent> getGridDraggedEventHandler(App app) {
+    Events.app = app;
+    return mouseGridDraggedEventHandler;
+  }
+
+  public static EventHandler<MouseEvent> getMouseDoubleRightClickOnGridEventHendler(App app) {
+    Events.app = app;
+    return mouseDoubleClickOnGridEventHendler;
   }
 
   public static EventHandler<MouseEvent> getDragInitiatedOverHandleEventHandler() {

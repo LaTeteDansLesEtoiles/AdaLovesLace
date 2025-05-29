@@ -84,7 +84,7 @@ public class PrintUtil {
       job.getJobSettings().getPageLayout().getPageOrientation(), Printer.MarginType.HARDWARE_MINIMUM);
 
     // Print the JavaFX root
-    boolean printed = job.printPage(pageLayout, app.getRoot());
+    boolean printed = job.printPage(pageLayout, app.getMovablePane());
 
     if(printed){
       logger.debug("Printed diagram successfully");

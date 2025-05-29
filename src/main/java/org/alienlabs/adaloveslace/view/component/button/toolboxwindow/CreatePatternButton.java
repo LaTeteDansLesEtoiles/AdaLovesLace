@@ -71,10 +71,10 @@ public class CreatePatternButton extends ImageButton {
         List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
         displayedKnots.addAll(new ArrayList<>(selectedKnots));
         selectedKnots.clear();
-        app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+        app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
 
         if (Events.getGridHoverEventHandler(app) != null) {
-            app.getRoot().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+            app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
         }
         newStep(displayedKnots, selectedKnots, true);
 
@@ -96,7 +96,7 @@ public class CreatePatternButton extends ImageButton {
                     removeRectangle(app);
 
                     rectangle = newRectangle();
-                    app.getRoot().getChildren().add(rectangle);
+                    app.getMovablePane().getChildren().add(rectangle);
                 }
             };
 
@@ -130,8 +130,8 @@ public class CreatePatternButton extends ImageButton {
                 }
             };
 
-            app.getRoot().addEventHandler(MouseEvent.MOUSE_MOVED, mouseMovedListener);
-            app.getRoot().addEventHandler(MouseEvent.MOUSE_CLICKED, mouseClickedListener);
+            app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, mouseMovedListener);
+            app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, mouseClickedListener);
         }
     }
 
@@ -149,7 +149,7 @@ public class CreatePatternButton extends ImageButton {
 
     private static void removeRectangle(App app) {
         if (null != rectangle) {
-            app.getRoot().getChildren().remove(rectangle);
+            app.getMovablePane().getChildren().remove(rectangle);
             app.getOptionalDotGrid().layoutChildren();
         }
     }

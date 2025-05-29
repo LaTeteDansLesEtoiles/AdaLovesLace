@@ -95,7 +95,7 @@ public class ImageUtil {
     private WritableImage  buildWritableImage(String pathname) {
         WritableImage wi = new WritableImage(Double.valueOf(app.getPrimaryStage().getX() + GRID_WIDTH).intValue(),
             Double.valueOf(app.getPrimaryStage().getY() + GRID_HEIGHT).intValue());
-        WritableImage snapshot = app.getRoot().snapshot(new SnapshotParameters(), wi);
+        WritableImage snapshot = app.getMovablePane().snapshot(new SnapshotParameters(), wi);
 
         File output = new File(pathname);
         try {
@@ -109,7 +109,7 @@ public class ImageUtil {
     private File buildImage(String pathname) {
         WritableImage wi = new WritableImage(Double.valueOf(app.getPrimaryStage().getX() + GRID_WIDTH).intValue(),
             Double.valueOf(app.getPrimaryStage().getY() + GRID_HEIGHT).intValue());
-        WritableImage snapshot = app.getRoot().snapshot(new SnapshotParameters(), wi);
+        WritableImage snapshot = app.getMovablePane().snapshot(new SnapshotParameters(), wi);
 
         PATH_NAME = new File(pathname);
         try {

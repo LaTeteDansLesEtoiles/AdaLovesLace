@@ -62,7 +62,7 @@ public class FileUtil {
         Diagram diagram = loadFromLaceFile(app, file);
 
         app.getPrimaryStage().close();
-        app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
+        app.showMainWindow(app, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
             app.getPrimaryStage(), diagram);
         app.getOptionalDotGrid().setDiagram(diagram);
         app.initializeKeyboardShorcuts();

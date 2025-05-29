@@ -83,7 +83,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   void testClickOutsideOfAGridDot(FxRobot robot) {
     // Given
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = newPointOnGrid(WHITE_PIXEL_X, app.getRoot().getLayoutY() + WHITE_PIXEL_Y);
+    Point2D pointToMoveTo = newPointOnGrid(WHITE_PIXEL_X, app.getMovablePane().getLayoutY() + WHITE_PIXEL_Y);
 
     // When
     robot.moveTo(pointToMoveTo);
