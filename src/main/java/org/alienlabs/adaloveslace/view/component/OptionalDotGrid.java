@@ -50,7 +50,7 @@ public class OptionalDotGrid extends Pane {
   double GRID_WIDTH                     = 1400d;
   double GRID_HEIGHT                    = 600d;
   public static final double TOP_MARGIN = -70d;
-  public static final double CREATE_PATTERN_MARGIN = 30;
+  public static final double CREATE_PATTERN_MARGIN = 5;
 
   private boolean showHideGrid = true;
   private boolean gridNeedsToBeRedrawn;
@@ -379,6 +379,17 @@ public class OptionalDotGrid extends Pane {
     for (Knot knot : getDiagram().getCurrentStep().getSelectedKnots()) {
       clearGuideLines(knot);
     }
+  }
+
+  public void clearCreatePatternRectangle() {
+    root.getChildren().removeAll(root.getChildren().stream()
+            .filter(Rectangle.class::isInstance)
+            .map((Node node) -> {
+              node.setOnMouseMoved(null);
+              node.setOnMouseClicked(null);
+              return node;
+            })
+            .toList());
   }
 
   private void drawDisplayedKnot(Knot knot) {

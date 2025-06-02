@@ -323,4 +323,10 @@ public class Events {
     return dragDroppedHandleWithSelectionMode;
   }
 
+  public static void removeEventsFromGrid(App app) {
+    app.getOptionalDotGrid().clearCreatePatternRectangle();
+    app.getOptionalDotGrid().getRoot().setOnMouseMoved(null);
+    app.getMovablePane().setOnMouseClicked(null);
+  }
+
 }

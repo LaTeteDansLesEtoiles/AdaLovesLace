@@ -136,7 +136,7 @@ public class ImageUtil {
     private void createPattern(double x, double y, double width, double height) {
         Platform.runLater(() -> {
             try {
-                WritableImage snapshot = app.getPrimaryStage().getScene().snapshot(null);
+                WritableImage snapshot = app.getMovablePane().snapshot(null, null);
                 WritableImage croppedImage = new WritableImage(snapshot.getPixelReader(),
                         Double.valueOf(x).intValue(),
                         Double.valueOf(y).intValue(),

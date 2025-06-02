@@ -9,7 +9,6 @@ import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
-import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
@@ -71,16 +70,15 @@ public class CreatePatternButton extends ImageButton {
         app.getOptionalDotGrid().clearSelections();
         app.getOptionalDotGrid().clearHovered();
         app.getOptionalDotGrid().clearAllGuideLines();
+        app.getOptionalDotGrid().clearHandles();
 
         List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
         List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
         displayedKnots.addAll(new ArrayList<>(selectedKnots));
         selectedKnots.clear();
-        app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+        app.getOptionalDotGrid().getRoot().setOnMouseMoved(null);
+        app.getMovablePane().setOnMouseClicked(null);
 
-        if (Events.getGridHoverEventHandler(app) != null) {
-            app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-        }
         newStep(displayedKnots, selectedKnots, true);
 
         if (mouseClicks == 2) {
@@ -134,11 +132,10 @@ public class CreatePatternButton extends ImageButton {
                     removeRectangle(app);
                 }
             };
-
         }
 
-        app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, mouseMovedListener);
-        app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, mouseClickedListener);
+        app.getOptionalDotGrid().getRoot().setOnMouseMoved(mouseMovedListener);
+        app.getMovablePane().setOnMouseClicked(mouseClickedListener);
     }
 
     private static Rectangle newRectangle() {
@@ -147,8 +144,8 @@ public class CreatePatternButton extends ImageButton {
         rec.setStrokeWidth(2d);
         rec.setFill(Color.TRANSPARENT);
 
-        rec.addEventHandler(MouseEvent.MOUSE_MOVED, mouseMovedListener);
-        rec.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseClickedListener);
+        rec.setOnMouseMoved(mouseMovedListener);
+        rec.setOnMouseClicked(mouseClickedListener);
 
         return rec;
     }
@@ -160,16 +157,6 @@ public class CreatePatternButton extends ImageButton {
         }
     }
 
-    private static void computeRectangleY(double mouseEvent, double firstClickY) {
-        if (mouseEvent < firstClickY) {
-            rectangleY = mouseEvent + 2;
-            rectangleHeight = firstClickY - rectangleY;
-        } else {
-            rectangleY = firstClickY;
-            rectangleHeight = mouseEvent - firstClickY - 1;
-        }
-    }
-
     private static void computeRectangleX(double mouseEvent, double firstClickX) {
         if (mouseEvent < firstClickX) {
             rectangleX = mouseEvent + 2;
@@ -177,6 +164,16 @@ public class CreatePatternButton extends ImageButton {
         } else {
             rectangleX = firstClickX;
             rectangleWidth = mouseEvent - firstClickX - 1;
+        }
+    }
+
+    private static void computeRectangleY(double mouseEvent, double firstClickY) {
+        if (mouseEvent < firstClickY) {
+            rectangleY = mouseEvent + 2;
+            rectangleHeight = firstClickY - rectangleY;
+        } else {
+            rectangleY = firstClickY;
+            rectangleHeight = mouseEvent - firstClickY - 1;
         }
     }
 

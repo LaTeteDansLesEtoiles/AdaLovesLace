@@ -2,8 +2,6 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.MouseMode;
@@ -14,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.util.Events.keyHandler;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class SelectionButton extends ToggleButton {
@@ -25,7 +22,7 @@ public class SelectionButton extends ToggleButton {
 
   public SelectionButton(App app, GeometryWindow window, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onSetSelectionModeAction(app, window));
+    this.setOnMouseClicked(_ -> onSetSelectionModeAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
@@ -38,15 +35,12 @@ public class SelectionButton extends ToggleButton {
     logger.debug("Setting selection mode");
 
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
-    app.getScene().removeEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
-    app.getOptionalDotGrid().getRoot().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
       putAllEventsOnKnot(app, knot);
     }
 
-    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+    Events.removeEventsFromGrid(app);
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(true);
@@ -56,17 +50,13 @@ public class SelectionButton extends ToggleButton {
 
   public static void putAllEventsOnKnot(App app, Knot knot) {
     if (knot.isSelectable()) {
-      knot.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-      knot.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+      knot.getImageView().setOnMouseMoved(Events.getGridHoverEventHandler(app));
+      knot.getImageView().setOnMouseClicked(Events.getMouseClickEventHandler(app));
 
       if (knot.getHandle() != null) {
         knot.getHandle().setOnMousePressed(Events.getDragInitiatedOverHandleEventHandler());
         knot.getHandle().setOnMouseDragged(Events.getMouseDragOverHandleEventHandler());
         knot.getHandle().setOnMouseReleased(Events.getMouseDragDroppedHandleEventHandler());
-      }
-
-      if (knot.getPattern().isEmpty()) {
-        app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
       }
     }
   }
