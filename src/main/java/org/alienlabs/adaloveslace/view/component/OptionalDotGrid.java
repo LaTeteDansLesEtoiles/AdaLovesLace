@@ -137,6 +137,8 @@ public class OptionalDotGrid extends Pane {
     // We shall not display the undone knots => delete them from canvas, then draw the grid again
     deleteKnotsFromCanvas();
 
+    this.getDiagram().deleteKnotDecorationsFromFollowingSteps(root);
+
     // If there are knots on the diagram, we must display them at each window refresh
     if (!this.diagram.getAllSteps().isEmpty() && this.diagram.getCurrentStepIndex() >= 0) {
       for (Knot knot : this.diagram.getCurrentStep().getDisplayedKnots()) {
@@ -347,10 +349,6 @@ public class OptionalDotGrid extends Pane {
   public void drawGuideLines(final Step step, final Knot knot) {
     Platform.runLater(() -> {
       if ((diagram.getCurrentMode() != MouseMode.CREATE_PATTERN) && (diagram.getCurrentMode() != MouseMode.MIRROR)) {
-
-        // The black, thick lines that we use as guides
-        getDiagram().deleteKnotDecorationsFromFollowingSteps(root);
-
         for (Knot otherKnot : step.getAllVisibleKnots()) {
           if (!otherKnot.equals(knot) && otherKnot.isVisible()) {
             new GuideLinesUtil(knot, otherKnot, root);
