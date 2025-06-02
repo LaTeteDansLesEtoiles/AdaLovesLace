@@ -32,7 +32,7 @@ public class PatternButton extends ToggleButton {
     this.setGraphic(imageView);
     this.setGraphicTextGap(10d);
 
-    this.getStyleClass().add(PATTERN_AND_TEXT_BUTTON); // 👈 relie au style CSS
+    this.getStyleClass().add(PATTERN_AND_TEXT_BUTTON);
     this.setSelected(false);
     app.getScene().removeEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
 
