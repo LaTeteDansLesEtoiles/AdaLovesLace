@@ -56,6 +56,10 @@ public class ParentGridStrategy {
         return this.currentGridType;
     }
 
+    public void setCurrentGridType(GridType currentGridType) {
+        this.currentGridType = currentGridType;
+    }
+
     public static void hideGrid() {
         for (Shape shape : ParentGridStrategy.grid) {
             ParentGridStrategy.root.getChildren().remove(shape);

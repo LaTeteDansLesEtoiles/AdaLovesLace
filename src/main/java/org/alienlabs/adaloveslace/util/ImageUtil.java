@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.dto.DiagramDTO;
+import org.alienlabs.adaloveslace.business.model.enumeration.GridType;
 import org.alienlabs.adaloveslace.business.model.enumeration.Language;
 import org.alienlabs.adaloveslace.business.model.enumeration.SubTechnique;
 import org.alienlabs.adaloveslace.business.model.enumeration.Technique;
@@ -130,7 +131,6 @@ public class ImageUtil {
 
     public void buildImage(double xMin, double yMin, double wLog, double hLog) {
         if (app.getOptionalDotGrid().isShowHideGrid()) {
-            app.getOptionalDotGrid().setShowHideGrid(false);
             app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
             app.getOptionalDotGrid().layoutChildren();
         }
@@ -147,6 +147,11 @@ public class ImageUtil {
                     wLog,
                     hLog
             );
+
+            ParentGridStrategy parentGridStrategy = new ParentGridStrategy(app, app.getMovablePane());
+            GridType before = parentGridStrategy.getCurrentGridType();
+            ParentGridStrategy.hideGrid();
+
             double scale = app.getMovablePane().getScaleX();
             SnapshotParameters sp = new SnapshotParameters();
             sp.setFill(Color.TRANSPARENT);
@@ -157,15 +162,15 @@ public class ImageUtil {
             int cropY = (int) Math.round(yMin * scale);
             int cropW = (int) Math.round(wLog * scale);
             int cropH = (int) Math.round(hLog * scale);
-            BufferedImage croppedBI = buffered.getSubimage(cropX, cropY, cropW, cropH);
 
             try {
+                BufferedImage croppedBI = buffered.getSubimage(cropX, cropY, cropW, cropH);
                 ImageIO.write(croppedBI, EXPORT_IMAGE_FILE_FORMAT, OUTPUT);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.error("Problem writing new pattern image file!", e);
             }
 
-            app.getOptionalDotGrid().setShowHideGrid(true);
+            parentGridStrategy.setCurrentGridType(before);
             app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
             app.getOptionalDotGrid().layoutChildren();
 

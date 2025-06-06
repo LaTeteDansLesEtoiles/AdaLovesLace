@@ -11,6 +11,7 @@ import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
@@ -71,7 +72,9 @@ public class CreatePatternButton extends ImageButton {
         selectedKnots.clear();
         app.getMovablePane().setOnMouseMoved(null);
         app.getMovablePane().setOnMouseClicked(null);
-
+        app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+        app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+        app.getMovablePane().setOnMouseExited(null);
         newStep(displayedKnots, selectedKnots, true);
 
         Pane pane = app.getMovablePane();
