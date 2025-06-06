@@ -75,6 +75,9 @@ public class CreatePatternButton extends ImageButton {
         app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
         app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
         app.getMovablePane().setOnMouseExited(null);
+        app.getMovablePane().setOnMousePressed(null);
+        app.getMovablePane().setOnMouseDragged(null);
+
         newStep(displayedKnots, selectedKnots, true);
 
         Pane pane = app.getMovablePane();
