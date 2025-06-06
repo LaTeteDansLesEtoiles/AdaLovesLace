@@ -224,6 +224,7 @@ public class OptionalDotGrid extends Pane {
           if (knot.getHovered() != null) {
             root.getChildren().remove(knot.getHovered());
             knot.setHovered(null);
+            layoutChildren();
           }
         });
       }
