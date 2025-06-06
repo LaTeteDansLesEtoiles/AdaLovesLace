@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
+package org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid;
 
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;

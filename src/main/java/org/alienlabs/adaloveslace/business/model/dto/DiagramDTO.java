@@ -1,4 +1,8 @@
-package org.alienlabs.adaloveslace.business.model;
+package org.alienlabs.adaloveslace.business.model.dto;
+
+import org.alienlabs.adaloveslace.business.model.enumeration.Language;
+import org.alienlabs.adaloveslace.business.model.enumeration.SubTechnique;
+import org.alienlabs.adaloveslace.business.model.enumeration.Technique;
 
 import java.io.Serial;
 import java.io.Serializable;

@@ -3,7 +3,7 @@ package org.alienlabs.adaloveslace.util;
 import com.google.gson.Gson;
 import javafx.application.Platform;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.DiagramDTO;
+import org.alienlabs.adaloveslace.business.model.dto.DiagramDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

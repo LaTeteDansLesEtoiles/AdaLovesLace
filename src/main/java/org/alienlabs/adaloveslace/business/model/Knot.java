@@ -4,6 +4,8 @@ import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
+import org.alienlabs.adaloveslace.business.model.xmladapter.OptionalPatternAdapter;
+import org.alienlabs.adaloveslace.business.model.xmladapter.OptionalStringAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

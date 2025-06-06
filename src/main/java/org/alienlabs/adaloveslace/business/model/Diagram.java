@@ -17,6 +17,8 @@ import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.GridUtil;
@@ -71,7 +73,7 @@ public class Diagram {
     private static App          app;
 
     @XmlTransient
-    private MouseMode           currentMode;
+    private MouseMode currentMode;
 
     @XmlTransient
     private MouseMode           oldMode;

@@ -10,7 +10,15 @@ import javafx.scene.input.KeyCombination;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.PrintUtil;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.ExportImageButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.LoadButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.SaveAsButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.SaveButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.RedoKnotButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ResetDiagramButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ShowHideGridButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoKnotButton;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +27,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static org.alienlabs.adaloveslace.App.*;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.MENU_BAR_Y;
 

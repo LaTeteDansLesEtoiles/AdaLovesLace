@@ -26,4 +26,12 @@ module org.alienlabs.adaloveslace {
   exports org.alienlabs.adaloveslace.view.component.button.geometrywindow;
   exports org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
   exports org.alienlabs.adaloveslace.view.component.spinner;
+    exports org.alienlabs.adaloveslace.business.model.enumeration;
+    opens org.alienlabs.adaloveslace.business.model.enumeration to com.google.gson, jakarta.xml.bind;
+  exports org.alienlabs.adaloveslace.business.model.xmladapter;
+  opens org.alienlabs.adaloveslace.business.model.xmladapter to com.google.gson, jakarta.xml.bind;
+  exports org.alienlabs.adaloveslace.business.model.dto;
+  opens org.alienlabs.adaloveslace.business.model.dto to com.google.gson, jakarta.xml.bind;
+  exports org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file;
+  exports org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid;
 }

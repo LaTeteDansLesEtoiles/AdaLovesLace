@@ -11,7 +11,10 @@ import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.PrintUtil;
 import org.alienlabs.adaloveslace.view.component.PrintersListView;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShareButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.*;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +28,10 @@ import java.util.regex.Pattern;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.HOME_DIRECTORY_RESOURCES_PATH;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.CreatePatternButton.CREATE_PATTERN_BUTTON;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ExportPdfButton.EXPORT_PDF_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShareButton.SHARE_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.ExportPdfButton.EXPORT_PDF_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.CreatePatternButton.CREATE_PATTERN_BUTTON;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
 public class ToolboxWindow {

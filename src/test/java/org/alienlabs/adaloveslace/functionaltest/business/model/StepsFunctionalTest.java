@@ -2,8 +2,8 @@ package org.alienlabs.adaloveslace.functionaltest.business.model;
 
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.RedoKnotButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoKnotButton;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;

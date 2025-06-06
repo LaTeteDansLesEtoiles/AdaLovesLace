@@ -9,7 +9,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.ImageUtil;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.CreatePatternButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.CreatePatternButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

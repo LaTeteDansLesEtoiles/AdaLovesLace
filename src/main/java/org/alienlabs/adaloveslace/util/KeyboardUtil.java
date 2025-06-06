@@ -10,7 +10,14 @@ import org.alienlabs.adaloveslace.view.component.button.statewindow.InvisibleBut
 import org.alienlabs.adaloveslace.view.component.button.statewindow.SelectableButton;
 import org.alienlabs.adaloveslace.view.component.button.statewindow.UnselectableButton;
 import org.alienlabs.adaloveslace.view.component.button.statewindow.VisibleButton;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.ExportImageButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.LoadButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.SaveAsButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.RedoKnotButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ResetDiagramButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ShowHideGridButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoKnotButton;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
