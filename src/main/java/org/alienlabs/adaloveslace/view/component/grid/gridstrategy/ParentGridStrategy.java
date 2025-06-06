@@ -18,6 +18,7 @@ public class ParentGridStrategy {
 
     private static  App app;
     public static Pane gridPane;
+    private static boolean gridHasBeenDrawn = false;
 
     private GridType currentGridType = GridType.STAGGERED;
     private final EnumMap<GridType, IDotGridStrategy> childStrategies = new EnumMap<>(GridType.class);
@@ -25,6 +26,7 @@ public class ParentGridStrategy {
     public ParentGridStrategy(App app, Pane gridPane) {
         ParentGridStrategy.app = app;
         ParentGridStrategy.gridPane = gridPane;
+        gridHasBeenDrawn = false;
 
         childStrategies.put(GridType.STAGGERED, new StagerredDotGridStrategy());
         childStrategies.put(GridType.CRISS_CROSS, new CrissCrossDotGridStrategy());
@@ -32,15 +34,19 @@ public class ParentGridStrategy {
     }
 
     public void drawGrid() {
-        ParentGridStrategy.gridPane.setPrefWidth(app.getPrimaryStage().getWidth());
-        ParentGridStrategy.gridPane.setPrefHeight(app.getPrimaryStage().getHeight());
+        if (!gridHasBeenDrawn) {
+            ParentGridStrategy.gridPane.setPrefWidth(app.getPrimaryStage().getWidth());
+            ParentGridStrategy.gridPane.setPrefHeight(app.getPrimaryStage().getHeight());
 
-        double width = ParentGridStrategy.app.getMaxWidth();
-        double height = ParentGridStrategy.app.getMaxHeight();
+            double width = ParentGridStrategy.app.getMaxWidth();
+            double height = ParentGridStrategy.app.getMaxHeight();
 
-        IDotGridStrategy childStrategy = childStrategies.get(currentGridType);
-        childStrategy.setViewPort(width, height);
-        childStrategy.drawGrid();
+            IDotGridStrategy childStrategy = childStrategies.get(currentGridType);
+            childStrategy.setViewPort(width, height);
+            childStrategy.drawGrid();
+
+            gridHasBeenDrawn = true;
+        }
     }
 
     public void switchGridType() {
@@ -66,6 +72,10 @@ public class ParentGridStrategy {
 
     public static List<Shape> getGrid() {
         return ParentGridStrategy.grid;
+    }
+
+    public static void setGridHasBeenDrawn(boolean gridHasBeenDrawn) {
+        ParentGridStrategy.gridHasBeenDrawn = gridHasBeenDrawn;
     }
 
 }

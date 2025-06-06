@@ -131,7 +131,7 @@ public class ImageUtil {
 
     public void buildImage(double xMin, double yMin, double wLog, double hLog) {
         if (app.getOptionalDotGrid().isShowHideGrid()) {
-            app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+            ParentGridStrategy.setGridHasBeenDrawn(false);
             app.getOptionalDotGrid().layoutChildren();
         }
 
@@ -171,7 +171,7 @@ public class ImageUtil {
             }
 
             parentGridStrategy.setCurrentGridType(before);
-            app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+            ParentGridStrategy.setGridHasBeenDrawn(false);
             app.getOptionalDotGrid().layoutChildren();
 
             new CreatePatternWindow(app);
@@ -195,7 +195,7 @@ public class ImageUtil {
         }
 
         if (showGrid) {
-            app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+            ParentGridStrategy.setGridHasBeenDrawn(false);
             app.getOptionalDotGrid().layoutChildren();
         } else {
             ParentGridStrategy.hideGrid();

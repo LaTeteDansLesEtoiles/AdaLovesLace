@@ -49,7 +49,6 @@ public class OptionalDotGrid extends Pane {
 
   private final App app;
   private boolean showHideGrid = true;
-  private boolean gridNeedsToBeRedrawn;
   private Diagram diagram;
 
   private final Pane root;
@@ -119,8 +118,6 @@ public class OptionalDotGrid extends Pane {
       newStep(displayedKnots, copiedKnots, true);
       app.getOptionalDotGrid().getDiagram().setCurrentMode(app.getOptionalDotGrid().getDiagram().getOldMode());
     });
-
-    this.gridNeedsToBeRedrawn = true;
   }
 
   public OptionalDotGrid(App app, double width, double height, Diagram diagram, Pane root) {
@@ -132,10 +129,7 @@ public class OptionalDotGrid extends Pane {
   @Override
   public void layoutChildren() {
     drawDiagram();
-
-    if (this.gridNeedsToBeRedrawn) {
-      gridStrategy.drawGrid();
-    }
+    gridStrategy.drawGrid();
   }
 
   private void drawDiagram() {
@@ -409,10 +403,6 @@ public class OptionalDotGrid extends Pane {
             knot.getRotationAngle());
 
     return knot.getImageView();
-  }
-
-  public void setGridNeedsToBeRedrawn(boolean gridNeedsToBeRedrawn) {
-    this.gridNeedsToBeRedrawn = gridNeedsToBeRedrawn;
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

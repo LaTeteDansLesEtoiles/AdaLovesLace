@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid;
 
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
+import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +23,8 @@ public class ShowHideGridButton extends ImageButton {
 
   public static void showHideGrid() {
     app.getOptionalDotGrid().getGridStrategy().switchGridType();
-    app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
-
+    ParentGridStrategy.setGridHasBeenDrawn(false);
+    
     logger.debug("Event switch grid");
     app.getOptionalDotGrid().layoutChildren();
   }
