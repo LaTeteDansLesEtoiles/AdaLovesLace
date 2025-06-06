@@ -41,7 +41,7 @@ public class DeletionButton extends ToggleButton {
     window.getDuplicationButton() .setSelected(false);
 
     Events.removeEventsFromGrid(app);
-    app.getOptionalDotGrid().getRoot().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
   }
 
 }

@@ -92,7 +92,7 @@
 }
 
 .grid {
-  -fx-background-color: #ffffff;
+  -fx-background-color: transparent;
   -fx-text-fill: #f1f1f1;
 }
 

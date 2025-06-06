@@ -4,7 +4,6 @@ import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.geometry.Point3D;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
@@ -18,27 +17,19 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.*;
 import org.alienlabs.adaloveslace.util.Events;
-import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.CANVAS_TEXT_FONT_SIZE;
-import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
-import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
-import static org.alienlabs.adaloveslace.util.NodeUtil.HANDLE_SIZE;
 
 /**
  * A grid (= coordinate system) with dots (= used as landmarks for lace).
@@ -49,8 +40,6 @@ public class OptionalDotGrid extends Pane {
   public static final Color BLUE_HANDLE = Color.rgb(0, 0, 255, 0.5);
   double GRID_WIDTH                     = 1400d;
   double GRID_HEIGHT                    = 600d;
-  public static final double TOP_MARGIN = -70d;
-  public static final double CREATE_PATTERN_MARGIN = 5;
 
   private boolean showHideGrid = true;
   private boolean gridNeedsToBeRedrawn;
@@ -68,6 +57,7 @@ public class OptionalDotGrid extends Pane {
   private final SimpleObjectProperty<PatternOrTextMode> currentPatternOrTextModeProperty;
 
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
+  private GridUtil gridUtil;
 
   /**
    * We draw the dots on the grid using a Canvas.
@@ -79,8 +69,10 @@ public class OptionalDotGrid extends Pane {
     this.app = app;
     this.root = root;
     this.diagram = Objects.requireNonNullElseGet(diagram, () -> new Diagram(app));
+    this.gridUtil = new GridUtil(root);
 
     this.root.getStyleClass().add("grid");
+    this.root.setBackground(null);
     this.desiredRadius = RADIUS;
 
     if (!this.diagram.getPatterns().isEmpty()) {
@@ -201,7 +193,7 @@ public class OptionalDotGrid extends Pane {
           addSelectionAndHandleToAKnot(knot, Color.rgb(255, 0, 0, 0.5));
         } else {
           Platform.runLater(() -> {
-            Rectangle rec = newRectangle(knot, Color.BLUE);
+            Rectangle rec = this.gridUtil.newRectangle(knot, Color.BLUE);
             knot.setSelection(rec);
             logger.debug("Adding hover {} for Knot {}", rec, knot);
             root.getChildren().add(rec);
@@ -233,7 +225,7 @@ public class OptionalDotGrid extends Pane {
 
   public void addSelectionAndHandleToAKnot(Knot knot, Color rgba) {
     Platform.runLater(() -> {
-      Rectangle rec = newRectangle(knot, rgba);
+      Rectangle rec = this.gridUtil.newRectangle(knot, rgba);
       rec.addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
 
       knot.setHovered(rec);
@@ -249,9 +241,9 @@ public class OptionalDotGrid extends Pane {
         Circle handle;
 
         if (knot.getPattern().isPresent()) {
-          handle = newHandleForPattern(knot, rec);
+          handle = this.gridUtil.newHandleForPattern(knot, rec);
         } else {
-          handle = newHandleForText(knot, rec);
+          handle = this.gridUtil.newHandleForText(knot, rec);
         }
 
         knot.setHandle(handle);
@@ -264,86 +256,8 @@ public class OptionalDotGrid extends Pane {
     });
   }
 
-  // The handle is the top left corner of the rectangle of the zoomed, rotated knot
-  // @see https://stackoverflow.com/questions/41898990/find-corners-of-a-rotated-rectangle-given-its-center-point-and-rotation
-  // And invert "TOP LEFT VERTEX:" & "BOTTOM LEFT VERTEX:" (small error from the author)
-  public Circle newHandleForPattern(Knot knot, Rectangle rec) {
-    Circle circle = new Circle(
-            knot.getImageView().getBoundsInParent().getCenterX() -
-                    (knot.getPattern().get().getWidth() / 2 * rec.getScaleX()) *
-                            Math.cos(Math.toRadians(knot.getRotationAngle())) +
-                    (knot.getPattern().get().getHeight() / 2 * rec.getScaleY()) *
-                            Math.sin(Math.toRadians(knot.getRotationAngle())),
-            knot.getImageView().getBoundsInParent().getCenterY() -
-                    (knot.getPattern().get().getWidth() / 2 * rec.getScaleX()) *
-                            Math.sin(Math.toRadians(knot.getRotationAngle())) -
-                    (knot.getPattern().get().getHeight() / 2 * rec.getScaleY()) *
-                            Math.cos(Math.toRadians(knot.getRotationAngle())),
-            HANDLE_SIZE * computeZoomFactor(knot),
-            BLUE_HANDLE);
-    circle.setId(UUID.randomUUID().toString());
-    return circle;
-  }
-
-  // The handle is the top left corner of the rectangle of the zoomed, rotated knot
-  // @see https://stackoverflow.com/questions/41898990/find-corners-of-a-rotated-rectangle-given-its-center-point-and-rotation
-  // And invert "TOP LEFT VERTEX:" & "BOTTOM LEFT VERTEX:" (small error from the author)
-  public Circle newHandleForText(Knot knot, Rectangle rec) {
-    Circle circle = new Circle(
-            knot.getImageView().getBoundsInParent().getCenterX() -
-                    (knot.getImageView().getImage().getWidth() / 2 * rec.getScaleX()) *
-                            Math.cos(Math.toRadians(knot.getRotationAngle())) +
-                    (knot.getImageView().getImage().getHeight() / 2 * rec.getScaleY()) *
-                            Math.sin(Math.toRadians(knot.getRotationAngle())),
-            knot.getImageView().getBoundsInParent().getCenterY() -
-                    (knot.getImageView().getImage().getWidth() / 2 * rec.getScaleX()) *
-                            Math.sin(Math.toRadians(knot.getRotationAngle())) -
-                    (knot.getImageView().getImage().getHeight() / 2 * rec.getScaleY()) *
-                            Math.cos(Math.toRadians(knot.getRotationAngle())),
-            HANDLE_SIZE * computeZoomFactor(knot),
-            BLUE_HANDLE);
-    circle.setId(UUID.randomUUID().toString());
-    return circle;
-  }
-
-  public Rectangle newRectangle(Knot knot, Color color) {
-    Rectangle rec;
-
-    if (knot.getText().isPresent() && (knot.getPattern().isEmpty())) {
-      rec = new Rectangle(
-              knot.getX(),
-              knot.getY(),
-              knot.getImageView().getImage().getWidth(),
-              knot.getImageView().getImage().getHeight()
-      );
-      setRectangleProperties(knot, color, rec);
-      return rec;
-    } else if (knot.getPattern().isPresent()) {
-      rec = new Rectangle(
-              knot.getX(),
-              knot.getY(),
-              knot.getPattern().get().getWidth(),
-              knot.getPattern().get().getHeight()
-      );
-      setRectangleProperties(knot, color, rec);
-      return rec;
-    }
-
-    return null;
-  }
-
   private Rectangle newHoverRectangle(Knot knot) {
-    return newRectangle(knot, Color.GRAY);
-  }
-
-  private void setRectangleProperties(Knot knot, Color color, Rectangle rec) {
-    rec.setId(UUID.randomUUID().toString());
-    rec.setStroke(color);
-    rec.setStrokeWidth(2d);
-    rec.setFill(Color.TRANSPARENT);
-    rec.setScaleX(computeZoomFactor(knot));
-    rec.setScaleY(computeZoomFactor(knot));
-    rec.setRotate(knot.getRotationAngle());
+    return this.gridUtil.newRectangle(knot, Color.GRAY);
   }
 
   public void drawGuideLines(final Step step, final Knot knot) {
@@ -400,10 +314,11 @@ public class OptionalDotGrid extends Pane {
     if (knot.getText().isPresent() && !knot.getText().get().contentEquals(NEW_TEXT)) {
       drawTextImageView(knot, x, y);
       imageView = rotateTextKnot(knot);
-      zoomTextKnot(knot);
+      this.gridUtil.zoomTextKnot(knot);
     } else if (knot.getPattern().isPresent()) {
-      imageView = rotatePatternKnot(knot);
-      zoomAndFlipPatternKnot(knot);
+
+      imageView = this.gridUtil.rotatePatternKnot(knot);
+      this.gridUtil.zoomAndFlipPatternKnot(knot);
     }
 
     if (null != imageView) {
@@ -442,7 +357,7 @@ public class OptionalDotGrid extends Pane {
     if (knot.getPattern().isEmpty()) {
       drawTextImageView(knot, x, y);
       imageView = rotateTextKnot(knot);
-      zoomTextKnot(knot);
+      this.gridUtil.zoomTextKnot(knot);
 
       imageView.setLayoutX(x);
       imageView.setLayoutY(y);
@@ -450,8 +365,8 @@ public class OptionalDotGrid extends Pane {
 
       drawGuideLines(step, knot);
     } else if (knot.getPattern().isPresent()) {
-      imageView = rotatePatternKnot(knot);
-      zoomAndFlipPatternKnot(knot);
+      imageView = this.gridUtil.rotatePatternKnot(knot);
+      this.gridUtil.zoomAndFlipPatternKnot(knot);
 
       imageView.setLayoutX(x);
       imageView.setLayoutY(y);
@@ -465,87 +380,6 @@ public class OptionalDotGrid extends Pane {
                     knot.getPattern().get().getFilename() :
                     knot.getText().toString(),
             x, y);
-  }
-
-  // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
-  public double zoomAndFlipPatternKnot(Knot knot) {
-    flipPattern(knot.isFlippedVertically(), Rotate.Y_AXIS, knot);
-    flipPattern(knot.isFlippedHorizontally(), Rotate.X_AXIS, knot);
-
-    return zoomPattern(knot);
-  }
-
-  private double zoomPattern(Knot knot) {
-    double scaleFactor = computeZoomFactor(knot);
-    knot.getImageView().setScaleX(scaleFactor);
-    knot.getImageView().setScaleY(scaleFactor);
-
-    logger.debug("zoomed knot {} at zoom factor {} and scale factor {}",
-            knot.getPattern().get().getFilename(), knot.getZoomFactor(), scaleFactor);
-
-    return scaleFactor;
-  }
-
-  // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
-  private void zoomTextKnot(Knot knot) {
-    double scaleFactor = computeZoomFactor(knot);
-    knot.getImageView().setScaleX(scaleFactor);
-    knot.getImageView().setScaleY(scaleFactor);
-
-    logger.debug("zoomed knot {} at zoom factor {} and scale factor {}",
-            knot.getText(), knot.getZoomFactor(), scaleFactor);
-  }
-
-  private void flipPattern(boolean flip, Point3D axis, Knot knot) {
-    Rotate rot = new Rotate();
-    rot.setAxis(axis);
-    rot.setAngle(flip ? 180d : 0d);
-    rot.setPivotX(knot.getPattern().get().getWidth() / 2);
-    rot.setPivotY(knot.getPattern().get().getHeight() / 2);
-
-    knot.getImageView().getTransforms().add(rot);
-  }
-
-  public double computeZoomFactor(double factor) {
-    if (factor == 0) {
-      return 1;
-    } else {
-      return (10d + factor) / 10d;
-    }
-  }
-
-  public double computeZoomFactor(Knot knot) {
-    return computeZoomFactor(knot.getZoomFactor());
-  }
-
-  // Rotate Pattern knot with an angle in degrees
-  private ImageView rotatePatternKnot(Knot knot) {
-    if (knot.getImageView() == null) {
-      try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
-              + knot.getPattern().get().getFilename())) {
-        new FileUtil().buildKnotImageView(knot, fis);
-      } catch (IOException e) {
-        logger.error("Problem with pattern resource file!", e);
-      }
-    } else {
-      knot.getImageView().setLayoutX(knot.getX());
-      knot.getImageView().setLayoutY(knot.getY());
-      knot.getImageView().setFitHeight(knot.getPattern().get().getHeight());
-      knot.getImageView().setFitWidth(knot.getPattern().get().getWidth());
-    }
-
-    knot.getImageView().getTransforms().clear();
-    knot.getImageView().setRotate(knot.getRotationAngle());
-
-    if (!root.getChildren().contains(knot.getImageView())) {
-      root.getChildren().add(knot.getImageView());
-    }
-
-    logger.debug("rotated knot {} at angle {}",
-            knot.getPattern().get().getFilename(),
-            knot.getRotationAngle());
-
-    return knot.getImageView();
   }
 
   // Rotate Text knot with an angle in degrees
@@ -627,10 +461,6 @@ public class OptionalDotGrid extends Pane {
 
   public void setShowHideGrid(boolean showHideGrid) {
     this.showHideGrid = showHideGrid;
-  }
-
-  public Pane getRoot() {
-    return this.root;
   }
 
 }

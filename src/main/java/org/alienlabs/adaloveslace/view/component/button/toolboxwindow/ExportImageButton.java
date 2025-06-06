@@ -16,6 +16,8 @@ import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
 public class ExportImageButton extends ImageButton {
 
+    private static App app;
+
     public static final String EXPORT_IMAGE_DIALOG_TITLE  = "Export a diagram image";
 
     public static final String EXPORTED_FILES             = ".png files (*.png)";
@@ -26,11 +28,12 @@ public class ExportImageButton extends ImageButton {
 
     public ExportImageButton(App app, String buttonLabel) {
         super(buttonLabel);
-        this.setOnMouseClicked(event -> onExportAction(app));
+        ExportImageButton.app = app;
+        this.setOnMouseClicked(_ -> onExportAction());
         buildButtonImage("export.png");
     }
 
-    public static void onExportAction(App app) {
+    public static void onExportAction() {
         logger.debug("Exporting image file");
 
         FileChooser export = new FileChooserUtil().getFileChooser(EXPORT_IMAGE_DIALOG_TITLE, SAVED_LACE_FILE, LACE_FILE_FOLDER_SAVE_PATH, EXPORTED_FILES, EXPORT_FILE_FILTER);

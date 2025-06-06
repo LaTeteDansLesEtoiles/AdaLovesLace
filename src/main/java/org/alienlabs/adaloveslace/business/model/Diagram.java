@@ -19,6 +19,7 @@ import javafx.scene.text.Text;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
+import org.alienlabs.adaloveslace.view.component.GridUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -224,8 +225,8 @@ public class Diagram {
 
     // Workaround for move mode, lest handles without knots appear on the grid
     public void removeAllHandles() {
-        app.getOptionalDotGrid().getRoot().getChildren().removeAll(
-                app.getOptionalDotGrid().getRoot().getChildren().stream()
+        app.getMovablePane().getChildren().removeAll(
+                app.getMovablePane().getChildren().stream()
                         .filter(Circle.class::isInstance).toList()
         );
     }
@@ -328,7 +329,7 @@ public class Diagram {
                 ell.toFront();
 
                 grid.add(ell);
-                app.getOptionalDotGrid().getRoot().getChildren().add(ell);
+                app.getMovablePane().getChildren().add(ell);
             }
         }
     }
@@ -395,21 +396,21 @@ public class Diagram {
         }
 
         this.setCurrentKnot(currentKnot);
-        currentKnot.setSelection(app.getOptionalDotGrid().newRectangle(currentKnot, Color.BLUE));
+        currentKnot.setSelection(new GridUtil(app.getMovablePane()).newRectangle(currentKnot, Color.BLUE));
 
         if (pattern == null) {
-            currentKnot.setHandle(app.getOptionalDotGrid().newHandleForText(currentKnot, (Rectangle) currentKnot.getSelection()));
+            currentKnot.setHandle(new GridUtil(app.getMovablePane()).newHandleForText(currentKnot, (Rectangle) currentKnot.getSelection()));
         } else {
-            currentKnot.setHandle(app.getOptionalDotGrid().newHandleForPattern(currentKnot, (Rectangle) currentKnot.getSelection()));
+            currentKnot.setHandle(new GridUtil(app.getMovablePane()).newHandleForPattern(currentKnot, (Rectangle) currentKnot.getSelection()));
         }
 
         putAllEventsOnKnot(app, currentKnot);
 
-        if (null != oldCurrentKnot) {
-            if ((oldCurrentKnot.getPattern().isPresent() && isNewText) ||
-                    (oldCurrentKnot.getPattern().isEmpty() && !isNewText)) {
-                app.getMovablePane().getChildren().remove(oldCurrentKnot.getImageView());
-            }
+        if (null != oldCurrentKnot &&
+                ((oldCurrentKnot.getPattern().isPresent() &&
+                        isNewText) ||
+                        (oldCurrentKnot.getPattern().isEmpty() && !isNewText))) {
+            app.getMovablePane().getChildren().remove(oldCurrentKnot.getImageView());
         }
 
 
@@ -473,9 +474,9 @@ public class Diagram {
     }
 
     public void deleteKnotDecorationsFromFollowingSteps(App app, Knot knot) {
-        app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
-        app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
-        app.getOptionalDotGrid().getRoot().getChildren().removeAll(knot.getGuideLines());
+        app.getMovablePane().getChildren().remove(knot.getSelection());
+        app.getMovablePane().getChildren().remove(knot.getHovered());
+        app.getMovablePane().getChildren().removeAll(knot.getGuideLines());
         knot.getGuideLines().clear();
     }
 

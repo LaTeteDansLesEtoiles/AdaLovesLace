@@ -26,6 +26,7 @@ class ToolboxWindowFunctionalTest extends AppFunctionalTestParent {
    *
    * @param primaryStage The injected window (stage)
    */
+  @Override
   @Start
   public void start(Stage primaryStage) {
     super.start(primaryStage);
@@ -55,7 +56,7 @@ class ToolboxWindowFunctionalTest extends AppFunctionalTestParent {
     assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
 
     // When
-    synchronizeTask(() -> ShowHideGridButton.showHideGrid(app));
+    synchronizeTask(ShowHideGridButton::showHideGrid);
 
     // Move mouse and get the color of the pixel under the pointer
     pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
@@ -81,7 +82,7 @@ class ToolboxWindowFunctionalTest extends AppFunctionalTestParent {
     assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
 
     // When
-    synchronizeTask(() -> ShowHideGridButton.showHideGrid(app));
+    synchronizeTask(ShowHideGridButton::showHideGrid);
 
     // Move mouse and get the color of the pixel under the pointer
     pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
@@ -93,7 +94,7 @@ class ToolboxWindowFunctionalTest extends AppFunctionalTestParent {
 
     // When
     // Show the dot grid again
-    synchronizeTask(() -> ShowHideGridButton.showHideGrid(app));
+    synchronizeTask(ShowHideGridButton::showHideGrid);
 
     pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
     robot.moveTo(pointToCheck);

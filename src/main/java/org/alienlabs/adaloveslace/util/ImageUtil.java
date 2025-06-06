@@ -8,6 +8,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.*;
 import org.alienlabs.adaloveslace.view.window.CreatePatternWindow;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -93,8 +95,8 @@ public class ImageUtil {
     }
 
     private WritableImage  buildWritableImage(String pathname) {
-        WritableImage wi = new WritableImage(Double.valueOf(app.getMovablePane().getWidth()).intValue(),
-            Double.valueOf(app.getMovablePane().getHeight()).intValue());
+        WritableImage wi = new WritableImage((int)app.getMovablePane().getWidth(),
+                (int)app.getMovablePane().getHeight());
         WritableImage snapshot = app.getMovablePane().snapshot(new SnapshotParameters(), wi);
 
         File output = new File(pathname);
@@ -107,8 +109,8 @@ public class ImageUtil {
     }
 
     private File buildImage(String pathname) {
-        WritableImage wi = new WritableImage(Double.valueOf(app.getMovablePane().getWidth()).intValue(),
-            Double.valueOf(app.getMovablePane().getHeight()).intValue());
+        WritableImage wi = new WritableImage((int)app.getMovablePane().getWidth(),
+                (int)app.getMovablePane().getHeight());
         WritableImage snapshot = app.getMovablePane().snapshot(new SnapshotParameters(), wi);
 
         PATH_NAME = new File(pathname);
@@ -121,28 +123,39 @@ public class ImageUtil {
     return PATH_NAME;
     }
 
-    public void buildImage(double x, double y, double width, double height) {
+    public void buildImage(double xMin, double yMin, double wLog, double hLog) {
         if (app.getOptionalDotGrid().isShowHideGrid()) {
             app.getOptionalDotGrid().setShowHideGrid(false);
             app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
             app.getOptionalDotGrid().layoutChildren();
         }
 
-        if (width > 0d && height > 0d) {
-            createPattern(x, y, width, height);
-        }
+        createPattern(xMin, yMin, wLog, hLog);
     }
 
-    private void createPattern(double x, double y, double width, double height) {
+    private void createPattern(double xMin, double yMin, double wLog, double hLog) {
         Platform.runLater(() -> {
+            logger.debug(
+                    "Create Pattern => ImageView: X= {}, Y= {}, width= {}, height= {}",
+                    xMin,
+                    yMin,
+                    wLog,
+                    hLog
+            );
+            double scale = app.getMovablePane().getScaleX();
+            SnapshotParameters sp = new SnapshotParameters();
+            sp.setFill(Color.TRANSPARENT);
+            WritableImage fullSnap = app.getMovablePane().snapshot(sp, null);
+            BufferedImage buffered = SwingFXUtils.fromFXImage(fullSnap, null);
+
+            int cropX = (int) Math.round(xMin * scale);
+            int cropY = (int) Math.round(yMin * scale);
+            int cropW = (int) Math.round(wLog * scale);
+            int cropH = (int) Math.round(hLog * scale);
+            BufferedImage croppedBI = buffered.getSubimage(cropX, cropY, cropW, cropH);
+
             try {
-                WritableImage snapshot = app.getMovablePane().snapshot(null, null);
-                WritableImage croppedImage = new WritableImage(snapshot.getPixelReader(),
-                        Double.valueOf(x).intValue(),
-                        Double.valueOf(y).intValue(),
-                        Double.valueOf(width).intValue(),
-                        Double.valueOf(height).intValue());
-                ImageIO.write(SwingFXUtils.fromFXImage(croppedImage, null), EXPORT_IMAGE_FILE_FORMAT, OUTPUT);
+                ImageIO.write(croppedBI, EXPORT_IMAGE_FILE_FORMAT, OUTPUT);
             } catch (IOException e) {
                 logger.error("Problem writing new pattern image file!", e);
             }
@@ -164,9 +177,6 @@ public class ImageUtil {
     }
 
     private void manageTechnicalElementsFromRootGroup(boolean showElements, boolean showGrid) {
-        this.app.getMainWindow().getMenuBar().setVisible(showElements);
-        this.app.getMainWindow().getFooter().setVisible(showElements);
-
         if (!showElements) {
             app.getOptionalDotGrid().clearSelections();
             app.getOptionalDotGrid().clearAllGuideLines();

@@ -22,6 +22,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
      * Init method called before each test
      * @param primaryStage The injected window (stage)
      */
+    @Override
     @Start
     public void start(Stage primaryStage) {
         super.start(primaryStage);
@@ -119,7 +120,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         Color foundColorOnGridBeforeUndo = getColor(pointToCheck);
 
         // When
-        synchronizeLongTask(() -> UndoKnotButton.undoKnot(app));
+        synchronizeLongTask(UndoKnotButton::undoKnot);
 
         // Then
         Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
@@ -129,7 +130,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         assertNotEquals(foundColorOnGridBeforeUndo, foundColorOnGrid, "Both colors should not be the same!");
 
         // When
-        synchronizeLongTask(() -> RedoKnotButton.redoKnot(app));
+        synchronizeLongTask(RedoKnotButton::redoKnot);
 
         // Then
         synchronizeTask(() -> robot.moveTo(newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d)));
@@ -153,7 +154,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
         // When
-        synchronizeLongTask(() -> UndoKnotButton.undoKnot(app));
+        synchronizeLongTask(UndoKnotButton::undoKnot);
 
         // Then
         synchronizeTask(() -> robot.moveTo(newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d)));
@@ -162,7 +163,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         assertNotEquals(foundColorOnGridBeforeUndo, foundColorOnGrid);
 
         // When
-        synchronizeLongTask(() -> RedoKnotButton.redoKnot(app));
+        synchronizeLongTask(RedoKnotButton::redoKnot);
 
         // Then
         synchronizeTask(() -> robot.moveTo(newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d)));

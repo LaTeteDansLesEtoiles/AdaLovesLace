@@ -78,7 +78,7 @@ public class FileUtil {
         app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
             app.getPrimaryStage(), diagram);
         app.getOptionalDotGrid().setDiagram(diagram);
-        app.initializeKeyboardShorcuts();
+        new KeyboardUtil().initializeKeyboardShorcuts(app);
         app.onDoMainWindowResize();
     }
 

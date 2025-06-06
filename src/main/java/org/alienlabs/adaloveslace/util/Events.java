@@ -29,7 +29,8 @@ public class Events {
   private static double handleOffsetX;
   private static double handleOffsetY;
   private static Point2D previousEvent;
-  private static Point2D dragStart;
+  private static double dragStartX;
+  private static double dragStartY;
 
   private static final Logger logger = LoggerFactory.getLogger(Events.class);
 
@@ -40,7 +41,7 @@ public class Events {
   public static final EventHandler<KeyEvent> keyHandler = event -> {
     if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.DRAWING ||
             app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.SELECTION) {
-      logger.info("key pressed -> {}", event.getCode());
+      logger.debug("key pressed -> {}", event.getCode());
 
       StringBuilder typedText = app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText();
 
@@ -73,19 +74,19 @@ public class Events {
 
   public static final EventHandler<MouseEvent> mouseClickEventHandler = event -> {
     String eType = event.getEventType().toString();
-    logger.info("Event type mouseClickEventHandler -> {}, source {} current Step index {}, current mode: {}",
+    logger.debug("Event type mouseClickEventHandler -> {}, source {} current Step index {}, current mode: {}",
             eType,
             event.getSource(),
             app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
             app.getOptionalDotGrid().getDiagram().getCurrentMode());
 
     if (eType.equals(MOUSE_CLICKED) && event.getButton() == MouseButton.PRIMARY) {
-      Point2D mouseInParent = app.getOptionalDotGrid().getRoot().sceneToLocal(event.getSceneX(), event.getSceneY());
+      Point2D mouseInParent = app.getMovablePane().sceneToLocal(event.getSceneX(), event.getSceneY());
       Double x = mouseInParent.getX();
       Double y = mouseInParent.getY();
 
-      logger.info("Coordinate X     -> {}", x);
-      logger.info("Coordinate Y     -> {}", y);
+      logger.debug("Coordinate X     -> {}", x);
+      logger.debug("Coordinate Y     -> {}", y);
 
       processMouseClick(x, y);
     }
@@ -93,20 +94,23 @@ public class Events {
 
   public static final EventHandler<MouseEvent> mouseRightClickEventHandler = event -> {
     if (event.getButton() == MouseButton.SECONDARY) {
-                dragStart = new Point2D(event.getSceneX(), event.getSceneY());
-            }
+      dragStartX = event.getSceneX();
+      dragStartY = event.getSceneY();
+    }
   };
 
   public static final EventHandler<MouseEvent> mouseGridDraggedEventHandler = event -> {
-    if (event.getButton() == MouseButton.SECONDARY && dragStart != null) {
-      double dx = event.getSceneX() - dragStart.getX();
-      double dy = event.getSceneY() - dragStart.getY();
-
+    if (event.getButton() == MouseButton.SECONDARY) {
       Pane movablePane = app.getMovablePane();
+
+      logger.debug("Pane in scene : {}", movablePane.localToScene(0, 0));
+      double dx = event.getSceneX() - dragStartX;
+      double dy = event.getSceneY() - dragStartY;
       movablePane.setTranslateX(movablePane.getTranslateX() + dx);
       movablePane.setTranslateY(movablePane.getTranslateY() + dy);
 
-      dragStart = new Point2D(event.getSceneX(), event.getSceneY());
+      dragStartX = event.getSceneX();
+      dragStartY = event.getSceneY();
     }
   };
 
@@ -130,7 +134,7 @@ public class Events {
   // @see https://stackoverflow.com/questions/40982787/change-cursor-in-javafx-listview-during-drag-and-drop/40984625#40984625
   public static final EventHandler<MouseEvent> dragInitiatedOverOnHandle = event -> {
     String eType = event.getEventType().toString();
-    logger.info(
+    logger.debug(
             "Event type -> dragInitiatedOverOnHandle {}, source {} current Step index {}, current mode {}, X {}, Y {}",
             eType,
             event.getSource(),
@@ -229,7 +233,7 @@ public class Events {
   public static final EventHandler<MouseEvent> dragDroppedHandleWithSelectionMode = event -> {
     String eType = event.getEventType().toString();
 
-    logger.info(
+    logger.debug(
             "Event type -> {},  current Step index: {}, current mode: {}, X: {}, Y: {}",
             eType,
             app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
@@ -251,11 +255,11 @@ public class Events {
       case DRAWING          -> app.getOptionalDotGrid().getDiagram().drawKnot(x, y);
       case SELECTION        -> app.getMainWindow().onClickWithSelectionMode(app);
       case DELETION         -> app.getMainWindow().onClickWithDeletionMode(app, app.getOptionalDotGrid().getDiagram()) ;
-      case DUPLICATION      -> {}
-      case CREATE_PATTERN   -> {} // This is managed in CreatePatternButton
-      case MIRROR           -> {} // This is managed in CreatePatternButton
-      case MOVE             -> {} // This is managed in the various [Arrow]Button
-      case DRAG_AND_DROP    -> {} // This is managed in Events#dragInitiatedOverOnHandle()
+      case DUPLICATION      -> { }
+      case CREATE_PATTERN   -> { /* This is managed in CreatePatternButton*/ }
+      case MIRROR           -> { /* This is managed in CreatePatternButton */ }
+      case MOVE             -> { /* This is managed in the various [Arrow]Button */ }
+      case DRAG_AND_DROP    -> { /* This is managed in Events#dragInitiatedOverOnHandle()*/ }
       default -> throw new IllegalArgumentException("Please provide a valid mode, not: " +
         app.getOptionalDotGrid().getDiagram().getCurrentMode());
     }
@@ -325,7 +329,7 @@ public class Events {
 
   public static void removeEventsFromGrid(App app) {
     app.getOptionalDotGrid().clearCreatePatternRectangle();
-    app.getOptionalDotGrid().getRoot().setOnMouseMoved(null);
+    app.getMovablePane().setOnMouseMoved(null);
     app.getMovablePane().setOnMouseClicked(null);
   }
 

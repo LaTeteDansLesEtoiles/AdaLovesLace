@@ -18,6 +18,7 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
      *
      * @param primaryStage The injected window (stage)
      */
+    @Override
     @Start
     public void start(Stage primaryStage) {
         super.start(primaryStage);
@@ -35,7 +36,7 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
 
         synchronizeTask(() -> drawSnowFlake(robot, 140, 70));
 
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+        synchronizeTask(UndoKnotButton::undoKnot);
 
         synchronizeTask(() -> drawSnowFlake(robot, 220, 70));
 
@@ -123,8 +124,8 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
 
         synchronizeTask(() -> drawSnowFlake(robot, 110, 120));
 
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
+        synchronizeTask(UndoKnotButton::undoKnot);
+        synchronizeTask(RedoKnotButton::redoKnot);
 
         synchronizeTask(() -> drawSnowFlake(robot, 80, 85));
 
@@ -226,22 +227,22 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
 
         synchronizeTask(() -> drawSnowFlake(robot, 160, 160));
 
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+        synchronizeTask(UndoKnotButton::undoKnot);
+        synchronizeTask(UndoKnotButton::undoKnot);
+        synchronizeTask(UndoKnotButton::undoKnot);
+        synchronizeTask(UndoKnotButton::undoKnot);
+        synchronizeTask(UndoKnotButton::undoKnot);
+        synchronizeTask(UndoKnotButton::undoKnot);
+        synchronizeTask(UndoKnotButton::undoKnot);
+        synchronizeTask(UndoKnotButton::undoKnot);
+        synchronizeTask(UndoKnotButton::undoKnot);
+        synchronizeTask(UndoKnotButton::undoKnot);
+        synchronizeTask(UndoKnotButton::undoKnot);
+        synchronizeTask(UndoKnotButton::undoKnot);
 
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
+        synchronizeTask(RedoKnotButton::redoKnot);
+        synchronizeTask(RedoKnotButton::redoKnot);
+        synchronizeTask(RedoKnotButton::redoKnot);
 
         synchronizeTask(() -> drawSnowFlake(robot, 220, 160));
 
@@ -343,15 +344,15 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
 
         synchronizeTask(() -> drawSnowFlake(robot, 160, 160));
 
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+        synchronizeTask(UndoKnotButton::undoKnot);
 
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
-        synchronizeTask(() -> RedoKnotButton.redoKnot(app));
+        synchronizeTask(RedoKnotButton::redoKnot);
+        synchronizeTask(RedoKnotButton::redoKnot);
+        synchronizeTask(RedoKnotButton::redoKnot);
+        synchronizeTask(RedoKnotButton::redoKnot);
+        synchronizeTask(RedoKnotButton::redoKnot);
 
-        synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+        synchronizeTask(UndoKnotButton::undoKnot);
 
         synchronizeTask(() -> drawSnowFlake(robot, 220, 160));
 

@@ -3,7 +3,9 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
@@ -20,25 +22,20 @@ import java.util.List;
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.view.component.OptionalDotGrid.CREATE_PATTERN_MARGIN;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class CreatePatternButton extends ImageButton {
 
-    public static final String CREATE_PATTERN_BUTTON  = "CREATE_PATTERN_BUTTON";
+    public static final String CREATE_PATTERN_BUTTON    = "CREATE_PATTERN_BUTTON";
 
-    private static int mouseClicks                    = 0;
-    private static final Logger logger                = LoggerFactory.getLogger(CreatePatternButton.class);
     private static EventHandler<MouseEvent> mouseMovedListener;
     private static EventHandler<MouseEvent> mouseClickedListener;
 
-    private static double firstClickX;
-    private static double firstClickY;
-    private static double rectangleX;
-    private static double rectangleY;
-    private static double rectangleWidth;
-    private static double rectangleHeight;
-    private static Rectangle rectangle;
+    private static Point2D firstClickLocal = null;
+    private static Point2D secondClickLocal = null;
+    private static final Rectangle selectionRectangle   = new Rectangle();
+
+    private static final Logger logger                  = LoggerFactory.getLogger(CreatePatternButton.class);
 
     public CreatePatternButton(String buttonLabel, App app) {
         super(buttonLabel);
@@ -56,10 +53,6 @@ public class CreatePatternButton extends ImageButton {
     public static void onCreatePatternModeAction(App app) {
         logger.debug("Setting create pattern mode");
 
-        if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.CREATE_PATTERN && mouseClicks == 0) {
-            return;
-        }
-
         app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.CREATE_PATTERN);
 
         app.getGeometryWindow().getDrawingButton().setSelected(false);
@@ -76,105 +69,79 @@ public class CreatePatternButton extends ImageButton {
         List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
         displayedKnots.addAll(new ArrayList<>(selectedKnots));
         selectedKnots.clear();
-        app.getOptionalDotGrid().getRoot().setOnMouseMoved(null);
+        app.getMovablePane().setOnMouseMoved(null);
         app.getMovablePane().setOnMouseClicked(null);
 
         newStep(displayedKnots, selectedKnots, true);
 
-        if (mouseClicks == 2) {
-            removeRectangle(app);
-            mouseClicks = 0;
-            new ImageUtil(app).buildImage(firstClickX, firstClickY + CREATE_PATTERN_MARGIN, rectangleWidth, rectangleHeight);
-        }
+        Pane pane = app.getMovablePane();
+        selectionRectangle.setStroke(Color.DARKGREEN);
+        selectionRectangle.setFill(Color.TRANSPARENT);
+        selectionRectangle.setStrokeWidth(1);
+        selectionRectangle.setVisible(false);
+        pane.getChildren().add(selectionRectangle);
 
-        if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.CREATE_PATTERN) {
-            mouseMovedListener = mouseEvent -> {
-                Point2D mouseInParent = app.getOptionalDotGrid().getRoot().sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
-                logger.debug("Create Pattern => MouseEvent moved: X= {}, Y= {}", mouseInParent.getX(), mouseInParent.getY());
+        mouseMovedListener = mouseEvent -> {
+            Point2D mouseInParent = app.getMovablePane().sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+            logger.debug("Create Pattern => MouseEvent moved: X= {}, Y= {}", mouseInParent.getX(), mouseInParent.getY());
 
-                if (mouseClicks == 1) {
-                    computeRectangleX(mouseInParent.getX(), firstClickX);
-                    computeRectangleY(mouseInParent.getY(), firstClickY);
+            if (firstClickLocal != null && secondClickLocal == null) {
+                Point2D clickPoint = pane.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
-                    removeRectangle(app);
+                removeRectangle(app);
+                double x = Math.min(firstClickLocal.getX(), clickPoint.getX());
+                double y = Math.min(firstClickLocal.getY(), clickPoint.getY());
+                double w = Math.abs(firstClickLocal.getX() - clickPoint.getX());
+                double h = Math.abs(firstClickLocal.getY() - clickPoint.getY());
 
-                    rectangle = newRectangle();
-                    app.getMovablePane().getChildren().add(rectangle);
-                }
-            };
+                selectionRectangle.setX(x);
+                selectionRectangle.setY(y);
+                selectionRectangle.setWidth(w);
+                selectionRectangle.setHeight(h);
+                selectionRectangle.setVisible(true);
+                removeRectangle(app);
+                pane.getChildren().add(selectionRectangle);
+            }
+        };
 
-            mouseClickedListener = mouseEvent -> {
-                Point2D mouseInParent = app.getOptionalDotGrid().getRoot().sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
-                logger.debug("Create Pattern => MouseEvent pressed: X= {}, Y= {}, source= {}",
-                        mouseInParent.getX(),
-                        mouseInParent.getY(),
-                        mouseEvent.getSource());
+        mouseClickedListener = mouseEvent -> {
+            if (mouseEvent.getButton() != MouseButton.PRIMARY) {
+                return;
+            }
 
-                mouseClicks++;
+            Point2D local = pane.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
-                if (mouseClicks == 1) {
-                    rectangleX = mouseInParent.getX();
-                    rectangleY = mouseInParent.getY();
-                    firstClickX = mouseInParent.getX();
-                    firstClickY = mouseInParent.getY();
-                } else if (mouseClicks == 2) {
-                    rectangleX = mouseInParent.getX();
-                    rectangleY = mouseInParent.getY();
-                    rectangleWidth  = (rectangleX >= firstClickX) ? rectangleX - firstClickX : firstClickX - rectangleX;
-                    rectangleHeight = (rectangleY >= firstClickY) ? rectangleY - firstClickY : firstClickY - rectangleY;
-                } else if (mouseClicks > 2) {
-                    mouseClicks = 1;
-                    rectangleX = mouseInParent.getX();
-                    rectangleY = mouseInParent.getY();
-                    firstClickX = mouseInParent.getX();
-                    firstClickY = mouseInParent.getY();
+            if (firstClickLocal == null) {
+                firstClickLocal = local;
+                logger.debug("Create Pattern => first click {}", firstClickLocal);
+            } else if (secondClickLocal == null) {
+                secondClickLocal = local;
+                logger.debug("Create Pattern => second click {}", secondClickLocal);
 
-                    removeRectangle(app);
-                }
-            };
-        }
+                double xMin = Math.min(firstClickLocal.getX(), secondClickLocal.getX());
+                double yMin = Math.min(firstClickLocal.getY(), secondClickLocal.getY());
+                double wLog = Math.abs(firstClickLocal.getX() - secondClickLocal.getX());
+                double hLog = Math.abs(firstClickLocal.getY() - secondClickLocal.getY());
 
-        app.getOptionalDotGrid().getRoot().setOnMouseMoved(mouseMovedListener);
+                selectionRectangle.setX(xMin);
+                selectionRectangle.setY(yMin);
+                selectionRectangle.setWidth(wLog);
+                selectionRectangle.setHeight(hLog);
+                selectionRectangle.setVisible(true);
+
+                new ImageUtil(app).buildImage(xMin, yMin, wLog, hLog);
+                firstClickLocal = null;
+                secondClickLocal = null;
+            }
+        };
+
+        app.getMovablePane().setOnMouseMoved(mouseMovedListener);
         app.getMovablePane().setOnMouseClicked(mouseClickedListener);
     }
 
-    private static Rectangle newRectangle() {
-        Rectangle rec = new Rectangle(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
-        rec.setStroke(Color.DARKGREEN);
-        rec.setStrokeWidth(2d);
-        rec.setFill(Color.TRANSPARENT);
-
-        rec.setOnMouseMoved(mouseMovedListener);
-        rec.setOnMouseClicked(mouseClickedListener);
-
-        return rec;
-    }
-
     private static void removeRectangle(App app) {
-        if (null != rectangle) {
-            app.getMovablePane().getChildren().remove(rectangle);
-            app.getOptionalDotGrid().layoutChildren();
-        }
-    }
-
-    private static void computeRectangleX(double mouseEvent, double firstClickX) {
-        if (mouseEvent < firstClickX) {
-            rectangleX = mouseEvent + 2;
-            rectangleWidth = firstClickX - rectangleX;
-        } else {
-            rectangleX = firstClickX;
-            rectangleWidth = mouseEvent - firstClickX - 1;
-        }
-    }
-
-    private static void computeRectangleY(double mouseEvent, double firstClickY) {
-        if (mouseEvent < firstClickY) {
-            rectangleY = mouseEvent + 2;
-            rectangleHeight = firstClickY - rectangleY;
-        } else {
-            rectangleY = firstClickY;
-            rectangleHeight = mouseEvent - firstClickY - 1;
-        }
+        app.getMovablePane().getChildren().remove(selectionRectangle);
+        app.getOptionalDotGrid().layoutChildren();
     }
 
     public static EventHandler<MouseEvent> getMouseMovedListener() {

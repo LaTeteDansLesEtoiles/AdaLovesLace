@@ -33,7 +33,8 @@ public class DrawingButton extends ToggleButton {
   }
 
   public static void onSetDrawModeAction(App app, GeometryWindow window) {
-    logger.info("Setting draw mode");
+    logger.debug("Setting draw mode");
+
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
     Events.removeEventsFromGrid(app);
     app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
