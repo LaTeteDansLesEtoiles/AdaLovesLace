@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view.component;
+package org.alienlabs.adaloveslace.view.component.grid;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -27,6 +27,9 @@ import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
+import org.alienlabs.adaloveslace.view.component.GridUtil;
+import org.alienlabs.adaloveslace.view.component.GuideLinesUtil;
+import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +44,6 @@ import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
  */
 public class OptionalDotGrid extends Pane {
 
-  private static final double RADIUS    = 0.5d; // The dots are ellipses, this is their radius
   public static final Color BLUE_HANDLE = Color.rgb(0, 0, 255, 0.5);
   double GRID_WIDTH                     = 1400d;
   double GRID_HEIGHT                    = 600d;
@@ -63,6 +65,7 @@ public class OptionalDotGrid extends Pane {
 
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
   private GridUtil gridUtil;
+  private ParentGridStrategy gridStrategy;
 
   /**
    * We draw the dots on the grid using a Canvas.
@@ -78,7 +81,6 @@ public class OptionalDotGrid extends Pane {
 
     this.root.getStyleClass().add("grid");
     this.root.setBackground(null);
-    this.desiredRadius = RADIUS;
 
     if (!this.diagram.getPatterns().isEmpty()) {
       this.diagram.setCurrentPattern(this.diagram.getPatterns().stream().findFirst().get());
@@ -89,6 +91,9 @@ public class OptionalDotGrid extends Pane {
 
     currentPatternProperty.addListener(observable -> this.diagram.setCurrentPattern(currentPatternProperty.getValue()));
     currentPatternOrTextModeProperty = new SimpleObjectProperty<>(PatternOrTextMode.PATTERN);
+
+    gridStrategy = new ParentGridStrategy(app, root);
+
     showHideGridProperty = new SimpleBooleanProperty(this.showHideGrid);
     showHideGridProperty.addListener(observable -> {
       this.showHideGrid = showHideGridProperty.getValue();
@@ -126,7 +131,7 @@ public class OptionalDotGrid extends Pane {
     drawDiagram();
 
     if (this.gridNeedsToBeRedrawn) {
-      drawGrid();
+      gridStrategy.getInstance().drawGrid();
     }
   }
 
@@ -403,30 +408,6 @@ public class OptionalDotGrid extends Pane {
     return knot.getImageView();
   }
 
-  public void drawGrid() {
-    this.root.setPrefWidth(app.getPrimaryStage().getWidth());
-    this.root.setPrefHeight(app.getPrimaryStage().getHeight());
-
-    double width = app.getMaxWidth();
-    double height = app.getMaxHeight();
-
-    logger.debug("grid width: {}, height: {}", width, height);
-
-    if (this.showHideGrid && this.gridNeedsToBeRedrawn) {
-      this.diagram.drawGrid(width, height, desiredRadius, grid);
-    } else {
-      hideGrid();
-    }
-
-    this.gridNeedsToBeRedrawn = false;
-  }
-
-  public void hideGrid() {
-    for (Shape shape : grid) {
-      root.getChildren().remove(shape);
-    }
-  }
-
   public void setGridNeedsToBeRedrawn(boolean gridNeedsToBeRedrawn) {
     this.gridNeedsToBeRedrawn = gridNeedsToBeRedrawn;
   }
@@ -466,6 +447,10 @@ public class OptionalDotGrid extends Pane {
 
   public void setShowHideGrid(boolean showHideGrid) {
     this.showHideGrid = showHideGrid;
+  }
+
+  public ParentGridStrategy getGridStrategy() {
+    return gridStrategy;
   }
 
 }

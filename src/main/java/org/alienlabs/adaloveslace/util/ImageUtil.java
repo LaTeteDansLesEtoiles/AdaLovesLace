@@ -15,6 +15,7 @@ import org.alienlabs.adaloveslace.business.model.dto.DiagramDTO;
 import org.alienlabs.adaloveslace.business.model.enumeration.Language;
 import org.alienlabs.adaloveslace.business.model.enumeration.SubTechnique;
 import org.alienlabs.adaloveslace.business.model.enumeration.Technique;
+import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.alienlabs.adaloveslace.view.window.CreatePatternWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,7 +193,7 @@ public class ImageUtil {
             app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
             app.getOptionalDotGrid().layoutChildren();
         } else {
-            app.getOptionalDotGrid().hideGrid();
+            ParentGridStrategy.hideGrid();
         }
     }
 

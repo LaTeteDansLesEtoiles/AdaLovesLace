@@ -27,7 +27,7 @@ import org.alienlabs.adaloveslace.util.KeyboardUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.component.AdaLovesLaceMenuBar;
-import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.alienlabs.adaloveslace.view.window.StateWindow;

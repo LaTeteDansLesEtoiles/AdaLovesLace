@@ -15,7 +15,7 @@ import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
-import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

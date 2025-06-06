@@ -21,11 +21,10 @@ public class ShowHideGridButton extends ImageButton {
   }
 
   public static void showHideGrid() {
-    final boolean currentShowHideGridState = app.getOptionalDotGrid().isShowHideGridProperty().getValue();
-    app.getOptionalDotGrid().isShowHideGridProperty().set(!currentShowHideGridState);
+    app.getOptionalDotGrid().getGridStrategy().switchGridType();
     app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
 
-    logger.debug("Event show / hide grid: {}", !currentShowHideGridState);
+    logger.debug("Event switch grid");
     app.getOptionalDotGrid().layoutChildren();
   }
 

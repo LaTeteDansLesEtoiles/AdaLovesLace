@@ -255,11 +255,11 @@ public class Events {
       case DRAWING          -> app.getOptionalDotGrid().getDiagram().drawKnot(x, y);
       case SELECTION        -> app.getMainWindow().onClickWithSelectionMode(app);
       case DELETION         -> app.getMainWindow().onClickWithDeletionMode(app, app.getOptionalDotGrid().getDiagram()) ;
-      case DUPLICATION      -> { }
-      case CREATE_PATTERN   -> { /* This is managed in CreatePatternButton*/ }
-      case MIRROR           -> { /* This is managed in CreatePatternButton */ }
+      case DUPLICATION      -> { /* This is managed in DuplicationButton */ }
+      case CREATE_PATTERN   -> { /* This is managed in CreatePatternButton */ }
+      case MIRROR           -> { /* This is managed in [Horizontal|Vertical]FlippingButton */ }
       case MOVE             -> { /* This is managed in the various [Arrow]Button */ }
-      case DRAG_AND_DROP    -> { /* This is managed in Events#dragInitiatedOverOnHandle()*/ }
+      case DRAG_AND_DROP    -> { /* This is managed in Events#dragInitiatedOverOnHandle() */ }
       default -> throw new IllegalArgumentException("Please provide a valid mode, not: " +
         app.getOptionalDotGrid().getDiagram().getCurrentMode());
     }

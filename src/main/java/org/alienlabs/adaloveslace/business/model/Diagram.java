@@ -13,7 +13,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.alienlabs.adaloveslace.App;
@@ -82,13 +84,22 @@ public class Diagram {
     private static final Logger logger = LoggerFactory.getLogger(Diagram.class);
 
     @XmlTransient
-    private static final double SPACING_X = 25d; // The X space between the dots
+    public static final double SPACING_X_FOR_DOTS = 25d; // The X space between the dots
 
     @XmlTransient
-    private static final double SPACING_Y = 10d; // The Y space between the dots
+    public static final double SPACING_Y_FOR_DOTS = 10d; // The Y space between the dots
 
     @XmlTransient
-    private static final Color GRID_COLOR  = Color.gray(0d, 0.2d);
+    public static final double SPACING_X_FOR_CRISS_CROSS = 25d; // The X space between the lines
+
+    @XmlTransient
+    public static final double SPACING_Y_FOR_CRISS_CROSS = 20d; // The Y space between the lines
+
+    @XmlTransient
+    public static final Color DOT_GRID_COLOR = Color.gray(0d, 0.2d);
+
+    @XmlTransient
+    public static final Color CRISS_CROSS_GRID_COLOR = Color.DARKGRAY;
 
     @XmlTransient
     public Runnable updateImage;
@@ -318,22 +329,6 @@ public class Diagram {
                 selectedKnots,
                 layoutChildren
         );
-    }
-
-    public void drawGrid(double w, double h, double desiredRadius, List<Shape> grid) {
-        app.getOptionalDotGrid().hideGrid();
-
-        for (double gridX = 10d; gridX < w; gridX += SPACING_X) {
-            for (double gridY = 0d; gridY < (h - 50d); gridY += SPACING_Y) {
-                double offsetY = (gridY % (2d * SPACING_Y)) == 0d ? SPACING_X / 2d : 0d;
-                Ellipse ell = new Ellipse(gridX - desiredRadius + offsetY,gridY - desiredRadius, desiredRadius, desiredRadius); // A dot
-                ell.setFill(GRID_COLOR);
-                ell.toFront();
-
-                grid.add(ell);
-                app.getMovablePane().getChildren().add(ell);
-            }
-        }
     }
 
     public void drawKnot(double x, double y) {
