@@ -14,7 +14,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -48,13 +47,13 @@ public class OptionalDotGrid extends Pane {
   double GRID_WIDTH                     = 1400d;
   double GRID_HEIGHT                    = 600d;
 
+  private final App app;
   private boolean showHideGrid = true;
   private boolean gridNeedsToBeRedrawn;
   private Diagram diagram;
 
-  private final List<Shape> grid = new ArrayList<>();
   private final Pane root;
-  private final App app;
+  private final Pane gridPane;
 
   public static final PauseTransition moveKnotPause = new PauseTransition(Duration.millis(750));
 
@@ -75,11 +74,17 @@ public class OptionalDotGrid extends Pane {
   public OptionalDotGrid(App app, Diagram diagram, Pane root) {
     this.app = app;
     this.root = root;
+    this.root.toFront();
     this.diagram = Objects.requireNonNullElseGet(diagram, () -> new Diagram(app));
-    this.gridUtil = new GridUtil(root);
 
-    this.root.getStyleClass().add("grid");
-    this.root.setBackground(null);
+    this.gridPane = new Pane();
+    this.gridPane.toBack();
+    this.gridPane.getStyleClass().add("grid");
+    this.gridPane.setBackground(null);
+
+    this.root.getChildren().add(this.gridPane);
+    this.gridUtil = new GridUtil(this.root);
+
 
     if (!this.diagram.getPatterns().isEmpty()) {
       this.diagram.setCurrentPattern(this.diagram.getPatterns().stream().findFirst().get());
@@ -91,7 +96,7 @@ public class OptionalDotGrid extends Pane {
     currentPatternProperty.addListener(observable -> this.diagram.setCurrentPattern(currentPatternProperty.getValue()));
     currentPatternOrTextModeProperty = new SimpleObjectProperty<>(PatternOrTextMode.PATTERN);
 
-    gridStrategy = new ParentGridStrategy(app, root);
+    gridStrategy = new ParentGridStrategy(app, this.gridPane);
 
     showHideGridProperty = new SimpleBooleanProperty(this.showHideGrid);
     showHideGridProperty.addListener(observable -> {
@@ -449,6 +454,10 @@ public class OptionalDotGrid extends Pane {
 
   public ParentGridStrategy getGridStrategy() {
     return gridStrategy;
+  }
+
+  public Pane getGridPane() {
+    return this.gridPane;
   }
 
 }

@@ -111,8 +111,8 @@ public class Events {
   public static final EventHandler<MouseEvent> mouseGridDraggedEventHandler = event -> {
     if (event.getButton() == MouseButton.SECONDARY) {
       Pane movablePane = app.getMovablePane();
-
       logger.debug("Pane in scene : {}", movablePane.localToScene(0, 0));
+
       double dx = event.getSceneX() - dragStartX;
       double dy = event.getSceneY() - dragStartY;
       movablePane.setTranslateX(movablePane.getTranslateX() + dx);

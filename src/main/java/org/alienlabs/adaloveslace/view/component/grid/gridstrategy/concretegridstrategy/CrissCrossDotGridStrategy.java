@@ -1,8 +1,6 @@
 package org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy;
 
-import javafx.animation.PauseTransition;
 import javafx.scene.shape.Line;
-import javafx.util.Duration;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.IDotGridStrategy;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 
@@ -12,9 +10,6 @@ public class CrissCrossDotGridStrategy implements IDotGridStrategy {
 
     private double width;
     private double height;
-
-    private PauseTransition gridPause;
-    private PauseTransition cleanUpPause;
     private double offsetY;
 
     /**
@@ -31,20 +26,10 @@ public class CrissCrossDotGridStrategy implements IDotGridStrategy {
     public void setViewPort(double width, double height) {
         this.width = width;
         this.height = height;
-        gridPause = new PauseTransition(Duration.millis(1000 / width));
-        cleanUpPause = new PauseTransition(Duration.seconds(2));
     }
 
     @Override
     public void drawGrid() {
-        gridPause.setOnFinished(_ -> draw());
-        cleanUpPause.setOnFinished(_ -> draw());
-
-        gridPause.playFromStart();
-        cleanUpPause.play();
-    }
-
-    private void draw() {
         ParentGridStrategy.hideGrid();
 
         for (double gridX = 0d; gridX < this.width; gridX += SPACING_X_FOR_CRISS_CROSS) {
@@ -64,6 +49,10 @@ public class CrissCrossDotGridStrategy implements IDotGridStrategy {
                 ParentGridStrategy.grid.add(l2);
             }
         }
-        ParentGridStrategy.root.getChildren().addAll(ParentGridStrategy.grid);
+        ParentGridStrategy.gridPane.getChildren().addAll(ParentGridStrategy.grid);
+        ParentGridStrategy.gridPane.toBack();
+        ParentGridStrategy.gridPane.getStyleClass().add("grid");
+        ParentGridStrategy.gridPane.setBackground(null);
     }
+
 }

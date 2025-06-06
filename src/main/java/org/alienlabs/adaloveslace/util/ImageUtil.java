@@ -148,7 +148,7 @@ public class ImageUtil {
                     hLog
             );
 
-            ParentGridStrategy parentGridStrategy = new ParentGridStrategy(app, app.getMovablePane());
+            ParentGridStrategy parentGridStrategy = new ParentGridStrategy(app, app.getOptionalDotGrid().getGridPane());
             GridType before = parentGridStrategy.getCurrentGridType();
             ParentGridStrategy.hideGrid();
 

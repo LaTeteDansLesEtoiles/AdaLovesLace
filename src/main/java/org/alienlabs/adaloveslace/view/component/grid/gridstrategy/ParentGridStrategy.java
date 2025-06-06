@@ -17,14 +17,14 @@ public class ParentGridStrategy {
     public static List<Shape> grid = new ArrayList<>();
 
     private static  App app;
-    public static Pane root;
+    public static Pane gridPane;
 
     private GridType currentGridType = GridType.STAGGERED;
     private final EnumMap<GridType, IDotGridStrategy> childStrategies = new EnumMap<>(GridType.class);
 
-    public ParentGridStrategy(App app, Pane root) {
+    public ParentGridStrategy(App app, Pane gridPane) {
         ParentGridStrategy.app = app;
-        ParentGridStrategy.root = root;
+        ParentGridStrategy.gridPane = gridPane;
 
         childStrategies.put(GridType.STAGGERED, new StagerredDotGridStrategy());
         childStrategies.put(GridType.CRISS_CROSS, new CrissCrossDotGridStrategy());
@@ -32,8 +32,8 @@ public class ParentGridStrategy {
     }
 
     public void drawGrid() {
-        ParentGridStrategy.root.setPrefWidth(app.getPrimaryStage().getWidth());
-        ParentGridStrategy.root.setPrefHeight(app.getPrimaryStage().getHeight());
+        ParentGridStrategy.gridPane.setPrefWidth(app.getPrimaryStage().getWidth());
+        ParentGridStrategy.gridPane.setPrefHeight(app.getPrimaryStage().getHeight());
 
         double width = ParentGridStrategy.app.getMaxWidth();
         double height = ParentGridStrategy.app.getMaxHeight();
@@ -60,7 +60,7 @@ public class ParentGridStrategy {
     }
 
     public static void hideGrid() {
-        ParentGridStrategy.root.getChildren().removeAll(ParentGridStrategy.grid);
+        ParentGridStrategy.gridPane.getChildren().clear();
         ParentGridStrategy.grid.clear();
     }
 
