@@ -84,12 +84,11 @@ public class MainWindow {
     return footer;
   }
 
-  public StackPane createGrid(App app, final double width, final double height, final double radius,
-                              final Diagram diagram, final Pane canvas) {
+  public StackPane createGrid(App app, final double width, final double height, final Diagram diagram, final Pane canvas) {
     if (width == 0d || height == 0d) {
       this.optionalDotGrid = new OptionalDotGrid(app, diagram, canvas);
     } else {
-      this.optionalDotGrid = new OptionalDotGrid(app, width, height, radius, diagram, canvas);
+      this.optionalDotGrid = new OptionalDotGrid(app, width, height, diagram, canvas);
     }
 
     grid = new StackPane(this.optionalDotGrid);

@@ -140,7 +140,7 @@ public class App extends Application {
     }
 
     logger.debug("Starting app: opening main window");
-    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage, diagram);
+    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, primaryStage, diagram);
 
     logger.debug("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
@@ -159,7 +159,7 @@ public class App extends Application {
   }
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
-                             double gridDotsRadius, Stage primaryStage, Diagram diagram) {
+                             Stage primaryStage, Diagram diagram) {
     BorderPane root;
     App.mainWindow = new MainWindow();
     this.diagram = diagram;
@@ -170,7 +170,7 @@ public class App extends Application {
     movablePane               = new Pane();
     movablePane.getStyleClass().add("grid");
 
-    StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, gridDotsRadius, this.diagram, movablePane);
+    StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, this.diagram, movablePane);
 
     root                      = new BorderPane();
     root.getStyleClass().add("grid");

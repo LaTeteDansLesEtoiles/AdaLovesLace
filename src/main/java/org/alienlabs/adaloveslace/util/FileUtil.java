@@ -75,7 +75,7 @@ public class FileUtil {
 
     private static void preparePrimaryStage(App app, Diagram diagram) {
         app.getPrimaryStage().close();
-        app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
+        app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT,
             app.getPrimaryStage(), diagram);
         app.getOptionalDotGrid().setDiagram(diagram);
         new KeyboardUtil().initializeKeyboardShorcuts(app);

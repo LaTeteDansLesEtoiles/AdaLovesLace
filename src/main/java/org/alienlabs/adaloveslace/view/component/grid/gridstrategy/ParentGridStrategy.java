@@ -31,7 +31,7 @@ public class ParentGridStrategy {
         childStrategies.put(GridType.HIDDEN, new HiddenDotGridStrategy());
     }
 
-    public IDotGridStrategy getInstance() {
+    public void drawGrid() {
         ParentGridStrategy.root.setPrefWidth(app.getPrimaryStage().getWidth());
         ParentGridStrategy.root.setPrefHeight(app.getPrimaryStage().getHeight());
 
@@ -40,8 +40,7 @@ public class ParentGridStrategy {
 
         IDotGridStrategy childStrategy = childStrategies.get(currentGridType);
         childStrategy.setViewPort(width, height);
-
-        return childStrategy;
+        childStrategy.drawGrid();
     }
 
     public void switchGridType() {
@@ -61,9 +60,8 @@ public class ParentGridStrategy {
     }
 
     public static void hideGrid() {
-        for (Shape shape : ParentGridStrategy.grid) {
-            ParentGridStrategy.root.getChildren().remove(shape);
-        }
+        ParentGridStrategy.root.getChildren().removeAll(ParentGridStrategy.grid);
+        ParentGridStrategy.grid.clear();
     }
 
     public static List<Shape> getGrid() {

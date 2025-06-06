@@ -50,7 +50,6 @@ public class OptionalDotGrid extends Pane {
 
   private boolean showHideGrid = true;
   private boolean gridNeedsToBeRedrawn;
-  private double desiredRadius;
   private Diagram diagram;
 
   private final List<Shape> grid = new ArrayList<>();
@@ -119,11 +118,10 @@ public class OptionalDotGrid extends Pane {
     this.gridNeedsToBeRedrawn = true;
   }
 
-  public OptionalDotGrid(App app, double width, double height, double desiredRadius, Diagram diagram, Pane root) {
+  public OptionalDotGrid(App app, double width, double height, Diagram diagram, Pane root) {
     this(app, diagram, root);
     GRID_WIDTH = width;
     GRID_HEIGHT = height;
-    this.desiredRadius = desiredRadius;
   }
 
   @Override
@@ -131,7 +129,7 @@ public class OptionalDotGrid extends Pane {
     drawDiagram();
 
     if (this.gridNeedsToBeRedrawn) {
-      gridStrategy.getInstance().drawGrid();
+      gridStrategy.drawGrid();
     }
   }
 
@@ -226,7 +224,6 @@ public class OptionalDotGrid extends Pane {
           if (knot.getHovered() != null) {
             root.getChildren().remove(knot.getHovered());
             knot.setHovered(null);
-            layoutChildren();
           }
         });
       }

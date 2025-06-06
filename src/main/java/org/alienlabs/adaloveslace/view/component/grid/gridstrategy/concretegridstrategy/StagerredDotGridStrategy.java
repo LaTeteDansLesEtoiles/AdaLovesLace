@@ -1,6 +1,8 @@
 package org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy;
 
+import javafx.animation.PauseTransition;
 import javafx.scene.shape.Ellipse;
+import javafx.util.Duration;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.IDotGridStrategy;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 
@@ -11,6 +13,8 @@ public class StagerredDotGridStrategy implements IDotGridStrategy {
 
     private double width;
     private double height;
+
+    private final PauseTransition gridPause = new PauseTransition(Duration.millis(500));
 
     /**
      * This shall only be called by the ParentGridStrategy.
@@ -29,18 +33,23 @@ public class StagerredDotGridStrategy implements IDotGridStrategy {
 
     @Override
     public void drawGrid() {
-        ParentGridStrategy.hideGrid();
+        gridPause.setOnFinished(_ -> {
+            ParentGridStrategy.hideGrid();
 
-        for (double gridX = 10d; gridX < this.width; gridX += SPACING_X_FOR_DOTS) {
-            for (double gridY = 0d; gridY < (this.height - 50d); gridY += SPACING_Y_FOR_DOTS) {
-                double offsetY = (gridY % (2d * SPACING_Y_FOR_DOTS)) == 0d ? SPACING_X_FOR_DOTS / 2d : 0d;
-                Ellipse ell = new Ellipse(gridX - GRID_DOTS_RADIUS + offsetY,gridY - GRID_DOTS_RADIUS, GRID_DOTS_RADIUS, GRID_DOTS_RADIUS); // A dot
-                ell.setFill(DOT_GRID_COLOR);
-                ell.toFront();
+            for (double gridX = 10d; gridX < this.width; gridX += SPACING_X_FOR_DOTS) {
+                for (double gridY = 0d; gridY < (this.height - 50d); gridY += SPACING_Y_FOR_DOTS) {
+                    double offsetY = (gridY % (2d * SPACING_Y_FOR_DOTS)) == 0d ? SPACING_X_FOR_DOTS / 2d : 0d;
+                    Ellipse ell = new Ellipse(gridX - GRID_DOTS_RADIUS + offsetY,gridY - GRID_DOTS_RADIUS, GRID_DOTS_RADIUS, GRID_DOTS_RADIUS); // A dot
+                    ell.setFill(DOT_GRID_COLOR);
+                    ell.toBack();
 
-                ParentGridStrategy.grid.add(ell);
-                ParentGridStrategy.root.getChildren().add(ell);
+                    ParentGridStrategy.grid.add(ell);
+                }
+
             }
-        }
+            ParentGridStrategy.root.getChildren().addAll(ParentGridStrategy.grid);
+        });
+
+        gridPause.playFromStart();
     }
 }

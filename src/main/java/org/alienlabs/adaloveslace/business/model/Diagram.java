@@ -93,7 +93,7 @@ public class Diagram {
     public static final double SPACING_X_FOR_CRISS_CROSS = 25d; // The X space between the lines
 
     @XmlTransient
-    public static final double SPACING_Y_FOR_CRISS_CROSS = 20d; // The Y space between the lines
+    public static final double SPACING_Y_FOR_CRISS_CROSS = 25d; // The Y space between the lines
 
     @XmlTransient
     public static final Color DOT_GRID_COLOR = Color.gray(0d, 0.2d);
