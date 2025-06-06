@@ -15,12 +15,14 @@ public class CrissCrossDotGridStrategy implements IDotGridStrategy {
 
     private PauseTransition gridPause;
     private PauseTransition cleanUpPause;
+    private double offsetY;
 
     /**
      * This shall only be called by the ParentGridStrategy.
      */
     public CrissCrossDotGridStrategy() {
         // This shall only be called by the ParentGridStrategy.
+        offsetY = SPACING_X_FOR_CRISS_CROSS / 2d;
     }
 
     /**
@@ -47,15 +49,14 @@ public class CrissCrossDotGridStrategy implements IDotGridStrategy {
 
         for (double gridX = 0d; gridX < this.width; gridX += SPACING_X_FOR_CRISS_CROSS) {
             for (double gridY = 0d; gridY < this.height; gridY += SPACING_Y_FOR_CRISS_CROSS) {
-                double offsetY = SPACING_X_FOR_CRISS_CROSS / 2d;
-                Line l1 = new Line(gridX + offsetY, gridY, width, gridY); // A dot
+                Line l1 = new Line(gridX + offsetY, gridY, width, gridY);
                 l1.setStroke(CRISS_CROSS_GRID_COLOR);
                 l1.setStrokeWidth(1);
                 l1.toBack();
 
                 ParentGridStrategy.grid.add(l1);
 
-                Line l2 = new Line(gridX + offsetY, gridY, gridX + offsetY, height); // A dot
+                Line l2 = new Line(gridX + offsetY, gridY, gridX + offsetY, height);
                 l2.setStroke(CRISS_CROSS_GRID_COLOR);
                 l2.setStrokeWidth(1);
                 l2.toFront();
