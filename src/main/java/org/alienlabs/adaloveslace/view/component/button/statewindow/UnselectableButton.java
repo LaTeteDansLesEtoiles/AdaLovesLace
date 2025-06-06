@@ -52,13 +52,13 @@ public class UnselectableButton extends ImageButton {
 
       displayedKnots.add(copy);
 
-      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getSelection());
+      app.getMovablePane().getChildren().remove(knot.getSelection());
       copy.setSelection(null);
 
-      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHovered());
+      app.getMovablePane().getChildren().remove(knot.getHovered());
       copy.setHovered(null);
 
-      app.getOptionalDotGrid().getRoot().getChildren().remove(knot.getHandle());
+      app.getMovablePane().getChildren().remove(knot.getHandle());
       copy.setHandle(null);
     }
 

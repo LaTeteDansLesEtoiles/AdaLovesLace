@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
+package org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid;
 
 import javafx.animation.PauseTransition;
 import javafx.event.EventHandler;
@@ -6,7 +6,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.PatternOrTextMode;
+import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
+import org.alienlabs.adaloveslace.util.Events;
 
 import static org.alienlabs.adaloveslace.App.TEXT_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
@@ -30,8 +31,8 @@ public class TextButton extends ToggleButton {
   private final EventHandler<MouseEvent> onTextButtonClicked = event -> {
     app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().set(PatternOrTextMode.TEXT);
     app.unselectPatternsAndTextButtons();
-    app.getOptionalDotGrid().getDiagram().resetKnotsText();
-    app.getOptionalDotGrid().getRoot().setOnKeyPressed(null);
+    app.getMovablePane().setOnKeyPressed(null);
+    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
     this.setSelected(true);
     this.getStyleClass().add(PATTERN_AND_TEXT_BUTTON_WAITING_SELECTION);
 

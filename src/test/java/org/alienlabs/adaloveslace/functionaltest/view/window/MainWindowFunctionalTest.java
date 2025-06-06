@@ -4,9 +4,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.RedoKnotButton;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ResetDiagramButton;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.UndoKnotButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.RedoKnotButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ResetDiagramButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoKnotButton;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -27,6 +27,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
    *
    * @param primaryStage The injected window (stage)
    */
+  @Override
   @Start
   public void start(Stage primaryStage) {
     super.start(primaryStage);
@@ -62,19 +63,19 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     // Then
     foundColorOnGrid = getColor(pointToCheck);
 
-    // If we choose a point in the snowflake it must not be of the same color than the grid dots
+    // If we choose a point in the snowflake, it must not be of the same color as the grid dots
     assertFalse(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
 
-    // If we choose a point in the snowflake it must not be of the same color than the grid background
+    // If we choose a point in the snowflake, it must not be of the same color as the grid background
     assertFalse(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
 
-    // If we choose a point in the snowflake it must be of the right color
+    // If we choose a point in the snowflake, it must be of the right color
     assertTrue(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid),
       "Expected color: " + SNOWFLAKE_DOT_COLOR + ", actual color: " + foundColorOnGrid);
   }
 
   /**
-   * Checks if we are able to click anywhere on the canvas, i.e. somewhere where there is no pattern
+   * Checks if we are able to click anywhere on the canvas, i.e., somewhere where there is no pattern
    * and no grid dots: the pixel should be white.
    *
    * @param robot The injected FxRobot
@@ -83,7 +84,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   void testClickOutsideOfAGridDot(FxRobot robot) {
     // Given
     // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToMoveTo = newPointOnGrid(WHITE_PIXEL_X, app.getRoot().getLayoutY() + WHITE_PIXEL_Y);
+    Point2D pointToMoveTo = newPointOnGrid(WHITE_PIXEL_X, app.getMovablePane().getLayoutY() + WHITE_PIXEL_Y);
 
     // When
     robot.moveTo(pointToMoveTo);
@@ -129,15 +130,15 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
     Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
 
-    // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
+    // This is to have time to copy the image to the canvas, otherwise the image is always white, and we don't
     // have access to the UI thread for the copy without "Platform.runLater()"
     Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
     // When: issue an "Undo knot" command
-    synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+    synchronizeTask(UndoKnotButton::undoKnot);
 
     // Then
-    // Move mouse and get the color of the pixel under the pointer
+    // Move the mouse and get the color of the pixel under the pointer
     snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     Color foundColorOnGridAfterUndo = getColor(snowflakePoint);
 
@@ -158,18 +159,18 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
     Point2D snowflakePoint = new Point2D(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
 
-    // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
+    // This is to have time to copy the image to the canvas, otherwise the image is always white, and we don't
     // have access to the UI thread for the copy without "Platform.runLater()"
     Color foundColorOnGridBeforeRedo = getColor(snowflakePoint);
 
     // Issue an "Undo knot" command
-    synchronizeTask(() -> UndoKnotButton.undoKnot(app));
+    synchronizeTask(UndoKnotButton::undoKnot);
 
     // When: Issue a "Redo knot" command
-    synchronizeTask(() -> RedoKnotButton.redoKnot(app));
+    synchronizeTask(RedoKnotButton::redoKnot);
 
     // Then
-    // Move mouse and get the color of the pixel under the pointer
+    //  Move the mouse and get the color of the pixel under the pointer
     snowflakePoint = new Point2D(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     Color foundColorOnGridAfterRedo = getColor(snowflakePoint);
 
@@ -195,10 +196,10 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     Color foundColorOnGridBeforeReset = getColor(pointToCheck);
 
     // When: issue a "Reset diagram" command
-    synchronizeTask(() -> ResetDiagramButton.resetDiagram(app));
+    synchronizeTask(ResetDiagramButton::resetDiagram);
 
     // Then
-    // Move mouse and get the color of the pixel under the pointer
+    //  Move the mouse and get the color of the pixel under the pointer
     pointToCheck = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     robot.moveTo(pointToCheck);
     Color foundColorOnGridAfterReset = getColor(pointToCheck);
@@ -208,11 +209,11 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   }
 
   private String getMainWindowTitle() {
-    return this.app.primaryStage.getTitle();
+    return this.app.getPrimaryStage().getTitle();
   }
 
   private boolean isMainWindowDisplayed() {
-    return this.app.primaryStage.getScene().getWindow().isShowing();
+    return this.app.getPrimaryStage().getScene().getWindow().isShowing();
   }
 
 }

@@ -49,6 +49,9 @@ public class NodeUtil {
     copy.setSelectable(knot.isSelectable());
     copy.setFlippedVertically(knot.isFlippedVertically());
     copy.setFlippedHorizontally(knot.isFlippedHorizontally());
+    copy.setTextId(knot.getTextId());
+    copy.setTypedText(knot.getTypedText());
+    copy.setText(knot.getText());
 
     if (knot.getHovered() != null) {
       copy.setHovered(knot.getHovered());

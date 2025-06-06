@@ -9,7 +9,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.ImageUtil;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.CreatePatternButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.CreatePatternButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,8 +51,8 @@ public class CreatePatternWindow {
     if (result.isPresent() && result.get() == createPatternButton) {
       logger.debug("Accepted pattern creation");
 
-      app.getRoot().removeEventHandler(MouseEvent.MOUSE_MOVED, CreatePatternButton.getMouseMovedListener());
-      app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, CreatePatternButton.getMouseClickedListener());
+      app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_MOVED, CreatePatternButton.getMouseMovedListener());
+      app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, CreatePatternButton.getMouseClickedListener());
       app.getPrimaryStage().close();
       app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
         app.getPrimaryStage(), app.getOptionalDotGrid().getDiagram());

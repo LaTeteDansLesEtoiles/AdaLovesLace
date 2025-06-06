@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -10,25 +11,23 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.business.model.Diagram;
-import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.util.FileUtil;
+import org.alienlabs.adaloveslace.util.KeyboardUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.SystemInfo;
+import org.alienlabs.adaloveslace.view.component.AdaLovesLaceMenuBar;
 import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
-import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.*;
-import org.alienlabs.adaloveslace.view.component.button.statewindow.InvisibleButton;
-import org.alienlabs.adaloveslace.view.component.button.statewindow.SelectableButton;
-import org.alienlabs.adaloveslace.view.component.button.statewindow.UnselectableButton;
-import org.alienlabs.adaloveslace.view.component.button.statewindow.VisibleButton;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.alienlabs.adaloveslace.view.window.StateWindow;
@@ -42,6 +41,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import static org.alienlabs.adaloveslace.util.Events.getMouseDoubleRightClickOnGridEventHendler;
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_BUTTONS;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON_SELECTED;
@@ -68,7 +68,7 @@ public class App extends Application {
   public static final String EXPORT_IMAGE_CONTENT_TYPE= "image/png";
   public static final String EXPORT_IMAGE_FILE_TYPE   = ".png";
   public static final String EXPORT_PDF_FILE_TYPE     = ".pdf";
-  public static final String PATTERNS_DIRECTORY_NAME  = "patterns";
+  public static final String PATTERNS_DIRECTORY_NAME  = "knots";
   public static final String ERROR                    = "Error!";
   public static final String ASSETS_DIRECTORY         = "assets/";
   public static final String GET_PRINTERS_BUTTON_NAME = "GetPrinters";
@@ -80,7 +80,7 @@ public class App extends Application {
   public static final double  MAIN_WINDOW_WIDTH       = 525d;
   public static final double  MAIN_WINDOW_HEIGHT      = 780d;
   public static final double  GRID_WIDTH              = 650d;
-  public static final double  GRID_HEIGHT             = 650d;
+  public static final double  GRID_HEIGHT             = 550d;
   public static final int     ICON_SIZE               = 46;
   public static final int     SMALL_ICON_SIZE         = 23;
   public static final int     CANVAS_TEXT_FONT_SIZE   = 32;
@@ -99,7 +99,7 @@ public class App extends Application {
                   DEFAULT_LOCALE_COUNTRY)
   );
 
-  private final PauseTransition resizePause = new PauseTransition(Duration.millis(700));
+  private final PauseTransition resizePause = new PauseTransition(Duration.millis(600));
   private final Map<KeyCode, Boolean> currentlyActiveKeys = new EnumMap<>(KeyCode.class);
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
@@ -112,11 +112,13 @@ public class App extends Application {
   private GeometryWindow geometryWindow;
   private Stage stateStage;
   private StateWindow stateWindow;
-  private ToolboxWindow toolboxWindow;
+  private static ToolboxWindow toolboxWindow;
 
 
-  public Pane root;
-  public Stage primaryStage;
+  private Pane movablePane;
+  private Stage primaryStage;
+  private double maxHeight = GRID_HEIGHT;
+  private double maxWidth = GRID_WIDTH;
 
   @Override
   public void start(Stage primaryStage) {
@@ -125,7 +127,7 @@ public class App extends Application {
 
     if (params.getRaw() != null && !params.getRaw().isEmpty()) {
       filePath = String.join(" ", params.getRaw());
-      logger.info(filePath);
+      logger.debug(filePath);
     }
 
     Font.loadFont(getClass().getResource("/fonts/PatrickHand-Regular.ttf").toExternalForm(), 12);
@@ -151,35 +153,99 @@ public class App extends Application {
 
     if (!filePath.isEmpty()) {
       new FileUtil().buildUiFromLaceFile(this, new File(filePath));
-      this.getPrimaryStage().requestFocus();
     }
+
+    this.getPrimaryStage().requestFocus();
   }
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
                              double gridDotsRadius, Stage primaryStage, Diagram diagram) {
-    VBox notCanvas;
+    BorderPane root;
     App.mainWindow = new MainWindow();
     this.diagram = diagram;
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
 
-    notCanvas = new VBox();
-    root                      = new Pane();
+    movablePane               = new Pane();
+    movablePane.getStyleClass().add("grid");
 
-    MenuBar menuBar           = App.mainWindow.createMenuBar(notCanvas, this);
-    StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, gridDotsRadius, this.diagram, root);
-    TilePane footer           = mainWindow.createFooter(javafxVersion, javaVersion);
+    StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, gridDotsRadius, this.diagram, movablePane);
 
-    VBox.setVgrow(root, Priority.ALWAYS);
-    root.getChildren().add(grid);
-    notCanvas.getChildren().addAll(root, footer);
-    App.mainWindow.onMainWindowClicked(this, root);
+    root                      = new BorderPane();
+    root.getStyleClass().add("grid");
+    movablePane.getChildren().add(grid);
+    root.setCenter(movablePane);
 
-    scene = new Scene(notCanvas, windowWidth, windowHeight);
+    App.mainWindow.onMainWindowClicked(this, movablePane);
+
+    scene = new Scene(root, windowWidth, windowHeight);
     scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
     scene.setFill(Color.TRANSPARENT);
 
+    onSceneKeyPressed();
+    onSceneKeyReleased();
+
+    // On double right-click, center the grid
+    scene.setOnMouseClicked(getMouseDoubleRightClickOnGridEventHendler(this));
+
+    primaryStage.setScene(scene);
+    primaryStage.setX(MAIN_WINDOW_X);
+    primaryStage.setY(MAIN_WINDOW_Y);
+    primaryStage.setTitle(resourceBundle.getString(MAIN_WINDOW_TITLE));
+
+    onCloseApplication(primaryStage);
+    onDoMainWindowResize();
+
+    slider = createZoomSlider();
+    this.getOptionalDotGrid().setDiagram(diagram);
+    this.primaryStage = primaryStage;
+    grid.getStyleClass().add("grid");
+
+    primaryStage.show();
+  }
+
+  public void onDoMainWindowResize() {
+    onDoResize();
+    onDoChangeWidth(this.getPrimaryStage().widthProperty(), "Window width: {}");
+    onDoChangeHeight(this.getPrimaryStage().heightProperty(), "Window height: {}");
+  }
+
+  private void onDoChangeHeight(ReadOnlyDoubleProperty primaryStage, String s) {
+    primaryStage.addListener((obs, oldVal, newVal) ->
+            {
+              logger.debug(s, newVal);
+              resizePause.playFromStart();
+              this.maxHeight = Math.max((double) newVal, this.maxHeight);
+            }
+    );
+  }
+
+  private void onDoChangeWidth(ReadOnlyDoubleProperty primaryStage, String s) {
+        primaryStage.addListener((obs, oldVal, newVal) ->
+            {
+              logger.debug(s, newVal);
+              resizePause.playFromStart();
+              this.maxWidth = Math.max((double) newVal, this.maxWidth);
+            }
+    );
+  }
+
+  private void onDoResize() {
+    resizePause.setOnFinished(e -> {
+      this.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+      this.getOptionalDotGrid().layoutChildren();
+    });
+  }
+
+  private static void onCloseApplication(Stage primaryStage) {
+    primaryStage.setOnCloseRequest(windowEvent -> {
+      logger.debug("You shall close the app by closing this window!");
+      Platform.exit();
+    });
+  }
+
+  private void onSceneKeyPressed() {
     // For multi-selection with "Control" key
     scene.setOnKeyPressed(event -> {
       KeyCode codeString = event.getCode();
@@ -187,49 +253,12 @@ public class App extends Application {
         currentlyActiveKeys.put(codeString, true);
       }
     });
+  }
+
+  private void onSceneKeyReleased() {
     scene.setOnKeyReleased(event ->
       currentlyActiveKeys.remove(event.getCode())
     );
-
-    primaryStage.setScene(scene);
-    primaryStage.setX(MAIN_WINDOW_X);
-    primaryStage.setY(MAIN_WINDOW_Y);
-    primaryStage.setTitle(resourceBundle.getString(MAIN_WINDOW_TITLE));
-
-    primaryStage.setOnCloseRequest(windowEvent -> {
-      logger.debug("You shall close the app by closing this window!");
-      Platform.exit();
-    });
-
-    resizePause.setOnFinished(e -> {
-      this.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
-      this.getOptionalDotGrid().layoutChildren();
-    });
-
-    primaryStage.widthProperty().addListener((obs, oldVal, newVal) ->
-            {
-              logger.debug("Window width: {}", newVal);
-              resizePause.playFromStart();
-            }
-    );
-
-    primaryStage.heightProperty().addListener((obs, oldVal, newVal) ->
-            {
-              logger.debug("Window height: {}", newVal);
-              resizePause.playFromStart();
-            }
-    );
-
-    slider = createZoomSlider();
-
-    this.getOptionalDotGrid().setDiagram(diagram);
-    this.primaryStage = primaryStage;
-
-    grid.getStyleClass().add("grid");
-    footer.getStyleClass().add("footer");
-    menuBar.getStyleClass().add("main-menu");
-
-    primaryStage.show();
   }
 
   private Slider createZoomSlider() {
@@ -244,18 +273,18 @@ public class App extends Application {
     slider.setBlockIncrement(1);
     slider.setLayoutX(MAIN_WINDOW_WIDTH / 2d - 60d);
     slider.valueProperty().addListener((ov, oldVal, newVal) -> {
+      double zoomFactor;
+
       if (newVal.doubleValue() < 50d) {
-        double zoomOutFactor = newVal.doubleValue() / 50d + 0.1d;
-        root.setScaleX(zoomOutFactor);
-        root.setScaleY(zoomOutFactor);
+        zoomFactor = newVal.doubleValue() / 50d + 0.1d;
       } else if (newVal.doubleValue() > 50d) {
-        double zoomInFactor = (newVal.doubleValue() - 40) / 10d;
-        root.setScaleX(zoomInFactor);
-        root.setScaleY(zoomInFactor);
+        zoomFactor = (newVal.doubleValue() - 40) / 10d;
       } else {
-        root.setScaleX(INITIAL_GRID_ZOOM_FACTOR);
-        root.setScaleY(INITIAL_GRID_ZOOM_FACTOR);
+        zoomFactor = INITIAL_GRID_ZOOM_FACTOR;
       }
+
+      movablePane.setScaleX(zoomFactor);
+      movablePane.setScaleY(zoomFactor);
     });
     return slider;
   }
@@ -268,8 +297,12 @@ public class App extends Application {
     scrollPane.setFitToHeight(true);
 
     toolboxWindow         = new ToolboxWindow();
+
+    MenuBar menuBar       = new AdaLovesLaceMenuBar().createMenuBar(this);
+    parent.add(menuBar, 0, 0);
+
     this.diagram          = toolboxWindow.createToolboxPane(parent, classpathBase, resourcesPath, app, this.diagram);
-    int posY              = this.diagram.getPatterns().size() / 2 + 1;
+    int posY              = this.diagram.getPatterns().size() / 2 + 2;
     toolboxWindow.createToolboxButtons(parent, app, posY);
     toolboxWindow.createToolboxStage(this.toolboxStage, parent, app, posY);
     return toolboxWindow;
@@ -284,7 +317,7 @@ public class App extends Application {
 
     geometryWindow.createGeometryStage(geometryStage, parent);
 
-    initializeKeyboardShorcuts();
+    new KeyboardUtil().initializeKeyboardShorcuts(this);
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
     return geometryWindow;
   }
@@ -311,7 +344,11 @@ public class App extends Application {
 
   public static void main(String[] args) {
     Preferences prefs = new Preferences();
+    setLocale(prefs);
+    launch(args);
+  }
 
+  private static void setLocale(Preferences prefs) {
     if ((!prefs.getStringValue(LOCALE_LANGUAGE).isEmpty()) && (!prefs.getStringValue(LOCALE_COUNTRY).isEmpty())) {
       Locale locale = new Locale(prefs.getStringValue(LOCALE_LANGUAGE), prefs.getStringValue(LOCALE_COUNTRY));
       resourceBundle = ResourceBundle.getBundle(ADA_LOVES_LACE, locale);
@@ -322,31 +359,6 @@ public class App extends Application {
       prefs.setStringValue(LOCALE_LANGUAGE, DEFAULT_LOCALE_LANGUAGE);
       prefs.setStringValue(LOCALE_COUNTRY, DEFAULT_LOCALE_COUNTRY);
     }
-
-    launch(args);
-  }
-
-  public void initializeKeyboardShorcuts() {
-    Platform.runLater(() -> {
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.UP),
-        () -> UpButton.onMoveKnotUpAction       (this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN),
-        () -> DownButton.onMoveKnotDownAction   (this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.LEFT),
-        () -> LeftButton.onMoveKnotLeftAction   (this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT),
-        () -> RightButton.onMoveKnotRightAction (this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN),
-        () -> SelectableButton.onSetSelectableModeAction(this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN),
-        () -> UnselectableButton.onSetUnselectableModeAction(this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN),
-        () -> VisibleButton.onSetVisibleAction   (this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN),
-        () -> InvisibleButton.onSetInvisibleAction (this));
-      getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN),
-              FastMoveModeButton::onSwitchFastModeAction);
-    });
   }
 
   public void unselectPatternsAndTextButtons() {
@@ -401,8 +413,12 @@ public class App extends Application {
     return this.stateWindow;
   }
 
-  public Pane getRoot() {
-    return root;
+  public Pane getMovablePane() {
+    return movablePane;
+  }
+
+  public void setMovablePane(Pane movablePane) {
+    this.movablePane = movablePane;
   }
 
   public Slider getSlider() {
@@ -423,6 +439,14 @@ public class App extends Application {
 
   public Stage getStateStage() {
     return this.stateStage;
+  }
+
+  public double getMaxHeight() {
+    return this.maxHeight;
+  }
+
+  public double getMaxWidth() {
+    return this.maxWidth;
   }
 
   public static void setResourceBundle(ResourceBundle resourceBundle) {

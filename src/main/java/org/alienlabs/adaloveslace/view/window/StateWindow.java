@@ -46,7 +46,10 @@ public class StateWindow {
 
     this.stateStage = stateStage;
     stateStage.setTitle(resourceBundle.getString(STATE_TITLE));
-    stateStage.setOnCloseRequest(windowEvent -> logger.debug("You shall not close the state window directly!"));
+    stateStage.setOnCloseRequest(windowEvent -> {
+      logger.debug("You shall not close the state window directly!");
+      windowEvent.consume();
+    });
     stateStage.setX(TOOLBOX_WINDOW_X + TOOLBOX_WINDOW_WIDTH);
     stateStage.setY(MAIN_WINDOW_Y + MAIN_WINDOW_HEIGHT + STATE_WINDOW_GAP);
     stateStage.setScene(stateScene);

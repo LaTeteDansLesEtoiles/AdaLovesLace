@@ -6,7 +6,7 @@ node {
     }
 
     stage('check java') {
-        env.PATH="/usr/lib/jvm/temurin-21-jdk-amd64/bin:${env.PATH}"
+        env.PATH="/usr/lib/jvm/temurin-24-jdk-amd64/bin:${env.PATH}"
         sh "java -version"
     }
 
@@ -25,7 +25,7 @@ node {
         }
     }
 
-    wrap([$class: 'Xvfb', screen: '3840x2160x24', timeout: 25]) {
+    wrap([$class: 'Xvfb', screen: '1920x1080x24', timeout: 25]) {
 
         stage('functional tests') {
           try {

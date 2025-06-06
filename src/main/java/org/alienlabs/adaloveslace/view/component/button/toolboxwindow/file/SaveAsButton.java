@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
+package org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file;
 
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
@@ -18,6 +18,8 @@ import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
 public class SaveAsButton extends ImageButton {
 
+  private static App app;
+
   public static final String SAVE_FILE_AS_DIALOG_TITLE  = "Save diagram as";
   public static final String DIAGRAM_FILES              = ".lace files (*.lace)";
   public static final String DIAGRAM_FILE_FILTER        = "*.lace";
@@ -26,11 +28,12 @@ public class SaveAsButton extends ImageButton {
 
   public SaveAsButton(App app, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onSaveAsAction(app));
+    SaveAsButton.app = app;
+    this.setOnMouseClicked(_ -> onSaveAsAction());
     buildButtonImage("save_as.png");
   }
 
-  public static void onSaveAsAction(App app) {
+  public static void onSaveAsAction() {
     logger.debug("Saving file as");
 
     FileChooser saveAs = new FileChooser();

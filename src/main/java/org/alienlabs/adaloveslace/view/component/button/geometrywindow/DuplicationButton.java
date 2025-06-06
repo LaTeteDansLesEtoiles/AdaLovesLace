@@ -4,7 +4,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.slf4j.Logger;
@@ -58,6 +59,7 @@ public class DuplicationButton extends ToggleButton {
     }
 
     newStep(displayedKnots, selectedKnotsCopy, true);
+    Events.removeEventsFromGrid(app);
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(false);

@@ -3,12 +3,10 @@ package org.alienlabs.adaloveslace.unittest.view.component;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.alienlabs.adaloveslace.util.FileUtil;
-import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.GridUtil;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -31,7 +29,7 @@ class OptionalDotGridTest {
     knot.setZoomFactor(Integer.parseInt(settedZoomFactor));
 
     // When
-    double actualZoomFactor = new OptionalDotGrid(null, new Diagram(new App()), new Pane()).zoomAndFlipPatternKnot(knot);
+    double actualZoomFactor = new GridUtil(new Pane()).zoomAndFlipPatternKnot(knot);
 
     // Then
     assertEquals(Double.valueOf(expectedZoomFactor), actualZoomFactor);

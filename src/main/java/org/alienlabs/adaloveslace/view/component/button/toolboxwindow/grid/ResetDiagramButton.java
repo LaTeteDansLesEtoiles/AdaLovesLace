@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
+package org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid;
 
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
@@ -7,15 +7,18 @@ import org.slf4j.LoggerFactory;
 
 public class ResetDiagramButton extends ImageButton {
 
+  private static App app;
+
   private static final Logger logger = LoggerFactory.getLogger(ResetDiagramButton.class);
 
-  public ResetDiagramButton(String buttonLabel, App app) {
+    public ResetDiagramButton(String buttonLabel, App app) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> resetDiagram(app));
+      ResetDiagramButton.app = app;
+        this.setOnMouseClicked(_ -> resetDiagram());
     buildButtonImage("reset_diagram.png");
   }
 
-  public static void resetDiagram(App app) {
+  public static void resetDiagram() {
     app.getOptionalDotGrid().getDiagram().resetDiagram(app);
     app.getOptionalDotGrid().layoutChildren();
 
