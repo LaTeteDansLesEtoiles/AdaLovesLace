@@ -38,6 +38,8 @@ public class DrawingButton extends ToggleButton {
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
     Events.removeEventsFromGrid(app);
     app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+    app.getMovablePane().setOnMouseExited(Events.getGridHoverExitEventHandler(app));
     app.getOptionalDotGrid().clearHandles();
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {

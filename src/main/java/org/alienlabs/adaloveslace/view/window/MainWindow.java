@@ -106,6 +106,8 @@ public class MainWindow {
 
   public void onMainWindowClicked(final App app, final Pane movablePane) {
     movablePane.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+    movablePane.addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+    movablePane.setOnMouseExited(Events.getGridHoverExitEventHandler(app));
     movablePane.setOnMousePressed(Events.getMouseRightClickEventHandler(app));
     movablePane.setOnMouseDragged(Events.getGridDraggedEventHandler(app));
   }
