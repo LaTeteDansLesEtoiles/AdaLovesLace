@@ -91,7 +91,7 @@ public class CreatePatternButton extends ImageButton {
             Point2D mouseInParent = app.getMovablePane().sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
             logger.debug("Create Pattern => MouseEvent moved: X= {}, Y= {}", mouseInParent.getX(), mouseInParent.getY());
 
-            if (firstClickLocal != null && secondClickLocal == null) {
+            if (firstClickLocal != null) {
                 Point2D clickPoint = pane.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
                 removeRectangle(app);
@@ -105,7 +105,6 @@ public class CreatePatternButton extends ImageButton {
                 selectionRectangle.setWidth(w);
                 selectionRectangle.setHeight(h);
                 selectionRectangle.setVisible(true);
-                removeRectangle(app);
                 pane.getChildren().add(selectionRectangle);
             }
         };
