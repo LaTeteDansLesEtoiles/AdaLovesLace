@@ -37,9 +37,6 @@ public class ImageUtil {
 
     public static final String NEW_PATTERN = "pattern";
 
-    public static final File OUTPUT = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
-        NEW_PATTERN + UUID.randomUUID().toString().substring(0, 8) + EXPORT_IMAGE_FILE_TYPE);
-
     public static File PATH_NAME;
 
     private final App app;
@@ -118,8 +115,8 @@ public class ImageUtil {
         WritableImage wi = new WritableImage((int)app.getMovablePane().getWidth(),
                 (int)app.getMovablePane().getHeight());
         WritableImage snapshot = app.getMovablePane().snapshot(new SnapshotParameters(), wi);
-
         PATH_NAME = new File(pathname);
+
         try {
             ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), EXPORT_IMAGE_FILE_FORMAT, PATH_NAME);
         } catch (IOException e) {
@@ -164,8 +161,23 @@ public class ImageUtil {
             int cropH = (int) Math.round(hLog * scale);
 
             try {
-                BufferedImage croppedBI = buffered.getSubimage(cropX, cropY, cropW, cropH);
-                ImageIO.write(croppedBI, EXPORT_IMAGE_FILE_FORMAT, OUTPUT);
+                BufferedImage croppedBI = buffered.getSubimage(
+                        getX(cropX, cropW, fullSnap),
+                        getY(cropY, cropH, fullSnap),
+                        cropW,
+                        cropH
+                );
+                File previewFile = new File(
+                        APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
+                        NEW_PATTERN + UUID.randomUUID().toString().substring(0, 8) + EXPORT_IMAGE_FILE_TYPE
+                );
+                ImageIO.write(
+                        croppedBI,
+                        EXPORT_IMAGE_FILE_FORMAT,
+                        previewFile
+                );
+
+                new CreatePatternWindow(app, previewFile);
             } catch (Exception e) {
                 logger.error("Problem writing new pattern image file!", e);
             }
@@ -173,9 +185,23 @@ public class ImageUtil {
             parentGridStrategy.setCurrentGridType(before);
             ParentGridStrategy.setGridHasBeenDrawn(false);
             app.getOptionalDotGrid().layoutChildren();
-
-            new CreatePatternWindow(app);
         });
+    }
+
+    private int getX(int cropX, int cropW, WritableImage fullSnap) {
+        if (cropX + cropW < 0) {
+            return 0;
+        }
+
+        return cropX + cropW >= fullSnap.getWidth() ? (int) fullSnap.getWidth() - cropW : cropX;
+    }
+
+    private int getY(int cropY, int cropH, WritableImage fullSnap) {
+        if (cropY + cropH < 0) {
+            return 0;
+        }
+
+        return cropY + cropH >= fullSnap.getHeight() ? (int) fullSnap.getHeight() - cropH : cropY;
     }
 
     public void hideTechnicalElementsFromRootGroup(boolean showGrid) {

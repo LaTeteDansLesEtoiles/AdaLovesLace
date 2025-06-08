@@ -8,7 +8,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.CreatePatternButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,10 +35,10 @@ public class CreatePatternWindow {
   public static final String CREATE_PATTERN_PREVIEW_LABEL    = "CREATE_PATTERN_PREVIEW_LABEL";
 
   private static final Logger logger = LoggerFactory.getLogger(CreatePatternWindow.class);
-  private final File previewFile;
+    private final File previewFile;
 
-    public CreatePatternWindow(App app) {
-      this.previewFile = ImageUtil.OUTPUT;
+    public CreatePatternWindow(App app, File previewFile) {
+      this.previewFile = previewFile;
       Alert alert = new Alert(CONFIRMATION);
 
       ButtonType createPatternButton = buildAlertWindow(alert);
@@ -65,7 +64,9 @@ public class CreatePatternWindow {
         logger.debug("Pattern creation cancelled");
 
         try {
-          Files.delete(previewFile.toPath());
+          if (Files.exists(this.previewFile.toPath())) {
+            Files.delete(this.previewFile.toPath());
+          }
         } catch (IOException e) {
           logger.error("Error deleting file during pattern creation window!", e);
         }
