@@ -28,7 +28,6 @@ import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.GridUtil;
 import org.alienlabs.adaloveslace.view.component.GuideLinesUtil;
-import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +61,6 @@ public class OptionalDotGrid extends Pane {
 
   private static final Logger logger = LoggerFactory.getLogger(OptionalDotGrid.class);
   private GridUtil gridUtil;
-  private ParentGridStrategy gridStrategy;
 
   /**
    * We draw the dots on the grid using a Canvas.
@@ -94,8 +92,6 @@ public class OptionalDotGrid extends Pane {
 
     currentPatternProperty.addListener(observable -> this.diagram.setCurrentPattern(currentPatternProperty.getValue()));
     currentPatternOrTextModeProperty = new SimpleObjectProperty<>(PatternOrTextMode.PATTERN);
-
-    gridStrategy = new ParentGridStrategy(app, this.gridPane);
 
     showHideGridProperty = new SimpleBooleanProperty(this.showHideGrid);
     showHideGridProperty.addListener(observable -> {
@@ -129,7 +125,7 @@ public class OptionalDotGrid extends Pane {
   @Override
   public void layoutChildren() {
     drawDiagram();
-    gridStrategy.drawGrid();
+    app.getGridStrategy().drawGrid();
   }
 
   private void drawDiagram() {
@@ -440,10 +436,6 @@ public class OptionalDotGrid extends Pane {
 
   public void setShowHideGrid(boolean showHideGrid) {
     this.showHideGrid = showHideGrid;
-  }
-
-  public ParentGridStrategy getGridStrategy() {
-    return gridStrategy;
   }
 
   public Pane getGridPane() {

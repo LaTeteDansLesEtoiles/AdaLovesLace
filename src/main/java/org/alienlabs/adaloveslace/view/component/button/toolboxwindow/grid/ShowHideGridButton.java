@@ -22,9 +22,9 @@ public class ShowHideGridButton extends ImageButton {
   }
 
   public static void showHideGrid() {
-    app.getOptionalDotGrid().getGridStrategy().switchGridType();
+    app.getGridStrategy().switchGridType();
     ParentGridStrategy.setGridHasBeenDrawn(false);
-    
+
     logger.debug("Event switch grid");
     app.getOptionalDotGrid().layoutChildren();
   }

@@ -1,5 +1,6 @@
 package org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy;
 
+import org.alienlabs.adaloveslace.business.model.Coordinate;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.IDotGridStrategy;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 
@@ -27,4 +28,10 @@ public class HiddenDotGridStrategy implements IDotGridStrategy {
     public void drawGrid() {
         ParentGridStrategy.hideGrid();
     }
+
+    @Override
+    public Coordinate getDrawCoordinates(double x, double y) {
+        return new Coordinate(x, y);
+    }
+
 }

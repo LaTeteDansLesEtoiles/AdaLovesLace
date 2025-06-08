@@ -93,6 +93,7 @@ public class App extends Application {
   public static final String DEFAULT_LOCALE_COUNTRY   = "FR";
   public static final Duration TOOLTIPS_DURATION      = Duration.seconds(60);
   public static final double INITIAL_GRID_ZOOM_FACTOR = 1d;
+  private ParentGridStrategy gridStrategy;
 
   public static ResourceBundle resourceBundle = ResourceBundle.getBundle(
           ADA_LOVES_LACE,
@@ -448,6 +449,14 @@ public class App extends Application {
 
   public double getMaxWidth() {
     return this.maxWidth;
+  }
+
+  public ParentGridStrategy getGridStrategy() {
+    return this.gridStrategy;
+  }
+
+  public void setGridStrategy(ParentGridStrategy gridStrategy) {
+    this.gridStrategy = gridStrategy;
   }
 
   public static void setResourceBundle(ResourceBundle resourceBundle) {

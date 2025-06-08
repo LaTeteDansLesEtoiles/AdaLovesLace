@@ -1,6 +1,7 @@
 package org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy;
 
 import javafx.scene.shape.Ellipse;
+import org.alienlabs.adaloveslace.business.model.Coordinate;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.IDotGridStrategy;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 
@@ -44,4 +45,10 @@ public class StagerredDotGridStrategy implements IDotGridStrategy {
         }
         ParentGridStrategy.gridPane.getChildren().addAll(ParentGridStrategy.grid);
     }
+
+    @Override
+    public Coordinate getDrawCoordinates(double x, double y) {
+        return new Coordinate(x, y);
+    }
+
 }

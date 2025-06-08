@@ -335,12 +335,14 @@ public class Diagram {
         logger.debug("Current pattern  -> {}", this.getCurrentPattern());
         ImageView iv;
 
+        Coordinate coord = app.getGridStrategy().getDrawCoordinates(x, y);
+
         if (PatternOrTextMode.PATTERN == app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get()) {
-            iv = drawPattern(x, y);
+            iv = drawPattern(coord.x(), coord.y());
 
             if (null != iv) {
                 isNewText = false;
-                createImageViewWithStep(x, y, iv, this.getCurrentPattern());
+                createImageViewWithStep(coord.x(), coord.y(), iv, this.getCurrentPattern());
             }
         } else {
             isNewText = true;

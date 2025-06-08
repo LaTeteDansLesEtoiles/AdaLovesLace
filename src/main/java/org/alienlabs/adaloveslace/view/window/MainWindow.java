@@ -16,6 +16,7 @@ import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,6 +93,7 @@ public class MainWindow {
     }
 
     grid = new StackPane(this.optionalDotGrid);
+    app.setGridStrategy(new ParentGridStrategy(app, this.getOptionalDotGrid().getGridPane()));
 
     if (width != 0d && height != 0d) {
       grid.setPrefWidth(width);

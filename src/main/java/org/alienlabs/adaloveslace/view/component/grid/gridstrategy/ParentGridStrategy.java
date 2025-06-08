@@ -3,6 +3,7 @@ package org.alienlabs.adaloveslace.view.component.grid.gridstrategy;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Coordinate;
 import org.alienlabs.adaloveslace.business.model.enumeration.GridType;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy.CrissCrossDotGridStrategy;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy.HiddenDotGridStrategy;
@@ -47,6 +48,10 @@ public class ParentGridStrategy {
 
             gridHasBeenDrawn = true;
         }
+    }
+
+    public Coordinate getDrawCoordinates(double x, double y) {
+        return childStrategies.get(currentGridType).getDrawCoordinates(x, y);
     }
 
     public void switchGridType() {
