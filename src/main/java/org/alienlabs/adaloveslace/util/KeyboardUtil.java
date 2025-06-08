@@ -73,7 +73,7 @@ public class KeyboardUtil {
             app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN),
                     ShowHideGridButton::showHideGrid);
 
-            app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN),
+            app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN, KeyCodeCombination.ALT_DOWN),
                     () -> {
                         Locale locale = new Locale("fr", "FR");
                         App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
@@ -85,7 +85,7 @@ public class KeyboardUtil {
                         restartApp();
                     } );
 
-            app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.U, KeyCombination.CONTROL_DOWN),
+            app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN),
                     () -> {
                         Locale locale = new Locale("en", "EN");
                         App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
