@@ -59,6 +59,7 @@ public class CreatePatternWindow {
         app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
         app.getGeometryStage().close();
         app.showGeometryWindow(app);
+        app.getStateStage().close();
         app.showStateWindow(app);
       } else {
         logger.debug("Pattern creation cancelled");
