@@ -15,7 +15,8 @@ import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
-import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,15 +85,15 @@ public class MainWindow {
     return footer;
   }
 
-  public StackPane createGrid(App app, final double width, final double height, final double radius,
-                              final Diagram diagram, final Pane canvas) {
+  public StackPane createGrid(App app, final double width, final double height, final Diagram diagram, final Pane canvas) {
     if (width == 0d || height == 0d) {
       this.optionalDotGrid = new OptionalDotGrid(app, diagram, canvas);
     } else {
-      this.optionalDotGrid = new OptionalDotGrid(app, width, height, radius, diagram, canvas);
+      this.optionalDotGrid = new OptionalDotGrid(app, width, height, diagram, canvas);
     }
 
     grid = new StackPane(this.optionalDotGrid);
+    app.setGridStrategy(new ParentGridStrategy(app, this.getOptionalDotGrid().getGridPane()));
 
     if (width != 0d && height != 0d) {
       grid.setPrefWidth(width);
@@ -106,6 +107,8 @@ public class MainWindow {
 
   public void onMainWindowClicked(final App app, final Pane movablePane) {
     movablePane.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+    movablePane.addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+    movablePane.setOnMouseExited(Events.getGridHoverExitEventHandler(app));
     movablePane.setOnMousePressed(Events.getMouseRightClickEventHandler(app));
     movablePane.setOnMouseDragged(Events.getGridDraggedEventHandler(app));
   }

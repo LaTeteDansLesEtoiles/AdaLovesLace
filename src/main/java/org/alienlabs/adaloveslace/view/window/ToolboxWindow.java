@@ -131,6 +131,7 @@ public class ToolboxWindow {
             this.colorWheelButton = button;
             button.getStyleClass().add(PATTERN_AND_TEXT_BUTTON_SELECTED);
             diagram.setCurrentPattern(pattern);
+            app.getOptionalDotGrid().getCurrentPatternProperty().set(pattern);
         }
 
         if (i == 1) {

@@ -20,7 +20,7 @@ import java.util.UUID;
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 import static org.alienlabs.adaloveslace.util.NodeUtil.HANDLE_SIZE;
-import static org.alienlabs.adaloveslace.view.component.OptionalDotGrid.BLUE_HANDLE;
+import static org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid.BLUE_HANDLE;
 
 public class GridUtil {
 
@@ -33,7 +33,7 @@ public class GridUtil {
     }
 
     // Rotate Pattern knot with an angle in degrees
-    ImageView rotatePatternKnot(Knot knot) {
+    public ImageView rotatePatternKnot(Knot knot) {
         if (knot.getImageView() == null) {
             try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
                     + knot.getPattern().get().getFilename())) {
@@ -81,7 +81,7 @@ public class GridUtil {
     }
 
     // Zoom factor goes from -10 to 10, 0 being don't zoom knot, < 0 being shrink knot, > 0 being enlarge knot
-    void zoomTextKnot(Knot knot) {
+    public void zoomTextKnot(Knot knot) {
         double scaleFactor = this.computeZoomFactor(knot);
         knot.getImageView().setScaleX(scaleFactor);
         knot.getImageView().setScaleY(scaleFactor);

@@ -12,9 +12,11 @@ import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.dto.DiagramDTO;
+import org.alienlabs.adaloveslace.business.model.enumeration.GridType;
 import org.alienlabs.adaloveslace.business.model.enumeration.Language;
 import org.alienlabs.adaloveslace.business.model.enumeration.SubTechnique;
 import org.alienlabs.adaloveslace.business.model.enumeration.Technique;
+import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.alienlabs.adaloveslace.view.window.CreatePatternWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +36,6 @@ import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 public class ImageUtil {
 
     public static final String NEW_PATTERN = "pattern";
-
-    public static final File OUTPUT = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
-        NEW_PATTERN + UUID.randomUUID().toString().substring(0, 8) + EXPORT_IMAGE_FILE_TYPE);
 
     public static File PATH_NAME;
 
@@ -116,8 +115,8 @@ public class ImageUtil {
         WritableImage wi = new WritableImage((int)app.getMovablePane().getWidth(),
                 (int)app.getMovablePane().getHeight());
         WritableImage snapshot = app.getMovablePane().snapshot(new SnapshotParameters(), wi);
-
         PATH_NAME = new File(pathname);
+
         try {
             ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), EXPORT_IMAGE_FILE_FORMAT, PATH_NAME);
         } catch (IOException e) {
@@ -129,8 +128,7 @@ public class ImageUtil {
 
     public void buildImage(double xMin, double yMin, double wLog, double hLog) {
         if (app.getOptionalDotGrid().isShowHideGrid()) {
-            app.getOptionalDotGrid().setShowHideGrid(false);
-            app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+            ParentGridStrategy.setGridHasBeenDrawn(false);
             app.getOptionalDotGrid().layoutChildren();
         }
 
@@ -146,6 +144,11 @@ public class ImageUtil {
                     wLog,
                     hLog
             );
+
+            ParentGridStrategy parentGridStrategy = new ParentGridStrategy(app, app.getOptionalDotGrid().getGridPane());
+            GridType before = parentGridStrategy.getCurrentGridType();
+            ParentGridStrategy.hideGrid();
+
             double scale = app.getMovablePane().getScaleX();
             SnapshotParameters sp = new SnapshotParameters();
             sp.setFill(Color.TRANSPARENT);
@@ -156,20 +159,49 @@ public class ImageUtil {
             int cropY = (int) Math.round(yMin * scale);
             int cropW = (int) Math.round(wLog * scale);
             int cropH = (int) Math.round(hLog * scale);
-            BufferedImage croppedBI = buffered.getSubimage(cropX, cropY, cropW, cropH);
 
             try {
-                ImageIO.write(croppedBI, EXPORT_IMAGE_FILE_FORMAT, OUTPUT);
-            } catch (IOException e) {
+                BufferedImage croppedBI = buffered.getSubimage(
+                        getX(cropX, cropW, fullSnap),
+                        getY(cropY, cropH, fullSnap),
+                        cropW,
+                        cropH
+                );
+                File previewFile = new File(
+                        APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
+                        NEW_PATTERN + UUID.randomUUID().toString().substring(0, 8) + EXPORT_IMAGE_FILE_TYPE
+                );
+                ImageIO.write(
+                        croppedBI,
+                        EXPORT_IMAGE_FILE_FORMAT,
+                        previewFile
+                );
+
+                new CreatePatternWindow(app, previewFile);
+            } catch (Exception e) {
                 logger.error("Problem writing new pattern image file!", e);
             }
 
-            app.getOptionalDotGrid().setShowHideGrid(true);
-            app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+            parentGridStrategy.setCurrentGridType(before);
+            ParentGridStrategy.setGridHasBeenDrawn(false);
             app.getOptionalDotGrid().layoutChildren();
-
-            new CreatePatternWindow(app);
         });
+    }
+
+    private int getX(int cropX, int cropW, WritableImage fullSnap) {
+        if (cropX + cropW < 0) {
+            return 0;
+        }
+
+        return cropX + cropW >= fullSnap.getWidth() ? (int) fullSnap.getWidth() - cropW : cropX;
+    }
+
+    private int getY(int cropY, int cropH, WritableImage fullSnap) {
+        if (cropY + cropH < 0) {
+            return 0;
+        }
+
+        return cropY + cropH >= fullSnap.getHeight() ? (int) fullSnap.getHeight() - cropH : cropY;
     }
 
     public void hideTechnicalElementsFromRootGroup(boolean showGrid) {
@@ -189,10 +221,10 @@ public class ImageUtil {
         }
 
         if (showGrid) {
-            app.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+            ParentGridStrategy.setGridHasBeenDrawn(false);
             app.getOptionalDotGrid().layoutChildren();
         } else {
-            app.getOptionalDotGrid().hideGrid();
+            ParentGridStrategy.hideGrid();
         }
     }
 

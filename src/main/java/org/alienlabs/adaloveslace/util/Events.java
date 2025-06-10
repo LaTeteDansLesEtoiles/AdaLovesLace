@@ -4,17 +4,24 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +33,8 @@ public class Events {
 
   static App app;
 
+  private static ImageView currentImageView;
+  private static Pattern currentPattern;
   private static double handleOffsetX;
   private static double handleOffsetY;
   private static Point2D previousEvent;
@@ -102,8 +111,8 @@ public class Events {
   public static final EventHandler<MouseEvent> mouseGridDraggedEventHandler = event -> {
     if (event.getButton() == MouseButton.SECONDARY) {
       Pane movablePane = app.getMovablePane();
-
       logger.debug("Pane in scene : {}", movablePane.localToScene(0, 0));
+
       double dx = event.getSceneX() - dragStartX;
       double dy = event.getSceneY() - dragStartY;
       movablePane.setTranslateX(movablePane.getTranslateX() + dx);
@@ -255,16 +264,17 @@ public class Events {
       case DRAWING          -> app.getOptionalDotGrid().getDiagram().drawKnot(x, y);
       case SELECTION        -> app.getMainWindow().onClickWithSelectionMode(app);
       case DELETION         -> app.getMainWindow().onClickWithDeletionMode(app, app.getOptionalDotGrid().getDiagram()) ;
-      case DUPLICATION      -> { }
-      case CREATE_PATTERN   -> { /* This is managed in CreatePatternButton*/ }
-      case MIRROR           -> { /* This is managed in CreatePatternButton */ }
+      case DUPLICATION      -> { /* This is managed in DuplicationButton */ }
+      case CREATE_PATTERN   -> { /* This is managed in CreatePatternButton */ }
+      case MIRROR           -> { /* This is managed in [Horizontal|Vertical]FlippingButton */ }
       case MOVE             -> { /* This is managed in the various [Arrow]Button */ }
-      case DRAG_AND_DROP    -> { /* This is managed in Events#dragInitiatedOverOnHandle()*/ }
+      case DRAG_AND_DROP    -> { /* This is managed in Events#dragInitiatedOverOnHandle() */ }
       default -> throw new IllegalArgumentException("Please provide a valid mode, not: " +
         app.getOptionalDotGrid().getDiagram().getCurrentMode());
     }
   }
 
+  private static Rectangle rectangle;
   public static final EventHandler<MouseEvent> gridHoverEventHandler = mouseEvent -> {
     logger.debug("MouseEvent: X= {}, Y= {}", mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
@@ -274,10 +284,10 @@ public class Events {
       List<Knot> allKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots());
       boolean isMouseOverAGivenKnot = false;
 
-    for (Knot knot : allKnots) {
-      // If a knot is already selected, we must still hover over it because we may want to unselect it afterwards
-      // But if it's already hovered over, we shall not hover it again
-      isMouseOverAGivenKnot = new NodeUtil().isMouseOverKnot(knot);
+      for (Knot knot : allKnots) {
+        // If a knot is already selected, we must still hover over it because we may want to unselect it afterwards
+        // But if it's already hovered over, we shall not hover it again
+        isMouseOverAGivenKnot = new NodeUtil().isMouseOverKnot(knot);
 
         if (isMouseOverAGivenKnot) {
           // We can have only one hovered over knot at once
@@ -287,12 +297,69 @@ public class Events {
       }
 
       app.getOptionalDotGrid().drawHoveredOverOrSelectedDecorations(allKnots);
+    } else if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.DRAWING) {
+      if (PatternOrTextMode.PATTERN == app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get()) {
+        if (null != currentImageView) {
+          app.getMovablePane().getChildren().remove(currentImageView);
+        }
+        if (null == currentImageView
+                || !app.getOptionalDotGrid().getCurrentPatternProperty().get().equals(currentPattern)) {
+          currentPattern = app.getOptionalDotGrid().getCurrentPatternProperty().get();
+          currentImageView = new ImageView(
+                  new Image(
+                          new File(app.getOptionalDotGrid().getCurrentPatternProperty().get().getAbsoluteFilename())
+                                  .toURI().toString()
+                  )
+          );
+        }
+
+        Point2D mouseInParent = app.getMovablePane().sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+        Double x = mouseInParent.getX();
+        Double y = mouseInParent.getY();
+        currentImageView.setLayoutX(x);
+        currentImageView.setLayoutY(y);
+        app.getMovablePane().getChildren().add(currentImageView);
+      } else {
+        if (null != rectangle) {
+          app.getMovablePane().getChildren().remove(rectangle);
+        }
+
+        Point2D mouseInParent = app.getMovablePane().sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+        Double x = mouseInParent.getX();
+        Double y = mouseInParent.getY();
+
+        rectangle = new Rectangle(
+                25,
+                40
+        );
+        rectangle.setLayoutX(x);
+        rectangle.setLayoutY(y);
+        rectangle.setStroke(Color.BLUE);
+        rectangle.setStrokeWidth(2d);
+        rectangle.setFill(Color.TRANSPARENT);
+
+        app.getMovablePane().getChildren().add(rectangle);
+      }
+    }
+  };
+
+  public static final EventHandler<MouseEvent> gridHoverExitEventHandler = mouseEvent -> {
+    if (null != currentImageView) {
+      app.getMovablePane().getChildren().remove(currentImageView);
+    }
+    if (null != rectangle) {
+      app.getMovablePane().getChildren().remove(rectangle);
     }
   };
 
   public static EventHandler<MouseEvent> getGridHoverEventHandler(App app) {
     Events.app = app;
     return gridHoverEventHandler;
+  }
+
+  public static EventHandler<MouseEvent> getGridHoverExitEventHandler(App app) {
+    Events.app = app;
+    return gridHoverExitEventHandler;
   }
 
   public static EventHandler<MouseEvent> getMouseClickEventHandler(App app) {
@@ -331,6 +398,10 @@ public class Events {
     app.getOptionalDotGrid().clearCreatePatternRectangle();
     app.getMovablePane().setOnMouseMoved(null);
     app.getMovablePane().setOnMouseClicked(null);
+  }
+
+  public static void setCurrentImageView(ImageView currentImageView) {
+    Events.currentImageView = currentImageView;
   }
 
 }

@@ -131,7 +131,7 @@ public class AdaLovesLaceMenuBar {
 
             ToolboxWindow.restartApp();
         } );
-        frenchItem.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN));
+        frenchItem.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN));
 
         MenuItem englishItem = new MenuItem(ENGLISH);
         englishItem.setOnAction(_ -> {
@@ -144,7 +144,7 @@ public class AdaLovesLaceMenuBar {
 
             ToolboxWindow.restartApp();
         });
-        englishItem.setAccelerator(new KeyCodeCombination(KeyCode.U, KeyCombination.CONTROL_DOWN));
+        englishItem.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN));
 
         fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, exportImageItem, separator1, quitItem);
         editMenu.getItems().addAll(undoKnotItem, redoKnotItem, separator2, resetDiagramItem);

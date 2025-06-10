@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view.component;
+package org.alienlabs.adaloveslace.view.component.grid;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -14,7 +14,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -27,6 +26,8 @@ import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
 import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
+import org.alienlabs.adaloveslace.view.component.GridUtil;
+import org.alienlabs.adaloveslace.view.component.GuideLinesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,19 +42,16 @@ import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
  */
 public class OptionalDotGrid extends Pane {
 
-  private static final double RADIUS    = 0.5d; // The dots are ellipses, this is their radius
   public static final Color BLUE_HANDLE = Color.rgb(0, 0, 255, 0.5);
   double GRID_WIDTH                     = 1400d;
   double GRID_HEIGHT                    = 600d;
 
+  private final App app;
   private boolean showHideGrid = true;
-  private boolean gridNeedsToBeRedrawn;
-  private double desiredRadius;
   private Diagram diagram;
 
-  private final List<Shape> grid = new ArrayList<>();
   private final Pane root;
-  private final App app;
+  private final Pane gridPane;
 
   public static final PauseTransition moveKnotPause = new PauseTransition(Duration.millis(750));
 
@@ -73,12 +71,17 @@ public class OptionalDotGrid extends Pane {
   public OptionalDotGrid(App app, Diagram diagram, Pane root) {
     this.app = app;
     this.root = root;
+    this.root.toFront();
     this.diagram = Objects.requireNonNullElseGet(diagram, () -> new Diagram(app));
-    this.gridUtil = new GridUtil(root);
 
-    this.root.getStyleClass().add("grid");
-    this.root.setBackground(null);
-    this.desiredRadius = RADIUS;
+    this.gridPane = new Pane();
+    this.gridPane.toBack();
+    this.gridPane.getStyleClass().add("grid");
+    this.gridPane.setBackground(null);
+
+    this.root.getChildren().add(this.gridPane);
+    this.gridUtil = new GridUtil(this.root);
+
 
     if (!this.diagram.getPatterns().isEmpty()) {
       this.diagram.setCurrentPattern(this.diagram.getPatterns().stream().findFirst().get());
@@ -89,6 +92,7 @@ public class OptionalDotGrid extends Pane {
 
     currentPatternProperty.addListener(observable -> this.diagram.setCurrentPattern(currentPatternProperty.getValue()));
     currentPatternOrTextModeProperty = new SimpleObjectProperty<>(PatternOrTextMode.PATTERN);
+
     showHideGridProperty = new SimpleBooleanProperty(this.showHideGrid);
     showHideGridProperty.addListener(observable -> {
       this.showHideGrid = showHideGridProperty.getValue();
@@ -110,24 +114,18 @@ public class OptionalDotGrid extends Pane {
       newStep(displayedKnots, copiedKnots, true);
       app.getOptionalDotGrid().getDiagram().setCurrentMode(app.getOptionalDotGrid().getDiagram().getOldMode());
     });
-
-    this.gridNeedsToBeRedrawn = true;
   }
 
-  public OptionalDotGrid(App app, double width, double height, double desiredRadius, Diagram diagram, Pane root) {
+  public OptionalDotGrid(App app, double width, double height, Diagram diagram, Pane root) {
     this(app, diagram, root);
     GRID_WIDTH = width;
     GRID_HEIGHT = height;
-    this.desiredRadius = desiredRadius;
   }
 
   @Override
   public void layoutChildren() {
     drawDiagram();
-
-    if (this.gridNeedsToBeRedrawn) {
-      drawGrid();
-    }
+    app.getGridStrategy().drawGrid();
   }
 
   private void drawDiagram() {
@@ -403,34 +401,6 @@ public class OptionalDotGrid extends Pane {
     return knot.getImageView();
   }
 
-  public void drawGrid() {
-    this.root.setPrefWidth(app.getPrimaryStage().getWidth());
-    this.root.setPrefHeight(app.getPrimaryStage().getHeight());
-
-    double width = app.getMaxWidth();
-    double height = app.getMaxHeight();
-
-    logger.debug("grid width: {}, height: {}", width, height);
-
-    if (this.showHideGrid && this.gridNeedsToBeRedrawn) {
-      this.diagram.drawGrid(width, height, desiredRadius, grid);
-    } else {
-      hideGrid();
-    }
-
-    this.gridNeedsToBeRedrawn = false;
-  }
-
-  public void hideGrid() {
-    for (Shape shape : grid) {
-      root.getChildren().remove(shape);
-    }
-  }
-
-  public void setGridNeedsToBeRedrawn(boolean gridNeedsToBeRedrawn) {
-    this.gridNeedsToBeRedrawn = gridNeedsToBeRedrawn;
-  }
-
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
           value = "EI_EXPOSE_REP",
           justification = "A JavaFX property is meant to be modified from the outside")
@@ -466,6 +436,10 @@ public class OptionalDotGrid extends Pane {
 
   public void setShowHideGrid(boolean showHideGrid) {
     this.showHideGrid = showHideGrid;
+  }
+
+  public Pane getGridPane() {
+    return this.gridPane;
   }
 
 }

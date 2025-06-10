@@ -27,7 +27,8 @@ import org.alienlabs.adaloveslace.util.KeyboardUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.component.AdaLovesLaceMenuBar;
-import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.alienlabs.adaloveslace.view.window.StateWindow;
@@ -92,6 +93,7 @@ public class App extends Application {
   public static final String DEFAULT_LOCALE_COUNTRY   = "FR";
   public static final Duration TOOLTIPS_DURATION      = Duration.seconds(60);
   public static final double INITIAL_GRID_ZOOM_FACTOR = 1d;
+  private ParentGridStrategy gridStrategy;
 
   public static ResourceBundle resourceBundle = ResourceBundle.getBundle(
           ADA_LOVES_LACE,
@@ -140,7 +142,7 @@ public class App extends Application {
     }
 
     logger.debug("Starting app: opening main window");
-    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS, primaryStage, diagram);
+    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, primaryStage, diagram);
 
     logger.debug("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
@@ -159,7 +161,7 @@ public class App extends Application {
   }
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
-                             double gridDotsRadius, Stage primaryStage, Diagram diagram) {
+                             Stage primaryStage, Diagram diagram) {
     BorderPane root;
     App.mainWindow = new MainWindow();
     this.diagram = diagram;
@@ -170,7 +172,7 @@ public class App extends Application {
     movablePane               = new Pane();
     movablePane.getStyleClass().add("grid");
 
-    StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, gridDotsRadius, this.diagram, movablePane);
+    StackPane grid            = mainWindow.createGrid(this, gridWidth, gridHeight, this.diagram, movablePane);
 
     root                      = new BorderPane();
     root.getStyleClass().add("grid");
@@ -233,7 +235,7 @@ public class App extends Application {
 
   private void onDoResize() {
     resizePause.setOnFinished(e -> {
-      this.getOptionalDotGrid().setGridNeedsToBeRedrawn(true);
+      ParentGridStrategy.setGridHasBeenDrawn(false);
       this.getOptionalDotGrid().layoutChildren();
     });
   }
@@ -447,6 +449,14 @@ public class App extends Application {
 
   public double getMaxWidth() {
     return this.maxWidth;
+  }
+
+  public ParentGridStrategy getGridStrategy() {
+    return this.gridStrategy;
+  }
+
+  public void setGridStrategy(ParentGridStrategy gridStrategy) {
+    this.gridStrategy = gridStrategy;
   }
 
   public static void setResourceBundle(ResourceBundle resourceBundle) {

@@ -149,3 +149,7 @@
   -fx-background-color: #4f6d7a;
   -fx-text-fill: white;
 }
+
+.dialog-pane .header-panel {
+    -fx-background-color: #2b2b2b;
+}
