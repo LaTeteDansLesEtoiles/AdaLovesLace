@@ -38,9 +38,9 @@ public class KeyboardUtil {
                     () -> LeftButton.onMoveKnotLeftAction   (app));
             app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT),
                     () -> RightButton.onMoveKnotRightAction (app));
-            app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN),
+            app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN),
                     () -> SelectableButton.onSetSelectableModeAction(app));
-            app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN),
+            app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN),
                     () -> UnselectableButton.onSetUnselectableModeAction(app));
             app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN),
                     () -> VisibleButton.onSetVisibleAction   (app));
