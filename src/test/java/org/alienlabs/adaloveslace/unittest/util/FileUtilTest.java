@@ -77,7 +77,7 @@ class FileUtilTest {
     @Test
     void saved_dot_lace_file_should_contain_a_pattern_file() {
         // When
-        File fileToCheck = fileUtil.saveFile(new File(APP_FOLDER_IN_USER_HOME, "1.lace"), diagramToSave, 2);
+        File fileToCheck = fileUtil.saveFile(new File(APP_FOLDER_IN_USER_HOME, "1.lace"), diagramToSave);
 
         // Then
         try (ZipFile zf = new ZipFile(fileToCheck)){
@@ -95,7 +95,7 @@ class FileUtilTest {
     void saved_dot_lace_file_should_contain_an_xml_file() {
         // When
         app.setOptionalDotGrid(null);
-        File fileToCheck = fileUtil.saveFile(dotLaceFile, diagramToSave, 2);
+        File fileToCheck = fileUtil.saveFile(dotLaceFile, diagramToSave);
 
         // Then
         try (ZipFile zf  = new ZipFile(fileToCheck)) {
@@ -116,7 +116,7 @@ class FileUtilTest {
     @Test
     void saved_xml_file_should_contain_a_pattern_and_a_current_index() {
         // When
-        File fileToCheck = fileUtil.saveFile(dotLaceFile, diagramToSave, 5);
+        File fileToCheck = fileUtil.saveFile(dotLaceFile, diagramToSave);
 
         // Then
         ZipFile zf = null;

@@ -32,6 +32,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.business.model.Step.MAX_NUMBER_OF_STEPS_IN_LACE_FILE;
 
 public class FileUtil {
 
@@ -245,13 +246,21 @@ public class FileUtil {
         }
     }
 
-    public File saveFile(File file, Diagram diagram, Integer currentStepIndex) {
+    public File saveFile(File file, Diagram diagram) {
         if (this.app != null && app.getMainWindow() != null && this.app.getOptionalDotGrid() != null) {
             this.app.getOptionalDotGrid().layoutChildren();
         }
 
         try {
-            marshallLaceFile(file, diagram, currentStepIndex);
+            diagram.getCurrentStep().clearStepsGreaterThanPresentStepPlusLimit(diagram);
+            marshallLaceFile(
+                    file,
+                    diagram,
+                    Math.min(
+                            MAX_NUMBER_OF_STEPS_IN_LACE_FILE,
+                            diagram.getAllSteps().size()
+                    )
+            );
         } catch (JAXBException e) {
             logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
         } catch (CompletionException e) {

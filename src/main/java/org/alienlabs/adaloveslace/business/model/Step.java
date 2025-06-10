@@ -34,6 +34,9 @@ public class Step implements Comparable<Step> {
     @XmlTransient
     private static final int MAX_NUMBER_OF_STEPS = 1000;
 
+    @XmlTransient
+    public static final int MAX_NUMBER_OF_STEPS_IN_LACE_FILE = 10;
+
     // For JAXB
     public Step() {
         this.stepIndex = 0;
@@ -70,6 +73,24 @@ public class Step implements Comparable<Step> {
         // For testability
         if (layoutChildren) {
             app.getOptionalDotGrid().layoutChildren();
+        }
+    }
+
+    public void clearStepsGreaterThanPresentStepPlusLimit(Diagram diagram) {
+        List<Step> stepsToKeep = new ArrayList<>(diagram.getAllSteps().stream()
+                .filter(step1 -> ((
+                        step1.getStepIndex() <= diagram.getCurrentStepIndex()) &&
+                        step1.getStepIndex() >= diagram.getCurrentStepIndex() - MAX_NUMBER_OF_STEPS_IN_LACE_FILE)
+                )
+                .toList());
+        diagram.getAllSteps().clear();
+        diagram.setAllSteps(stepsToKeep);
+
+        for (int index = 0;
+             index <= Math.min(MAX_NUMBER_OF_STEPS_IN_LACE_FILE, stepsToKeep.size() - 1);
+             index++
+        ) {
+            diagram.getAllSteps().get(index).setStepIndex(index);
         }
     }
 

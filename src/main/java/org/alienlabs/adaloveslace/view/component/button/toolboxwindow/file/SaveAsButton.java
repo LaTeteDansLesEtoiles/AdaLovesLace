@@ -72,8 +72,7 @@ public class SaveAsButton extends ImageButton {
 
         new FileUtil(app).saveFile(
                 file,
-                app.getOptionalDotGrid().getDiagram(),
-                app.getOptionalDotGrid().getDiagram().getCurrentStepIndex()
+                app.getOptionalDotGrid().getDiagram()
         );
       }
     }

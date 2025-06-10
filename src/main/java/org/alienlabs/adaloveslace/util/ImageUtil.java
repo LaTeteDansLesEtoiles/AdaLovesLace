@@ -88,8 +88,7 @@ public class ImageUtil {
                                 laceFilePath,
                                 new Diagram(app.getOptionalDotGrid().getDiagram(),
                                         app
-                                ),
-                                app.getOptionalDotGrid().getDiagram().getCurrentStepIndex()
+                                )
                         ).toPath())).
                 diagramContentType(LACE_FILE_MIME_TYPE).
                 username(username).
