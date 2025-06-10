@@ -43,7 +43,7 @@ public class DuplicationButton extends ToggleButton {
 
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-    List<Knot> selectedKnotsCopy = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    List<Knot> selectedKnotsCopy = new ArrayList<>();
 
     for (Knot knot : selectedKnots) {
       Knot copiedKnot = new NodeUtil().copyKnotCloningImageView(knot);
@@ -52,7 +52,7 @@ public class DuplicationButton extends ToggleButton {
       copiedKnot.getImageView().setLayoutX(knot.getX() + (NEW_KNOT_GAP * selectedKnots.size()));
       copiedKnot.getImageView().setLayoutY(knot.getY() + (NEW_KNOT_GAP * selectedKnots.size()));
 
-      displayedKnots.remove(knot);
+      displayedKnots.add(knot);
       displayedKnots.remove(copiedKnot);
 
       selectedKnotsCopy.add(copiedKnot);
