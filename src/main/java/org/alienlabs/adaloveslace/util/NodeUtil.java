@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.util;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 
 import static org.alienlabs.adaloveslace.util.Events.app;
@@ -63,4 +64,13 @@ public class NodeUtil {
       copy.setHandle(knot.getHandle());
     }
   }
+
+  public void clearTechnicalElements(App app) {
+    app.getOptionalDotGrid().clearSelections();
+    app.getOptionalDotGrid().clearAllGuideLines();
+    app.getOptionalDotGrid().clearHovered();
+    app.getOptionalDotGrid().clearHandles();
+    app.getOptionalDotGrid().layoutChildren();
+  }
+
 }

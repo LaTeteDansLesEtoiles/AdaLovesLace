@@ -213,10 +213,7 @@ public class ImageUtil {
 
     private void manageTechnicalElementsFromRootGroup(boolean showElements, boolean showGrid) {
         if (!showElements) {
-            app.getOptionalDotGrid().clearSelections();
-            app.getOptionalDotGrid().clearAllGuideLines();
-            app.getOptionalDotGrid().clearHovered();
-            app.getOptionalDotGrid().clearHandles();
+            new NodeUtil().clearTechnicalElements(app);
         }
 
         if (showGrid) {

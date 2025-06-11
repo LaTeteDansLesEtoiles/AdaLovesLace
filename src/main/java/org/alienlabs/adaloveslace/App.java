@@ -22,10 +22,7 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
-import org.alienlabs.adaloveslace.util.FileUtil;
-import org.alienlabs.adaloveslace.util.KeyboardUtil;
-import org.alienlabs.adaloveslace.util.Preferences;
-import org.alienlabs.adaloveslace.util.SystemInfo;
+import org.alienlabs.adaloveslace.util.*;
 import org.alienlabs.adaloveslace.view.component.AdaLovesLaceMenuBar;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
@@ -115,7 +112,6 @@ public class App extends Application {
   private StateWindow stateWindow;
   private static ToolboxWindow toolboxWindow;
 
-
   private Pane movablePane;
   private Stage primaryStage;
   private double maxHeight = GRID_HEIGHT;
@@ -156,6 +152,7 @@ public class App extends Application {
 
     if (!filePath.isEmpty()) {
       new FileUtil().buildUiFromLaceFile(this, new File(filePath));
+      new NodeUtil().clearTechnicalElements(this);
     }
 
     this.getPrimaryStage().requestFocus();
