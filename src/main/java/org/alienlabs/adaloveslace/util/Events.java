@@ -54,12 +54,17 @@ public class Events {
             app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.SELECTION) {
       logger.debug("key pressed -> {}", event.getCode());
 
+      if ((app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size() > 1) ||
+              (app.getOptionalDotGrid().getDiagram().getCurrentKnot() != null &&
+                      app.getOptionalDotGrid().getDiagram().getCurrentKnot().getPattern().isPresent())) {
+        return;
+      }
+
+      isNewText = false;
+
       StringBuilder typedText = app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText();
       if (typedText == null) {
         typedText = new StringBuilder(NEW_TEXT);
-        isNewText = true;
-      }  else {
-        isNewText = false;
       }
 
       switch (event.getCode()) {
@@ -242,7 +247,11 @@ public class Events {
     }
 
     app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(copiedKnots);
-    app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnots.getLast());
+
+    if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size() == 1) {
+      app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnots.getLast());
+    }
+
     app.getOptionalDotGrid().layoutChildren();
 
     logger.debug("Event type: {}, X: {}, Y: {}", event.getEventType(), event.getX(), event.getY());

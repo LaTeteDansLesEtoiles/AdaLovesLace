@@ -41,6 +41,7 @@ public class ZoomSpinner {
           copiedKnots.add(copiedKnot);
         }
 
+        app.getOptionalDotGrid().getDiagram().setCurrentKnot(selectedKnots.getLast());
         newStep(displayedKnots, copiedKnots, true);
       }
 

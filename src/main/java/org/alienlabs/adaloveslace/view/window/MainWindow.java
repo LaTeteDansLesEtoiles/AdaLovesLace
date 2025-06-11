@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.business.model.Diagram.isNewText;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
 
@@ -143,10 +142,12 @@ public class MainWindow {
           selectedKnots.clear();
           selectedKnots.add(copiedKnot);
 
+          List<Knot> selectedKnotsOfStep = new ArrayList<>();
+          selectedKnotsOfStep.add(copiedKnot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           if (!NEW_TEXT.toString().contentEquals(copiedKnot.getText().get())) {
             copiedKnot.setTypedText(new StringBuilder(copiedKnot.getText().get()));
-            isNewText = true;
           }
 
           newStep(displayedKnots, selectedKnots, true);
@@ -155,6 +156,9 @@ public class MainWindow {
           selectedKnots.add(copiedKnot);
           displayedKnots.remove(knot);
 
+          List<Knot> selectedKnotsOfStep = new ArrayList<>();
+          selectedKnotsOfStep.add(copiedKnot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
@@ -177,10 +181,12 @@ public class MainWindow {
           selectedKnots.add(copiedKnot);
           displayedKnots.remove(knot);
 
+          List<Knot> selectedKnotsOfStep = new ArrayList<>();
+          selectedKnotsOfStep.add(copiedKnot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           if (!NEW_TEXT.toString().contentEquals(copiedKnot.getText().get())) {
             copiedKnot.setTypedText(new StringBuilder(copiedKnot.getText().get()));
-            isNewText = true;
           }
 
           hideHandlesForNotSelectedKnots(app, displayedKnots);
@@ -194,6 +200,9 @@ public class MainWindow {
           displayedKnots.remove(knot);
           displayedKnots.add(copiedKnot);
 
+          List<Knot> selectedKnotsOfStep = new ArrayList<>();
+          selectedKnotsOfStep.add(copiedKnot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
