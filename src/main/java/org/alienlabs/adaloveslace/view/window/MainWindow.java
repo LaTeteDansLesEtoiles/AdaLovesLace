@@ -25,7 +25,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.alienlabs.adaloveslace.App.resourceBundle;
+import static org.alienlabs.adaloveslace.business.model.Diagram.isNewText;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
+import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
 
 public class MainWindow {
 
@@ -142,6 +144,11 @@ public class MainWindow {
           selectedKnots.add(copiedKnot);
 
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          if (!NEW_TEXT.toString().contentEquals(copiedKnot.getText().get())) {
+            copiedKnot.setTypedText(new StringBuilder(copiedKnot.getText().get()));
+            isNewText = true;
+          }
+
           newStep(displayedKnots, selectedKnots, true);
         } else {
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
@@ -171,6 +178,11 @@ public class MainWindow {
           displayedKnots.remove(knot);
 
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          if (!NEW_TEXT.toString().contentEquals(copiedKnot.getText().get())) {
+            copiedKnot.setTypedText(new StringBuilder(copiedKnot.getText().get()));
+            isNewText = true;
+          }
+
           hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
 

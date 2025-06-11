@@ -24,7 +24,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static org.alienlabs.adaloveslace.business.model.Diagram.isNewText;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.MOUSE_CLICKED;
@@ -53,6 +55,12 @@ public class Events {
       logger.debug("key pressed -> {}", event.getCode());
 
       StringBuilder typedText = app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText();
+      if (typedText == null) {
+        typedText = new StringBuilder(NEW_TEXT);
+        isNewText = true;
+      }  else {
+        isNewText = false;
+      }
 
       switch (event.getCode()) {
         case BACK_SPACE:
@@ -75,6 +83,7 @@ public class Events {
           if (!event.isControlDown() && !event.getText().isEmpty()) {
             typedText.append(event.getText());
             app.getOptionalDotGrid().getDiagram().getCurrentKnot().setTypedText(typedText);
+            app.getOptionalDotGrid().getDiagram().getCurrentKnot().setText(Optional.of(typedText.toString()));
             app.getOptionalDotGrid().getDiagram().getUpdateImage().run();
           }
       }
@@ -233,6 +242,7 @@ public class Events {
     }
 
     app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(copiedKnots);
+    app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnots.getLast());
     app.getOptionalDotGrid().layoutChildren();
 
     logger.debug("Event type: {}, X: {}, Y: {}", event.getEventType(), event.getX(), event.getY());

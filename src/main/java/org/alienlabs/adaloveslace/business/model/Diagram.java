@@ -355,6 +355,7 @@ public class Diagram {
                 ? null
                 : this.getCurrentKnot();
 
+        boolean textMode = (pattern == null);
 
         if (null == imageView) {
             imageView = new ImageView();
@@ -366,8 +367,8 @@ public class Diagram {
             text.setText(getCurrentKnot() == null ? NEW_TEXT.toString() : getCurrentKnot().getTypedText().toString());
             text.setFont(new Font(CANVAS_TEXT_FONT_SIZE));
             text.setFill(Color.BLACK);
-            text.setLayoutX(x);
-            text.setLayoutY(y);
+            text.setLayoutX(getCurrentKnot() == null ? x : getCurrentKnot().getX());
+            text.setLayoutY(getCurrentKnot() == null ? y : getCurrentKnot().getY());
 
             WritableImage s = text.snapshot(params, null);
             imageView.setImage(s);
@@ -385,8 +386,11 @@ public class Diagram {
         if (isNewText && currentKnot.getPattern().isEmpty()) {
             currentKnot.setTextId(UUID.randomUUID());
         } else if (currentKnot.getPattern().isEmpty()) {
-            currentKnot.setTextId(oldCurrentKnot.getTextId());
-            currentKnot.setTypedText(oldCurrentKnot.getTypedText());
+            if (oldCurrentKnot != null && oldCurrentKnot.getTextId() == null) {
+                currentKnot.setTextId(UUID.randomUUID());
+            } else {
+                currentKnot.setTextId(oldCurrentKnot.getTextId());
+            }
         }
 
         if (currentKnot.getPattern().isEmpty()) {
@@ -394,6 +398,7 @@ public class Diagram {
             currentKnot.setZoomFactor(oldCurrentKnot == null ? DEFAULT_ZOOM : oldCurrentKnot.getZoomFactor());
         }
 
+        currentKnot.setTypedText(oldCurrentKnot == null ? null : oldCurrentKnot.getTypedText());
         this.setCurrentKnot(currentKnot);
         currentKnot.setSelection(new GridUtil(app.getMovablePane()).newRectangle(currentKnot, Color.BLUE));
 
@@ -405,30 +410,27 @@ public class Diagram {
 
         putAllEventsOnKnot(app, currentKnot);
 
-        if (null != oldCurrentKnot &&
-                ((oldCurrentKnot.getPattern().isPresent() &&
-                        isNewText) ||
-                        (oldCurrentKnot.getPattern().isEmpty() && !isNewText))) {
+        if (null != oldCurrentKnot && textMode) {
             app.getMovablePane().getChildren().remove(oldCurrentKnot.getImageView());
         }
 
 
         List<Knot> displayedKnots = new ArrayList<>(this.getCurrentStep().getDisplayedKnots());
+        List<Knot> selectedKnots = new ArrayList<>();
         displayedKnots.addAll(
                 this.getCurrentStep().getSelectedKnots().stream().filter(
                                 knot -> (
                                         (!displayedKnots.contains(knot) && knot.getPattern().isPresent())
-                                                || (currentKnot.getTextId() == null)
-                                                || (knot.getTextId() != null
-                                                    && currentKnot.getTextId() != null
-                                                    && !currentKnot.getTextId().equals(knot.getTextId())))
+                                                || (!textMode && knot.getPattern().isEmpty())
+                                )
                         )
                         .toList()
         );
 
-        List<Knot> selectedKnots = new ArrayList<>();
+        if (currentKnot.getPattern().isEmpty() && null != currentKnot.getTypedText()) {
+            currentKnot.setText(Optional.of(currentKnot.getTypedText().toString()));
+        }
         selectedKnots.add(currentKnot);
-
         isNewText = false;
 
         newStep(
@@ -450,6 +452,8 @@ public class Diagram {
         app.getGeometryWindow().getDeletionButton()     .setSelected(false);
         app.getGeometryWindow().getDuplicationButton()  .setSelected(false);
 
+        app.getOptionalDotGrid().getDiagram().setCurrentKnot(null);
+        isNewText = true;
         getUpdateImage().run();
     }
 

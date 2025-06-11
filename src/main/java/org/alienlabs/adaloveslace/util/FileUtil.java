@@ -32,7 +32,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import static org.alienlabs.adaloveslace.App.*;
-import static org.alienlabs.adaloveslace.business.model.Step.MAX_NUMBER_OF_STEPS_IN_LACE_FILE;
 
 public class FileUtil {
 
@@ -256,10 +255,7 @@ public class FileUtil {
             marshallLaceFile(
                     file,
                     diagram,
-                    Math.min(
-                            MAX_NUMBER_OF_STEPS_IN_LACE_FILE,
-                            diagram.getAllSteps().size()
-                    )
+                    diagram.getAllSteps().size()
             );
         } catch (JAXBException e) {
             logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
