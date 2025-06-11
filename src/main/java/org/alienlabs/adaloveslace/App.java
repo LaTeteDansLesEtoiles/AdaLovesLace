@@ -103,7 +103,6 @@ public class App extends Application {
 
   private final PauseTransition resizePause = new PauseTransition(Duration.millis(600));
   private final Map<KeyCode, Boolean> currentlyActiveKeys = new EnumMap<>(KeyCode.class);
-  private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   private Stage toolboxStage;
   private Diagram diagram;
@@ -121,6 +120,8 @@ public class App extends Application {
   private Stage primaryStage;
   private double maxHeight = GRID_HEIGHT;
   private double maxWidth = GRID_WIDTH;
+
+  private static final Logger logger = LoggerFactory.getLogger(App.class);
 
   @Override
   public void start(Stage primaryStage) {
