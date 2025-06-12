@@ -15,14 +15,12 @@ import java.util.List;
 
 public class ParentGridStrategy {
 
-    public static List<Shape> grid = new ArrayList<>();
-
-    private static  App app;
     public static Pane gridPane;
-    private static boolean gridHasBeenDrawn = false;
-
+    public static List<Shape> grid = new ArrayList<>();
     private GridType currentGridType = GridType.STAGGERED;
     private final EnumMap<GridType, IDotGridStrategy> childStrategies = new EnumMap<>(GridType.class);
+    private static  App app;
+    private static boolean gridHasBeenDrawn = false;
 
     public ParentGridStrategy(App app, Pane gridPane) {
         ParentGridStrategy.app = app;
@@ -39,8 +37,8 @@ public class ParentGridStrategy {
             ParentGridStrategy.gridPane.setPrefWidth(app.getPrimaryStage().getWidth());
             ParentGridStrategy.gridPane.setPrefHeight(app.getPrimaryStage().getHeight());
 
-            double width = ParentGridStrategy.app.getMaxWidth();
-            double height = ParentGridStrategy.app.getMaxHeight();
+            double width = ParentGridStrategy.app.getGridWidth();
+            double height = ParentGridStrategy.app.getGridHeight();
 
             IDotGridStrategy childStrategy = childStrategies.get(currentGridType);
             childStrategy.setViewPort(width, height);

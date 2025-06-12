@@ -92,7 +92,6 @@ public class CreatePatternWindow {
   private GridPane buildGridPane() {
     GridPane gridPane = new GridPane();
     gridPane.setPrefWidth(CREATE_PATTERN_WINDOW_WIDTH);
-    gridPane.setMaxWidth(Double.MAX_VALUE);
 
     try {
       Image preview = new Image(new File(this.previewFile.getAbsolutePath()).toURI().toURL().toExternalForm());

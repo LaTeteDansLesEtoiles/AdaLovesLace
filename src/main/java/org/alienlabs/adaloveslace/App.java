@@ -59,7 +59,7 @@ public class App extends Application {
   public static final String STATE_TITLE              = "State";
   public static final String LACE_FILE_EXTENSION      = ".lace";
   public static final String LACE_FILE_MIME_TYPE      = "application/lace";
-  public static final String ADA_LOVES_LACE_WEB       = "http://192.168.1.100:18082";
+  public static final String ADA_LOVES_LACE_WEB       = "https://app.adaloveslace.top";
   public static final String ADA_LOVES_LACE_WEB_SHARE_ENDPOINT       = "/api/diagrams/upload-diagram";
   public static final String EXPORT_IMAGE_FILE_FORMAT = "png";
 
@@ -114,8 +114,8 @@ public class App extends Application {
 
   private Pane movablePane;
   private Stage primaryStage;
-  private double maxHeight = GRID_HEIGHT;
-  private double maxWidth = GRID_WIDTH;
+  private double gridHeight = GRID_HEIGHT;
+  private double gridWidth = GRID_WIDTH;
 
   private static final Logger logger = LoggerFactory.getLogger(App.class);
 
@@ -216,7 +216,7 @@ public class App extends Application {
             {
               logger.debug(s, newVal);
               resizePause.playFromStart();
-              this.maxHeight = Math.max((double) newVal, this.maxHeight);
+              this.gridHeight = (double) newVal;
             }
     );
   }
@@ -226,7 +226,7 @@ public class App extends Application {
             {
               logger.debug(s, newVal);
               resizePause.playFromStart();
-              this.maxWidth = Math.max((double) newVal, this.maxWidth);
+              this.gridWidth = (double) newVal;
             }
     );
   }
@@ -441,12 +441,12 @@ public class App extends Application {
     return this.stateStage;
   }
 
-  public double getMaxHeight() {
-    return this.maxHeight;
+  public double getGridHeight() {
+    return this.gridHeight;
   }
 
-  public double getMaxWidth() {
-    return this.maxWidth;
+  public double getGridWidth() {
+    return this.gridWidth;
   }
 
   public ParentGridStrategy getGridStrategy() {
