@@ -122,7 +122,6 @@ public class NodeUtil {
     app.getGeometryWindow().getDuplicationButton()  .setSelected(false);
 
     app.getOptionalDotGrid().getDiagram().setCurrentKnot(null);
-    isNewText = true;
     diagram.getUpdateImage().run();
   }
 
