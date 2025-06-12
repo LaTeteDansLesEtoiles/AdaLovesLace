@@ -252,6 +252,8 @@ public class FileUtil {
 
         try {
             diagram.getCurrentStep().clearStepsGreaterThanPresentStepPlusLimit(diagram);
+            diagram.getCurrentStep().getDisplayedKnots().addAll(new ArrayList<>(diagram.getCurrentStep().getSelectedKnots()));
+            diagram.getCurrentStep().getSelectedKnots().clear();
             marshallLaceFile(
                     file,
                     diagram,
