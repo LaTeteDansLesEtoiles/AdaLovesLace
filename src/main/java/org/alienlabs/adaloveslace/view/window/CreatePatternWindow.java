@@ -20,7 +20,7 @@ import java.util.Optional;
 
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 import static javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE;
-import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 
 public class CreatePatternWindow {
@@ -53,8 +53,14 @@ public class CreatePatternWindow {
         app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_MOVED, CreatePatternButton.getMouseMovedListener());
         app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, CreatePatternButton.getMouseClickedListener());
         app.getPrimaryStage().close();
-        app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT,
-                app.getPrimaryStage(), app.getOptionalDotGrid().getDiagram());
+        app.showMainWindow(
+                app.getResizes().getMainWindowWidth(),
+                app.getResizes().getMainWindowHeight(),
+                app.getResizes().getGridWidth(),
+                app.getResizes().getGridHeight(),
+                app.getPrimaryStage(),
+                app.getOptionalDotGrid().getDiagram()
+        );
         app.getToolboxStage().close();
         app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
         app.getGeometryStage().close();

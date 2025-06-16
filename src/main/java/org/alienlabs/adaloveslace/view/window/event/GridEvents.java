@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.util;
+package org.alienlabs.adaloveslace.view.window.event;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -18,6 +18,7 @@ import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
+import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +32,9 @@ import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
 import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.MOUSE_CLICKED;
 
-public class Events {
+public class GridEvents {
 
-  static App app;
+  public static App app;
 
   private static ImageView currentImageView;
   private static Pattern currentPattern;
@@ -43,9 +44,9 @@ public class Events {
   private static double dragStartX;
   private static double dragStartY;
 
-  private static final Logger logger = LoggerFactory.getLogger(Events.class);
+  private static final Logger logger = LoggerFactory.getLogger(GridEvents.class);
 
-  private Events() {
+  private GridEvents() {
     // Not accessible on purpose since all the events are static
   }
 
@@ -173,7 +174,7 @@ public class Events {
     handleOffsetY = event.getSceneY() - handleCenterInScene.getY();
     previousEvent = null;
 
-    app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+    app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
     app.getOptionalDotGrid().getDiagram().setOldMode(app.getOptionalDotGrid().getDiagram().getCurrentMode());
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAG_AND_DROP);
 
@@ -243,7 +244,7 @@ public class Events {
       copiedKnot.getHovered().setLayoutY(copiedKnot.getY());
 
       copiedKnots.add(copiedKnot);
-      Events.logger.debug("Knot to move");
+      GridEvents.logger.debug("Knot to move");
     }
 
     app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(copiedKnots);
@@ -275,7 +276,7 @@ public class Events {
 
     event.consume();
     Platform.runLater(() ->
-            app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app)));
+            app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app)));
   };
 
   private static void processMouseClick(double x, double y) {
@@ -372,32 +373,32 @@ public class Events {
   };
 
   public static EventHandler<MouseEvent> getGridHoverEventHandler(App app) {
-    Events.app = app;
+    GridEvents.app = app;
     return gridHoverEventHandler;
   }
 
   public static EventHandler<MouseEvent> getGridHoverExitEventHandler(App app) {
-    Events.app = app;
+    GridEvents.app = app;
     return gridHoverExitEventHandler;
   }
 
   public static EventHandler<MouseEvent> getMouseClickEventHandler(App app) {
-    Events.app = app;
+    GridEvents.app = app;
     return mouseClickEventHandler;
   }
 
   public static EventHandler<MouseEvent> getMouseRightClickEventHandler(App app) {
-    Events.app = app;
+    GridEvents.app = app;
     return mouseRightClickEventHandler;
   }
 
   public static EventHandler<MouseEvent> getGridDraggedEventHandler(App app) {
-    Events.app = app;
+    GridEvents.app = app;
     return mouseGridDraggedEventHandler;
   }
 
   public static EventHandler<MouseEvent> getMouseDoubleRightClickOnGridEventHendler(App app) {
-    Events.app = app;
+    GridEvents.app = app;
     return mouseDoubleClickOnGridEventHendler;
   }
 
@@ -420,7 +421,7 @@ public class Events {
   }
 
   public static void setCurrentImageView(ImageView currentImageView) {
-    Events.currentImageView = currentImageView;
+    GridEvents.currentImageView = currentImageView;
   }
 
 }

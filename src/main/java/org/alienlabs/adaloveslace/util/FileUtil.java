@@ -17,6 +17,7 @@ import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.DrawingButton;
+import org.alienlabs.adaloveslace.view.window.event.WindowResizeEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,11 +76,17 @@ public class FileUtil {
 
     private static void preparePrimaryStage(App app, Diagram diagram) {
         app.getPrimaryStage().close();
-        app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT,
-            app.getPrimaryStage(), diagram);
+        app.showMainWindow(
+                app.getResizes().getMainWindowWidth(),
+                app.getResizes().getMainWindowHeight(),
+                app.getResizes().getGridWidth(),
+                app.getResizes().getGridHeight(),
+                app.getPrimaryStage(),
+                diagram
+        );
         app.getOptionalDotGrid().setDiagram(diagram);
         new KeyboardUtil().initializeKeyboardShorcuts(app);
-        app.onDoMainWindowResize();
+        new WindowResizeEvents(app).onDoMainWindowResize();
     }
 
     public Diagram loadFromLaceFile(App app, File file) {

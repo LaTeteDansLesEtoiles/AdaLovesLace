@@ -36,8 +36,9 @@ import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
 public class ToolboxWindow {
 
-    public static final double TOOLBOX_WINDOW_X                 = 600d;
-    public static final double TOOLBOX_WINDOW_WIDTH             = 550d;
+    public static final double DEFAULT_TOOLBOX_WINDOW_X         = 600d;
+    public static final double DEFAULT_TOOLBOX_WINDOW_Y         = DEFAULT_MAIN_WINDOW_Y;
+    public static final double DEFAULT_TOOLBOX_WINDOW_WIDTH     = 550d;
     public static final double MENU_BAR_Y                       = 0d;
 
     public static final String THE_FOLLOWING_FOLDER_STRING      = "The following folder: '";
@@ -228,7 +229,7 @@ public class ToolboxWindow {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
         VBox root = new VBox(scrollPane);
-        root.setPrefSize(TOOLBOX_WINDOW_WIDTH, computeWindowHeight(app));
+        root.setPrefSize(app.getResizes().getToolboxWindowWidth(), computeWindowHeight(app));
         root.getStyleClass().add("toolbox");
 
         buildPrintButtons(app, parent, posY);
@@ -236,9 +237,9 @@ public class ToolboxWindow {
         Scene toolboxScene = new Scene(root);
         toolboxScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 
-        toolboxStage.setX(TOOLBOX_WINDOW_X);
-        toolboxStage.setY(MAIN_WINDOW_Y);
-        toolboxStage.setWidth(TOOLBOX_WINDOW_WIDTH);
+        toolboxStage.setX(app.getWindowRepositionEvents().getToolboxWindowX());
+        toolboxStage.setY(app.getWindowRepositionEvents().getToolboxWindowY());
+        toolboxStage.setWidth(app.getResizes().getToolboxWindowWidth());
         toolboxStage.setHeight(computeWindowHeight(app));
         toolboxStage.setScene(toolboxScene);
         toolboxStage.setTitle(resourceBundle.getString(TOOLBOX_TITLE));
@@ -252,6 +253,9 @@ public class ToolboxWindow {
     }
 
     private int computeWindowHeight(App app) {
+        if (app.getResizes().getToolboxWindowHeight() != 0d) {
+            return (int) app.getResizes().getToolboxWindowHeight();
+        }
         if (app.getOptionalDotGrid().getDiagram().getPatterns().isEmpty()) {
             return 900;
         } else {

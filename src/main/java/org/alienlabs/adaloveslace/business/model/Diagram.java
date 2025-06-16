@@ -15,9 +15,9 @@ import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
-import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.GridUtil;
+import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,8 +175,8 @@ public class Diagram {
             if (!knot.isSelectable()) {
                 Knot knotCopy = this.nodeUtil.copyKnot(knot);
 
-                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
                 knot.setSelection(null);
                 knot.setHovered(null);
                 knot.setHandle(null);
@@ -192,8 +192,8 @@ public class Diagram {
                 if (this.getCurrentMode() == MouseMode.SELECTION) {
                     putAllEventsOnKnot(app, knotCopy);
                 } else {
-                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
                 }
 
                 if (displayedKnots.contains(knot)) {
@@ -267,8 +267,8 @@ public class Diagram {
             if (!knot.isSelectable()) {
                 Knot knotCopy = this.nodeUtil.copyKnot(knot);
 
-                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
                 knot.setSelection(null);
                 knot.setHovered(null);
                 knot.setHandle(null);
@@ -288,8 +288,8 @@ public class Diagram {
                 if (this.getCurrentMode() == MouseMode.SELECTION) {
                     putAllEventsOnKnot(app, knotCopy);
                 } else {
-                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
                 }
 
                 if (this.getCurrentStep().getDisplayedKnots().contains(knot)) {

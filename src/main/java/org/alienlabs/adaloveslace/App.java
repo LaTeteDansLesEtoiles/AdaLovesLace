@@ -1,9 +1,7 @@
 package org.alienlabs.adaloveslace;
 
-import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -30,6 +28,8 @@ import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.alienlabs.adaloveslace.view.window.StateWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
+import org.alienlabs.adaloveslace.view.window.event.WindowRepositionEvents;
+import org.alienlabs.adaloveslace.view.window.event.WindowResizeEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,10 +39,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import static org.alienlabs.adaloveslace.util.Events.getMouseDoubleRightClickOnGridEventHendler;
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_BUTTONS;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON_SELECTED;
+import static org.alienlabs.adaloveslace.view.window.event.GridEvents.getMouseDoubleRightClickOnGridEventHendler;
 
 /**
  * JavaFX App
@@ -73,12 +73,12 @@ public class App extends Application {
   public static final String PRINT_BUTTON_NAME        = "PrintDiagram";
   public static final String TEXT_BUTTON_NAME         = "TextButton";
 
-  public static final double  MAIN_WINDOW_Y           = 5d;
-  public static final double  MAIN_WINDOW_X           = 75d;
-  public static final double  MAIN_WINDOW_WIDTH       = 525d;
-  public static final double  MAIN_WINDOW_HEIGHT      = 780d;
-  public static final double  GRID_WIDTH              = 650d;
-  public static final double  GRID_HEIGHT             = 550d;
+  public static final double DEFAULT_MAIN_WINDOW_X    = 75d;
+  public static final double DEFAULT_MAIN_WINDOW_Y    = 5d;
+  public static final double DEFAULT_MAIN_WINDOW_WIDTH = 525d;
+  public static final double DEFAULT_MAIN_WINDOW_HEIGHT = 780d;
+  public static final double DEFAULT_GRID_WIDTH       = 650d;
+  public static final double DEFAULT_GRID_HEIGHT      = 550d;
   public static final int     ICON_SIZE               = 46;
   public static final int     SMALL_ICON_SIZE         = 23;
   public static final int     CANVAS_TEXT_FONT_SIZE   = 32;
@@ -98,7 +98,6 @@ public class App extends Application {
                   DEFAULT_LOCALE_COUNTRY)
   );
 
-  private final PauseTransition resizePause = new PauseTransition(Duration.millis(600));
   private final Map<KeyCode, Boolean> currentlyActiveKeys = new EnumMap<>(KeyCode.class);
 
   private Stage toolboxStage;
@@ -114,10 +113,12 @@ public class App extends Application {
 
   private Pane movablePane;
   private Stage primaryStage;
-  private double gridHeight = GRID_HEIGHT;
-  private double gridWidth = GRID_WIDTH;
+  private double gridWidth = DEFAULT_GRID_WIDTH;
+  private double gridHeight = DEFAULT_GRID_HEIGHT;
 
   private static final Logger logger = LoggerFactory.getLogger(App.class);
+  private WindowResizeEvents resizes;
+  private WindowRepositionEvents windowRepositionEvents;
 
   @Override
   public void start(Stage primaryStage) {
@@ -139,7 +140,17 @@ public class App extends Application {
     }
 
     logger.debug("Starting app: opening main window");
-    showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, primaryStage, diagram);
+    this.resizes = new WindowResizeEvents(this);
+    this.windowRepositionEvents = new WindowRepositionEvents(this);
+
+    showMainWindow(
+            this.resizes.getMainWindowWidth(),
+            this.resizes.getMainWindowHeight(),
+            this.resizes.getGridWidth(),
+            this.resizes.getGridHeight(),
+            primaryStage,
+            diagram
+    );
 
     logger.debug("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
@@ -155,6 +166,8 @@ public class App extends Application {
       new NodeUtil().clearTechnicalElements(this);
     }
 
+    this.resizes.onWindowsResize();
+    this.windowRepositionEvents.onWindowsReposition();
     this.getPrimaryStage().requestFocus();
   }
 
@@ -190,12 +203,11 @@ public class App extends Application {
     scene.setOnMouseClicked(getMouseDoubleRightClickOnGridEventHendler(this));
 
     primaryStage.setScene(scene);
-    primaryStage.setX(MAIN_WINDOW_X);
-    primaryStage.setY(MAIN_WINDOW_Y);
+    primaryStage.setX(this.windowRepositionEvents.getMainWindowX());
+    primaryStage.setY(this.windowRepositionEvents.getMainWindowY());
     primaryStage.setTitle(resourceBundle.getString(MAIN_WINDOW_TITLE));
 
     onCloseApplication(primaryStage);
-    onDoMainWindowResize();
 
     slider = createZoomSlider();
     this.getOptionalDotGrid().setDiagram(diagram);
@@ -203,39 +215,6 @@ public class App extends Application {
     grid.getStyleClass().add("grid");
 
     primaryStage.show();
-  }
-
-  public void onDoMainWindowResize() {
-    onDoResize();
-    onDoChangeWidth(this.getPrimaryStage().widthProperty(), "Window width: {}");
-    onDoChangeHeight(this.getPrimaryStage().heightProperty(), "Window height: {}");
-  }
-
-  private void onDoChangeHeight(ReadOnlyDoubleProperty primaryStage, String s) {
-    primaryStage.addListener((obs, oldVal, newVal) ->
-            {
-              logger.debug(s, newVal);
-              resizePause.playFromStart();
-              this.gridHeight = (double) newVal;
-            }
-    );
-  }
-
-  private void onDoChangeWidth(ReadOnlyDoubleProperty primaryStage, String s) {
-        primaryStage.addListener((obs, oldVal, newVal) ->
-            {
-              logger.debug(s, newVal);
-              resizePause.playFromStart();
-              this.gridWidth = (double) newVal;
-            }
-    );
-  }
-
-  private void onDoResize() {
-    resizePause.setOnFinished(e -> {
-      ParentGridStrategy.setGridHasBeenDrawn(false);
-      this.getOptionalDotGrid().layoutChildren();
-    });
   }
 
   private static void onCloseApplication(Stage primaryStage) {
@@ -271,7 +250,7 @@ public class App extends Application {
     slider.setMajorTickUnit(10);
     slider.setMinorTickCount(5);
     slider.setBlockIncrement(1);
-    slider.setLayoutX(MAIN_WINDOW_WIDTH / 2d - 60d);
+    slider.setLayoutX(this.resizes.getMainWindowWidth() / 2d - 60d);
     slider.valueProperty().addListener((ov, oldVal, newVal) -> {
       double zoomFactor;
 
@@ -315,7 +294,7 @@ public class App extends Application {
     geometryWindow.createGeometryButtons(app, parent);
     geometryWindow.createMoveKnotButtons(app, parent);
 
-    geometryWindow.createGeometryStage(geometryStage, parent);
+    geometryWindow.createGeometryStage(app, geometryStage, parent);
 
     new KeyboardUtil().initializeKeyboardShorcuts(this);
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
@@ -327,7 +306,7 @@ public class App extends Application {
     GridPane parent = newGridPane();
     stateWindow  = new StateWindow();
     stateWindow.createStateButtons(app, parent);
-    stateWindow.createStateStage(stateStage, parent);
+    stateWindow.createStateStage(app, stateStage, parent);
 
     return stateWindow;
   }
@@ -441,12 +420,20 @@ public class App extends Application {
     return this.stateStage;
   }
 
+  public double getGridWidth() {
+    return this.gridWidth;
+  }
+
+  public void setGridWidth(double gridWidth) {
+    this.gridWidth = gridWidth;
+  }
+
   public double getGridHeight() {
     return this.gridHeight;
   }
 
-  public double getGridWidth() {
-    return this.gridWidth;
+  public void setGridHeight(double gridHeight) {
+    this.gridHeight = gridHeight;
   }
 
   public ParentGridStrategy getGridStrategy() {
@@ -462,7 +449,15 @@ public class App extends Application {
   }
 
   public Map<KeyCode, Boolean> getCurrentlyActiveKeys() {
-    return currentlyActiveKeys;
+    return this.currentlyActiveKeys;
+  }
+
+  public WindowResizeEvents getResizes() {
+    return this.resizes;
+  }
+
+  public WindowRepositionEvents getWindowRepositionEvents() {
+    return this.windowRepositionEvents;
   }
 
 }

@@ -24,10 +24,10 @@ import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
-import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.GridUtil;
 import org.alienlabs.adaloveslace.view.component.GuideLinesUtil;
+import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -229,7 +229,7 @@ public class OptionalDotGrid extends Pane {
   public void addSelectionAndHandleToAKnot(Knot knot, Color rgba) {
     Platform.runLater(() -> {
       Rectangle rec = this.gridUtil.newRectangle(knot, rgba);
-      rec.addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+      rec.addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
 
       knot.setHovered(rec);
       knot.setSelection(rec);
@@ -252,9 +252,9 @@ public class OptionalDotGrid extends Pane {
         knot.setHandle(handle);
         root.getChildren().add(handle);
 
-        handle.setOnMousePressed(Events.getDragInitiatedOverHandleEventHandler());
-        handle.setOnMouseDragged(Events.getMouseDragOverHandleEventHandler());
-        handle.setOnMouseReleased(Events.getMouseDragDroppedHandleEventHandler());
+        handle.setOnMousePressed(GridEvents.getDragInitiatedOverHandleEventHandler());
+        handle.setOnMouseDragged(GridEvents.getMouseDragOverHandleEventHandler());
+        handle.setOnMouseReleased(GridEvents.getMouseDragDroppedHandleEventHandler());
       }
     });
   }

@@ -13,10 +13,10 @@ import javafx.scene.layout.TilePane;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
+import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,11 +107,11 @@ public class MainWindow {
   }
 
   public void onMainWindowClicked(final App app, final Pane movablePane) {
-    movablePane.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
-    movablePane.addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-    movablePane.setOnMouseExited(Events.getGridHoverExitEventHandler(app));
-    movablePane.setOnMousePressed(Events.getMouseRightClickEventHandler(app));
-    movablePane.setOnMouseDragged(Events.getGridDraggedEventHandler(app));
+    movablePane.addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
+    movablePane.addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+    movablePane.setOnMouseExited(GridEvents.getGridHoverExitEventHandler(app));
+    movablePane.setOnMousePressed(GridEvents.getMouseRightClickEventHandler(app));
+    movablePane.setOnMouseDragged(GridEvents.getGridDraggedEventHandler(app));
   }
 
   public void onClickWithSelectionMode(App app) {

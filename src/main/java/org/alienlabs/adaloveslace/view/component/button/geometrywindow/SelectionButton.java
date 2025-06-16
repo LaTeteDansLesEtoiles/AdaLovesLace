@@ -6,15 +6,15 @@ import javafx.scene.input.KeyEvent;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
-import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
+import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.util.Events.keyHandler;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.view.window.event.GridEvents.keyHandler;
 
 public class SelectionButton extends ToggleButton {
 
@@ -43,7 +43,7 @@ public class SelectionButton extends ToggleButton {
       putAllEventsOnKnot(app, knot);
     }
 
-    Events.removeEventsFromGrid(app);
+    GridEvents.removeEventsFromGrid(app);
 
     window.getDrawingButton()     .setSelected(false);
     window.getSelectionButton()   .setSelected(true);
@@ -53,13 +53,13 @@ public class SelectionButton extends ToggleButton {
 
   public static void putAllEventsOnKnot(App app, Knot knot) {
     if (knot.isSelectable()) {
-      knot.getImageView().setOnMouseMoved(Events.getGridHoverEventHandler(app));
-      knot.getImageView().setOnMouseClicked(Events.getMouseClickEventHandler(app));
+      knot.getImageView().setOnMouseMoved(GridEvents.getGridHoverEventHandler(app));
+      knot.getImageView().setOnMouseClicked(GridEvents.getMouseClickEventHandler(app));
 
       if (knot.getHandle() != null) {
-        knot.getHandle().setOnMousePressed(Events.getDragInitiatedOverHandleEventHandler());
-        knot.getHandle().setOnMouseDragged(Events.getMouseDragOverHandleEventHandler());
-        knot.getHandle().setOnMouseReleased(Events.getMouseDragDroppedHandleEventHandler());
+        knot.getHandle().setOnMousePressed(GridEvents.getDragInitiatedOverHandleEventHandler());
+        knot.getHandle().setOnMouseDragged(GridEvents.getMouseDragOverHandleEventHandler());
+        knot.getHandle().setOnMouseReleased(GridEvents.getMouseDragDroppedHandleEventHandler());
       }
     }
   }

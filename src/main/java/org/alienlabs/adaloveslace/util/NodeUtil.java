@@ -15,6 +15,7 @@ import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.view.component.GridUtil;
+import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +28,9 @@ import static org.alienlabs.adaloveslace.App.CANVAS_TEXT_FONT_SIZE;
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
 import static org.alienlabs.adaloveslace.business.model.Diagram.isNewText;
 import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
-import static org.alienlabs.adaloveslace.util.Events.app;
-import static org.alienlabs.adaloveslace.util.Events.keyHandler;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
+import static org.alienlabs.adaloveslace.view.window.event.GridEvents.app;
+import static org.alienlabs.adaloveslace.view.window.event.GridEvents.keyHandler;
 
 public class NodeUtil {
 
@@ -63,8 +64,8 @@ public class NodeUtil {
   public Knot copyKnotCloningImageView(Knot knot) {
     Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), knot.getText(), new ImageView(knot.getImageView().getImage()));
     copy(knot, copy);
-    copy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-    copy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+    copy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+    copy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
 
     return copy;
   }
