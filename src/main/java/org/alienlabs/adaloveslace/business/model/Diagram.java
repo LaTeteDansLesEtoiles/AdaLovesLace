@@ -5,38 +5,26 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import javafx.scene.Node;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
-import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.GridUtil;
+import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.*;
 
-import static org.alienlabs.adaloveslace.App.CANVAS_TEXT_FONT_SIZE;
-import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
-import static org.alienlabs.adaloveslace.business.model.Knot.*;
-import static org.alienlabs.adaloveslace.util.Events.keyHandler;
-import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
+import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
+import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton.putAllEventsOnKnot;
 
 /**
@@ -104,11 +92,15 @@ public class Diagram {
     @XmlTransient
     public Runnable updateImage;
 
+    @XmlTransient
+    private NodeUtil nodeUtil;
+
     // For JAXB
     public Diagram() {
         this.patterns           = new HashSet<>();
         this.currentMode        = MouseMode.DRAWING;
         this.currentStepIndex   = 0;
+        this.nodeUtil           = new NodeUtil();
         setUpdateImage();
     }
 
@@ -118,6 +110,7 @@ public class Diagram {
         this.currentStepIndex   = 0;
         Diagram.app             = app;
         this.allSteps.add(new Step());
+        this.nodeUtil           = new NodeUtil();
         setUpdateImage();
     }
 
@@ -132,6 +125,7 @@ public class Diagram {
         this.currentStepIndex       = 0;
         Diagram.app                 = app;
         this.allSteps.add(new Step());
+        this.nodeUtil               = new NodeUtil();
         setUpdateImage();
     }
 
@@ -179,10 +173,10 @@ public class Diagram {
 
         for (Knot knot : this.getCurrentStep().getAllVisibleKnots()) {
             if (!knot.isSelectable()) {
-                Knot knotCopy = new NodeUtil().copyKnot(knot);
+                Knot knotCopy = this.nodeUtil.copyKnot(knot);
 
-                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
                 knot.setSelection(null);
                 knot.setHovered(null);
                 knot.setHandle(null);
@@ -193,13 +187,13 @@ public class Diagram {
                     selectedCopy.add(knotCopy);
                 }
             } else {
-                Knot knotCopy = new NodeUtil().copyKnot(knot);
+                Knot knotCopy = this.nodeUtil.copyKnot(knot);
 
                 if (this.getCurrentMode() == MouseMode.SELECTION) {
                     putAllEventsOnKnot(app, knotCopy);
                 } else {
-                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
                 }
 
                 if (displayedKnots.contains(knot)) {
@@ -271,10 +265,10 @@ public class Diagram {
 
         for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
             if (!knot.isSelectable()) {
-                Knot knotCopy = new NodeUtil().copyKnot(knot);
+                Knot knotCopy = this.nodeUtil.copyKnot(knot);
 
-                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+                knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
                 knot.setSelection(null);
                 knot.setHovered(null);
                 knot.setHandle(null);
@@ -289,13 +283,13 @@ public class Diagram {
                     app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedCopy);
                 }
             } else {
-                Knot knotCopy = new NodeUtil().copyKnot(knot);
+                Knot knotCopy = this.nodeUtil.copyKnot(knot);
 
                 if (this.getCurrentMode() == MouseMode.SELECTION) {
                     putAllEventsOnKnot(app, knotCopy);
                 } else {
-                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+                    knotCopy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
                 }
 
                 if (this.getCurrentStep().getDisplayedKnots().contains(knot)) {
@@ -334,59 +328,46 @@ public class Diagram {
     public void drawKnot(double x, double y) {
         logger.debug("Current pattern  -> {}", this.getCurrentPattern());
         ImageView iv;
-
         Coordinate coord = app.getGridStrategy().getDrawCoordinates(x, y);
 
         if (PatternOrTextMode.PATTERN == app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get()) {
-            iv = drawPattern(coord.x(), coord.y());
+            iv = this.nodeUtil.drawPattern(coord.x(), coord.y(), this.getCurrentPattern());
 
             if (null != iv) {
-                isNewText = false;
+                isNewText = true;
                 createImageViewWithStep(coord.x(), coord.y(), iv, this.getCurrentPattern());
             }
         } else {
             isNewText = true;
-            drawText(x, y);
+            this.nodeUtil.drawText(this, x, y);
         }
     }
 
     private void createImageViewWithStep(double x, double y, ImageView imageView, Pattern pattern) {
-        Knot oldCurrentKnot = (app.getOptionalDotGrid().getDiagram().getCurrentKnot() == null)
+        if (this.getCurrentStep().getSelectedKnots().size() > 1) {
+            return;
+        }
+
+        Knot oldCurrentKnot = (this.getCurrentKnot() == null)
                 ? null
                 : this.getCurrentKnot();
 
+        boolean textMode = (pattern == null);
 
-        if (null == imageView) {
-            imageView = new ImageView();
-
-            final Text text = new Text();
-            SnapshotParameters params = new SnapshotParameters();
-            params.setFill(Color.TRANSPARENT);
-
-            text.setText(getCurrentKnot() == null ? NEW_TEXT.toString() : getCurrentKnot().getTypedText().toString());
-            text.setFont(new Font(CANVAS_TEXT_FONT_SIZE));
-            text.setFill(Color.BLACK);
-            text.setLayoutX(x);
-            text.setLayoutY(y);
-
-            WritableImage s = text.snapshot(params, null);
-            imageView.setImage(s);
+        if (textMode) {
+            imageView = this.nodeUtil.createText(x, y, imageView, getCurrentKnot());
         }
 
-        currentKnot = new Knot(
-                isNewText || getCurrentKnot() == null || pattern != null ? x : getCurrentKnot().getX(),
-                isNewText || getCurrentKnot() == null || pattern != null ? y : getCurrentKnot().getY(),
-                pattern == null ? Optional.empty() : Optional.of(pattern),
-                pattern == null && !isNewText
-                        ? Optional.of(getCurrentKnot().getTypedText().toString())
-                        : Optional.of(NEW_TEXT.toString()),
-                imageView
-        );
+        currentKnot = this.nodeUtil.newKnot(x, y, imageView, pattern, getCurrentKnot());
+
         if (isNewText && currentKnot.getPattern().isEmpty()) {
             currentKnot.setTextId(UUID.randomUUID());
         } else if (currentKnot.getPattern().isEmpty()) {
-            currentKnot.setTextId(oldCurrentKnot.getTextId());
-            currentKnot.setTypedText(oldCurrentKnot.getTypedText());
+            if (oldCurrentKnot == null || oldCurrentKnot.getTextId() == null) {
+                currentKnot.setTextId(UUID.randomUUID());
+            } else {
+                currentKnot.setTextId(oldCurrentKnot.getTextId());
+            }
         }
 
         if (currentKnot.getPattern().isEmpty()) {
@@ -394,6 +375,7 @@ public class Diagram {
             currentKnot.setZoomFactor(oldCurrentKnot == null ? DEFAULT_ZOOM : oldCurrentKnot.getZoomFactor());
         }
 
+        currentKnot.setTypedText(oldCurrentKnot == null ? null : oldCurrentKnot.getTypedText());
         this.setCurrentKnot(currentKnot);
         currentKnot.setSelection(new GridUtil(app.getMovablePane()).newRectangle(currentKnot, Color.BLUE));
 
@@ -405,30 +387,26 @@ public class Diagram {
 
         putAllEventsOnKnot(app, currentKnot);
 
-        if (null != oldCurrentKnot &&
-                ((oldCurrentKnot.getPattern().isPresent() &&
-                        isNewText) ||
-                        (oldCurrentKnot.getPattern().isEmpty() && !isNewText))) {
+        if (null != oldCurrentKnot && textMode) {
             app.getMovablePane().getChildren().remove(oldCurrentKnot.getImageView());
         }
 
 
         List<Knot> displayedKnots = new ArrayList<>(this.getCurrentStep().getDisplayedKnots());
+        List<Knot> selectedKnots = new ArrayList<>();
         displayedKnots.addAll(
                 this.getCurrentStep().getSelectedKnots().stream().filter(
                                 knot -> (
-                                        (!displayedKnots.contains(knot) && knot.getPattern().isPresent())
-                                                || (currentKnot.getTextId() == null)
-                                                || (knot.getTextId() != null
-                                                    && currentKnot.getTextId() != null
-                                                    && !currentKnot.getTextId().equals(knot.getTextId())))
+                                        knot.getPattern().isPresent() || isNewText
+                                )
                         )
                         .toList()
         );
 
-        List<Knot> selectedKnots = new ArrayList<>();
+        if (currentKnot.getPattern().isEmpty() && null != currentKnot.getTypedText()) {
+            currentKnot.setText(Optional.of(currentKnot.getTypedText().toString()));
+        }
         selectedKnots.add(currentKnot);
-
         isNewText = false;
 
         newStep(
@@ -436,40 +414,6 @@ public class Diagram {
                 selectedKnots,
                 true
         );
-    }
-
-
-    public void drawText(double x, double y) {
-        this.x = x;
-        this.y = y;
-
-        app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
-        app.getOptionalDotGrid().getDiagram()           .setCurrentMode(MouseMode.SELECTION);
-        app.getGeometryWindow().getDrawingButton()      .setSelected(false);
-        app.getGeometryWindow().getSelectionButton()    .setSelected(true);
-        app.getGeometryWindow().getDeletionButton()     .setSelected(false);
-        app.getGeometryWindow().getDuplicationButton()  .setSelected(false);
-
-        getUpdateImage().run();
-    }
-
-    private ImageView drawPattern(double x, double y) {
-        ImageView iv = null;
-
-        try (FileInputStream fis = new FileInputStream(new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, this.getCurrentPattern().getFilename()))) {
-            Image image = new Image(fis);
-            iv = new ImageView(image);
-
-            iv.setLayoutX(x);
-            iv.setLayoutY(y);
-            iv.setRotate(0d);
-
-            logger.debug("Top left corner of the knot {} is ({},{})", this.getCurrentPattern().getFilename(), x, y);
-        } catch (IOException e) {
-            logger.error("Problem with pattern resource file!", e);
-        }
-
-        return iv;
     }
 
     public void deleteKnotDecorationsFromFollowingSteps(App app, Knot knot) {

@@ -92,7 +92,6 @@ public class DiagramShareWindow {
 
     GridPane gridPane = new GridPane();
     gridPane.setPrefWidth(DIAGRAM_SHARE_WINDOW_WIDTH);
-    gridPane.setMaxWidth(Double.MAX_VALUE);
     gridPane.add(filenameLabel, 0, 0);
     gridPane.add(filenameText, 1, 0);
 

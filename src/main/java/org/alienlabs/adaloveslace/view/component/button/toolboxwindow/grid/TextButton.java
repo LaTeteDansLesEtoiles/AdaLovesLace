@@ -7,7 +7,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
-import org.alienlabs.adaloveslace.util.Events;
+import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 
 import static org.alienlabs.adaloveslace.App.TEXT_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
@@ -32,7 +32,7 @@ public class TextButton extends ToggleButton {
     app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().set(PatternOrTextMode.TEXT);
     app.unselectPatternsAndTextButtons();
     app.getMovablePane().setOnKeyPressed(null);
-    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
+    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
     this.setSelected(true);
     this.getStyleClass().add(PATTERN_AND_TEXT_BUTTON_WAITING_SELECTION);
 

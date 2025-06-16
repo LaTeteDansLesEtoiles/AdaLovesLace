@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.App.EXPORT_IMAGE_FILE_TYPE;
 import static org.alienlabs.adaloveslace.util.FileUtil.FILE_SEPARATOR;
 
 @ExtendWith(ApplicationExtension.class)
@@ -94,7 +94,13 @@ public class AppFunctionalTestParent {
     this.primaryStage = primaryStage;
 
     // The grid dots are twice as big as in the production code in order to facilitate tests
-    this.app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, this.primaryStage, diagram);
+    this.app.showMainWindow(
+            this.app.getResizes().getMainWindowWidth(),
+            this.app.getResizes().getMainWindowHeight(),
+            this.app.getResizes().getGridWidth(),
+            this.app.getResizes().getGridHeight(),
+            this.primaryStage,
+            diagram);
     this.app.setOptionalDotGrid(this.app.getMainWindow().getOptionalDotGrid());
 
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);

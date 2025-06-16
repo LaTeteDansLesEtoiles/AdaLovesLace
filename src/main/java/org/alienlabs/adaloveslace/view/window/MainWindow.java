@@ -13,10 +13,10 @@ import javafx.scene.layout.TilePane;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.util.Events;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
+import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +26,7 @@ import java.util.List;
 
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
+import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
 
 public class MainWindow {
 
@@ -106,11 +107,11 @@ public class MainWindow {
   }
 
   public void onMainWindowClicked(final App app, final Pane movablePane) {
-    movablePane.addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
-    movablePane.addEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-    movablePane.setOnMouseExited(Events.getGridHoverExitEventHandler(app));
-    movablePane.setOnMousePressed(Events.getMouseRightClickEventHandler(app));
-    movablePane.setOnMouseDragged(Events.getGridDraggedEventHandler(app));
+    movablePane.addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
+    movablePane.addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+    movablePane.setOnMouseExited(GridEvents.getGridHoverExitEventHandler(app));
+    movablePane.setOnMousePressed(GridEvents.getMouseRightClickEventHandler(app));
+    movablePane.setOnMouseDragged(GridEvents.getGridDraggedEventHandler(app));
   }
 
   public void onClickWithSelectionMode(App app) {
@@ -141,13 +142,23 @@ public class MainWindow {
           selectedKnots.clear();
           selectedKnots.add(copiedKnot);
 
+          List<Knot> selectedKnotsOfStep = new ArrayList<>();
+          selectedKnotsOfStep.add(copiedKnot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          if (!NEW_TEXT.toString().contentEquals(copiedKnot.getText().get())) {
+            copiedKnot.setTypedText(new StringBuilder(copiedKnot.getText().get()));
+          }
+
           newStep(displayedKnots, selectedKnots, true);
         } else {
           Knot copiedKnot = new NodeUtil().copyKnot(knot);
           selectedKnots.add(copiedKnot);
           displayedKnots.remove(knot);
 
+          List<Knot> selectedKnotsOfStep = new ArrayList<>();
+          selectedKnotsOfStep.add(copiedKnot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
@@ -170,7 +181,14 @@ public class MainWindow {
           selectedKnots.add(copiedKnot);
           displayedKnots.remove(knot);
 
+          List<Knot> selectedKnotsOfStep = new ArrayList<>();
+          selectedKnotsOfStep.add(copiedKnot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          if (!NEW_TEXT.toString().contentEquals(copiedKnot.getText().get())) {
+            copiedKnot.setTypedText(new StringBuilder(copiedKnot.getText().get()));
+          }
+
           hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
 
@@ -182,6 +200,9 @@ public class MainWindow {
           displayedKnots.remove(knot);
           displayedKnots.add(copiedKnot);
 
+          List<Knot> selectedKnotsOfStep = new ArrayList<>();
+          selectedKnotsOfStep.add(copiedKnot);
+          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);

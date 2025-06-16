@@ -4,6 +4,7 @@ import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.FileChooserUtil;
 import org.alienlabs.adaloveslace.util.FileUtil;
+import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ public class LoadButton extends ImageButton {
 
     if (file != null) {
       new FileUtil().buildUiFromLaceFile(app, file);
+      new NodeUtil().clearTechnicalElements(app);
       app.getPrimaryStage().requestFocus();
     }
   }

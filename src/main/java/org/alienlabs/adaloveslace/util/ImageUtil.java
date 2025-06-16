@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.util;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ToggleButton;
@@ -10,7 +11,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.dto.DiagramDTO;
 import org.alienlabs.adaloveslace.business.model.enumeration.GridType;
 import org.alienlabs.adaloveslace.business.model.enumeration.Language;
@@ -85,22 +85,21 @@ public class ImageUtil {
                 language(Language.FRENCH).
                 diagram(Files.readAllBytes(
                         new FileUtil(app).saveFile(
-                                laceFilePath,
-                                new Diagram(app.getOptionalDotGrid().getDiagram(),
-                                        app
-                                ),
-                                app.getOptionalDotGrid().getDiagram().getCurrentStepIndex()
-                        ).toPath())).
+                                        laceFilePath,
+                                        app.getOptionalDotGrid().getDiagram()
+                                )
+                                .toPath()
+                )).
                 diagramContentType(LACE_FILE_MIME_TYPE).
                 username(username).
                 clientId(UUID.fromString(clientId)).
                 clientSecret(UUID.fromString(clientSecret));
     }
 
-    private WritableImage  buildWritableImage(String pathname) {
+    private WritableImage buildWritableImage(String pathname) {
         WritableImage wi = new WritableImage((int)app.getMovablePane().getWidth(),
                 (int)app.getMovablePane().getHeight());
-        WritableImage snapshot = app.getMovablePane().snapshot(new SnapshotParameters(), wi);
+        WritableImage snapshot = app.getMovablePane().snapshot(newSnapshotParameters(), wi);
 
         File output = new File(pathname);
         try {
@@ -112,9 +111,11 @@ public class ImageUtil {
     }
 
     private File buildImage(String pathname) {
-        WritableImage wi = new WritableImage((int)app.getMovablePane().getWidth(),
-                (int)app.getMovablePane().getHeight());
-        WritableImage snapshot = app.getMovablePane().snapshot(new SnapshotParameters(), wi);
+        WritableImage wi = new WritableImage(
+                (int)app.getMovablePane().getWidth(),
+                (int)app.getMovablePane().getHeight()
+        );
+        WritableImage snapshot = app.getMovablePane().snapshot(newSnapshotParameters(), wi);
         PATH_NAME = new File(pathname);
 
         try {
@@ -124,6 +125,19 @@ public class ImageUtil {
         }
 
     return PATH_NAME;
+    }
+
+    private SnapshotParameters newSnapshotParameters() {
+        SnapshotParameters params = new SnapshotParameters();
+        params.setViewport(
+                new Rectangle2D(
+                        app.getMovablePane().getLayoutX(),
+                        app.getMovablePane().getLayoutY(),
+                        app.getMovablePane().getWidth(),
+                        app.getMovablePane().getHeight()
+                )
+        );
+        return params;
     }
 
     public void buildImage(double xMin, double yMin, double wLog, double hLog) {
@@ -214,10 +228,7 @@ public class ImageUtil {
 
     private void manageTechnicalElementsFromRootGroup(boolean showElements, boolean showGrid) {
         if (!showElements) {
-            app.getOptionalDotGrid().clearSelections();
-            app.getOptionalDotGrid().clearAllGuideLines();
-            app.getOptionalDotGrid().clearHovered();
-            app.getOptionalDotGrid().clearHandles();
+            new NodeUtil().clearTechnicalElements(app);
         }
 
         if (showGrid) {
