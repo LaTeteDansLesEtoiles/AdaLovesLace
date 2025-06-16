@@ -6,7 +6,7 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Pattern;
-import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ class UndoRedoStepTest {
     @BeforeEach
     void beforeEach() {
         app = new App();
-        app.root = new Pane();
+        app.setMovablePane(new Pane());
         app.setMainWindow(new MainWindow());
         this.diagram = new Diagram(app);
         app.setOptionalDotGrid(new OptionalDotGrid(app, this.diagram, new Pane()));

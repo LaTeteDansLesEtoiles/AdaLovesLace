@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
+package org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file;
 
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
@@ -81,8 +81,7 @@ public class SaveButton extends ImageButton {
             }
 
             new FileUtil(app).saveFile(file,
-                    app.getOptionalDotGrid().getDiagram(),
-                    app.getOptionalDotGrid().getDiagram().getCurrentStepIndex()
+                    app.getOptionalDotGrid().getDiagram()
             );
         }
     }

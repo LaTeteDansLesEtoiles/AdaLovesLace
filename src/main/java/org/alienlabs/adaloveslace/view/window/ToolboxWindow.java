@@ -11,7 +11,10 @@ import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.PrintUtil;
 import org.alienlabs.adaloveslace.view.component.PrintersListView;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.*;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShareButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.*;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,16 +28,18 @@ import java.util.regex.Pattern;
 
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.HOME_DIRECTORY_RESOURCES_PATH;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.CreatePatternButton.CREATE_PATTERN_BUTTON;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ExportPdfButton.EXPORT_PDF_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShareButton.SHARE_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.ExportPdfButton.EXPORT_PDF_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.CreatePatternButton.CREATE_PATTERN_BUTTON;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
 public class ToolboxWindow {
 
-    public static final double TOOLBOX_WINDOW_X = 600d;
-    public static final double TOOLBOX_WINDOW_WIDTH = 550d;
+    public static final double DEFAULT_TOOLBOX_WINDOW_X         = 600d;
+    public static final double DEFAULT_TOOLBOX_WINDOW_Y         = DEFAULT_MAIN_WINDOW_Y;
+    public static final double DEFAULT_TOOLBOX_WINDOW_WIDTH     = 550d;
+    public static final double MENU_BAR_Y                       = 0d;
 
     public static final String THE_FOLLOWING_FOLDER_STRING      = "The following folder: '";
     public static final String PATTERN_AND_TEXT_BUTTON_SELECTED = "pattern-and-text-button-selected";
@@ -44,22 +49,24 @@ public class ToolboxWindow {
     private List<String> classpathResourceFiles;
 
     private UndoKnotButton undoKnotButton;
-    private RedoKnotButton redoKnotButton;
-    private ResetDiagramButton resetDiagramButton;
     private ToggleButton snowflakeButton;
     private ToggleButton colorWheelButton;
     private final List<ToggleButton> allPatterns;
+    private MenuBar menuBar;
 
-    private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
-    private TextArea printersTextArea;
     private Stage toolboxStage;
     private TextButton textButton;
+
+    private static App app;
+
+    private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
 
     public ToolboxWindow() {
         this.allPatterns = new ArrayList<>();
     }
 
     public Diagram createToolboxPane(GridPane parent, Object classpathBase, String resourcesPath, App app, final Diagram diagram) {
+        ToolboxWindow.app = app;
         this.classpathResourceFiles = loadPatternsResourcesFiles(resourcesPath, classpathBase);
 
         if (classpathBase.equals(app)) {
@@ -71,14 +78,14 @@ public class ToolboxWindow {
         for (int i = 0; i < this.classpathResourceFiles.size(); i++) {
             // i % 2 = 2 columns
             // i / 2 = as many rows as necessary
-            parent.add(buildPatternButton(app, diagram, i), i % 2, i / 2);
+            parent.add(buildPatternButton(app, diagram, i), i % 2, (i + 2) / 2);
         }
 
         this.textButton = new TextButton(app);
         parent.add(
                 this.textButton,
                 this.classpathResourceFiles.size() % 2,
-                this.classpathResourceFiles.size() / 2
+                (int)Math.floor((double) (this.classpathResourceFiles.size() + 2) / 2)
         );
 
         return diagram;
@@ -125,6 +132,7 @@ public class ToolboxWindow {
             this.colorWheelButton = button;
             button.getStyleClass().add(PATTERN_AND_TEXT_BUTTON_SELECTED);
             diagram.setCurrentPattern(pattern);
+            app.getOptionalDotGrid().getCurrentPatternProperty().set(pattern);
         }
 
         if (i == 1) {
@@ -143,14 +151,14 @@ public class ToolboxWindow {
         if (homeDirectoryResourceFiles == null || homeDirectoryResourceFiles.isEmpty()) {
             showEmptyPatternDirectoryDialog(patternsDirectoryResourcesPath);
         } else {
-            // We don't add duplicated resources to our toolbox buttons (i.e. filename must be different in both
+            // We don't add duplicated resources to our toolbox buttons (i.e., filename must be different in both
             // classpathResourceFiles & homeDirectoryResourceFiles
             this.classpathResourceFiles.addAll(
                     getAllResourceFilesWithoutDuplicates(homeDirectoryResourceFiles));
         }
     }
 
-    // We don't add duplicated resources to our toolbox buttons (i.e. filename must be different in both
+    // We don't add duplicated resources to our toolbox buttons (i.e., filename must be different in both
     // classpathResourceFiles & homeDirectoryResourceFiles
     private List<String> getAllResourceFilesWithoutDuplicates(List<String> homeDirectoryResourceFiles) {
         return homeDirectoryResourceFiles.stream().filter(patternDirectoryResource -> classpathResourceFiles.stream().noneMatch(
@@ -216,12 +224,12 @@ public class ToolboxWindow {
 
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(parent);
-        scrollPane.setFitToWidth(true); // pour que le contenu prenne toute la largeur
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // pas de défilement horizontal
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED); // barre verticale optionnelle
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
         VBox root = new VBox(scrollPane);
-        root.setPrefSize(TOOLBOX_WINDOW_WIDTH, computeWindowHeight(app));
+        root.setPrefSize(app.getResizes().getToolboxWindowWidth(), computeWindowHeight(app));
         root.getStyleClass().add("toolbox");
 
         buildPrintButtons(app, parent, posY);
@@ -229,21 +237,25 @@ public class ToolboxWindow {
         Scene toolboxScene = new Scene(root);
         toolboxScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 
-        toolboxStage.setX(TOOLBOX_WINDOW_X);
-        toolboxStage.setY(MAIN_WINDOW_Y);
-        toolboxStage.setWidth(TOOLBOX_WINDOW_WIDTH);
+        toolboxStage.setX(app.getWindowRepositionEvents().getToolboxWindowX());
+        toolboxStage.setY(app.getWindowRepositionEvents().getToolboxWindowY());
+        toolboxStage.setWidth(app.getResizes().getToolboxWindowWidth());
         toolboxStage.setHeight(computeWindowHeight(app));
         toolboxStage.setScene(toolboxScene);
         toolboxStage.setTitle(resourceBundle.getString(TOOLBOX_TITLE));
 
-        toolboxStage.setOnCloseRequest(windowEvent ->
-                logger.debug("You shall not close the toolbox window directly!")
-        );
+        toolboxStage.setOnCloseRequest(windowEvent -> {
+            logger.debug("You shall not close the toolbox window directly!");
+            windowEvent.consume();
+        });
 
         toolboxStage.show();
     }
 
     private int computeWindowHeight(App app) {
+        if (app.getResizes().getToolboxWindowHeight() != 0d) {
+            return (int) app.getResizes().getToolboxWindowHeight();
+        }
         if (app.getOptionalDotGrid().getDiagram().getPatterns().isEmpty()) {
             return 900;
         } else {
@@ -298,14 +310,16 @@ public class ToolboxWindow {
     }
 
     private void buildEditButtons(App app, GridPane buttonsPane, int posY) {
+        RedoKnotButton redoKnotButton;
+        ResetDiagramButton resetDiagramButton;
         this.undoKnotButton = new UndoKnotButton(resourceBundle.getString(UNDO_KNOT), app);
-        this.redoKnotButton = new RedoKnotButton(resourceBundle.getString(REDO_KNOT), app);
+        redoKnotButton = new RedoKnotButton(resourceBundle.getString(REDO_KNOT), app);
         CreatePatternButton createPatternButton = new CreatePatternButton(resourceBundle.getString(CREATE_PATTERN_BUTTON), app);
-        this.resetDiagramButton = new ResetDiagramButton(resourceBundle.getString(RESET_DIAGRAM), app);
+        resetDiagramButton = new ResetDiagramButton(resourceBundle.getString(RESET_DIAGRAM), app);
         buttonsPane.add(this.undoKnotButton, 0, posY + 3);
-        buttonsPane.add(this.redoKnotButton, 1, posY + 3);
+        buttonsPane.add(redoKnotButton, 1, posY + 3);
         buttonsPane.add(createPatternButton, 0, posY + 4);
-        buttonsPane.add(this.resetDiagramButton, 0, posY + 5);
+        buttonsPane.add(resetDiagramButton, 0, posY + 5);
     }
 
     private void buildFileButtons(App app, GridPane buttonsPane, int posY) {
@@ -345,20 +359,8 @@ public class ToolboxWindow {
         alert.showAndWait();
     }
 
-    public ResetDiagramButton getResetDiagramButton() {
-        return this.resetDiagramButton;
-    }
-
     public UndoKnotButton getUndoKnotButton() {
         return this.undoKnotButton;
-    }
-
-    public RedoKnotButton getRedoKnotButton() {
-        return this.redoKnotButton;
-    }
-
-    public TextArea getPrintersTextArea() {
-        return this.printersTextArea;
     }
 
     public List<ToggleButton> getAllPatterns() {
@@ -379,6 +381,18 @@ public class ToolboxWindow {
 
     public Stage getToolboxStage() {
         return this.toolboxStage;
+    }
+
+    public static void restartApp() {
+        app.getGeometryWindow().getGeometryStage().close();
+        app.getToolboxWindow().getToolboxStage().close();
+        app.getStateWindow().getStateStage().close();
+        app.getPrimaryStage().close();
+        app.start(new Stage());
+    }
+
+    public MenuBar getMenuBar() {
+        return this.menuBar;
     }
 
 }

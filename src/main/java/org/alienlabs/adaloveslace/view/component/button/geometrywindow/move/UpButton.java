@@ -3,7 +3,7 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow.move;
 import javafx.scene.control.Button;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.MouseMode;
+import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.view.component.OptionalDotGrid.moveKnotPause;
+import static org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid.moveKnotPause;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class UpButton extends Button {

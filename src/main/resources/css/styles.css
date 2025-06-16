@@ -92,7 +92,7 @@
 }
 
 .grid {
-  -fx-background-color: #ffffff;
+  -fx-background-color: transparent;
   -fx-text-fill: #f1f1f1;
 }
 
@@ -148,4 +148,8 @@
 .selected-line {
   -fx-background-color: #4f6d7a;
   -fx-text-fill: white;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #2b2b2b;
 }

@@ -1,6 +1,6 @@
 Ada Aime la Dentelle : un logiciel de création de diagrammes de techniques de fils
 
-AdaLovesLace: A thread-based techniques patterns creation software 
+AdaLovesLace: A thread-based techniques diagrams creation software 
 
 This is Free Software, under [Affero GPL V3 license](license.md)
 

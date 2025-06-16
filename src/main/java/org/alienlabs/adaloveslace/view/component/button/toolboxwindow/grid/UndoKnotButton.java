@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
+package org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid;
 
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
@@ -7,15 +7,18 @@ import org.slf4j.LoggerFactory;
 
 public class UndoKnotButton extends ImageButton {
 
+  private static App app;
+
   private static final Logger logger = LoggerFactory.getLogger(UndoKnotButton.class);
 
-  public UndoKnotButton(String buttonLabel, App app) {
+    public UndoKnotButton(String buttonLabel, App app) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> undoKnot(app));
+      UndoKnotButton.app = app;
+        this.setOnMouseClicked(_ -> undoKnot());
     buildButtonImage("undo.png");
   }
 
-  public static void undoKnot(App app) {
+  public static void undoKnot() {
     app.getOptionalDotGrid().getDiagram().undoLastStep(app, true);
     logger.debug("Undo knot event");
   }

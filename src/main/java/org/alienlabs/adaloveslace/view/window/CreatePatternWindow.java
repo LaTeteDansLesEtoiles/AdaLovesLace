@@ -8,8 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.util.ImageUtil;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.CreatePatternButton;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.CreatePatternButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,7 @@ import java.util.Optional;
 
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 import static javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE;
-import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 
 public class CreatePatternWindow {
@@ -36,48 +35,58 @@ public class CreatePatternWindow {
   public static final String CREATE_PATTERN_PREVIEW_LABEL    = "CREATE_PATTERN_PREVIEW_LABEL";
 
   private static final Logger logger = LoggerFactory.getLogger(CreatePatternWindow.class);
-  private final File previewFile;
+    private final File previewFile;
 
-  public CreatePatternWindow(App app) {
-    this.previewFile = ImageUtil.OUTPUT;
-    Alert alert = new Alert(CONFIRMATION);
+    public CreatePatternWindow(App app, File previewFile) {
+      this.previewFile = previewFile;
+      Alert alert = new Alert(CONFIRMATION);
 
-    ButtonType createPatternButton = buildAlertWindow(alert);
-    GridPane gridPane = buildGridPane();
-    alert.getDialogPane().setContent(gridPane);
+      ButtonType createPatternButton = buildAlertWindow(alert);
+      GridPane gridPane = buildGridPane();
+      alert.getDialogPane().setContent(gridPane);
 
-    Optional<ButtonType> result = alert.showAndWait();
+      Optional<ButtonType> result = alert.showAndWait();
 
-    if (result.isPresent() && result.get() == createPatternButton) {
-      logger.debug("Accepted pattern creation");
+      if (result.isPresent() && result.get() == createPatternButton) {
+        logger.debug("Accepted pattern creation");
 
-      app.getRoot().removeEventHandler(MouseEvent.MOUSE_MOVED, CreatePatternButton.getMouseMovedListener());
-      app.getRoot().removeEventHandler(MouseEvent.MOUSE_CLICKED, CreatePatternButton.getMouseClickedListener());
-      app.getPrimaryStage().close();
-      app.showMainWindow(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, GRID_WIDTH, GRID_HEIGHT, GRID_DOTS_RADIUS,
-        app.getPrimaryStage(), app.getOptionalDotGrid().getDiagram());
-      app.getToolboxStage().close();
-      app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
-      app.getGeometryStage().close();
-      app.showGeometryWindow(app);
-      app.showStateWindow(app);
-    } else {
-      logger.debug("Pattern creation cancelled");
+        app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_MOVED, CreatePatternButton.getMouseMovedListener());
+        app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, CreatePatternButton.getMouseClickedListener());
+        app.getPrimaryStage().close();
+        app.showMainWindow(
+                app.getResizes().getMainWindowWidth(),
+                app.getResizes().getMainWindowHeight(),
+                app.getResizes().getGridWidth(),
+                app.getResizes().getGridHeight(),
+                app.getPrimaryStage(),
+                app.getOptionalDotGrid().getDiagram()
+        );
+        app.getToolboxStage().close();
+        app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
+        app.getGeometryStage().close();
+        app.showGeometryWindow(app);
+        app.getStateStage().close();
+        app.showStateWindow(app);
+      } else {
+        logger.debug("Pattern creation cancelled");
 
-      try {
-        Files.delete(previewFile.toPath());
-      } catch (IOException e) {
-        logger.error("Error deleting file during pattern creation window!", e);
+        try {
+          if (Files.exists(this.previewFile.toPath())) {
+            Files.delete(this.previewFile.toPath());
+          }
+        } catch (IOException e) {
+          logger.error("Error deleting file during pattern creation window!", e);
+        }
       }
-    }
 
-    alert.close();
-  }
+      alert.close();
+    }
 
   private ButtonType buildAlertWindow(Alert alert) {
     alert.setTitle(resourceBundle.getString(CREATE_PATTERN_WINDOW_TITLE));
     alert.setHeaderText(resourceBundle.getString(CREATE_PATTERN_HEADER_TEXT));
     alert.setContentText(resourceBundle.getString(CREATE_PATTERN_CONTENT_TEXT));
+    alert.getDialogPane().getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 
     ButtonType createDiagramButton  = new ButtonType(resourceBundle.getString(CREATE_PATTERN_BUTTON_TEXT));
     ButtonType cancelButton = new ButtonType(resourceBundle.getString(CANCEL_BUTTON_TEXT), CANCEL_CLOSE);
@@ -89,7 +98,6 @@ public class CreatePatternWindow {
   private GridPane buildGridPane() {
     GridPane gridPane = new GridPane();
     gridPane.setPrefWidth(CREATE_PATTERN_WINDOW_WIDTH);
-    gridPane.setMaxWidth(Double.MAX_VALUE);
 
     try {
       Image preview = new Image(new File(this.previewFile.getAbsolutePath()).toURI().toURL().toExternalForm());
@@ -98,6 +106,13 @@ public class CreatePatternWindow {
       Label imagePreviewLabel = new Label(resourceBundle.getString(CREATE_PATTERN_PREVIEW_LABEL));
       gridPane.add(imagePreviewLabel, 0, 0);
       gridPane.add(view, 1, 0);
+
+      gridPane.setStyle(
+    "-fx-border-color: white;" +
+    "-fx-border-width: 2;" +
+    "-fx-border-radius: 4;" +
+    "-fx-background-radius: 4;"
+);
     } catch (MalformedURLException e) {
       logger.error("Error reading pattern file during pattern creation window!", e);
     }

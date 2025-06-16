@@ -6,7 +6,7 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.alienlabs.adaloveslace.util.FileUtil;
-import org.alienlabs.adaloveslace.view.component.OptionalDotGrid;
+import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,6 @@ class FileUtilTest {
 
     public static final int NUMBER_OF_STEPS     = 23;
     public static final int NUMBER_OF_PATTERNS  = 22;
-    public static final int LAST_PATTERN_INDEX  = 21;
     public static final int LAST_STEP_INDEX     = 22;
 
     private File dotLaceFile;
@@ -78,10 +77,10 @@ class FileUtilTest {
     @Test
     void saved_dot_lace_file_should_contain_a_pattern_file() {
         // When
-        File fileTocheck = fileUtil.saveFile(new File(APP_FOLDER_IN_USER_HOME, "1.lace"), diagramToSave, 2);
+        File fileToCheck = fileUtil.saveFile(new File(APP_FOLDER_IN_USER_HOME, "1.lace"), diagramToSave);
 
         // Then
-        try (ZipFile zf = new ZipFile(fileTocheck)){
+        try (ZipFile zf = new ZipFile(fileToCheck)){
             final Enumeration<? extends ZipEntry> e = zf.entries();
 
             assertEquals(2, zf.size());
@@ -96,10 +95,10 @@ class FileUtilTest {
     void saved_dot_lace_file_should_contain_an_xml_file() {
         // When
         app.setOptionalDotGrid(null);
-        File fileTocheck = fileUtil.saveFile(dotLaceFile, diagramToSave, 2);
+        File fileToCheck = fileUtil.saveFile(dotLaceFile, diagramToSave);
 
         // Then
-        try (ZipFile zf  = new ZipFile(fileTocheck)) {
+        try (ZipFile zf  = new ZipFile(fileToCheck)) {
 
         assertEquals(2, zf.size());
         Iterator<? extends ZipEntry> iterator = zf.entries().asIterator();
@@ -117,13 +116,13 @@ class FileUtilTest {
     @Test
     void saved_xml_file_should_contain_a_pattern_and_a_current_index() {
         // When
-        File fileTocheck = fileUtil.saveFile(dotLaceFile, diagramToSave, 5);
+        File fileToCheck = fileUtil.saveFile(dotLaceFile, diagramToSave);
 
         // Then
         ZipFile zf = null;
 
         try {
-            zf = new ZipFile(fileTocheck);
+            zf = new ZipFile(fileToCheck);
         } catch(final IOException e) {
             logger.error("Error reading .jar file!", e);
             fail();
@@ -139,7 +138,7 @@ class FileUtilTest {
         try {
             diagramToCheck = fileUtil.unmarshallXmlFile(zf, xmlFile);
         } catch (JAXBException | IOException ex) {
-            logger.error("Error unmarshalling .jar file!", e);
+            logger.error("Error unmarshalling .jar file!", ex);
         }
 
         assertEquals(5, diagramToCheck.getCurrentStepIndex());

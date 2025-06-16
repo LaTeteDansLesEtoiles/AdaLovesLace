@@ -32,7 +32,7 @@ public class RotationSpinner {
 
       if (++numberOfUpdates == 1) {
         List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-        List<Knot> selectedKnots = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
+        List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
         List<Knot> copiedKnots = new ArrayList<>();
 
         for (Knot knot : selectedKnots) {
@@ -41,6 +41,7 @@ public class RotationSpinner {
           copiedKnots.add(copiedKnot);
         }
 
+        app.getOptionalDotGrid().getDiagram().setCurrentKnot(selectedKnots.getLast());
         newStep(displayedKnots, copiedKnots, true);
       }
 

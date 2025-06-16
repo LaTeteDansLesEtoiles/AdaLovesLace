@@ -31,9 +31,10 @@ import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.Zo
 
 public class GeometryWindow {
 
-  public static final double GEOMETRY_WINDOW_X                  = 1150d;
-  public static final double GEOMETRY_WINDOW_WIDTH              = 400d;
-  public static final double GEOMETRY_WINDOW_HEIGHT             = 760d;
+  public static final double DEFAULT_GEOMETRY_WINDOW_X          = 1150d;
+  public static final double DEFAULT_GEOMETRY_WINDOW_Y          = DEFAULT_MAIN_WINDOW_Y;
+  public static final double DEFAULT_GEOMETRY_WINDOW_WIDTH      = 400d;
+  public static final double DEFAULT_GEOMETRY_WINDOW_HEIGHT     = 760d;
   public static final double GAP_BETWEEN_BUTTONS                = 10d;
 
   public static final double GEOMETRY_BUTTONS_HEIGHT            = 50d;
@@ -64,7 +65,7 @@ public class GeometryWindow {
   private static final Logger logger = LoggerFactory.getLogger(GeometryWindow.class);
   private Stage geometryStage;
 
-  public void createGeometryStage(Stage geometryStage, Pane parent) {
+  public void createGeometryStage(App app, Stage geometryStage, Pane parent) {
     ScrollPane scrollPane = new ScrollPane(parent);
     scrollPane.setFitToWidth(true); // le contenu prend toute la largeur
     scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -73,15 +74,18 @@ public class GeometryWindow {
     scrollPane.getStyleClass().add("geometry-scroll");
     parent.getStyleClass().add("geometry-pane");
 
-    Scene geometryScene = new Scene(scrollPane, GEOMETRY_WINDOW_WIDTH, GEOMETRY_WINDOW_HEIGHT);
+    Scene geometryScene = new Scene(scrollPane, app.getResizes().getGeometryWindowWidth(), app.getResizes().getGeometryWindowHeight());
     geometryScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 
 
     this.geometryStage = geometryStage;
     geometryStage.setTitle(resourceBundle.getString(GEOMETRY_TITLE));
-    geometryStage.setOnCloseRequest(windowEvent -> logger.debug("You shall not close the geometry window directly!"));
-    geometryStage.setX(GEOMETRY_WINDOW_X);
-    geometryStage.setY(MAIN_WINDOW_Y);
+    geometryStage.setOnCloseRequest(windowEvent -> {
+      logger.debug("You shall not close the geometry window directly!");
+      windowEvent.consume();
+    });
+    geometryStage.setX(app.getWindowRepositionEvents().getGeometryWindowX());
+    geometryStage.setY(app.getWindowRepositionEvents().getGeometryWindowY());
     geometryStage.setScene(geometryScene);
     geometryStage.show();
   }

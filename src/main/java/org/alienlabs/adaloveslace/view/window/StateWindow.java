@@ -20,17 +20,19 @@ import static org.alienlabs.adaloveslace.view.component.button.statewindow.Invis
 import static org.alienlabs.adaloveslace.view.component.button.statewindow.SelectableButton.SELECTABLE_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.statewindow.UnselectableButton.UNSELECTABLE_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.statewindow.VisibleButton.VISIBLE_BUTTON_NAME;
-import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.TOOLBOX_WINDOW_WIDTH;
-import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.TOOLBOX_WINDOW_X;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.DEFAULT_TOOLBOX_WINDOW_WIDTH;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.DEFAULT_TOOLBOX_WINDOW_X;
 
 public class StateWindow {
 
   public static final double STATE_WINDOW_GAP                = 10d;
-  public static final double STATE_WINDOW_WIDTH              = 400d;
-  public static final double STATE_WINDOW_HEIGHT             = 240d;
+  public static final double DEFAULT_STATE_WINDOW_Y = DEFAULT_MAIN_WINDOW_Y + DEFAULT_MAIN_WINDOW_HEIGHT + STATE_WINDOW_GAP;
+  public static final double DEFAULT_STATE_WINDOW_WIDTH      = 400d;
+  public static final double DEFAULT_STATE_WINDOW_HEIGHT     = 240d;
   public static final double GAP_BETWEEN_BUTTONS             = 5d;
 
   public static final double STATE_BUTTONS_HEIGHT            = 35d;
+  public static final double DEFAULT_STATE_WINDOW_X          = DEFAULT_TOOLBOX_WINDOW_X + DEFAULT_TOOLBOX_WINDOW_WIDTH;
 
   private UnselectableButton unselectableButton;
   private SelectableButton selectableButton;
@@ -40,15 +42,18 @@ public class StateWindow {
   private static final Logger logger = LoggerFactory.getLogger(StateWindow.class);
   private Stage stateStage;
 
-  public void createStateStage(Stage stateStage, Pane parent) {
-    Scene stateScene = new Scene(parent, STATE_WINDOW_WIDTH, STATE_WINDOW_HEIGHT);
+  public void createStateStage(App app, Stage stateStage, Pane parent) {
+    Scene stateScene = new Scene(parent, app.getResizes().getStateWindowWidth(), app.getResizes().getStateWindowHeight());
     stateScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 
     this.stateStage = stateStage;
     stateStage.setTitle(resourceBundle.getString(STATE_TITLE));
-    stateStage.setOnCloseRequest(windowEvent -> logger.debug("You shall not close the state window directly!"));
-    stateStage.setX(TOOLBOX_WINDOW_X + TOOLBOX_WINDOW_WIDTH);
-    stateStage.setY(MAIN_WINDOW_Y + MAIN_WINDOW_HEIGHT + STATE_WINDOW_GAP);
+    stateStage.setOnCloseRequest(windowEvent -> {
+      logger.debug("You shall not close the state window directly!");
+      windowEvent.consume();
+    });
+    stateStage.setX(app.getWindowRepositionEvents().getStateWindowX());
+    stateStage.setY(app.getWindowRepositionEvents().getStateWindowY());
     stateStage.setScene(stateScene);
     stateStage.show();
   }

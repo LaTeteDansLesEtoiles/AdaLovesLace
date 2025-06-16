@@ -5,9 +5,9 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.MouseMode;
-import org.alienlabs.adaloveslace.util.Events;
+import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
+import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,15 +33,18 @@ public class DrawingButton extends ToggleButton {
   }
 
   public static void onSetDrawModeAction(App app, GeometryWindow window) {
-    logger.info("Setting draw mode");
-    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
-    app.getOptionalDotGrid().clearHovered();
+    logger.debug("Setting draw mode");
 
-    app.getRoot().addEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
+    GridEvents.removeEventsFromGrid(app);
+    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
+    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+    app.getMovablePane().setOnMouseExited(GridEvents.getGridHoverExitEventHandler(app));
+    app.getOptionalDotGrid().clearHandles();
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
-      knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, Events.getGridHoverEventHandler(app));
-      knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, Events.getMouseClickEventHandler(app));
+      knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+      knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
     }
 
     window.getDrawingButton()     .setSelected(true);

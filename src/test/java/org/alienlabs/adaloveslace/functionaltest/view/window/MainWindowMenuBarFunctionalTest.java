@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.Start;
 
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -43,6 +43,7 @@ class MainWindowMenuBarFunctionalTest extends AppFunctionalTestParent {
    *
    * @param primaryStage The injected window (stage)
    */
+  @Override
   @Start
   public void start(Stage primaryStage) {
     super.start(primaryStage);
@@ -139,15 +140,15 @@ class MainWindowMenuBarFunctionalTest extends AppFunctionalTestParent {
   }
 
   private Menu getFileMenu() {
-    return this.app.getMainWindow().getMenuBar().getMenus().get(FILE_MENU_ENTRY_INDEX);
+    return this.app.getToolboxWindow().getMenuBar().getMenus().get(FILE_MENU_ENTRY_INDEX);
   }
 
   private Menu getEditMenu() {
-    return this.app.getMainWindow().getMenuBar().getMenus().get(EDIT_MENU_ENTRY_INDEX);
+    return this.app.getToolboxWindow().getMenuBar().getMenus().get(EDIT_MENU_ENTRY_INDEX);
   }
 
   private Menu getToolMenu() {
-    return this.app.getMainWindow().getMenuBar().getMenus().get(TOOL_MENU_ENTRY_INDEX);
+    return this.app.getToolboxWindow().getMenuBar().getMenus().get(TOOL_MENU_ENTRY_INDEX);
   }
 
   private MenuItem getShowHideGridMenuItem(Menu menu) {

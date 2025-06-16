@@ -3,13 +3,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.alienlabs.adaloveslace</groupId>
   <artifactId>adaloveslace</artifactId>
-  <version>1.0.4</version>
-  <description>A tatting lace patterns creation software</description>
+  <version>1.0.10</version>
+  <description>A thread-based techniques diagrams creation software</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>21</java.version>
-    <javafx.version>21</javafx.version>
+    <java.version>24</java.version>
+    <javafx.version>24.0.1</javafx.version>
     <test-plugins.version>3.3.0</test-plugins.version>
     <itext.version>9.2.0</itext.version>
     <testfx.version>4.0.17</testfx.version>
@@ -128,13 +128,6 @@
       <version>${testfx.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- To launch JavaFX in tests -->
-    <dependency>
-      <groupId>org.testfx</groupId>
-      <artifactId>openjfx-monocle</artifactId>
-      <version>21.0.2</version>
-      <scope>test</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.hamcrest</groupId>
@@ -157,10 +150,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <version>3.14.0</version>
         <configuration>
-          <source>21</source>
-          <target>21</target>
+          <source>24</source>
+          <target>24</target>
         </configuration>
       </plugin>
 

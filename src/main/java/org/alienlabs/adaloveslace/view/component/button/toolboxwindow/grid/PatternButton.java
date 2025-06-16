@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
+package org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid;
 
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
@@ -6,13 +6,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Pattern;
-import org.alienlabs.adaloveslace.business.model.PatternOrTextMode;
+import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
+import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.alienlabs.adaloveslace.util.Events.keyHandler;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON_SELECTED;
+import static org.alienlabs.adaloveslace.view.window.event.GridEvents.keyHandler;
 
 public class PatternButton extends ToggleButton {
 
@@ -32,7 +33,7 @@ public class PatternButton extends ToggleButton {
     this.setGraphic(imageView);
     this.setGraphicTextGap(10d);
 
-    this.getStyleClass().add(PATTERN_AND_TEXT_BUTTON); // 👈 relie au style CSS
+    this.getStyleClass().add(PATTERN_AND_TEXT_BUTTON);
     this.setSelected(false);
     app.getScene().removeEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
 
@@ -46,8 +47,8 @@ public class PatternButton extends ToggleButton {
       logger.debug("Event type -> {}, new current Pattern -> {}", event.getEventType(), newCurrentPattern);
 
       app.getOptionalDotGrid().getCurrentPatternProperty().set(newCurrentPattern);
+      GridEvents.setCurrentImageView(imageView);
       app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().set(PatternOrTextMode.PATTERN);
-      app.getOptionalDotGrid().getDiagram().resetKnotsText();
     });
   }
 

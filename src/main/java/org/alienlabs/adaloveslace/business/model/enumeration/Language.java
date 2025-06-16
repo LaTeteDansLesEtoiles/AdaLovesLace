@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.business.model;
+package org.alienlabs.adaloveslace.business.model.enumeration;
 
 /**
  * The Language enumeration.
