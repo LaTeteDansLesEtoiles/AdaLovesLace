@@ -227,7 +227,7 @@ public class FileUtil {
     private Diagram buildDiagram(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
         Diagram diagram = unmarshallXmlFile(zipFile, entry);
         buildAbsoluteFilenamesForPatternsAndKnots(diagram);
-        diagram.setCurrentPattern(diagram.getPatterns().stream().findFirst().get());
+        diagram.setCurrentPattern(diagram.getPatterns().stream().findFirst().orElse(null));
         return diagram;
     }
 

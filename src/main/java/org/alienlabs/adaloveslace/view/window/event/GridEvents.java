@@ -322,8 +322,8 @@ public class GridEvents {
         if (null != currentImageView) {
           app.getMovablePane().getChildren().remove(currentImageView);
         }
-        if (null == currentImageView
-                || !app.getOptionalDotGrid().getCurrentPatternProperty().get().equals(currentPattern)) {
+        if ((null != app.getOptionalDotGrid().getCurrentPatternProperty().get()) && (null == currentImageView
+                || !app.getOptionalDotGrid().getCurrentPatternProperty().get().equals(currentPattern))) {
           currentPattern = app.getOptionalDotGrid().getCurrentPatternProperty().get();
           currentImageView = new ImageView(
                   new Image(
@@ -333,12 +333,14 @@ public class GridEvents {
           );
         }
 
-        Point2D mouseInParent = app.getMovablePane().sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
-        Double x = mouseInParent.getX();
-        Double y = mouseInParent.getY();
-        currentImageView.setLayoutX(x);
-        currentImageView.setLayoutY(y);
-        app.getMovablePane().getChildren().add(currentImageView);
+        if (null != currentImageView) {
+          Point2D mouseInParent = app.getMovablePane().sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+          Double x = mouseInParent.getX();
+          Double y = mouseInParent.getY();
+          currentImageView.setLayoutX(x);
+          currentImageView.setLayoutY(y);
+          app.getMovablePane().getChildren().add(currentImageView);
+        }
       } else {
         if (null != rectangle) {
           app.getMovablePane().getChildren().remove(rectangle);

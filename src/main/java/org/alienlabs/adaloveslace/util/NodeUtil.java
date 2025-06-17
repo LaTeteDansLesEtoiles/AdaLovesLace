@@ -99,6 +99,10 @@ public class NodeUtil {
   }
 
   public ImageView drawPattern(double x, double y, Pattern currentPattern) {
+    if (null == currentPattern) {
+      return null;
+    }
+
     ImageView iv = null;
 
     try (FileInputStream fis = new FileInputStream(new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, currentPattern.getFilename()))) {

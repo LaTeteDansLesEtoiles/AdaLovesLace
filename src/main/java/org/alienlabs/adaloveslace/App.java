@@ -282,7 +282,7 @@ public class App extends Application {
     parent.add(menuBar, 0, 0);
 
     this.diagram          = toolboxWindow.createToolboxPane(parent, classpathBase, resourcesPath, app, this.diagram);
-    int posY              = this.diagram.getPatterns().size() / 2 + 3;
+    int posY              = this.diagram.getPatterns().size() / 2 + 5;
     toolboxWindow.createToolboxButtons(parent, app, posY);
     toolboxWindow.createToolboxStage(this.toolboxStage, parent, app, posY);
     return toolboxWindow;
