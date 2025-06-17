@@ -97,7 +97,7 @@ public class WindowRepositionEvents {
             return DEFAULT_MAIN_WINDOW_Y;
         }
 
-        return Double.parseDouble(prefs.getStringValue(WindowRepositionEvents.MAIN_WINDOW_Y));
+        return Double.parseDouble(prefs.getStringValue(WindowRepositionEvents.MAIN_WINDOW_Y)) - 16d;
     }
 
     public double getToolboxWindowX() {
@@ -115,7 +115,7 @@ public class WindowRepositionEvents {
             return DEFAULT_TOOLBOX_WINDOW_Y;
         }
 
-        return Double.parseDouble(prefs.getStringValue(WindowRepositionEvents.TOOLBOX_WINDOW_Y));
+        return Double.parseDouble(prefs.getStringValue(WindowRepositionEvents.TOOLBOX_WINDOW_Y)) - 16d;
     }
     public double getGeometryWindowX() {
         Preferences prefs = new Preferences();
@@ -132,7 +132,7 @@ public class WindowRepositionEvents {
             return DEFAULT_GEOMETRY_WINDOW_Y;
         }
 
-        return Double.parseDouble(prefs.getStringValue(WindowRepositionEvents.GEOMETRY_WINDOW_Y));
+        return Double.parseDouble(prefs.getStringValue(WindowRepositionEvents.GEOMETRY_WINDOW_Y)) - 16d;
     }
     public double getStateWindowX() {
         Preferences prefs = new Preferences();
@@ -149,7 +149,7 @@ public class WindowRepositionEvents {
             return DEFAULT_STATE_WINDOW_Y;
         }
 
-        return Double.parseDouble(prefs.getStringValue(WindowRepositionEvents.STATE_WINDOW_Y));
+        return Double.parseDouble(prefs.getStringValue(WindowRepositionEvents.STATE_WINDOW_Y)) - 16d;
     }
 
 }

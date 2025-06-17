@@ -6,8 +6,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.*;
@@ -17,8 +16,6 @@ public class BackInBlackButton extends ToggleButton {
 
   private static App app;
   private static final String BACK_TO_BLACK_BUTTON_NAME = "BackToBlack";
-
-  private static final Logger logger = LoggerFactory.getLogger(BackInBlackButton.class);
 
   public BackInBlackButton(App app) {
     super(resourceBundle.getString(BACK_TO_BLACK_BUTTON_NAME));
@@ -36,12 +33,13 @@ public class BackInBlackButton extends ToggleButton {
     this.setSelected(true);
     this.getStyleClass().add(BUTTON_WAITING_SELECTION);
 
-    PauseTransition pause = new PauseTransition(Duration.millis(500));
+    PauseTransition pause = new PauseTransition(Duration.millis(250d));
     pause.setOnFinished(e -> {
       this.getStyleClass().remove(BUTTON_WAITING_SELECTION);
       this.getStyleClass().add(BUTTON_SELECTED);
       app.getToolboxWindow().getColorButton().getStyleClass().remove(BUTTON_SELECTED);
       app.getOptionalDotGrid().getDiagram().setCurrentColor(null);
+      GridEvents.setCurrentImageView(null);
     });
 
     pause.playFromStart();

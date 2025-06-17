@@ -326,7 +326,15 @@ public class GridEvents {
                 || !app.getOptionalDotGrid().getCurrentPatternProperty().get().equals(currentPattern))) {
           currentPattern = app.getOptionalDotGrid().getCurrentPatternProperty().get();
           currentImageView = new ImageView(
-                  new Image(
+                  app.getOptionalDotGrid().getDiagram().getCurrentColor() != null
+                          ? new NodeUtil().replaceColoredPixels(
+                          new Image(
+                                  new File(app.getOptionalDotGrid().getCurrentPatternProperty().get().getAbsoluteFilename())
+                                          .toURI().toString()
+                          ),
+                          app.getOptionalDotGrid().getDiagram().getCurrentColor()
+                  )
+                          : new Image(
                           new File(app.getOptionalDotGrid().getCurrentPatternProperty().get().getAbsoluteFilename())
                                   .toURI().toString()
                   )

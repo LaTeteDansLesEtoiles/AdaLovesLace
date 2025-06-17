@@ -119,13 +119,14 @@ public class MainWindow {
     boolean hasClickedOnAGivenKnot = false;
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    NodeUtil nodeUtil = new NodeUtil();
 
     // We iterate on the Knots as long as they are still Knots left to iterate
     // And we stop at the first clicked Knot
     while (it.hasNext()) {
       Knot knot = it.next();
 
-      hasClickedOnAGivenKnot = new NodeUtil().isMouseOverKnot(knot);
+      hasClickedOnAGivenKnot = nodeUtil.isMouseOverKnot(knot);
 
       if (hasClickedOnAGivenKnot && (knot.getSelection() == null)) {
         logger.debug("Clicked Knot {} in order to select it",
@@ -135,8 +136,10 @@ public class MainWindow {
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
-          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          Knot copiedKnot = nodeUtil.copyKnot(knot);
+          nodeUtil.colorizeKnot(app, copiedKnot);
           removeNodeAndDecorationsForNowDisplayedKnots(app, selectedKnots);
+
           displayedKnots.addAll(new ArrayList<>(selectedKnots));
           displayedKnots.remove(knot);
           selectedKnots.clear();
@@ -152,7 +155,8 @@ public class MainWindow {
 
           newStep(displayedKnots, selectedKnots, true);
         } else {
-          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          Knot copiedKnot = nodeUtil.copyKnot(knot);
+          nodeUtil.colorizeKnot(app, copiedKnot);
           selectedKnots.add(copiedKnot);
           displayedKnots.remove(knot);
 
@@ -175,7 +179,8 @@ public class MainWindow {
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
-          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          Knot copiedKnot = nodeUtil.copyKnot(knot);
+          nodeUtil.colorizeKnot(app, copiedKnot);
           displayedKnots.addAll(new ArrayList<>(selectedKnots));
           selectedKnots.clear();
           selectedKnots.add(copiedKnot);
@@ -194,7 +199,8 @@ public class MainWindow {
 
           break;
         } else {
-          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          Knot copiedKnot = nodeUtil.copyKnot(knot);
+          nodeUtil.colorizeKnot(app, copiedKnot);
           copiedKnot.setSelection(null);
           selectedKnots.remove(knot);
           displayedKnots.remove(knot);
@@ -213,9 +219,10 @@ public class MainWindow {
 
     // If we have clicked elsewhere, we deselect all knots
     if (!hasClickedOnAGivenKnot) {
-      displayedKnots.addAll(selectedKnots.stream().map(knot -> new NodeUtil().copyKnot(knot)).toList());
+      displayedKnots.addAll(selectedKnots.stream().map(nodeUtil::copyKnot).toList());
       removeNodeAndDecorationsForNowDisplayedKnots(app, displayedKnots);
       selectedKnots.clear();
+      GridEvents.setCurrentImageView(null);
 
       newStep(displayedKnots, selectedKnots, true);
     }

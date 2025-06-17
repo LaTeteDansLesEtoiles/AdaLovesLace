@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,7 @@ public class ColorButton extends ToggleButton {
     this.setSelected(true);
     this.getStyleClass().add(BUTTON_WAITING_SELECTION);
 
-    PauseTransition pause = new PauseTransition(Duration.millis(500));
+    PauseTransition pause = new PauseTransition(Duration.millis(250d));
     pause.setOnFinished(_ -> {
       this.getStyleClass().remove(BUTTON_WAITING_SELECTION);
       app.getToolboxWindow().getBackInBlackButton().getStyleClass().remove(BUTTON_SELECTED);
@@ -68,6 +69,7 @@ public class ColorButton extends ToggleButton {
         Optional<Color> result = dialog.showAndWait();
         result.ifPresent(color -> logger.debug("Chosen color: {}", color));
         app.getOptionalDotGrid().getDiagram().setCurrentColor(result.orElse(null));
+        GridEvents.setCurrentImageView(null);
       });
     });
 

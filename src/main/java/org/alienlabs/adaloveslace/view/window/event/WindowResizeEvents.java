@@ -137,7 +137,7 @@ public class WindowResizeEvents {
             return DEFAULT_MAIN_WINDOW_HEIGHT;
         }
 
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.MAIN_WINDOW_HEIGHT));
+        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.MAIN_WINDOW_HEIGHT)) - 32d;
     }
 
     public double getGridWidth() {
@@ -155,7 +155,7 @@ public class WindowResizeEvents {
             return DEFAULT_GRID_HEIGHT;
         }
 
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.GRID_HEIGHT));
+        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.GRID_HEIGHT)) - 32d;
     }
 
     public double getToolboxWindowWidth() {
@@ -173,7 +173,7 @@ public class WindowResizeEvents {
             return 0d;
         }
 
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.TOOLBOX_WINDOW_HEIGHT));
+        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.TOOLBOX_WINDOW_HEIGHT)) - 32d;
     }
     public double getGeometryWindowWidth() {
         Preferences prefs = new Preferences();
@@ -190,7 +190,7 @@ public class WindowResizeEvents {
             return DEFAULT_GEOMETRY_WINDOW_HEIGHT;
         }
 
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.GEOMETRY_WINDOW_HEIGHT));
+        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.GEOMETRY_WINDOW_HEIGHT)) - 48d;
     }
     public double getStateWindowWidth() {
         Preferences prefs = new Preferences();
@@ -207,7 +207,7 @@ public class WindowResizeEvents {
             return DEFAULT_STATE_WINDOW_HEIGHT;
         }
 
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.STATE_WINDOW_HEIGHT));
+        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.STATE_WINDOW_HEIGHT)) - 48d;
     }
 
 }
