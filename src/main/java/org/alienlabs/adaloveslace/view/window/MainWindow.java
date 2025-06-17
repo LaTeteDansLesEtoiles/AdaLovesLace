@@ -222,6 +222,7 @@ public class MainWindow {
       displayedKnots.addAll(selectedKnots.stream().map(nodeUtil::copyKnot).toList());
       removeNodeAndDecorationsForNowDisplayedKnots(app, displayedKnots);
       selectedKnots.clear();
+      GridEvents.setCurrentImageView(null);
 
       newStep(displayedKnots, selectedKnots, true);
     }

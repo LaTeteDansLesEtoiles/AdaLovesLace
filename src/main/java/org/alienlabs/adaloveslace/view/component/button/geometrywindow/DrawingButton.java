@@ -11,6 +11,8 @@ import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
@@ -46,6 +48,11 @@ public class DrawingButton extends ToggleButton {
       knot.getImageView().removeEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
       knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
     }
+
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().addAll(
+            new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots())
+    );
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
 
     window.getDrawingButton()     .setSelected(true);
     window.getSelectionButton()   .setSelected(false);
