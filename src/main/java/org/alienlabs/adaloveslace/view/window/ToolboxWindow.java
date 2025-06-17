@@ -88,18 +88,18 @@ public class ToolboxWindow {
         this.backInBlackButton = new BackInBlackButton(app);
         parent.add(
                 this.textButton,
-                this.classpathResourceFiles.size() % 2,
-                (int)Math.floor((double) (this.classpathResourceFiles.size() + 2) / 2)
+                0,
+                (int)Math.floor((double) (this.classpathResourceFiles.size() + 3) / 2)
         );
         parent.add(
                 this.colorButton,
-                this.classpathResourceFiles.size() % 2,
-                (int)Math.floor((double) (this.classpathResourceFiles.size() + 4) / 2)
+                0,
+                (int)Math.floor((double) (this.classpathResourceFiles.size() + 5) / 2)
         );
         parent.add(
                 this.backInBlackButton,
-                this.classpathResourceFiles.size() % 2 + 1,
-                (int)Math.floor((double) (this.classpathResourceFiles.size() + 4) / 2)
+                1,
+                (int)Math.floor((double) (this.classpathResourceFiles.size() + 5) / 2)
         );
 
         return diagram;
@@ -163,7 +163,7 @@ public class ToolboxWindow {
                 patternsDirectoryResourcesPath);
 
         if (homeDirectoryResourceFiles == null || homeDirectoryResourceFiles.isEmpty()) {
-            showEmptyPatternDirectoryDialog(patternsDirectoryResourcesPath);
+            // Nothing to do here
         } else {
             // We don't add duplicated resources to our toolbox buttons (i.e., filename must be different in both
             // classpathResourceFiles & homeDirectoryResourceFiles
@@ -185,11 +185,11 @@ public class ToolboxWindow {
     private File createPatternDirectory() {
         File patternsDirectoryResourcesPath = new File(System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
         if (!patternsDirectoryResourcesPath.exists() && !patternsDirectoryResourcesPath.mkdir()) {
-            showNoPatternDirectoryDialog(patternsDirectoryResourcesPath);
+            // Nothing to do here
         }
 
         if (!patternsDirectoryResourcesPath.canWrite()) {
-            showNoPatternDirectoryDialog(patternsDirectoryResourcesPath);
+            // Nothing to do here
         }
 
         return patternsDirectoryResourcesPath;
@@ -197,11 +197,11 @@ public class ToolboxWindow {
 
     private void createProjectHomeDirectory(File projectHomeDirectory) {
         if (!projectHomeDirectory.exists() && !projectHomeDirectory.mkdir()) {
-            showNoHomeDirectoryDialog(projectHomeDirectory);
+            // Nothing to do here
         }
 
         if (!projectHomeDirectory.canWrite()) {
-            showNoHomeDirectoryDialog(projectHomeDirectory);
+            // Nothing to do here
         }
     }
 
@@ -350,27 +350,6 @@ public class ToolboxWindow {
         buttonsPane.add(shareButton, 1, posY + 1);
         buttonsPane.add(exportImageButton, 0, posY + 2);
         buttonsPane.add(exportPdfButton, 1, posY + 2);
-    }
-
-    private void showNoHomeDirectoryDialog(final File directory) {
-        showErrorDialog(THE_FOLLOWING_FOLDER_STRING + directory.getAbsolutePath() + "' shall be used as an " + ADA_LOVES_LACE + " home folder and it is either non-existent either non-writable!");
-    }
-
-    private void showNoPatternDirectoryDialog(final File directory) {
-        showErrorDialog(THE_FOLLOWING_FOLDER_STRING + directory.getAbsolutePath() + "' shall be used for storing pattern images and it is either non-existent either non-writable!");
-    }
-
-    private void showEmptyPatternDirectoryDialog(final File directory) {
-        showErrorDialog(THE_FOLLOWING_FOLDER_STRING + directory.getAbsolutePath() + "' shall be used for storing pattern images and it is empty!");
-    }
-
-    private void showErrorDialog(String text) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(ADA_LOVES_LACE);
-        alert.setHeaderText(ERROR);
-        alert.setContentText(text);
-
-        alert.showAndWait();
     }
 
     public UndoKnotButton getUndoKnotButton() {
