@@ -86,7 +86,8 @@ public class ImageUtil {
                 diagram(Files.readAllBytes(
                         new FileUtil(app).saveFile(
                                         laceFilePath,
-                                        app.getOptionalDotGrid().getDiagram()
+                                        app.getOptionalDotGrid().getDiagram(),
+                                true
                                 )
                                 .toPath()
                 )).

@@ -259,8 +259,8 @@ public class FileUtil {
         }
     }
 
-    public File saveFile(File file, Diagram diagram) {
-        if (this.app != null && app.getMainWindow() != null && this.app.getOptionalDotGrid() != null) {
+    public File saveFile(File file, Diagram diagram, boolean layoutChildren) {
+        if (this.app != null && app.getMainWindow() != null && this.app.getOptionalDotGrid() != null && layoutChildren) {
             this.app.getOptionalDotGrid().layoutChildren();
         }
 

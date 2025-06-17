@@ -80,8 +80,10 @@ public class SaveButton extends ImageButton {
                 );
             }
 
-            new FileUtil(app).saveFile(file,
-                    app.getOptionalDotGrid().getDiagram()
+            new FileUtil(app).saveFile(
+                    file,
+                    app.getOptionalDotGrid().getDiagram(),
+                    true
             );
         }
     }

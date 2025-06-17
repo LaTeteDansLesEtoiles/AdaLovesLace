@@ -4,7 +4,9 @@ import jakarta.xml.bind.JAXBException;
 import javafx.scene.layout.Pane;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Pattern;
+import org.alienlabs.adaloveslace.business.model.Step;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
@@ -17,10 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -47,10 +46,18 @@ class FileUtilTest {
     @BeforeEach
     void beforeEach() {
         app = new App();
+        app.setMainWindow(new MainWindow());
         diagramToSave = new Diagram();
+        app.setOptionalDotGrid(new OptionalDotGrid(app, diagramToSave, new Pane()));
         this.app.setDiagram(diagramToSave);
         fileUtil = new FileUtil(app);
 
+        List<Step> allSteps = new ArrayList<>();
+        List<Knot> displayedKnots = new ArrayList<>();
+        List<Knot> selectedKnots = new ArrayList<>();
+        allSteps.add(new Step(app, diagramToSave, displayedKnots, selectedKnots, false));
+        allSteps.add(new Step(app, diagramToSave, displayedKnots, selectedKnots, false));
+        diagramToSave.setAllSteps(allSteps);
         diagramToSave.setCurrentStepIndex(2);
 
         Pattern pattern = new Pattern();
@@ -77,7 +84,11 @@ class FileUtilTest {
     @Test
     void saved_dot_lace_file_should_contain_a_pattern_file() {
         // When
-        File fileToCheck = fileUtil.saveFile(new File(APP_FOLDER_IN_USER_HOME, "1.lace"), diagramToSave);
+        File fileToCheck = fileUtil.saveFile(
+                new File(APP_FOLDER_IN_USER_HOME, "1.lace"),
+                diagramToSave,
+                false
+        );
 
         // Then
         try (ZipFile zf = new ZipFile(fileToCheck)){
@@ -95,7 +106,7 @@ class FileUtilTest {
     void saved_dot_lace_file_should_contain_an_xml_file() {
         // When
         app.setOptionalDotGrid(null);
-        File fileToCheck = fileUtil.saveFile(dotLaceFile, diagramToSave);
+        File fileToCheck = fileUtil.saveFile(dotLaceFile, diagramToSave, false);
 
         // Then
         try (ZipFile zf  = new ZipFile(fileToCheck)) {
@@ -116,7 +127,15 @@ class FileUtilTest {
     @Test
     void saved_xml_file_should_contain_a_pattern_and_a_current_index() {
         // When
-        File fileToCheck = fileUtil.saveFile(dotLaceFile, diagramToSave);
+        List<Step> allSteps = new ArrayList<>(diagramToSave.getAllSteps());
+        List<Knot> displayedKnots = diagramToSave.getCurrentStep().getDisplayedKnots();
+        List<Knot> selectedKnots = diagramToSave.getCurrentStep().getSelectedKnots();
+        allSteps.add(new Step(app, diagramToSave, displayedKnots, selectedKnots, false));
+        allSteps.add(new Step(app, diagramToSave, displayedKnots, selectedKnots, false));
+        allSteps.add(new Step(app, diagramToSave, displayedKnots, selectedKnots, false));
+        diagramToSave.setAllSteps(allSteps);
+
+        File fileToCheck = fileUtil.saveFile(dotLaceFile, diagramToSave, false);
 
         // Then
         ZipFile zf = null;

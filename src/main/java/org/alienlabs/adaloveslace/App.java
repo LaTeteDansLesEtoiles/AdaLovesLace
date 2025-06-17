@@ -457,8 +457,16 @@ public class App extends Application {
     return this.resizes;
   }
 
+  public void setResizes(WindowResizeEvents resizes) {
+    this.resizes = resizes;
+  }
+
   public WindowRepositionEvents getWindowRepositionEvents() {
     return this.windowRepositionEvents;
+  }
+
+  public void setWindowRepositionEvents(WindowRepositionEvents windowRepositionEvents) {
+    this.windowRepositionEvents = windowRepositionEvents;
   }
 
 }
