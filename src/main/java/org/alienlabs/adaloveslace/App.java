@@ -41,7 +41,7 @@ import java.util.ResourceBundle;
 
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_BUTTONS;
-import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_AND_TEXT_BUTTON_SELECTED;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.BUTTON_SELECTED;
 import static org.alienlabs.adaloveslace.view.window.event.GridEvents.getMouseDoubleRightClickOnGridEventHendler;
 
 /**
@@ -72,6 +72,7 @@ public class App extends Application {
   public static final String GET_PRINTERS_BUTTON_NAME = "GetPrinters";
   public static final String PRINT_BUTTON_NAME        = "PrintDiagram";
   public static final String TEXT_BUTTON_NAME         = "TextButton";
+  public static final String COLOR_BUTTON_NAME        = "ColorButton";
 
   public static final double DEFAULT_MAIN_WINDOW_X    = 75d;
   public static final double DEFAULT_MAIN_WINDOW_Y    = 5d;
@@ -281,7 +282,7 @@ public class App extends Application {
     parent.add(menuBar, 0, 0);
 
     this.diagram          = toolboxWindow.createToolboxPane(parent, classpathBase, resourcesPath, app, this.diagram);
-    int posY              = this.diagram.getPatterns().size() / 2 + 2;
+    int posY              = this.diagram.getPatterns().size() / 2 + 3;
     toolboxWindow.createToolboxButtons(parent, app, posY);
     toolboxWindow.createToolboxStage(this.toolboxStage, parent, app, posY);
     return toolboxWindow;
@@ -343,10 +344,10 @@ public class App extends Application {
   public void unselectPatternsAndTextButtons() {
     this.getToolboxWindow().getAllPatterns().forEach(toggleButton -> {
       toggleButton.setSelected(false);
-      toggleButton.getStyleClass().remove(PATTERN_AND_TEXT_BUTTON_SELECTED);
+      toggleButton.getStyleClass().remove(BUTTON_SELECTED);
     });
     this.getToolboxWindow().getTextButton().setSelected(false);
-    this.getToolboxWindow().getTextButton().getStyleClass().remove(PATTERN_AND_TEXT_BUTTON_SELECTED);
+    this.getToolboxWindow().getTextButton().getStyleClass().remove(BUTTON_SELECTED);
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

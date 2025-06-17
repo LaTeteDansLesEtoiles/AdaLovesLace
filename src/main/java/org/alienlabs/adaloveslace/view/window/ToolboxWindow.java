@@ -42,9 +42,9 @@ public class ToolboxWindow {
     public static final double MENU_BAR_Y                       = 0d;
 
     public static final String THE_FOLLOWING_FOLDER_STRING      = "The following folder: '";
-    public static final String PATTERN_AND_TEXT_BUTTON_SELECTED = "pattern-and-text-button-selected";
-    public static final String PATTERN_AND_TEXT_BUTTON_WAITING_SELECTION = "pattern-and-text-button-waiting-selection";
-    public static final String PATTERN_AND_TEXT_BUTTON          = "pattern-and-text-button";
+    public static final String BUTTON_SELECTED                  = "button-selected";
+    public static final String BUTTON_WAITING_SELECTION         = "button-waiting-selection";
+    public static final String PATTERN_TEXT_AND_COLOR_BUTTON    = "pattern-text-and-color-button";
 
     private List<String> classpathResourceFiles;
 
@@ -56,6 +56,8 @@ public class ToolboxWindow {
 
     private Stage toolboxStage;
     private TextButton textButton;
+    private ColorButton colorButton;
+    private BackInBlackButton backInBlackButton;
 
     private static App app;
 
@@ -82,10 +84,22 @@ public class ToolboxWindow {
         }
 
         this.textButton = new TextButton(app);
+        this.colorButton = new ColorButton(app);
+        this.backInBlackButton = new BackInBlackButton(app);
         parent.add(
                 this.textButton,
                 this.classpathResourceFiles.size() % 2,
                 (int)Math.floor((double) (this.classpathResourceFiles.size() + 2) / 2)
+        );
+        parent.add(
+                this.colorButton,
+                this.classpathResourceFiles.size() % 2,
+                (int)Math.floor((double) (this.classpathResourceFiles.size() + 4) / 2)
+        );
+        parent.add(
+                this.backInBlackButton,
+                this.classpathResourceFiles.size() % 2 + 1,
+                (int)Math.floor((double) (this.classpathResourceFiles.size() + 4) / 2)
         );
 
         return diagram;
@@ -130,7 +144,7 @@ public class ToolboxWindow {
 
         if (i == 0) {
             this.colorWheelButton = button;
-            button.getStyleClass().add(PATTERN_AND_TEXT_BUTTON_SELECTED);
+            button.getStyleClass().add(BUTTON_SELECTED);
             diagram.setCurrentPattern(pattern);
             app.getOptionalDotGrid().getCurrentPatternProperty().set(pattern);
         }
@@ -369,6 +383,14 @@ public class ToolboxWindow {
 
     public TextButton getTextButton() {
         return this.textButton;
+    }
+
+    public ColorButton getColorButton() {
+        return this.colorButton;
+    }
+
+    public BackInBlackButton getBackInBlackButton() {
+        return this.backInBlackButton;
     }
 
     public ToggleButton getSnowflakeButton() {

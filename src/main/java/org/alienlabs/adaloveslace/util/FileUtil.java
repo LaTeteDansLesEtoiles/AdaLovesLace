@@ -12,6 +12,7 @@ import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Diagram;
 import org.alienlabs.adaloveslace.business.model.Knot;
@@ -171,12 +172,18 @@ public class FileUtil {
 
     public void buildKnotImageView(Knot knot, FileInputStream fis) {
         if (knot.getPattern().isPresent()) {
-            loadImageView(knot, fis);
+            loadImageView(knot, fis, knot.getColor());
         }
     }
 
-    private static void loadImageView(Knot knot, FileInputStream fis) {
-        Image image = new Image(fis);
+    private static void loadImageView(Knot knot, FileInputStream fis, Optional<Color> currentColor) {
+        Image image;
+
+        if (currentColor.isPresent()) {
+            image = new NodeUtil().replaceBlackPixels(new Image(fis), currentColor.get());
+        } else {
+            image = new Image(fis);
+        }
         ImageView iv = new ImageView(image);
 
         iv.setLayoutX(knot.getX());
@@ -258,9 +265,9 @@ public class FileUtil {
         }
 
         try {
-            diagram.getCurrentStep().clearStepsGreaterThanPresentStepPlusLimit(diagram);
             diagram.getCurrentStep().getDisplayedKnots().addAll(new ArrayList<>(diagram.getCurrentStep().getSelectedKnots()));
             diagram.getCurrentStep().getSelectedKnots().clear();
+            diagram.getCurrentStep().clearStepsGreaterThanPresentStepPlusLimit(diagram);
             marshallLaceFile(
                     file,
                     diagram,
