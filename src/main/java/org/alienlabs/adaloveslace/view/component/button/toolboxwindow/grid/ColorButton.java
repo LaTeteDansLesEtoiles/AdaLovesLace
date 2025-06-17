@@ -40,16 +40,17 @@ public class ColorButton extends ToggleButton {
     this.setOnMouseClicked(onColorButtonClicked);
   }
 
-  private final EventHandler<MouseEvent> onColorButtonClicked = event -> {
+  private final EventHandler<MouseEvent> onColorButtonClicked = _ -> {
     this.setSelected(true);
     this.getStyleClass().add(BUTTON_WAITING_SELECTION);
 
     PauseTransition pause = new PauseTransition(Duration.millis(500));
-    pause.setOnFinished(e -> {
+    pause.setOnFinished(_ -> {
       this.getStyleClass().remove(BUTTON_WAITING_SELECTION);
+      app.getToolboxWindow().getBackInBlackButton().getStyleClass().remove(BUTTON_SELECTED);
       this.getStyleClass().add(BUTTON_SELECTED);
 
-      ColorPicker colorPicker = new ColorPicker();
+      ColorPicker colorPicker = new ColorPicker(Color.BLACK);
       Dialog<Color> dialog = new Dialog<>();
       dialog.setTitle(resourceBundle.getString(CHOOSE_KNOT_COLOR));
       dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);

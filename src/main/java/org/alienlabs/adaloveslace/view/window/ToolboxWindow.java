@@ -57,6 +57,7 @@ public class ToolboxWindow {
     private Stage toolboxStage;
     private TextButton textButton;
     private ColorButton colorButton;
+    private BackInBlackButton backInBlackButton;
 
     private static App app;
 
@@ -84,6 +85,7 @@ public class ToolboxWindow {
 
         this.textButton = new TextButton(app);
         this.colorButton = new ColorButton(app);
+        this.backInBlackButton = new BackInBlackButton(app);
         parent.add(
                 this.textButton,
                 this.classpathResourceFiles.size() % 2,
@@ -92,6 +94,11 @@ public class ToolboxWindow {
         parent.add(
                 this.colorButton,
                 this.classpathResourceFiles.size() % 2,
+                (int)Math.floor((double) (this.classpathResourceFiles.size() + 4) / 2)
+        );
+        parent.add(
+                this.backInBlackButton,
+                this.classpathResourceFiles.size() % 2 + 1,
                 (int)Math.floor((double) (this.classpathResourceFiles.size() + 4) / 2)
         );
 
@@ -380,6 +387,10 @@ public class ToolboxWindow {
 
     public ColorButton getColorButton() {
         return this.colorButton;
+    }
+
+    public BackInBlackButton getBackInBlackButton() {
+        return this.backInBlackButton;
     }
 
     public ToggleButton getSnowflakeButton() {
