@@ -106,7 +106,7 @@ public class NodeUtil {
     ImageView iv = null;
 
     try (FileInputStream fis = new FileInputStream(new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, currentPattern.getFilename()))) {
-      Image image = replaceBlackPixels(new Image(fis), app.getOptionalDotGrid().getDiagram().getCurrentColor());
+      Image image = replaceColoredPixels(new Image(fis), app.getOptionalDotGrid().getDiagram().getCurrentColor());
       iv = new ImageView(image);
 
       iv.setLayoutX(x);
@@ -121,7 +121,7 @@ public class NodeUtil {
     return iv;
   }
 
-  public Image replaceBlackPixels(Image image, Color replacementColor) {
+  public Image replaceColoredPixels(Image image, Color replacementColor, Color... backgroundColor) {
     if (replacementColor == null) {
       return image;
     }
@@ -136,18 +136,59 @@ public class NodeUtil {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         Color color = reader.getColor(x, y);
-        if (isBlack(color)) {
-          writer.setColor(x, y, replacementColor);
+        if (backgroundColor.length == 0) {
+          if (isBlack(color)) {
+            writer.setColor(x, y, replacementColor);
+          } else {
+            writer.setColor(x, y, color);
+          }
         } else {
-          writer.setColor(x, y, color);
+          if (isBackgroundColor(backgroundColor[0], color)) {
+            writer.setColor(x, y, replacementColor);
+          } else {
+            writer.setColor(x, y, color);
+          }
         }
       }
     }
+
     return result;
   }
 
   private boolean isBlack(Color color) {
     return color.getRed() == 0.0d && color.getGreen() == 0.0d && color.getBlue() == 0.0d && color.getOpacity() != 0.0d;
+  }
+
+  private boolean isBackgroundColor(Color backgroundColor, Color color) {
+    return color.getRed() == backgroundColor.getRed() &&
+            color.getGreen() == backgroundColor.getGreen() &&
+            color.getBlue() == backgroundColor.getBlue() &&
+            color.getOpacity() == backgroundColor.getOpacity();
+  }
+
+  public void colorizeKnot(App app, Knot copiedKnot) {
+    if (app.getOptionalDotGrid().getDiagram().getCurrentColor() != null) {
+      Color oldColor = copiedKnot.getColor().orElse(null);
+
+      if (oldColor != null) {
+        copiedKnot.setColor(Optional.of(app.getOptionalDotGrid().getDiagram().getCurrentColor()));
+        copiedKnot.getImageView().setImage(
+                new NodeUtil().replaceColoredPixels(
+                        copiedKnot.getImageView().getImage(),
+                        app.getOptionalDotGrid().getDiagram().getCurrentColor(),
+                        oldColor
+                )
+        );
+      } else {
+        copiedKnot.setColor(Optional.of(app.getOptionalDotGrid().getDiagram().getCurrentColor()));
+        copiedKnot.getImageView().setImage(
+                new NodeUtil().replaceColoredPixels(
+                        copiedKnot.getImageView().getImage(),
+                        app.getOptionalDotGrid().getDiagram().getCurrentColor()
+                )
+        );
+      }
+    }
   }
 
   public void drawText(Diagram diagram, double x, double y) {

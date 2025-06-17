@@ -44,7 +44,7 @@ public class ColorButton extends ToggleButton {
     this.setSelected(true);
     this.getStyleClass().add(BUTTON_WAITING_SELECTION);
 
-    PauseTransition pause = new PauseTransition(Duration.millis(500));
+    PauseTransition pause = new PauseTransition(Duration.millis(250d));
     pause.setOnFinished(_ -> {
       this.getStyleClass().remove(BUTTON_WAITING_SELECTION);
       app.getToolboxWindow().getBackInBlackButton().getStyleClass().remove(BUTTON_SELECTED);

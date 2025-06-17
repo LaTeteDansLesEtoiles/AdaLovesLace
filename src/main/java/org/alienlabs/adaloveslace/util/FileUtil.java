@@ -180,7 +180,7 @@ public class FileUtil {
         Image image;
 
         if (currentColor.isPresent()) {
-            image = new NodeUtil().replaceBlackPixels(new Image(fis), currentColor.get());
+            image = new NodeUtil().replaceColoredPixels(new Image(fis), currentColor.get());
         } else {
             image = new Image(fis);
         }
