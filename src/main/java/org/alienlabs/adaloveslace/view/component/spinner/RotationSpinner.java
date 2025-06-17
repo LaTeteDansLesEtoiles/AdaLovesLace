@@ -41,7 +41,7 @@ public class RotationSpinner {
           copiedKnots.add(copiedKnot);
         }
 
-        app.getOptionalDotGrid().getDiagram().setCurrentKnot(selectedKnots.getLast());
+        app.getOptionalDotGrid().getDiagram().setCurrentKnot(selectedKnots.isEmpty() ? null : selectedKnots.getLast());
         newStep(displayedKnots, copiedKnots, true);
       }
 

@@ -17,6 +17,8 @@ import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.StateWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
+import org.alienlabs.adaloveslace.view.window.event.WindowRepositionEvents;
+import org.alienlabs.adaloveslace.view.window.event.WindowResizeEvents;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +93,8 @@ public class AppFunctionalTestParent {
     App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
     Diagram diagram = new Diagram(this.app);
     this.app.setDiagram(diagram);
+    this.app.setResizes(new WindowResizeEvents(this.app));
+    this.app.setWindowRepositionEvents(new WindowRepositionEvents(this.app));
     this.primaryStage = primaryStage;
 
     // The grid dots are twice as big as in the production code in order to facilitate tests
@@ -158,14 +162,14 @@ public class AppFunctionalTestParent {
     robot.clickOn(geometryWindow.getGeometryStage().getScene().getWindow().getX() +
                     spinner.getLayoutX() + 50,
             geometryWindow.getGeometryStage().getScene().getWindow().getY() +
-                    spinner.getLayoutY() + 35, Motion.DIRECT, MouseButton.PRIMARY);
+                    spinner.getLayoutY() + 40, Motion.DIRECT, MouseButton.PRIMARY);
   }
 
   protected void decrementSpinner(FxRobot robot, Spinner<Integer> spinner) {
     robot.clickOn(geometryWindow.getGeometryStage().getScene().getWindow().getX() +
             spinner.getLayoutX() + 50,
             geometryWindow.getGeometryStage().getScene().getWindow().getY() +
-                    spinner.getLayoutY() + 75, Motion.DIRECT, MouseButton.PRIMARY);
+                    spinner.getLayoutY() + 100, Motion.DIRECT, MouseButton.PRIMARY);
   }
 
   protected void setSpinnerValue(Spinner<Integer> spinner, int value) {
@@ -290,8 +294,6 @@ public class AppFunctionalTestParent {
   protected void initDrawAndSelectSnowFlake(FxRobot robot) {
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
     synchronizeTask(() -> drawASnowflake(robot));
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectFirstSnowflake(robot));
   }
 
   protected void drawSnowFlake(FxRobot robot, double x, double y) {
