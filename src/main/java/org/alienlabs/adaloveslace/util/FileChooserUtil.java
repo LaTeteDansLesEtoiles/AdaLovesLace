@@ -21,7 +21,7 @@ public class FileChooserUtil {
     File xmlFile      = preferences.getPathWithFileValue(file);
     File xmlFilePath  = preferences.getPathWithFileValue(folderSavePath);
 
-    if (xmlFilePath == null || !xmlFilePath.canRead() || !xmlFile.canRead()) {
+    if (xmlFilePath == null || xmlFile == null || !xmlFilePath.canRead() || !xmlFile.canRead()) {
       // We don't know from where to export
       export.setInitialDirectory(new File(System.getProperty(USER_HOME)));
     } else {
