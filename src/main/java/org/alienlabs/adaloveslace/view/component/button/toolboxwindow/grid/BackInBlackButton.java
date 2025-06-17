@@ -6,6 +6,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.*;
@@ -38,6 +39,7 @@ public class BackInBlackButton extends ToggleButton {
       this.getStyleClass().add(BUTTON_SELECTED);
       app.getToolboxWindow().getColorButton().getStyleClass().remove(BUTTON_SELECTED);
       app.getOptionalDotGrid().getDiagram().setCurrentColor(null);
+      GridEvents.setCurrentImageView(null);
     });
 
     pause.playFromStart();
