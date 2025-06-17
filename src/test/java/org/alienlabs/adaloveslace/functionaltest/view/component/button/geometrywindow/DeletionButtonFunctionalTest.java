@@ -2,7 +2,6 @@ package org.alienlabs.adaloveslace.functionaltest.view.component.button.geometry
 
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -17,6 +16,7 @@ class DeletionButtonFunctionalTest extends AppFunctionalTestParent {
    *
    * @param primaryStage The injected window (stage)
    */
+  @Override
   @Start
   public void start(Stage primaryStage) {
     super.start(primaryStage);
@@ -56,7 +56,6 @@ class DeletionButtonFunctionalTest extends AppFunctionalTestParent {
    *
    */
   @Test
-  @Disabled("Flaky in Jenkins")
   void should_delete_two_knots_leaving_other_knot_untouched(final FxRobot robot) {
     // Given
     synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
@@ -71,14 +70,10 @@ class DeletionButtonFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     this.sleepMainThread();
-    this.sleepMainThread();
-    this.sleepMainThread();
-    this.sleepMainThread();
-    this.sleepMainThread();
-    assertEquals(1, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().size());
-    assertTrue(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().toList().isEmpty());
+    assertTrue(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().stream().toList().isEmpty());
+    assertEquals(1, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size());
 
-    assertEquals(OTHER_SNOWFLAKE_PIXEL_X, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().
+    assertEquals(OTHER_SNOWFLAKE_PIXEL_X, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
             stream().findFirst().get().getX());
   }
 
