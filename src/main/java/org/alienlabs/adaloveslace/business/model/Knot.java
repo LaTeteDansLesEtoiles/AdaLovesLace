@@ -4,6 +4,8 @@ import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import org.alienlabs.adaloveslace.business.model.xmladapter.OptionalColorAdapter;
 import org.alienlabs.adaloveslace.business.model.xmladapter.OptionalPatternAdapter;
 import org.alienlabs.adaloveslace.business.model.xmladapter.OptionalStringAdapter;
 
@@ -45,6 +47,10 @@ public class Knot implements Comparable<Knot> {
   @XmlElement
   @XmlJavaTypeAdapter(OptionalStringAdapter.class)
   private Optional<String> text = Optional.empty();
+
+  @XmlElement
+  @XmlJavaTypeAdapter(OptionalColorAdapter.class)
+  private Optional<Color> color = Optional.empty();
 
   private boolean visible = true;
 
@@ -88,12 +94,14 @@ public class Knot implements Comparable<Knot> {
           final double y,
           final Optional<Pattern> pattern,
           final Optional<String> text,
+          final Optional<Color> color,
           final ImageView imageView
   ) {
     this.x                    = x;
     this.y                    = y;
     this.pattern              = pattern;
     this.text                 = text;
+    this.color                = color;
     this.imageView            = imageView;
 
     this.uuid                 = UUID.randomUUID();
@@ -151,6 +159,14 @@ public class Knot implements Comparable<Knot> {
 
   public void setText(Optional<String> text) {
     this.text = text;
+  }
+
+  public Optional<Color> getColor() {
+    return this.color;
+  }
+
+  public void setColor(Optional<Color> color) {
+    this.color = color;
   }
 
   public ImageView getImageView() {

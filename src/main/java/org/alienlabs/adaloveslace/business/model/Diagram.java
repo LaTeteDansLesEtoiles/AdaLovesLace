@@ -57,6 +57,9 @@ public class Diagram {
     private Knot                currentKnot;
 
     @XmlTransient
+    private Color               currentColor;
+
+    @XmlTransient
     private boolean             isKnotSelected;
 
     @XmlTransient
@@ -135,7 +138,13 @@ public class Diagram {
                     knot -> putAllEventsOnKnot(app, knot)
             );
 
-            createImageViewWithStep(this.x, this.y, null, null);
+            createImageViewWithStep(
+                    this.x,
+                    this.y,
+                    null,
+                    null,
+                    this.getCurrentColor()
+            );
         };
     }
 
@@ -335,7 +344,13 @@ public class Diagram {
 
             if (null != iv) {
                 isNewText = true;
-                createImageViewWithStep(coord.x(), coord.y(), iv, this.getCurrentPattern());
+                createImageViewWithStep(
+                        coord.x(),
+                        coord.y(),
+                        iv,
+                        this.getCurrentPattern(),
+                        this.getCurrentColor()
+                );
             }
         } else {
             isNewText = true;
@@ -343,7 +358,7 @@ public class Diagram {
         }
     }
 
-    private void createImageViewWithStep(double x, double y, ImageView imageView, Pattern pattern) {
+    private void createImageViewWithStep(double x, double y, ImageView imageView, Pattern pattern, Color currentColor) {
         if (this.getCurrentStep().getSelectedKnots().size() > 1) {
             return;
         }
@@ -355,10 +370,10 @@ public class Diagram {
         boolean textMode = (pattern == null);
 
         if (textMode) {
-            imageView = this.nodeUtil.createText(x, y, imageView, getCurrentKnot());
+            imageView = this.nodeUtil.createText(x, y, imageView, getCurrentKnot(), currentColor);
         }
 
-        currentKnot = this.nodeUtil.newKnot(x, y, imageView, pattern, getCurrentKnot());
+        currentKnot = this.nodeUtil.newKnot(x, y, imageView, pattern, getCurrentKnot(), this.getCurrentColor());
 
         if (isNewText && currentKnot.getPattern().isEmpty()) {
             currentKnot.setTextId(UUID.randomUUID());
@@ -472,6 +487,14 @@ public class Diagram {
 
     public void setCurrentKnot(Knot currentKnot) {
         this.currentKnot = currentKnot;
+    }
+
+    public Color getCurrentColor() {
+        return this.currentColor;
+    }
+
+    public void setCurrentColor(Color currentColor) {
+        this.currentColor = currentColor;
     }
 
     public boolean isKnotSelected() {

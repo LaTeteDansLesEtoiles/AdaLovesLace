@@ -53,7 +53,7 @@ public class KeyboardUtil {
                     SaveAsButton::onSaveAsAction);
 
             app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN),
-                    LoadButton::onLoadAction);
+                    () -> LoadButton.onLoadAction(app));
 
             app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN),
                     ExportImageButton::onExportAction);

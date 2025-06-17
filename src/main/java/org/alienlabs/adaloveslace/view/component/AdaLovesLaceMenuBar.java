@@ -54,7 +54,7 @@ public class AdaLovesLaceMenuBar {
         saveAsItem.setAccelerator(SAVE_AS_KEY_COMBINATION);
 
         MenuItem loadItem = new MenuItem(resourceBundle.getString(LOAD_FILE));
-        loadItem.setOnAction(_ -> LoadButton.onLoadAction());
+        loadItem.setOnAction(_ -> LoadButton.onLoadAction(app));
         loadItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
 
         MenuItem exportImageItem = new MenuItem(resourceBundle.getString(EXPORT_IMAGE));

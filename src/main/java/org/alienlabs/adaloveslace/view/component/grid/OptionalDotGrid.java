@@ -337,7 +337,7 @@ public class OptionalDotGrid extends Pane {
     Text text = new Text();
     text.setText(knot.getText().get());
     text.setFont(new Font(CANVAS_TEXT_FONT_SIZE));
-    text.setFill(Color.BLACK);
+    text.setFill(knot.getColor().isEmpty() ? Color.BLACK : knot.getColor().get());
     SnapshotParameters params = new SnapshotParameters();
     params.setFill(Color.TRANSPARENT);
     text.setLayoutX(x);

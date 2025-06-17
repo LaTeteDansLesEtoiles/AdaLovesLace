@@ -1,9 +1,7 @@
 package org.alienlabs.adaloveslace.util;
 
 import javafx.scene.SnapshotParameters;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
+import javafx.scene.image.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -54,6 +52,7 @@ public class NodeUtil {
             knot.getY(),
             knot.getPattern(),
             knot.getText(),
+            knot.getColor(),
             knot.getImageView()
     );
     copy(knot, copy);
@@ -62,7 +61,14 @@ public class NodeUtil {
   }
 
   public Knot copyKnotCloningImageView(Knot knot) {
-    Knot copy = new Knot(knot.getX(), knot.getY(), knot.getPattern(), knot.getText(), new ImageView(knot.getImageView().getImage()));
+    Knot copy = new Knot(
+            knot.getX(),
+            knot.getY(),
+            knot.getPattern(),
+            knot.getText(),
+            knot.getColor(),
+            new ImageView(knot.getImageView().getImage())
+    );
     copy(knot, copy);
     copy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
     copy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
@@ -96,7 +102,7 @@ public class NodeUtil {
     ImageView iv = null;
 
     try (FileInputStream fis = new FileInputStream(new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, currentPattern.getFilename()))) {
-      Image image = new Image(fis);
+      Image image = replaceBlackPixels(new Image(fis), app.getOptionalDotGrid().getDiagram().getCurrentColor());
       iv = new ImageView(image);
 
       iv.setLayoutX(x);
@@ -109,6 +115,35 @@ public class NodeUtil {
     }
 
     return iv;
+  }
+
+  public Image replaceBlackPixels(Image image, Color replacementColor) {
+    if (replacementColor == null) {
+      return image;
+    }
+
+    int width = (int) image.getWidth();
+    int height = (int) image.getHeight();
+
+    WritableImage result = new WritableImage(width, height);
+    PixelReader reader = image.getPixelReader();
+    PixelWriter writer = result.getPixelWriter();
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        Color color = reader.getColor(x, y);
+        if (isBlack(color)) {
+          writer.setColor(x, y, replacementColor);
+        } else {
+          writer.setColor(x, y, color);
+        }
+      }
+    }
+    return result;
+  }
+
+  private boolean isBlack(Color color) {
+    return color.getRed() == 0.0d && color.getGreen() == 0.0d && color.getBlue() == 0.0d && color.getOpacity() != 0.0d;
   }
 
   public void drawText(Diagram diagram, double x, double y) {
@@ -135,7 +170,7 @@ public class NodeUtil {
   }
 
 
-  public Knot newKnot(double x, double y, ImageView imageView, Pattern pattern, Knot currentKnot) {
+  public Knot newKnot(double x, double y, ImageView imageView, Pattern pattern, Knot currentKnot, Color currentColor) {
     return new Knot(
             isNewText || currentKnot == null || pattern != null ? x : currentKnot.getX(),
             isNewText || currentKnot == null || pattern != null ? y : currentKnot.getY(),
@@ -143,11 +178,12 @@ public class NodeUtil {
             pattern == null && !isNewText
                     ? Optional.of(currentKnot == null ? NEW_TEXT.toString() : currentKnot.getTypedText().toString())
                     : Optional.of(NEW_TEXT.toString()),
+            currentColor == null ? Optional.empty() : Optional.of(currentColor),
             imageView
     );
   }
 
-  public ImageView createText(double x, double y, ImageView imageView, Knot currentKnot) {
+  public ImageView createText(double x, double y, ImageView imageView, Knot currentKnot, Color currentColor) {
     if (null == imageView) {
       imageView = new ImageView();
 
@@ -157,7 +193,7 @@ public class NodeUtil {
 
       text.setText(currentKnot == null ? NEW_TEXT.toString() : currentKnot.getTypedText().toString());
       text.setFont(new Font(CANVAS_TEXT_FONT_SIZE));
-      text.setFill(Color.BLACK);
+      text.setFill(currentColor);
       text.setScaleX(currentKnot == null ? 1d : new GridUtil(app.getMovablePane()).computeZoomFactor(currentKnot.getZoomFactor()));
       text.setScaleY(currentKnot == null ? 1d : new GridUtil(app.getMovablePane()).computeZoomFactor(currentKnot.getZoomFactor()));
       text.setRotate(currentKnot == null ? 0d : currentKnot.getRotationAngle());
