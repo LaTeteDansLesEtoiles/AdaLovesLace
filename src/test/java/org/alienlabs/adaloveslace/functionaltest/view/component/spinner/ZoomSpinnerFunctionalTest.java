@@ -16,6 +16,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    * Init method called before each test.
    * @param primaryStage The injected window (stage)
    */
+  @Override
   @Start
   public void start(Stage primaryStage) {
     super.start(primaryStage);
@@ -146,6 +147,108 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Then
     assertEquals(spinnerValue, this.geometryWindow.getZoomSpinner1().getValueFactory().getValue());
     assertEquals(spinnerValue, this.geometryWindow.getZoomSpinner2().getValueFactory().getValue());
+  }
+
+  /**
+   * Checks if the second and third zoom spinners in the toolbox
+   * contain the right value when raising the value in the first one
+   *
+   */
+  @Test
+  void should_contain_zoom_new_first_value_up(FxRobot robot) {
+    // Given
+    initDrawAndSelectSnowFlake(robot);
+
+    // When
+    synchronizeTask(() -> incrementSpinner(robot, this.geometryWindow.getZoomSpinner1()));
+
+    // Then
+    synchronizeTask(() -> assertZoomFactorEquals(1.1d));
+  }
+
+  /**
+   * Checks if the second and third zoom spinners in the toolbox
+   * contain the right value when lowering the value in the first one
+   *
+   */
+  @Test
+  void should_contain_zoom_new_first_value_down(FxRobot robot) {
+    // Given
+    initDrawAndSelectSnowFlake(robot);
+
+    // When
+    synchronizeTask(() ->  decrementSpinner(robot, this.geometryWindow.getZoomSpinner1()));
+
+    // Then
+    assertZoomFactorEquals(0.9d);
+  }
+
+  /**
+   * Checks if the first and third zoom spinners in the toolbox
+   * contain the right value when raising the value in the second one
+   *
+   */
+  @Test
+  void should_contain_zoom_new_second_value_up(FxRobot robot) {
+    // Given
+    initDrawAndSelectSnowFlake(robot);
+
+    // When
+    synchronizeTask(() -> incrementSpinner(robot, this.geometryWindow.getZoomSpinner2()));
+
+    // Then
+    assertZoomFactorEquals(1.2d);
+  }
+
+  /**
+   * Checks if the first and third zoom spinners in the toolbox
+   * contain the right value when lowering the value in the second one
+   *
+   */
+  @Test
+  void should_contain_zoom_new_second_value_down(FxRobot robot) {
+    // Given
+    initDrawAndSelectSnowFlake(robot);
+
+    // When
+    synchronizeTask(() -> decrementSpinner(robot, this.geometryWindow.getZoomSpinner2()));
+
+    // Then
+    assertZoomFactorEquals(0.8d);
+  }
+
+  /**
+   * Checks if the first and second zoom spinners in the toolbox
+   * contain the right value when raising the value in the third one
+   *
+   */
+  @Test
+  void should_contain_zoom_new_third_value_up(FxRobot robot) {
+    // Given
+    initDrawAndSelectSnowFlake(robot);
+
+    // When
+    synchronizeTask(() -> incrementSpinner(robot, this.geometryWindow.getZoomSpinner3()));
+
+    // Then
+    assertZoomFactorEquals(1.3d);
+  }
+
+  /**
+   * Checks if the first and second zoom spinners in the toolbox
+   * contain the right value when lowering the value in the third one
+   *
+   */
+  @Test
+  void should_contain_zoom_new_third_value_down(FxRobot robot) {
+    // Given
+    initDrawAndSelectSnowFlake(robot);
+
+    // When
+    synchronizeTask(() -> decrementSpinner(robot, this.geometryWindow.getZoomSpinner3()));
+
+    // Then
+    assertZoomFactorEquals(0.7d);
   }
 
   private void assertZoomFactorEquals(double expectedZoom) {
