@@ -17,7 +17,6 @@ public class ParentGridStrategy {
 
     public static Pane gridPane;
     public static List<Shape> grid = new ArrayList<>();
-    private GridType currentGridType = GridType.STAGGERED;
     private final EnumMap<GridType, IDotGridStrategy> childStrategies = new EnumMap<>(GridType.class);
     private static  App app;
     private static boolean gridHasBeenDrawn = false;
@@ -27,8 +26,8 @@ public class ParentGridStrategy {
         ParentGridStrategy.gridPane = gridPane;
         gridHasBeenDrawn = false;
 
-        childStrategies.put(GridType.STAGGERED, new StagerredDotGridStrategy());
         childStrategies.put(GridType.CRISS_CROSS, new CrissCrossDotGridStrategy());
+        childStrategies.put(GridType.STAGGERED, new StagerredDotGridStrategy());
         childStrategies.put(GridType.HIDDEN, new HiddenDotGridStrategy());
     }
 
@@ -40,7 +39,7 @@ public class ParentGridStrategy {
             double width = ParentGridStrategy.app.getGridWidth();
             double height = ParentGridStrategy.app.getGridHeight();
 
-            IDotGridStrategy childStrategy = childStrategies.get(currentGridType);
+            IDotGridStrategy childStrategy = childStrategies.get(app.getOptionalDotGrid().getDiagram().getCurrentGridType());
             childStrategy.setViewPort(width, height);
             childStrategy.drawGrid();
 
@@ -49,23 +48,25 @@ public class ParentGridStrategy {
     }
 
     public Coordinate getDrawCoordinates(double x, double y) {
-        return childStrategies.get(currentGridType).getDrawCoordinates(x, y);
+        return childStrategies.get(app.getOptionalDotGrid().getDiagram().getCurrentGridType()).getDrawCoordinates(x, y);
     }
 
     public void switchGridType() {
-        this.currentGridType = switch (currentGridType) {
-            case STAGGERED -> GridType.CRISS_CROSS;
-            case CRISS_CROSS -> GridType.HIDDEN;
-            case HIDDEN -> GridType.STAGGERED;
+        GridType currentGridType = switch (app.getOptionalDotGrid().getDiagram().getCurrentGridType()) {
+            case CRISS_CROSS -> GridType.STAGGERED;
+            case STAGGERED -> GridType.HIDDEN;
+            case HIDDEN -> GridType.CRISS_CROSS;
         };
+
+        app.getOptionalDotGrid().getDiagram().setCurrentGridType(currentGridType);
     }
 
     public GridType getCurrentGridType() {
-        return this.currentGridType;
+        return app.getOptionalDotGrid().getDiagram().getCurrentGridType();
     }
 
     public void setCurrentGridType(GridType currentGridType) {
-        this.currentGridType = currentGridType;
+        app.getOptionalDotGrid().getDiagram().setCurrentGridType(currentGridType);
     }
 
     public static void hideGrid() {

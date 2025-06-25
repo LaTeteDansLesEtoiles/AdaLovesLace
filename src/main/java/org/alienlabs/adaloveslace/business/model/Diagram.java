@@ -13,6 +13,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.enumeration.GridType;
 import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
 import org.alienlabs.adaloveslace.util.NodeUtil;
@@ -47,6 +48,8 @@ public class Diagram {
     private double              x;
 
     private double              y;
+
+    private GridType currentGridType = GridType.CRISS_CROSS;
 
     public static boolean       isNewText;
 
@@ -467,6 +470,14 @@ public class Diagram {
 
     public void setY(double y) {
         this.y = y;
+    }
+
+    public GridType getCurrentGridType() {
+        return this.currentGridType;
+    }
+
+    public void setCurrentGridType(GridType currentGridType) {
+        this.currentGridType = currentGridType;
     }
 
     public Runnable getUpdateImage() {
