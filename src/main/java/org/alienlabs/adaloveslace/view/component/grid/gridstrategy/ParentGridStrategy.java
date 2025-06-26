@@ -5,9 +5,7 @@ import javafx.scene.shape.Shape;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.business.model.Coordinate;
 import org.alienlabs.adaloveslace.business.model.enumeration.GridType;
-import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy.CrissCrossDotGridStrategy;
-import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy.HiddenDotGridStrategy;
-import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy.StagerredDotGridStrategy;
+import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy.*;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -27,6 +25,8 @@ public class ParentGridStrategy {
         gridHasBeenDrawn = false;
 
         childStrategies.put(GridType.CRISS_CROSS, new CrissCrossDotGridStrategy());
+        childStrategies.put(GridType.LATTICE, new LatticeDotGridStrategy());
+        childStrategies.put(GridType.POLAR, new PolarDotGridStrategy());
         childStrategies.put(GridType.STAGGERED, new StagerredDotGridStrategy());
         childStrategies.put(GridType.HIDDEN, new HiddenDotGridStrategy());
     }
@@ -36,8 +36,8 @@ public class ParentGridStrategy {
             ParentGridStrategy.gridPane.setPrefWidth(app.getPrimaryStage().getWidth());
             ParentGridStrategy.gridPane.setPrefHeight(app.getPrimaryStage().getHeight());
 
-            double width = ParentGridStrategy.app.getGridWidth();
-            double height = ParentGridStrategy.app.getGridHeight();
+            double width = app.getMovablePane().getWidth();
+            double height = app.getMovablePane().getHeight();
 
             IDotGridStrategy childStrategy = childStrategies.get(app.getOptionalDotGrid().getDiagram().getCurrentGridType());
             childStrategy.setViewPort(width, height);
@@ -53,7 +53,9 @@ public class ParentGridStrategy {
 
     public void switchGridType() {
         GridType currentGridType = switch (app.getOptionalDotGrid().getDiagram().getCurrentGridType()) {
-            case CRISS_CROSS -> GridType.STAGGERED;
+            case CRISS_CROSS -> GridType.LATTICE;
+            case LATTICE -> GridType.POLAR;
+            case POLAR -> GridType.STAGGERED;
             case STAGGERED -> GridType.HIDDEN;
             case HIDDEN -> GridType.CRISS_CROSS;
         };
