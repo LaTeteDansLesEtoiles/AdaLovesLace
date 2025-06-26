@@ -1,8 +1,8 @@
-package org.alienlabs.adaloveslace.business.model.dto;
+package org.alienlabs.adaloveslace.domain.dto;
 
-import org.alienlabs.adaloveslace.business.model.enumeration.Language;
-import org.alienlabs.adaloveslace.business.model.enumeration.SubTechnique;
-import org.alienlabs.adaloveslace.business.model.enumeration.Technique;
+import org.alienlabs.adaloveslace.domain.enumeration.Language;
+import org.alienlabs.adaloveslace.domain.enumeration.SubTechnique;
+import org.alienlabs.adaloveslace.domain.enumeration.Technique;
 
 import java.io.Serial;
 import java.io.Serializable;

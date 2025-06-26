@@ -1,7 +1,7 @@
-package org.alienlabs.adaloveslace.business.model.xmladapter;
+package org.alienlabs.adaloveslace.domain.xmladapter;
 
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
-import org.alienlabs.adaloveslace.business.model.Pattern;
+import org.alienlabs.adaloveslace.domain.Pattern;
 
 import java.util.Optional;
 

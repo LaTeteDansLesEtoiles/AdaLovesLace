@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.business.model.xmladapter;
+package org.alienlabs.adaloveslace.domain.xmladapter;
 
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 

@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 
-import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
+import static org.alienlabs.adaloveslace.domain.Knot.DEFAULT_ROTATION;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

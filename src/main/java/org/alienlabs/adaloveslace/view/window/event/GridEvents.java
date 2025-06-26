@@ -14,11 +14,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Coordinate;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.Pattern;
-import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
-import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
+import org.alienlabs.adaloveslace.domain.Coordinate;
+import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.Pattern;
+import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.domain.enumeration.PatternOrTextMode;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.alienlabs.adaloveslace.business.model.Diagram.isNewText;
-import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
+import static org.alienlabs.adaloveslace.domain.Diagram.isNewText;
+import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
+import static org.alienlabs.adaloveslace.domain.Knot.NEW_TEXT;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.MOUSE_CLICKED;
 
 public class GridEvents {

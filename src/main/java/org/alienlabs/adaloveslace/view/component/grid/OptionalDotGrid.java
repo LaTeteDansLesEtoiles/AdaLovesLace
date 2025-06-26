@@ -18,12 +18,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.Pattern;
-import org.alienlabs.adaloveslace.business.model.Step;
-import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
-import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
+import org.alienlabs.adaloveslace.domain.Diagram;
+import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.Pattern;
+import org.alienlabs.adaloveslace.domain.Step;
+import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.domain.enumeration.PatternOrTextMode;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.GridUtil;
 import org.alienlabs.adaloveslace.view.component.GuideLinesUtil;
@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.CANVAS_TEXT_FONT_SIZE;
-import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
+import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
+import static org.alienlabs.adaloveslace.domain.Knot.NEW_TEXT;
 
 /**
  * A grid (= coordinate system) with dots (= used as landmarks for lace).

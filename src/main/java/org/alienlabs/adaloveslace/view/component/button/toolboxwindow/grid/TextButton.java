@@ -6,7 +6,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
+import org.alienlabs.adaloveslace.domain.enumeration.PatternOrTextMode;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 
 import static org.alienlabs.adaloveslace.App.TEXT_BUTTON_NAME;

@@ -1,11 +1,11 @@
-package org.alienlabs.adaloveslace.unittest.business.model;
+package org.alienlabs.adaloveslace.unittest.domain;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.Pattern;
+import org.alienlabs.adaloveslace.domain.Diagram;
+import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.Pattern;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.junit.jupiter.api.BeforeEach;

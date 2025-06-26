@@ -1,13 +1,13 @@
-package org.alienlabs.adaloveslace.business.model;
+package org.alienlabs.adaloveslace.domain;
 
 import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import org.alienlabs.adaloveslace.business.model.xmladapter.OptionalColorAdapter;
-import org.alienlabs.adaloveslace.business.model.xmladapter.OptionalPatternAdapter;
-import org.alienlabs.adaloveslace.business.model.xmladapter.OptionalStringAdapter;
+import org.alienlabs.adaloveslace.domain.xmladapter.OptionalColorAdapter;
+import org.alienlabs.adaloveslace.domain.xmladapter.OptionalPatternAdapter;
+import org.alienlabs.adaloveslace.domain.xmladapter.OptionalStringAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

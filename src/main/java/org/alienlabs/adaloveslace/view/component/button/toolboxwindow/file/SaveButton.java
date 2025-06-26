@@ -2,7 +2,7 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file;
 
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Step;
+import org.alienlabs.adaloveslace.domain.Step;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;

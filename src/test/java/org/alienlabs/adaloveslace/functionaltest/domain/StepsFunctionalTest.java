@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.functionaltest.business.model;
+package org.alienlabs.adaloveslace.functionaltest.domain;
 
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;

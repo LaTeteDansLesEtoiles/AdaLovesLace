@@ -3,7 +3,7 @@ package org.alienlabs.adaloveslace.view.component;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.domain.Knot;
 
 public class GuideLinesUtil {
 

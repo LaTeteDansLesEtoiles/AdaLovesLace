@@ -2,8 +2,8 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 
 import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
+import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class HorizontalFlippingButton extends ImageButton {

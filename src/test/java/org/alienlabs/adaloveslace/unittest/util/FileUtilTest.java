@@ -3,10 +3,10 @@ package org.alienlabs.adaloveslace.unittest.util;
 import jakarta.xml.bind.JAXBException;
 import javafx.scene.layout.Pane;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.Pattern;
-import org.alienlabs.adaloveslace.business.model.Step;
+import org.alienlabs.adaloveslace.domain.Diagram;
+import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.Pattern;
+import org.alienlabs.adaloveslace.domain.Step;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
@@ -32,9 +32,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class FileUtilTest {
 
-    public static final int NUMBER_OF_STEPS     = 23;
-    public static final int NUMBER_OF_PATTERNS  = 22;
-    public static final int LAST_STEP_INDEX     = 22;
+    public static final int NUMBER_OF_STEPS     = 10;
+    public static final int NUMBER_OF_PATTERNS  = 24;
+    public static final int LAST_STEP_INDEX     = 9;
 
     private File dotLaceFile;
     private FileUtil fileUtil;
@@ -187,7 +187,7 @@ class FileUtilTest {
         assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getPatterns().stream().filter(pattern -> pattern.getFilename().equals(SNOWFLAKE_IMAGE)).findFirst().get().getFilename());
 
         assertEquals(NUMBER_OF_STEPS, diagramToCheck.getAllSteps().size());
-        assertEquals(3, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().size());
+        assertEquals(4, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().size());
         assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().get(0).getPattern().get().getFilename());
         assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().get(1).getPattern().get().getFilename());
         assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getAllSteps().get(LAST_STEP_INDEX).getDisplayedKnots().stream().toList().get(2).getPattern().get().getFilename());

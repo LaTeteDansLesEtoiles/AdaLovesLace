@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
-import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

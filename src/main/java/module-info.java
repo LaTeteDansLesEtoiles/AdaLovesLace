@@ -14,24 +14,24 @@ module org.alienlabs.adaloveslace {
   requires static javafx.controls;
   requires static layout;
 
-  opens org.alienlabs.adaloveslace                  to javafx.controls, javafx.graphics, layout;
-  opens org.alienlabs.adaloveslace.business.model   to com.google.gson, jakarta.xml.bind;
+  opens org.alienlabs.adaloveslace          to javafx.controls, javafx.graphics, layout;
+  opens org.alienlabs.adaloveslace.domain   to com.google.gson, jakarta.xml.bind;
   opens org.alienlabs.adaloveslace.util;
 
   exports org.alienlabs.adaloveslace;
-  exports org.alienlabs.adaloveslace.business.model;
+  exports org.alienlabs.adaloveslace.domain;
   exports org.alienlabs.adaloveslace.util;
   exports org.alienlabs.adaloveslace.view.window;
   exports org.alienlabs.adaloveslace.view.component;
   exports org.alienlabs.adaloveslace.view.component.button.geometrywindow;
   exports org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
   exports org.alienlabs.adaloveslace.view.component.spinner;
-  exports org.alienlabs.adaloveslace.business.model.enumeration;
-  opens org.alienlabs.adaloveslace.business.model.enumeration to com.google.gson, jakarta.xml.bind;
-  exports org.alienlabs.adaloveslace.business.model.xmladapter;
-  opens org.alienlabs.adaloveslace.business.model.xmladapter to com.google.gson, jakarta.xml.bind;
-  exports org.alienlabs.adaloveslace.business.model.dto;
-  opens org.alienlabs.adaloveslace.business.model.dto to com.google.gson, jakarta.xml.bind;
+  exports org.alienlabs.adaloveslace.domain.enumeration;
+  opens org.alienlabs.adaloveslace.domain.enumeration to com.google.gson, jakarta.xml.bind;
+  exports org.alienlabs.adaloveslace.domain.xmladapter;
+  opens org.alienlabs.adaloveslace.domain.xmladapter  to com.google.gson, jakarta.xml.bind;
+  exports org.alienlabs.adaloveslace.domain.dto;
+  opens org.alienlabs.adaloveslace.domain.dto         to com.google.gson, jakarta.xml.bind;
   exports org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file;
   exports org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid;
   exports org.alienlabs.adaloveslace.view.component.grid;

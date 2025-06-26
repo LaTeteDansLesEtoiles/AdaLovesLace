@@ -3,8 +3,8 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
+import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.NEW_KNOT_GAP;
 
@@ -30,6 +30,7 @@ public class DuplicationButton extends ToggleButton {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onSetDuplicationModeAction(app, window));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
+    this.setId("duplicationButton");
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(resourceBundle.getString("DUPLICATION_BUTTON_TOOLTIP"));

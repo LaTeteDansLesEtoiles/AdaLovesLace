@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.business.model;
+package org.alienlabs.adaloveslace.domain;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;

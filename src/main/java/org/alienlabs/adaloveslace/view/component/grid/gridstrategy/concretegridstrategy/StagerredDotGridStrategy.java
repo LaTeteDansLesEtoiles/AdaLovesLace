@@ -1,12 +1,12 @@
 package org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy;
 
 import javafx.scene.shape.Ellipse;
-import org.alienlabs.adaloveslace.business.model.Coordinate;
+import org.alienlabs.adaloveslace.domain.Coordinate;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.IDotGridStrategy;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 
 import static org.alienlabs.adaloveslace.App.GRID_DOTS_RADIUS;
-import static org.alienlabs.adaloveslace.business.model.Diagram.*;
+import static org.alienlabs.adaloveslace.domain.Diagram.*;
 
 public class StagerredDotGridStrategy implements IDotGridStrategy {
 

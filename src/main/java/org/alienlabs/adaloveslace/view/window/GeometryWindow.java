@@ -19,8 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.App.*;
-import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
-import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
+import static org.alienlabs.adaloveslace.domain.Knot.DEFAULT_ROTATION;
+import static org.alienlabs.adaloveslace.domain.Knot.DEFAULT_ZOOM;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.DeletionButton.DELETION_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.DuplicationButton.DUPLICATION_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.HorizontalFlippingButton.HORIZONTAL_FLIPPING_BUTTON_NAME;

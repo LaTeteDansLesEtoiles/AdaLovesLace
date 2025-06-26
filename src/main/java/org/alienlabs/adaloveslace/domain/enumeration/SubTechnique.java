@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.business.model.enumeration;
+package org.alienlabs.adaloveslace.domain.enumeration;
 
 /**
  * The SubTechnique enumeration.

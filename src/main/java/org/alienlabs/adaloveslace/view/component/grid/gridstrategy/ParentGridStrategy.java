@@ -3,8 +3,8 @@ package org.alienlabs.adaloveslace.view.component.grid.gridstrategy;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Coordinate;
-import org.alienlabs.adaloveslace.business.model.enumeration.GridType;
+import org.alienlabs.adaloveslace.domain.Coordinate;
+import org.alienlabs.adaloveslace.domain.enumeration.GridType;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy.*;
 
 import java.util.ArrayList;

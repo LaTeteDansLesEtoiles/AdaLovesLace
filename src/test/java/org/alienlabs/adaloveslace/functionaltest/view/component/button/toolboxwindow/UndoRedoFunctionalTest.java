@@ -43,7 +43,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> clickSelectButton(robot));
         synchronizeTask(() -> selectFirstSnowflake(robot));
 
-        synchronizeTask(() -> selectSecondKnotWithControlKeyPressed(robot)); // The first 2 snowflakes shall be selected, ready to be copied
+        synchronizeTask(() -> selectSecondSnowflake(robot)); // The first 2 snowflakes shall be selected, ready to be copied
 
         synchronizeTask(() -> unselectControlKey(robot)); // The first 2 snowflakes shall be selected, ready to be copied
 
@@ -76,7 +76,6 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
      *
      */
     @Test
-    @Disabled("Flaky in Jenkins")
     void should_duplicate_two_knots_then_undo(final FxRobot robot) {
         // Given
         synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
@@ -87,7 +86,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         synchronizeTask(() -> clickSelectButton(robot));
         synchronizeTask(() -> selectFirstSnowflake(robot));
 
-        synchronizeTask(() -> selectSecondKnotWithControlKeyPressed(robot)); // The first 2 snowflakes shall be selected, ready to be copied
+        synchronizeTask(() -> selectSecondSnowflake(robot)); // The first 2 snowflakes shall be selected, ready to be copied
 
         synchronizeTask(() -> unselectControlKey(robot)); // The first 2 snowflakes shall be selected, ready to be copied
 

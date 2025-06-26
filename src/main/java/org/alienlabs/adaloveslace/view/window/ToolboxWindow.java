@@ -7,7 +7,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.PrintUtil;
 import org.alienlabs.adaloveslace.view.component.PrintersListView;
@@ -132,7 +132,7 @@ public class ToolboxWindow {
 
     // The Pattern button itself
     private ToggleButton buildPatternButton(App app, Diagram diagram, int i, String filename, String label, FileInputStream fis) {
-        org.alienlabs.adaloveslace.business.model.Pattern pattern = new org.alienlabs.adaloveslace.business.model.Pattern(filename);
+        org.alienlabs.adaloveslace.domain.Pattern pattern = new org.alienlabs.adaloveslace.domain.Pattern(filename);
 
         Image img = new Image(fis);
 

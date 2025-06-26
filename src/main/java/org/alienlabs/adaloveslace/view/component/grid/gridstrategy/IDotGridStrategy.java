@@ -1,6 +1,6 @@
 package org.alienlabs.adaloveslace.view.component.grid.gridstrategy;
 
-import org.alienlabs.adaloveslace.business.model.Coordinate;
+import org.alienlabs.adaloveslace.domain.Coordinate;
 
 public interface IDotGridStrategy {
 

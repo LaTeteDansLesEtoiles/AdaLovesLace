@@ -11,8 +11,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
-import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.domain.Diagram;
+import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
@@ -25,8 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
+import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
+import static org.alienlabs.adaloveslace.domain.Knot.NEW_TEXT;
 
 public class MainWindow {
 

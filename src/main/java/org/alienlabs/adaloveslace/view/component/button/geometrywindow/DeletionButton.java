@@ -4,7 +4,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;

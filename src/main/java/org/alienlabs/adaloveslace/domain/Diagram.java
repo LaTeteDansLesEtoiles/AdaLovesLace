@@ -1,4 +1,4 @@
-package org.alienlabs.adaloveslace.business.model;
+package org.alienlabs.adaloveslace.domain;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -13,9 +13,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.enumeration.GridType;
-import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
-import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
+import org.alienlabs.adaloveslace.domain.enumeration.GridType;
+import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.domain.enumeration.PatternOrTextMode;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.GridUtil;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ROTATION;
-import static org.alienlabs.adaloveslace.business.model.Knot.DEFAULT_ZOOM;
+import static org.alienlabs.adaloveslace.domain.Knot.DEFAULT_ROTATION;
+import static org.alienlabs.adaloveslace.domain.Knot.DEFAULT_ZOOM;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton.putAllEventsOnKnot;
 
 /**

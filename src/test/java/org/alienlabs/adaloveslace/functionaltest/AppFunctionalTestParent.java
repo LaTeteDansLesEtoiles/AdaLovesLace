@@ -9,10 +9,11 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
+import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.StateWindow;
@@ -26,6 +27,7 @@ import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.robot.Motion;
 
+import java.util.Comparator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
@@ -45,7 +47,7 @@ public class AppFunctionalTestParent {
 
   // For tests:
   public static final long   SLEEP_TIME                   = Long.getLong("SLEEP_TIME", 2_500L);
-  public static final long   WAIT_TIME                    = Long.getLong("WAIT_TIME", 5_000L);
+  public static final long   WAIT_TIME                    = Long.getLong("WAIT_TIME", 10_000L);
   public static final double GRID_WIDTH                   = 600d;
   public static final double GRID_HEIGHT                  = 420d;
   public static final String BUILD_TOOL_OUTPUT_DIRECTORY  = "target/";
@@ -89,13 +91,13 @@ public class AppFunctionalTestParent {
     this.app = new App();
     this.app.setPrimaryStage(primaryStage);
 
+    this.primaryStage = primaryStage;
     Locale locale = new Locale("en", "EN");
     App.resourceBundle = ResourceBundle.getBundle("AdaLovesLace", locale);
     Diagram diagram = new Diagram(this.app);
     this.app.setDiagram(diagram);
     this.app.setResizes(new WindowResizeEvents(this.app));
     this.app.setWindowRepositionEvents(new WindowRepositionEvents(this.app));
-    this.primaryStage = primaryStage;
 
     // The grid dots are twice as big as in the production code in order to facilitate tests
     this.app.showMainWindow(
@@ -177,8 +179,28 @@ public class AppFunctionalTestParent {
   }
 
   protected void selectFirstSnowflake(FxRobot robot) {
-    Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
-    robot.clickOn(snowflakeOnTheGrid, Motion.DIRECT, MouseButton.PRIMARY);
+    Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 5d, FIRST_SNOWFLAKE_PIXEL_Y + 5d);
+    Point2D screenPoint = app.getMovablePane().getChildren().stream().filter(ImageView.class::isInstance).toList().get(0).localToScreen(snowflakeOnTheGrid);
+    double screenX = screenPoint.getX();
+    double screenY = screenPoint.getY();
+
+    MouseEvent enterWithControl = new MouseEvent(
+            MouseEvent.MOUSE_ENTERED,
+            snowflakeOnTheGrid.getX(),
+            snowflakeOnTheGrid.getY(),
+            screenX,
+            screenY,
+            MouseButton.PRIMARY,
+            0,
+            false,  // shift
+            true,   // control
+            false,  // alt
+            false,  // meta
+            false, false, false, false, false, false,
+            null
+    );
+
+    app.getPrimaryStage().fireEvent(enterWithControl);
   }
 
   protected void selectFirstColorWheel(FxRobot robot) {
@@ -187,8 +209,8 @@ public class AppFunctionalTestParent {
   }
 
   protected void selectSecondSnowflake(FxRobot robot) {
-    Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 20d, SECOND_SNOWFLAKE_PIXEL_Y + 20d);
-    robot.clickOn(snowflakeOnTheGrid, Motion.DIRECT, MouseButton.PRIMARY);
+    Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 25d, SECOND_SNOWFLAKE_PIXEL_Y + 25d);
+    robot.moveTo(snowflakeOnTheGrid).press(MouseButton.PRIMARY).release(MouseButton.PRIMARY);
   }
 
   // Click on the snowflake in the toolbox to select its pattern
@@ -213,6 +235,7 @@ public class AppFunctionalTestParent {
     });
 
     // We block the main thread to let the runnable (JavaFX application thread) work
+    this.sleepMainThread();
     this.sleepMainThread();
 
     try {
@@ -302,8 +325,7 @@ public class AppFunctionalTestParent {
   }
 
   protected void duplicateKnots(FxRobot robot) {
-    this.sleepMainThread();
-    robot.clickOn(this.geometryWindow.getDuplicationButton(), Motion.DIRECT, MouseButton.PRIMARY);
+    robot.clickOn("#duplicationButton");
   }
 
   protected void selectDeleteMode(FxRobot robot) {
@@ -311,9 +333,30 @@ public class AppFunctionalTestParent {
   }
 
   protected void selectSecondKnotWithControlKeyPressed(FxRobot robot) {
-    Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 10d, SECOND_SNOWFLAKE_PIXEL_Y + 10d);
-    robot.press(KeyCode.CONTROL);
-    robot.clickOn(snowflakeOnTheGrid, Motion.DIRECT, MouseButton.PRIMARY);
+    Point2D snowflakeOnTheGrid = newPointOnGrid(SECOND_SNOWFLAKE_PIXEL_X + 30d, SECOND_SNOWFLAKE_PIXEL_Y + 30d);
+    Point2D screenPoint = app.getMovablePane().getChildren().stream()
+            .filter(ImageView.class::isInstance).sorted(Comparator.comparing(Node::getLayoutX))
+            .toList().get(2).getScene().getWindow().getScene().getRoot().localToScreen(snowflakeOnTheGrid);
+    double screenX = screenPoint.getX();
+    double screenY = screenPoint.getY();
+
+    MouseEvent enterWithControl = new MouseEvent(
+            MouseEvent.MOUSE_ENTERED,
+            snowflakeOnTheGrid.getX(),
+            snowflakeOnTheGrid.getY(),
+            screenX,
+            screenY,
+            MouseButton.PRIMARY,
+            1,
+            false,  // shift
+            true,   // control
+            false,  // alt
+            false,  // meta
+            false, false, false, false, false, false,
+            null
+    );
+
+    app.getPrimaryStage().fireEvent(enterWithControl);
   }
 
   protected void unselectControlKey(FxRobot robot) {

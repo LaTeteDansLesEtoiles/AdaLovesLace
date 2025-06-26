@@ -14,9 +14,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.Step;
+import org.alienlabs.adaloveslace.domain.Diagram;
+import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.Step;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.DrawingButton;
 import org.alienlabs.adaloveslace.view.window.event.WindowResizeEvents;
 import org.slf4j.Logger;
@@ -236,7 +236,7 @@ public class FileUtil {
     }
 
     private void buildAbsoluteFilenamesForPatternsAndKnots(Diagram diagram) {
-        for (org.alienlabs.adaloveslace.business.model.Pattern p : diagram.getPatterns()) {
+        for (org.alienlabs.adaloveslace.domain.Pattern p : diagram.getPatterns()) {
             p.setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
         }
 
@@ -325,7 +325,7 @@ public class FileUtil {
     }
 
     private void writePatternsToLaceFile(Diagram toSave, ZipOutputStream zipOut) throws IOException {
-        for (org.alienlabs.adaloveslace.business.model.Pattern pattern : new HashSet<>(toSave.getPatterns())) {
+        for (org.alienlabs.adaloveslace.domain.Pattern pattern : new HashSet<>(toSave.getPatterns())) {
             File fileToZip = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
                 + pattern.getFilename());
             try {
