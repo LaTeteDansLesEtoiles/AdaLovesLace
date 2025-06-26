@@ -91,10 +91,7 @@ public class FileUtil {
     }
 
     public Diagram loadFromLaceFile(App app, File file) {
-        Diagram diagram = null;
-        diagram = buildZip(app, file, diagram);
-
-        return diagram;
+        return buildZip(app, file, null);
     }
 
     private Diagram buildZip(App app, File file, Diagram diagram) {
