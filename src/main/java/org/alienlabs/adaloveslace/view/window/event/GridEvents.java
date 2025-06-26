@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.business.model.Coordinate;
 import org.alienlabs.adaloveslace.business.model.Knot;
 import org.alienlabs.adaloveslace.business.model.Pattern;
 import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
@@ -345,8 +346,10 @@ public class GridEvents {
           Point2D mouseInParent = app.getMovablePane().sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
           Double x = mouseInParent.getX();
           Double y = mouseInParent.getY();
-          currentImageView.setLayoutX(x);
-          currentImageView.setLayoutY(y);
+
+          Coordinate coord = app.getGridStrategy().getDrawCoordinates(x, y);
+          currentImageView.setLayoutX(coord.x());
+          currentImageView.setLayoutY(coord.y());
           app.getMovablePane().getChildren().add(currentImageView);
         }
       } else {
