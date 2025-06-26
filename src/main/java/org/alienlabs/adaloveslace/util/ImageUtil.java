@@ -1,5 +1,6 @@
 package org.alienlabs.adaloveslace.util;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
@@ -27,7 +28,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.UUID;
 
 import static org.alienlabs.adaloveslace.App.*;
@@ -256,6 +258,46 @@ public class ImageUtil {
             }
         } catch (MalformedURLException | URISyntaxException e) {
             logger.error("Error loading button image!", e);
+        }
+    }
+
+    void backupKnots() {
+        Path root = Paths.get(APP_FOLDER_IN_USER_HOME);
+        Path knotsDirectory = root.resolve(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME );
+        Path backupDirectory = root.resolve(APP_FOLDER_IN_USER_HOME + BACKUP_DIRECTORY_NAME );
+
+        try {
+            createBackupDirectory(backupDirectory);
+
+            // Parcourt l'arborescence du dossier source
+            Files.walkFileTree(knotsDirectory, new SimpleFileVisitor<>() {
+
+                @Override
+                @NonNull
+                public FileVisitResult visitFile(@NonNull Path file, @NonNull BasicFileAttributes attrs) throws IOException {
+                    String fileName = file.getFileName().toString().toLowerCase();
+                    moveKnots(file, fileName, backupDirectory, knotsDirectory);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            logger.error("Error during file backup!", e);
+        }
+    }
+
+    private static void moveKnots(Path file, String fileName, Path backupDirectory, Path knotsDirectory) throws IOException {
+        if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png")) {
+            Path destination = backupDirectory.resolve(knotsDirectory.relativize(file));
+            Files.createDirectories(destination.getParent());
+            Files.move(file, destination, StandardCopyOption.REPLACE_EXISTING);
+
+            logger.debug("Copied: {} -> {}", file, destination);
+        }
+    }
+
+    private static void createBackupDirectory(Path targetDir) throws IOException {
+        if (Files.notExists(targetDir)) {
+            Files.createDirectories(targetDir);
         }
     }
 

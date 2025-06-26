@@ -67,11 +67,12 @@ public class App extends Application {
   public static final String EXPORT_IMAGE_FILE_TYPE   = ".png";
   public static final String EXPORT_PDF_FILE_TYPE     = ".pdf";
   public static final String PATTERNS_DIRECTORY_NAME  = "knots";
-  public static final String ERROR                    = "Error!";
+  public static final String BACKUP_DIRECTORY_NAME    = "backups";
   public static final String ASSETS_DIRECTORY         = "assets/";
   public static final String GET_PRINTERS_BUTTON_NAME = "GetPrinters";
   public static final String PRINT_BUTTON_NAME        = "PrintDiagram";
   public static final String TEXT_BUTTON_NAME         = "TextButton";
+  public static final String ADD_KNOT_BUTTON_NAME     = "AddKnotButton";
   public static final String COLOR_BUTTON_NAME        = "ColorButton";
 
   public static final double DEFAULT_MAIN_WINDOW_X    = 75d;

@@ -91,10 +91,11 @@ public class FileUtil {
     }
 
     public Diagram loadFromLaceFile(App app, File file) {
-        return buildZip(app, file, null);
+        new ImageUtil(app).backupKnots();
+        return readZip(app, file, null);
     }
 
-    private Diagram buildZip(App app, File file, Diagram diagram) {
+    private Diagram readZip(App app, File file, Diagram diagram) {
         try (ZipFile zipFile = new ZipFile(file)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
 

@@ -56,6 +56,7 @@ public class ToolboxWindow {
 
     private Stage toolboxStage;
     private TextButton textButton;
+    private AddKnotButton addKnotButton;
     private ColorButton colorButton;
     private BackInBlackButton backInBlackButton;
 
@@ -84,11 +85,17 @@ public class ToolboxWindow {
         }
 
         this.textButton = new TextButton(app);
+        this.addKnotButton = new AddKnotButton(app);
         this.colorButton = new ColorButton(app);
         this.backInBlackButton = new BackInBlackButton(app);
         parent.add(
                 this.textButton,
                 0,
+                (int)Math.floor((double) (this.classpathResourceFiles.size() + 3) / 2)
+        );
+        parent.add(
+                this.addKnotButton,
+                1,
                 (int)Math.floor((double) (this.classpathResourceFiles.size() + 3) / 2)
         );
         parent.add(
