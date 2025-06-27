@@ -275,8 +275,9 @@ public class ImageUtil {
                 @Override
                 @NonNull
                 public FileVisitResult visitFile(@NonNull Path file, @NonNull BasicFileAttributes attrs) throws IOException {
-                    String fileName = file.getFileName().toString().toLowerCase();
-                    moveKnots(file, fileName, backupDirectory, knotsDirectory);
+                    String filename = file.getFileName().toString().toLowerCase();
+                    moveKnot(file, filename, backupDirectory, knotsDirectory);
+
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -285,8 +286,8 @@ public class ImageUtil {
         }
     }
 
-    private static void moveKnots(Path file, String fileName, Path backupDirectory, Path knotsDirectory) throws IOException {
-        if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png")) {
+    private void moveKnot(Path file, String filename, Path backupDirectory, Path knotsDirectory) throws IOException {
+        if (isCorrectFileType(filename)) {
             Path destination = backupDirectory.resolve(knotsDirectory.relativize(file));
             Files.createDirectories(destination.getParent());
             Files.move(file, destination, StandardCopyOption.REPLACE_EXISTING);
@@ -295,7 +296,11 @@ public class ImageUtil {
         }
     }
 
-    private static void createBackupDirectory(Path targetDir) throws IOException {
+    private boolean isCorrectFileType(String filename) {
+        return filename.endsWith(".jpg") || filename.endsWith(".jpeg") || filename.endsWith(".png");
+    }
+
+    private void createBackupDirectory(Path targetDir) throws IOException {
         if (Files.notExists(targetDir)) {
             Files.createDirectories(targetDir);
         }
