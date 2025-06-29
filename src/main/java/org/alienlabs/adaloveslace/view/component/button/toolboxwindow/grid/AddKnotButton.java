@@ -5,6 +5,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.domain.enumeration.GridType;
 import org.alienlabs.adaloveslace.util.FileChooserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,6 @@ import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_TEXT_
 
 public class AddKnotButton extends ToggleButton {
 
-  public static final String ADD_KNOT_DIALOG_TITLE   = "Add knot";
   public static final String KNOT_FILES            = "image files (*.jpg or *.png)";
   public static final String KNOT_FILES_FILTER1      = "*.jpg";
   public static final String KNOT_FILES_FILTER2      = "*.jpeg";
@@ -47,7 +47,13 @@ public class AddKnotButton extends ToggleButton {
     app.getMovablePane().setOnKeyPressed(null);
     this.setSelected(true);
 
-    FileChooser load = new FileChooserUtil().getAddKnotFileChooser(ADD_KNOT_DIALOG_TITLE, APP_FOLDER_IN_USER_HOME, KNOT_FILES);
+    FileChooser load = new FileChooserUtil().getAddKnotFileChooser(
+            app.getOptionalDotGrid().getDiagram().getCurrentGridType() == GridType.CRISS_CROSS
+                    ? resourceBundle.getString(ADD_KNOT_WITH_SIZE_DIALOG_TITLE)
+                    : resourceBundle.getString(ADD_KNOT_BUTTON_NAME),
+            APP_FOLDER_IN_USER_HOME,
+            KNOT_FILES
+    );
     File file = load.showOpenDialog(app.getScene().getWindow());
 
     if (file != null) {
