@@ -6,7 +6,9 @@ package org.alienlabs.adaloveslace.domain.enumeration;
 public enum Technique {
     LACE("dentelle"),
     KNITTING("tricot"),
-    CROCHET("crochet");
+    CROCHET("crochet"),
+    EMBROIDERY("broderie"),
+    MISCELLANEOUS("divers");
 
     private final String value;
 

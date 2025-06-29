@@ -31,9 +31,7 @@ public class ImageButton extends Button {
       buttonImageView.setFitHeight(SMALL_ICON_SIZE);
       buttonImageView.setPreserveRatio(true);
       this.setGraphic(buttonImageView);
-    } catch (MalformedURLException e) {
-      logger.error("Error loading button image!", e);
-    } catch (URISyntaxException e) {
+    } catch (MalformedURLException | URISyntaxException e) {
       logger.error("Error loading button image!", e);
     }
   }

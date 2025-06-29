@@ -31,12 +31,9 @@ import static org.alienlabs.adaloveslace.domain.Knot.NEW_TEXT;
 public class MainWindow {
 
   public static final double NEW_KNOT_GAP  = 15d;
-  public static final String LANGUAGE = "Language";
-  public static final String TOOL = "Tool";
-  public static final String EDIT = "Edit";
-  public static final String FILE = "File";
 
   private OptionalDotGrid optionalDotGrid;
+
   private TilePane footer;
 
   public static final String SAVE_FILE      = "Save";

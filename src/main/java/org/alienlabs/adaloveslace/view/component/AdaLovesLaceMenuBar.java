@@ -8,6 +8,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.PrintUtil;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton;
@@ -23,6 +24,14 @@ import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -35,15 +44,32 @@ public class AdaLovesLaceMenuBar {
 
     private ObservableSet<Printer> printers;
 
-    private static final Logger logger = LoggerFactory.getLogger(AdaLovesLaceMenuBar.class);
+    private static final String LANGUAGE            = "Language";
+    private static final String TOOL                = "Tool";
+    private static final String QUICK_START         = "QuickStart";
+    private static final String MISCELLANEOUS       = "Miscellaneous";
+    private static final String CORNER_TO_CORNER    = "CornerToCorner";
+    private static final String CROCHET             = "Crochet";
+    private static final String EMBROIDERY          = "Embroidery";
+    private static final String MOSAIC_CROCHET      = "MosaicCrochet";
+    private static final String DIAMOND_PAINTING    = "DiamondPainting";
+    private static final String PIXEL_ART           = "PixelArt";
+    private static final String CROSS_STITCH        = "CrossStitch";
+    private static final String TAPESTRY            = "Tapestry";
+    private static final String PEYOTE_WEAVING      = "PeyoteWeaving";
+    private static final String EDIT                = "Edit";
+    private static final String FILE                = "File";
+
+    private static final Logger logger              = LoggerFactory.getLogger(AdaLovesLaceMenuBar.class);
 
     public MenuBar createMenuBar(App app) {
         MenuBar menuBar = new MenuBar();
 
-        Menu fileMenu     = new Menu(resourceBundle.getString(FILE));
-        Menu editMenu     = new Menu(resourceBundle.getString(EDIT));
-        Menu toolMenu     = new Menu(resourceBundle.getString(TOOL));
-        Menu languageMenu = new Menu(resourceBundle.getString(LANGUAGE));
+        Menu fileMenu       = new Menu(resourceBundle.getString(FILE));
+        Menu editMenu       = new Menu(resourceBundle.getString(EDIT));
+        Menu toolMenu       = new Menu(resourceBundle.getString(TOOL));
+        Menu quickStartMenu = new Menu(resourceBundle.getString(QUICK_START));
+        Menu languageMenu   = new Menu(resourceBundle.getString(LANGUAGE));
 
         MenuItem saveItem = new MenuItem(resourceBundle.getString(SAVE_FILE));
         saveItem.setOnAction(_ -> SaveButton.onSaveAction(app));
@@ -120,6 +146,43 @@ public class AdaLovesLaceMenuBar {
         });
         printItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN));
 
+        Menu crochetSubMenu         = new Menu(resourceBundle.getString(CROCHET));
+        Menu embroiderySubMenu      = new Menu(resourceBundle.getString(EMBROIDERY));
+        Menu miscellaneousSubMenu   = new Menu(resourceBundle.getString(MISCELLANEOUS));
+
+        MenuItem cornerToCornerItem = new MenuItem(resourceBundle.getString(CORNER_TO_CORNER));
+        cornerToCornerItem.setOnAction(_ ->
+                this.loadQuickstartDiagram(app, "Corner to corner.lace")
+        );
+        MenuItem crochetItem = new MenuItem(resourceBundle.getString(CROCHET));
+        crochetItem.setOnAction(_ ->
+                this.loadQuickstartDiagram(app, "Crochet.lace")
+        );
+        MenuItem mosaicCrochetItem = new MenuItem(resourceBundle.getString(MOSAIC_CROCHET));
+        mosaicCrochetItem.setOnAction(_ ->
+                this.loadQuickstartDiagram(app, "Crochet mosaique.lace")
+        );
+        MenuItem diamondPaintingItem = new MenuItem(resourceBundle.getString(DIAMOND_PAINTING));
+        diamondPaintingItem.setOnAction(_ ->
+                this.loadQuickstartDiagram(app, "Diamond painting.lace")
+        );
+        MenuItem pixelArtItem = new MenuItem(resourceBundle.getString(PIXEL_ART));
+        pixelArtItem.setOnAction(_ ->
+                this.loadQuickstartDiagram(app, "Pixel-art.lace")
+        );
+        MenuItem crossStitchItem = new MenuItem(resourceBundle.getString(CROSS_STITCH));
+        crossStitchItem.setOnAction(_ ->
+                this.loadQuickstartDiagram(app, "Point de croix.lace")
+        );
+        MenuItem tapestryItem = new MenuItem(resourceBundle.getString(TAPESTRY));
+        tapestryItem.setOnAction(_ ->
+                this.loadQuickstartDiagram(app, "Tapisserie.lace")
+        );
+        MenuItem peyoteWeavingItem = new MenuItem(resourceBundle.getString(PEYOTE_WEAVING));
+        peyoteWeavingItem.setOnAction(_ ->
+                this.loadQuickstartDiagram(app, "Tissage peyote.lace")
+        );
+
         MenuItem frenchItem = new MenuItem(FRENCH);
         frenchItem.setOnAction(_ -> {
             Locale locale = new Locale("fr", "FR");
@@ -149,13 +212,49 @@ public class AdaLovesLaceMenuBar {
         fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, exportImageItem, separator1, quitItem);
         editMenu.getItems().addAll(undoKnotItem, redoKnotItem, separator2, resetDiagramItem);
         toolMenu.getItems().addAll(showHideGridItem, separator3, getPrintersItem, printItem);
+        crochetSubMenu.getItems().addAll(cornerToCornerItem, crochetItem, mosaicCrochetItem, tapestryItem);
+        embroiderySubMenu.getItems().addAll(crossStitchItem);
+        miscellaneousSubMenu.getItems().addAll(diamondPaintingItem, pixelArtItem, peyoteWeavingItem);
+        quickStartMenu.getItems().addAll(crochetSubMenu, embroiderySubMenu, miscellaneousSubMenu);
         languageMenu.getItems().addAll(frenchItem, englishItem);
 
         menuBar.getStyleClass().add("main-menu");
-        menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu, languageMenu);
+        menuBar.getMenus().addAll(fileMenu, editMenu, toolMenu, quickStartMenu, languageMenu);
         menuBar.setTranslateY(MENU_BAR_Y);
 
         return menuBar;
+    }
+
+    private void loadQuickstartDiagram(App app, String diagramName) {
+        String path = File.separator + DIAGRAMS_DIRECTORY + diagramName;
+        URL url = AdaLovesLaceMenuBar.class.getResource(path);
+        logger.debug("Found URL? {}", url);
+
+        URL resourceUrl = AdaLovesLaceMenuBar.class.getResource(path);
+        File toLoad;
+
+        if (resourceUrl == null) {
+            throw new IllegalArgumentException("Resource not found: " + diagramName);
+        }
+
+        if ("file".equals(resourceUrl.getProtocol())) {
+            try {
+                toLoad = Paths.get(resourceUrl.toURI()).toFile();
+                new FileUtil().buildUiFromLaceFile(app, toLoad);
+            } catch (URISyntaxException e) {
+                logger.error("Error loading quickstart image: {}", diagramName, e);
+            }
+        } else {
+            try (InputStream in = resourceUrl.openStream()) {
+                File file = File.createTempFile(diagramName, "");
+                file.deleteOnExit();
+                Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                new FileUtil().buildUiFromLaceFile(app, file);
+            } catch (IOException e) {
+                logger.error("Error loading quickstart image: {}", diagramName, e);
+            }
+        }
     }
 
 }
