@@ -261,7 +261,7 @@ public class ImageUtil {
         }
     }
 
-    void backupKnots() {
+    public void backupKnots() {
         Path root = Paths.get(APP_FOLDER_IN_USER_HOME);
         Path knotsDirectory = root.resolve(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME );
         Path backupDirectory = root.resolve(APP_FOLDER_IN_USER_HOME + BACKUP_DIRECTORY_NAME );

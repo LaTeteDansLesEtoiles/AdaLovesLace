@@ -74,6 +74,7 @@ public class App extends Application {
   public static final String PRINT_BUTTON_NAME        = "PrintDiagram";
   public static final String TEXT_BUTTON_NAME         = "TextButton";
   public static final String ADD_KNOT_BUTTON_NAME     = "AddKnotButton";
+  public static final String RESET_KNOTS_BUTTON_NAME  = "ResetKnotsButton";
   public static final String ADD_KNOT_WITH_SIZE_DIALOG_TITLE   = "AddKnotWithSize";
   public static final String COLOR_BUTTON_NAME        = "ColorButton";
 

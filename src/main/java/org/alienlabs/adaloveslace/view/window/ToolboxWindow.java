@@ -57,6 +57,7 @@ public class ToolboxWindow {
     private Stage toolboxStage;
     private TextButton textButton;
     private AddKnotButton addKnotButton;
+    private ResetKnotsButton resetKnotSButton;
     private ColorButton colorButton;
     private BackInBlackButton backInBlackButton;
 
@@ -86,6 +87,7 @@ public class ToolboxWindow {
 
         this.textButton = new TextButton(app);
         this.addKnotButton = new AddKnotButton(app);
+        this.resetKnotSButton = new ResetKnotsButton(app);
         this.colorButton = new ColorButton(app);
         this.backInBlackButton = new BackInBlackButton(app);
         parent.add(
@@ -95,18 +97,23 @@ public class ToolboxWindow {
         );
         parent.add(
                 this.addKnotButton,
-                1,
-                (int)Math.floor((double) (this.classpathResourceFiles.size() + 3) / 2)
-        );
-        parent.add(
-                this.colorButton,
                 0,
                 (int)Math.floor((double) (this.classpathResourceFiles.size() + 5) / 2)
         );
         parent.add(
-                this.backInBlackButton,
+                this.resetKnotSButton,
                 1,
                 (int)Math.floor((double) (this.classpathResourceFiles.size() + 5) / 2)
+        );
+        parent.add(
+                this.colorButton,
+                0,
+                (int)Math.floor((double) (this.classpathResourceFiles.size() + 7) / 2)
+        );
+        parent.add(
+                this.backInBlackButton,
+                1,
+                (int)Math.floor((double) (this.classpathResourceFiles.size() + 7) / 2)
         );
 
         return diagram;
