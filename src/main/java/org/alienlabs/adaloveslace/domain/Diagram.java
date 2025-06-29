@@ -449,11 +449,12 @@ public class Diagram {
 
     // We don't lose the undo / redo history
     public void resetDiagram(App app) {
-        app.getMovablePane().getChildren().removeAll(this.getCurrentStep().getDisplayedKnots().stream().
+        app.getOptionalDotGrid().removeKnotDecorations();
+        app.getMovablePane().getChildren().removeAll(this.getCurrentStep().getAllVisibleKnots().stream().
             map(Knot::getImageView).toList());
-        app.getOptionalDotGrid().clearSelections();
         this.getAllSteps().clear();
         this.currentStepIndex = -1;
+        app.getOptionalDotGrid().layoutChildren();
     }
 
     public double getX() {

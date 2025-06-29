@@ -275,6 +275,13 @@ public class OptionalDotGrid extends Pane {
     });
   }
 
+  public void removeKnotDecorations() {
+    this.clearSelections();
+    this.clearAllGuideLines();
+    this.clearHovered();
+    this.clearHandles();
+  }
+
   public void clearGuideLines(final Knot knot) {
     root.getChildren().removeAll(knot.getGuideLines());
     knot.getGuideLines().clear();
