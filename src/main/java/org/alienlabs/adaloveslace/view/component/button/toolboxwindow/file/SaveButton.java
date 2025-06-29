@@ -14,12 +14,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import static org.alienlabs.adaloveslace.App.USER_HOME;
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.util.Preferences.LACE_FILE_FOLDER_SAVE_PATH;
 import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
 public class SaveButton extends ImageButton {
 
-    public static final String SAVE_FILE_DIALOG_TITLE   = "Save diagram as";
+    public static final String SAVE_FILE_DIALOG_TITLE   = "Save";
     public static final String DIAGRAM_FILES            = ".lace files (*.lace)";
     public static final String DIAGRAM_FILE_FILTER      = "*.lace";
 
@@ -45,7 +46,7 @@ public class SaveButton extends ImageButton {
             !laceFileParent.isDirectory() || !laceFileParent.canWrite() || !laceFilePath.canWrite()) {
             // Save as anyway, since we don't know where to save
             FileChooser saveAs = new FileChooser();
-            saveAs.setTitle(SAVE_FILE_DIALOG_TITLE);
+            saveAs.setTitle(resourceBundle.getString(SAVE_FILE_DIALOG_TITLE));
 
             File userHome = new File(System.getProperty(USER_HOME));
             saveAs.setInitialDirectory(userHome);
