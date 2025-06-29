@@ -329,7 +329,7 @@ public class ToolboxWindow {
     }
 
     private void buildQuitButton(GridPane buttonsPane, int posY) {
-        QuitButton showQuitButton = new QuitButton(resourceBundle.getString(QUIT_APP));
+        QuitButton showQuitButton = new QuitButton(app, resourceBundle.getString(QUIT_APP));
         buttonsPane.add(showQuitButton, 0, posY + 6);
     }
 

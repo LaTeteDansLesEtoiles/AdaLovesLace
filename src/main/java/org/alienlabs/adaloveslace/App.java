@@ -1,7 +1,6 @@
 package org.alienlabs.adaloveslace;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -22,6 +21,7 @@ import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.util.*;
 import org.alienlabs.adaloveslace.view.component.AdaLovesLaceMenuBar;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.alienlabs.adaloveslace.view.window.GeometryWindow;
@@ -41,6 +41,7 @@ import java.util.ResourceBundle;
 
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
 import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_BUTTONS;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.BUTTON_SELECTED;
 import static org.alienlabs.adaloveslace.view.window.event.GridEvents.getMouseDoubleRightClickOnGridEventHendler;
 
@@ -222,10 +223,10 @@ public class App extends Application {
     primaryStage.show();
   }
 
-  private static void onCloseApplication(Stage primaryStage) {
-    primaryStage.setOnCloseRequest(windowEvent -> {
+  private void onCloseApplication(Stage primaryStage) {
+    primaryStage.setOnCloseRequest(event -> {
       logger.debug("You shall close the app by closing this window!");
-      Platform.exit();
+      new QuitButton(this, resourceBundle.getString(QUIT_APP)).onQuitAction(event);
     });
   }
 

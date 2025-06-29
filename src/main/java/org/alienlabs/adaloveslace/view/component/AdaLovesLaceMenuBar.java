@@ -90,7 +90,7 @@ public class AdaLovesLaceMenuBar {
         SeparatorMenuItem separator1 = new SeparatorMenuItem();
 
         MenuItem quitItem = new MenuItem(resourceBundle.getString(QUIT_APP));
-        quitItem.setOnAction(_ -> QuitButton.onQuitAction());
+        quitItem.setOnAction(event -> new QuitButton(app, resourceBundle.getString(QUIT_APP)).onQuitAction(event));
         quitItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
 
         MenuItem undoKnotItem = new MenuItem(resourceBundle.getString(UNDO_KNOT));
