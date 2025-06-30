@@ -4,31 +4,31 @@ package org.alienlabs.adaloveslace.domain.enumeration;
  * The SubTechnique enumeration.
  */
 public enum SubTechnique {
-    CROCHET("crochet"),
-    MISC_CROCHET("crochet divers"),
-    TATTING_LACE("dentelle à l&#39;aiguille"),
-    SHETTLAND("dentelle de Shettland"),
-    MISC_LACE("dentelles diverses"),
-    GRANNY_SQUARE("granny square"),
-    CORNER_TO_CORNER("corner to corner"),
-    MOSAIC_CROCHET("crochet mosa&#239;que"),
-    DIAMOND_PAINTING("diamond painting"),
-    PIXEL_ART("pixel-art"),
-    CROSS_STITCH("point de croix"),
-    MISC_EMBROIDERY("broderies diverses"),
-    TAPESTRY("tapisserie"),
-    PEYOTE_WEAVING("tissage peyote"),
-    MISC_MISCELLANEOUS("divers"),
-    KNITTING("tricot"),
-    MISC_KNITTING("tricots divers");
+    CROCHET("CROCHET"),
+    MISC_CROCHET("MISC_CROCHET"),
+    TATTING_LACE("TATTING_LACE"),
+    SHETTLAND("SHETTLAND"),
+    MISC_LACE("MISC_LACE"),
+    GRANNY_SQUARE("GRANNY_SQUARE"),
+    CORNER_TO_CORNER("CORNER_TO_CORNER"),
+    MOSAIC_CROCHET("MOSAIC_CROCHET"),
+    DIAMOND_PAINTING("DIAMOND_PAINTING"),
+    PIXEL_ART("PIXEL_ART"),
+    CROSS_STITCH("CROSS_STITCH"),
+    MISC_EMBROIDERY("MISC_EMBROIDERY"),
+    TAPESTRY("TAPESTRY"),
+    PEYOTE_WEAVING("PEYOTE_WEAVING"),
+    MISC_MISCELLANEOUS("MISC_MISCELLANEOUS"),
+    KNITTING("KNITTING"),
+    MISC_KNITTING("MISC_KNITTING");
 
-    private final String value;
+    private final String messageKey;
 
-    SubTechnique(String value) {
-        this.value = value;
+    SubTechnique(String messageKey) {
+        this.messageKey = messageKey;
     }
 
-    public String getValue() {
-        return value;
+    public String getMessageKey() {
+        return messageKey;
     }
 }

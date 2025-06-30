@@ -2,7 +2,7 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
 
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
-import org.alienlabs.adaloveslace.view.window.DiagramShareWindow;
+import org.alienlabs.adaloveslace.view.window.DiagramShareWithImagesWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class ShareButton extends ImageButton {
 
   public static void onShareAction(App app) {
     logger.debug("Share file");
-    new DiagramShareWindow(app);
+    DiagramShareWithImagesWindow.show(app);
   }
 
 }

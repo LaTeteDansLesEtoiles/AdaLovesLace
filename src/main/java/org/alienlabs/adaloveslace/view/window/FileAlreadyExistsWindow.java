@@ -22,7 +22,7 @@ public class FileAlreadyExistsWindow {
   public static final String FILE_ALREADY_EXISTS_HEADER_TEXT      = "FILE_ALREADY_EXISTS_HEADER_TEXT";
   public static final String FILE_ALREADY_EXISTS_CONTENT_TEXT     = "FILE_ALREADY_EXISTS_CONTENT_TEXT";
   public static final String SAVE_BUTTON_TEXT                     = "SAVE_BUTTON_TEXT";
-  public static final String CANCEL_BUTTON_TEXT                   = "CANCEL_BUTTON_TEXT";
+  public static final String CANCEL_BUTTON_TEXT                   = "CancelButtonText";
 
   private static final Logger logger = LoggerFactory.getLogger(FileAlreadyExistsWindow.class);
   private final File fileToSave;

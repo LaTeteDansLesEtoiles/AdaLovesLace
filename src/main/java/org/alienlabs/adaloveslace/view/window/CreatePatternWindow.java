@@ -31,7 +31,7 @@ public class CreatePatternWindow {
   public static final String CREATE_PATTERN_HEADER_TEXT      = "CREATE_PATTERN_HEADER_TEXT";
   public static final String CREATE_PATTERN_CONTENT_TEXT     = "CREATE_PATTERN_CONTENT_TEXT";
   public static final String CREATE_PATTERN_BUTTON_TEXT      = "CREATE_PATTERN_BUTTON_TEXT";
-  public static final String CANCEL_BUTTON_TEXT              = "CANCEL_BUTTON_TEXT";
+  public static final String CANCEL_BUTTON_TEXT              = "CancelButtonText";
   public static final String CREATE_PATTERN_PREVIEW_LABEL    = "CREATE_PATTERN_PREVIEW_LABEL";
 
   private static final Logger logger = LoggerFactory.getLogger(CreatePatternWindow.class);

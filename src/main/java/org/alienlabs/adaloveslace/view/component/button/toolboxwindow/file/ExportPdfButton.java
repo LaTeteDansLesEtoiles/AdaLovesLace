@@ -48,7 +48,7 @@ public class ExportPdfButton extends ImageButton {
 
       String imageFilename = System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator + OUTPUT_TEMPORARY_IMAGE;
 
-      new ImageUtil(app).buildWritableImageWithoutTechnicalElements(imageFilename);
+      new ImageUtil(app).buildFileImageWithoutTechnicalElements(imageFilename);
       new FileUtil().generatePdf(pdfFilename, PATH_NAME.getAbsolutePath());
     }
   }

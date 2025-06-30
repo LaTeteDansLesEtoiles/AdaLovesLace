@@ -40,7 +40,7 @@ public class ExportImageButton extends ImageButton {
         File file = export.showSaveDialog(app.getScene().getWindow());
 
         if (file != null) {
-            new ImageUtil(app).buildWritableImageWithoutTechnicalElements(
+            new ImageUtil(app).buildFileImageWithoutTechnicalElements(
                 file.getAbsolutePath().endsWith(EXPORT_IMAGE_FILE_TYPE) ?
                     file.getAbsolutePath() :
                     file.getAbsolutePath() + EXPORT_IMAGE_FILE_TYPE

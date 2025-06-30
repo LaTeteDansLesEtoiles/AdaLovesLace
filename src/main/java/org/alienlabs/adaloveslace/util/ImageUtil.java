@@ -50,7 +50,7 @@ public class ImageUtil {
         this.app = app;
     }
 
-    public File buildWritableImageWithoutTechnicalElements(String pathname) {
+    public File buildFileImageWithoutTechnicalElements(String pathname) {
         boolean isGridDisplayed = app.getOptionalDotGrid().isShowHideGrid();
         this.hideTechnicalElementsFromRootGroup(false);
 
@@ -60,6 +60,17 @@ public class ImageUtil {
         logger.debug("Snapshot done!");
 
         return image;
+    }
+
+    public WritableImage buildWritableImageWithoutTechnicalElements(String pathname) {
+        boolean isGridDisplayed = app.getOptionalDotGrid().isShowHideGrid();
+        this.hideTechnicalElementsFromRootGroup(false);
+
+        WritableImage snapshot = buildWritableImage(pathname);
+        logger.debug("Snapshot done!");
+
+        this.showTechnicalElementsFromRootGroup(isGridDisplayed);
+        return snapshot;
     }
 
     public WritableImage buildWritableImageWithTechnicalElements(String pathname) {
@@ -72,7 +83,7 @@ public class ImageUtil {
     public DiagramDTO getDiagram(String diagramFilename, String username, String clientId, String clientSecret) throws IOException {
         UUID uuid         = UUID.randomUUID();
         new ImageUtil(app).
-                buildWritableImageWithoutTechnicalElements(
+                buildFileImageWithoutTechnicalElements(
                         APP_FOLDER_IN_USER_HOME + uuid + EXPORT_IMAGE_FILE_TYPE
                 );
         File laceFilePath = new File(APP_FOLDER_IN_USER_HOME + diagramFilename + LACE_FILE_EXTENSION);
@@ -99,7 +110,7 @@ public class ImageUtil {
                 clientSecret(UUID.fromString(clientSecret));
     }
 
-    private WritableImage buildWritableImage(String pathname) {
+    public WritableImage buildWritableImage(String pathname) {
         WritableImage wi = new WritableImage((int)app.getMovablePane().getWidth(),
                 (int)app.getMovablePane().getHeight());
         WritableImage snapshot = app.getMovablePane().snapshot(newSnapshotParameters(), wi);
