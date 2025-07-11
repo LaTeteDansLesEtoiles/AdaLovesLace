@@ -225,10 +225,10 @@ public class DiagramShareWithImagesWindow extends Dialog<DiagramShareWithImagesW
             Bindings.createBooleanBinding(
                     () ->
                             usernameField.getText().length()            < 3 ||
-                                    nameField.getText().length()        < 4 ||
-                                    descriptionField.getText().length() < 4 ||
-                                    clientIdField.getText().length()    < 4 ||
-                                    clientSecretField.getText().length()< 4 ||
+                                    nameField.getText().length()        < 5 ||
+                                    descriptionField.getText().length() < 5 ||
+                                    clientIdField.getText().length()    < 36 ||
+                                    clientSecretField.getText().length()< 36 ||
                                     techniqueCombo.getValue() == null ||
                                     subTechniqueCombo.getValue() == null ||
                                     imageList.isEmpty(),
