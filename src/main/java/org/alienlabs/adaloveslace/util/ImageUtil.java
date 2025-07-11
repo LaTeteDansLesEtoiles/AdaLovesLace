@@ -26,8 +26,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.UUID;
@@ -254,21 +252,16 @@ public class ImageUtil {
     }
 
     public void getImageView(String pathname, ButtonBase button, boolean isSelected) {
-        try {
-            Image buttonImage = new Image(ClassLoader.getSystemResource(ASSETS_DIRECTORY + pathname) != null ?
-                    ClassLoader.getSystemResource(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm() :
-                    new File(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm());
+        Image buttonImage = new Image(getClass()
+                        .getResource(ASSETS_DIRECTORY + pathname).toExternalForm());
 
-            ImageView buttonImageView  = new ImageView(buttonImage);
-            buttonImageView.setFitHeight(ICON_SIZE);
-            buttonImageView.setPreserveRatio(true);
-            button.setGraphic(buttonImageView);
+        ImageView buttonImageView  = new ImageView(buttonImage);
+        buttonImageView.setFitHeight(ICON_SIZE);
+        buttonImageView.setPreserveRatio(true);
+        button.setGraphic(buttonImageView);
 
-            if (isSelected) {
-                ((ToggleButton)button).setSelected(true);
-            }
-        } catch (MalformedURLException | URISyntaxException e) {
-            logger.error("Error loading button image!", e);
+        if (isSelected) {
+            ((ToggleButton)button).setSelected(true);
         }
     }
 
