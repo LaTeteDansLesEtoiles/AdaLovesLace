@@ -366,7 +366,7 @@
                     <bundleJre>true</bundleJre>
                     <generateInstaller>true</generateInstaller>
                     <generateMsi>true</generateMsi>
-                    <generateMsm>true</generateMsm>
+                    <generateMsm>false</generateMsm>
                     <administratorRequired>false</administratorRequired>
                     <platform>windows</platform>
                     <jrePath>${env.JAVA_HOME}</jrePath>
