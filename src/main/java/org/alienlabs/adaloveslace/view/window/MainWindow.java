@@ -109,6 +109,7 @@ public class MainWindow {
     movablePane.setOnMouseExited(GridEvents.getGridHoverExitEventHandler(app));
     movablePane.setOnMousePressed(GridEvents.getMouseRightClickEventHandler(app));
     movablePane.setOnMouseDragged(GridEvents.getGridDraggedEventHandler(app));
+    movablePane.setOnMouseReleased(GridEvents.getGridDragReleasedEventHandler(app));
   }
 
   public void onClickWithSelectionMode(App app) {

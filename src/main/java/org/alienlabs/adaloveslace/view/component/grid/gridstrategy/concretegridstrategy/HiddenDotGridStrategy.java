@@ -1,13 +1,10 @@
 package org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy;
 
-import org.alienlabs.adaloveslace.domain.Coordinate;
+import javafx.geometry.Point2D;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.IDotGridStrategy;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 
 public class HiddenDotGridStrategy implements IDotGridStrategy {
-
-    private double width;
-    private double height;
 
     /**
      * This shall only be called by the ParentGridStrategy.
@@ -19,9 +16,8 @@ public class HiddenDotGridStrategy implements IDotGridStrategy {
     /**
      * This shall only be called by the ParentGridStrategy.
      */
-    public void setViewPort(double width, double height) {
-        this.width = width;
-        this.height = height;
+    public void setViewPort(double width, double height, double translateX, double translateY) {
+        // Nothing to do here
     }
 
     @Override
@@ -30,8 +26,8 @@ public class HiddenDotGridStrategy implements IDotGridStrategy {
     }
 
     @Override
-    public Coordinate getDrawCoordinates(double x, double y) {
-        return new Coordinate(x, y);
+    public Point2D getSnapToGridDrawCoordinates(double x, double y) {
+        return new Point2D(x, y);
     }
 
 }

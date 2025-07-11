@@ -14,12 +14,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.domain.Coordinate;
 import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.domain.Pattern;
 import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.domain.enumeration.PatternOrTextMode;
 import org.alienlabs.adaloveslace.util.NodeUtil;
+import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,6 +136,13 @@ public class GridEvents {
 
       dragStartX = event.getSceneX();
       dragStartY = event.getSceneY();
+    }
+  };
+
+  public static final EventHandler<MouseEvent> mouseGridDragReleasedEventHandler = event -> {
+    if (event.getButton() == MouseButton.SECONDARY) {
+      ParentGridStrategy.setGridHasBeenDrawn(false);
+      app.getOptionalDotGrid().layoutChildren();
     }
   };
 
@@ -347,9 +354,11 @@ public class GridEvents {
           Double x = mouseInParent.getX();
           Double y = mouseInParent.getY();
 
-          Coordinate coord = app.getGridStrategy().getDrawCoordinates(x, y);
-          currentImageView.setLayoutX(coord.x());
-          currentImageView.setLayoutY(coord.y());
+          Point2D coord = app.getGridStrategy().getDrawCoordinates(x, y);
+          currentImageView.setLayoutX(coord.getX());
+          currentImageView.setLayoutY(coord.getY());
+          currentPattern.setCenterX(coord.getX());
+          currentPattern.setCenterY(coord.getY());
           app.getMovablePane().getChildren().add(currentImageView);
         }
       } else {
@@ -408,6 +417,11 @@ public class GridEvents {
   public static EventHandler<MouseEvent> getGridDraggedEventHandler(App app) {
     GridEvents.app = app;
     return mouseGridDraggedEventHandler;
+  }
+
+  public static EventHandler<MouseEvent> getGridDragReleasedEventHandler(App app) {
+    GridEvents.app = app;
+    return mouseGridDragReleasedEventHandler;
   }
 
   public static EventHandler<MouseEvent> getMouseDoubleRightClickOnGridEventHendler(App app) {

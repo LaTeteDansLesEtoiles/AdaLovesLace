@@ -4,6 +4,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -340,16 +341,16 @@ public class Diagram {
     public void drawKnot(double x, double y) {
         logger.debug("Current pattern  -> {}", this.getCurrentPattern());
         ImageView iv;
-        Coordinate coord = app.getGridStrategy().getDrawCoordinates(x, y);
+        Point2D coord = app.getGridStrategy().getDrawCoordinates(x, y);
 
         if (PatternOrTextMode.PATTERN == app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().get()) {
-            iv = this.nodeUtil.drawPattern(coord.x(), coord.y(), this.getCurrentPattern());
+            iv = this.nodeUtil.drawPattern(coord.getX(), coord.getY(), this.getCurrentPattern());
 
             if (null != iv) {
                 isNewText = true;
                 createImageViewWithStep(
-                        coord.x(),
-                        coord.y(),
+                        coord.getX(),
+                        coord.getY(),
                         iv,
                         this.getCurrentPattern(),
                         this.getCurrentColor()

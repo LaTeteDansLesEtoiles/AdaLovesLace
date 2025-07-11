@@ -1,9 +1,9 @@
 package org.alienlabs.adaloveslace.view.component.grid.gridstrategy;
 
+import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.domain.Coordinate;
 import org.alienlabs.adaloveslace.domain.enumeration.GridType;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy.*;
 
@@ -38,17 +38,19 @@ public class ParentGridStrategy {
 
             double width = app.getMovablePane().getWidth();
             double height = app.getMovablePane().getHeight();
+            double translateX = app.getMovablePane().getTranslateX();
+            double translateY = app.getMovablePane().getTranslateY();
 
             IDotGridStrategy childStrategy = childStrategies.get(app.getOptionalDotGrid().getDiagram().getCurrentGridType());
-            childStrategy.setViewPort(width, height);
+            childStrategy.setViewPort(width, height, translateX, translateY);
             childStrategy.drawGrid();
 
             gridHasBeenDrawn = true;
         }
     }
 
-    public Coordinate getDrawCoordinates(double x, double y) {
-        return childStrategies.get(app.getOptionalDotGrid().getDiagram().getCurrentGridType()).getDrawCoordinates(x, y);
+    public Point2D getDrawCoordinates(double x, double y) {
+        return childStrategies.get(app.getOptionalDotGrid().getDiagram().getCurrentGridType()).getSnapToGridDrawCoordinates(x, y);
     }
 
     public void switchGridType() {

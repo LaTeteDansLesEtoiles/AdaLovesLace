@@ -216,7 +216,7 @@ public class NodeUtil {
 
 
   public Knot newKnot(double x, double y, ImageView imageView, Pattern pattern, Knot currentKnot, Color currentColor) {
-    return new Knot(
+    Knot knot = new Knot(
             isNewText || currentKnot == null || pattern != null ? x : currentKnot.getX(),
             isNewText || currentKnot == null || pattern != null ? y : currentKnot.getY(),
             pattern == null ? Optional.empty() : Optional.of(pattern),
@@ -226,6 +226,13 @@ public class NodeUtil {
             currentColor == null ? Optional.empty() : Optional.of(currentColor),
             imageView
     );
+
+    if (knot.getPattern().isPresent()) {
+      knot.getPattern().get().setCenterX(x);
+      knot.getPattern().get().setCenterY(y);
+    }
+
+    return knot;
   }
 
   public ImageView createText(double x, double y, ImageView imageView, Knot currentKnot, Color currentColor) {

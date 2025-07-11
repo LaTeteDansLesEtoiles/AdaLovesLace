@@ -1,16 +1,16 @@
 package org.alienlabs.adaloveslace.view.component.grid.gridstrategy;
 
-import org.alienlabs.adaloveslace.domain.Coordinate;
+import javafx.geometry.Point2D;
 
 public interface IDotGridStrategy {
 
     /**
      * This shall only be called by the ParentGridStrategy.
      */
-    void setViewPort(double width, double height);
+    void setViewPort(double width, double height, double translateX, double translateY);
 
     void drawGrid();
 
-    Coordinate getDrawCoordinates(double x, double y);
+    Point2D getSnapToGridDrawCoordinates(double x, double y);
 
 }
