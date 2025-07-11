@@ -42,22 +42,22 @@ public class WindowRepositionEvents {
     }
 
     public void onDoMainWindowReposition() {
-        onDoChangeX(this.app.getPrimaryStage().xProperty(), MAIN_WINDOW_X, "Main window x: {}");
-        onDoChangeY(this.app.getPrimaryStage().yProperty(), MAIN_WINDOW_Y, "Main window y: {}");
+        onDoChangeX(this.app.getPrimaryStage().xProperty(), MAIN_WINDOW_X, "Main window sceneX: {}");
+        onDoChangeY(this.app.getPrimaryStage().yProperty(), MAIN_WINDOW_Y, "Main window sceneY: {}");
     }
 
     public void onDoToolboxWindowReposition() {
-        onDoChangeX(this.app.getToolboxStage().xProperty(), TOOLBOX_WINDOW_X, "Toolbox window x: {}");
-        onDoChangeY(this.app.getToolboxStage().yProperty(), TOOLBOX_WINDOW_Y, "Toolbox window y: {}");
+        onDoChangeX(this.app.getToolboxStage().xProperty(), TOOLBOX_WINDOW_X, "Toolbox window sceneX: {}");
+        onDoChangeY(this.app.getToolboxStage().yProperty(), TOOLBOX_WINDOW_Y, "Toolbox window sceneY: {}");
     }
 
     public void onDoGeometryWindowReposition() {
-        onDoChangeX(this.app.getGeometryStage().xProperty(), GEOMETRY_WINDOW_X, "Geometry window x: {}");
-        onDoChangeY(this.app.getGeometryStage().yProperty(), GEOMETRY_WINDOW_Y, "Geometry window y: {}");
+        onDoChangeX(this.app.getGeometryStage().xProperty(), GEOMETRY_WINDOW_X, "Geometry window sceneX: {}");
+        onDoChangeY(this.app.getGeometryStage().yProperty(), GEOMETRY_WINDOW_Y, "Geometry window sceneY: {}");
     }
     public void onDoStateWindowReposition() {
-        onDoChangeX(this.app.getStateStage().xProperty(), STATE_WINDOW_X, "State window x: {}");
-        onDoChangeY(this.app.getStateStage().yProperty(), STATE_WINDOW_Y, "State window y: {}");
+        onDoChangeX(this.app.getStateStage().xProperty(), STATE_WINDOW_X, "State window sceneX: {}");
+        onDoChangeY(this.app.getStateStage().yProperty(), STATE_WINDOW_Y, "State window sceneY: {}");
     }
 
     private void onDoChangeX(ReadOnlyDoubleProperty stage, String preferenceName, String s) {
