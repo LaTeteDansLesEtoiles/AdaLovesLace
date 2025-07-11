@@ -226,8 +226,8 @@ public class AdaLovesLaceMenuBar {
     }
 
     private void loadQuickstartDiagram(App app, String diagramName) {
-        String path = File.separator + DIAGRAMS_DIRECTORY + diagramName;
-        URL url = AdaLovesLaceMenuBar.class.getResource(path);
+        String path = DIAGRAMS_DIRECTORY + diagramName;
+        URL url = getClass().getResource(path);
         logger.debug("Found URL? {}", url);
 
         URL resourceUrl = AdaLovesLaceMenuBar.class.getResource(path);
