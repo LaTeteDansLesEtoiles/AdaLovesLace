@@ -36,8 +36,8 @@ public class StagerredDotGridStrategy implements IDotGridStrategy {
     public void drawGrid() {
         ParentGridStrategy.hideGrid();
 
-        for (double gridX = 10d; gridX < this.width + this.translateX; gridX += SPACING_X_FOR_DOTS) {
-            for (double gridY = 0d; gridY < this.height + this.translateY; gridY += SPACING_Y_FOR_DOTS) {
+        for (double gridX = 10d; gridX < this.width - this.translateX; gridX += SPACING_X_FOR_DOTS) {
+            for (double gridY = 0d; gridY < this.height - this.translateY; gridY += SPACING_Y_FOR_DOTS) {
                 double offsetY = (gridY % (2d * SPACING_Y_FOR_DOTS)) == 0d ? SPACING_X_FOR_DOTS / 2d : 0d;
                 Ellipse ell = new Ellipse(gridX - GRID_DOTS_RADIUS + offsetY,gridY - GRID_DOTS_RADIUS, GRID_DOTS_RADIUS, GRID_DOTS_RADIUS); // A dot
                 ell.setFill(DOT_GRID_COLOR);
