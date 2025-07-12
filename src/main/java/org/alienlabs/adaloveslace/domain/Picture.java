@@ -1,0 +1,85 @@
+package org.alienlabs.adaloveslace.domain;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
+
+import java.io.Serializable;
+
+/**
+ * A Picture.
+ */
+@XmlType(name = "Knot")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Picture implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private byte[] picture;
+
+    private String pictureContentType;
+
+    private Boolean showcase;
+
+    private Diagram preview;
+
+    public byte[] getPicture() {
+        return this.picture;
+    }
+
+    public Picture picture(byte[] picture) {
+        this.setPicture(picture);
+        return this;
+    }
+
+    public void setPicture(byte[] picture) {
+        this.picture = picture;
+    }
+
+    public String getPictureContentType() {
+        return this.pictureContentType;
+    }
+
+    public Picture pictureContentType(String pictureContentType) {
+        this.pictureContentType = pictureContentType;
+        return this;
+    }
+
+    public void setPictureContentType(String pictureContentType) {
+        this.pictureContentType = pictureContentType;
+    }
+
+    public Boolean getShowcase() {
+        return this.showcase;
+    }
+
+    public Picture showcase(Boolean showcase) {
+        this.setShowcase(showcase);
+        return this;
+    }
+
+    public void setShowcase(Boolean showcase) {
+        this.showcase = showcase;
+    }
+
+    public Diagram getPreview() {
+        return this.preview;
+    }
+
+    public void setPreview(Diagram diagram) {
+        this.preview = diagram;
+    }
+
+    public Picture preview(Diagram diagram) {
+        this.setPreview(diagram);
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Picture{" +
+            ", pictureContentType='" + getPictureContentType() + "'" +
+            ", showcase='" + getShowcase() + "'" +
+            "}";
+    }
+}

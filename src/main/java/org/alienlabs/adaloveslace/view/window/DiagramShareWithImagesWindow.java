@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.domain.Picture;
 import org.alienlabs.adaloveslace.domain.enumeration.SubTechnique;
 import org.alienlabs.adaloveslace.domain.enumeration.Technique;
 import org.alienlabs.adaloveslace.util.ImageUtil;
@@ -22,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -249,8 +251,27 @@ public class DiagramShareWithImagesWindow extends Dialog<DiagramShareWithImagesW
         preferences.setStringValue(CLIENT_ID_PREFERENCE,      clientIdField.getText());
         preferences.setStringValue(CLIENT_SECRET_PREFERENCE,  clientSecretField.getText());
 
-        new ShareUtil(app, nameField.getText(), usernameField.getText(), clientIdField.getText(), clientSecretField.getText());
-        logger.debug("Sharing success");
+        List<Picture> pictures = imageList.stream().map(image ->
+                {
+                    try {
+                        return new Picture().picture(new ImageUtil(app).imageToPngBytes(image)).
+                                pictureContentType("image/png").
+                                showcase(imageList.getFirst().equals(image)).
+                                preview(null);
+                    } catch (IOException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                }
+        ).toList();
+
+        new ShareUtil(
+                app,
+                nameField.getText(),
+                usernameField.getText(),
+                clientIdField.getText(),
+                clientSecretField.getText(),
+                pictures
+        );
 
         return new Result(
                 usernameField.getText(),

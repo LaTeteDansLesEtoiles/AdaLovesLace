@@ -1,11 +1,15 @@
 package org.alienlabs.adaloveslace.domain.dto;
 
+import com.google.gson.annotations.Expose;
+import org.alienlabs.adaloveslace.domain.Picture;
 import org.alienlabs.adaloveslace.domain.enumeration.Language;
 import org.alienlabs.adaloveslace.domain.enumeration.SubTechnique;
 import org.alienlabs.adaloveslace.domain.enumeration.Technique;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -16,29 +20,44 @@ public class DiagramDTO implements Serializable {
   @Serial
   private static final long serialVersionUID = 1L;
 
+  @Expose
   private UUID uuid;
 
+  @Expose
   private String name;
 
+  @Expose
   private byte[] preview;
 
+  @Expose
   private String previewContentType;
 
+  @Expose
   private Technique technique;
 
+  @Expose
   private SubTechnique subTechnique;
 
+  @Expose
   private Language language;
 
+  @Expose
   private byte[] diagram;
 
+  @Expose
   private String diagramContentType;
 
+  @Expose
   private String username;
 
+  @Expose
   private UUID clientId;
 
+  @Expose
   private UUID clientSecret;
+
+  @Expose
+  private List<Picture> previews = new ArrayList<>();
 
   public UUID getUuid() {
     return this.uuid;
@@ -188,6 +207,19 @@ public class DiagramDTO implements Serializable {
 
   public void setClientSecret(UUID clientSecret) {
     this.clientSecret = clientSecret;
+  }
+
+  public List<Picture> getPreviews() {
+    return previews;
+  }
+
+  public void setPreviews(List<Picture> previews) {
+    this.previews = previews;
+  }
+
+  public DiagramDTO previews(List<Picture> previews) {
+    this.setPreviews(previews);
+    return this;
   }
 
   public DiagramDTO clientSecret(UUID clientSecret) {

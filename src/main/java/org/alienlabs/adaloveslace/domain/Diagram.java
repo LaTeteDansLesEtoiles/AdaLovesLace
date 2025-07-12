@@ -40,6 +40,8 @@ import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.Se
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Diagram {
 
+    private String              name;
+
     private final Set<Pattern>  patterns;
 
     private Integer             currentStepIndex;
@@ -101,6 +103,9 @@ public class Diagram {
 
     @XmlTransient
     private NodeUtil nodeUtil;
+
+    @XmlTransient
+    private List<Picture> previews = new ArrayList<>();
 
     // For JAXB
     public Diagram() {
@@ -458,6 +463,14 @@ public class Diagram {
         app.getOptionalDotGrid().layoutChildren();
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public double getX() {
         return this.x;
     }
@@ -528,6 +541,14 @@ public class Diagram {
 
     public void setOldMode(MouseMode oldMode) {
         this.oldMode = oldMode;
+    }
+
+    public List<Picture> getPreviews() {
+        return this.previews;
+    }
+
+    public void setPreviews(List<Picture> previews) {
+        this.previews = previews;
     }
 
     public Integer getCurrentStepIndex() {

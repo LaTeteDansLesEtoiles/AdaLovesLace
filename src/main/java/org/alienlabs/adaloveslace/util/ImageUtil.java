@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.domain.Picture;
 import org.alienlabs.adaloveslace.domain.dto.DiagramDTO;
 import org.alienlabs.adaloveslace.domain.enumeration.GridType;
 import org.alienlabs.adaloveslace.domain.enumeration.Language;
@@ -24,10 +25,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 import java.util.UUID;
 
 import static org.alienlabs.adaloveslace.App.*;
@@ -78,7 +81,11 @@ public class ImageUtil {
         return snapshot;
     }
 
-    public DiagramDTO getDiagram(String diagramFilename, String username, String clientId, String clientSecret) throws IOException {
+    public DiagramDTO getDiagram(String diagramFilename,
+                                 String username,
+                                 String clientId,
+                                 String clientSecret,
+                                 List<Picture> imageList) throws IOException {
         UUID uuid         = UUID.randomUUID();
         new ImageUtil(app).
                 buildFileImageWithoutTechnicalElements(
@@ -105,7 +112,8 @@ public class ImageUtil {
                 diagramContentType(LACE_FILE_MIME_TYPE).
                 username(username).
                 clientId(UUID.fromString(clientId)).
-                clientSecret(UUID.fromString(clientSecret));
+                clientSecret(UUID.fromString(clientSecret)).
+                previews(imageList);
     }
 
     public WritableImage buildWritableImage(String pathname) {
@@ -307,6 +315,14 @@ public class ImageUtil {
     private void createBackupDirectory(Path targetDir) throws IOException {
         if (Files.notExists(targetDir)) {
             Files.createDirectories(targetDir);
+        }
+    }
+
+    public byte[] imageToPngBytes(Image fxImage) throws IOException {
+        BufferedImage bImage = SwingFXUtils.fromFXImage(fxImage, null);
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ImageIO.write(bImage, "png", baos);
+            return baos.toByteArray();
         }
     }
 
