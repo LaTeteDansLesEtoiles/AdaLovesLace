@@ -1,5 +1,6 @@
 package org.alienlabs.adaloveslace.domain;
 
+import com.google.gson.annotations.Expose;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlType;
@@ -15,12 +16,16 @@ public class Picture implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] picture;
+    @Expose
+    private String picture;
 
+    @Expose
     private String pictureContentType;
 
-    private Boolean showcase;
+    @Expose
+    private String showcase;
 
+    @Expose
     private Diagram preview;
 
     public String getPicture() {
