@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -318,11 +319,13 @@ public class ImageUtil {
         }
     }
 
-    public byte[] imageToPngBytes(Image fxImage) throws IOException {
+    public String imageToPngString(Image fxImage) throws IOException {
         BufferedImage bImage = SwingFXUtils.fromFXImage(fxImage, null);
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             ImageIO.write(bImage, "png", baos);
-            return baos.toByteArray();
+            byte[] imageBytes = baos.toByteArray();
+
+            return Base64.getEncoder().encodeToString(imageBytes);
         }
     }
 

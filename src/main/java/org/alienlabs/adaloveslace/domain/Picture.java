@@ -23,16 +23,16 @@ public class Picture implements Serializable {
 
     private Diagram preview;
 
-    public byte[] getPicture() {
+    public String getPicture() {
         return this.picture;
     }
 
-    public Picture picture(byte[] picture) {
+    public Picture picture(String picture) {
         this.setPicture(picture);
         return this;
     }
 
-    public void setPicture(byte[] picture) {
+    public void setPicture(String picture) {
         this.picture = picture;
     }
 
@@ -49,16 +49,16 @@ public class Picture implements Serializable {
         this.pictureContentType = pictureContentType;
     }
 
-    public Boolean getShowcase() {
+    public String getShowcase() {
         return this.showcase;
     }
 
-    public Picture showcase(Boolean showcase) {
+    public Picture showcase(String showcase) {
         this.setShowcase(showcase);
         return this;
     }
 
-    public void setShowcase(Boolean showcase) {
+    public void setShowcase(String showcase) {
         this.showcase = showcase;
     }
 

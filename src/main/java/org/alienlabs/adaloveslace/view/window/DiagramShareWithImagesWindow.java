@@ -251,18 +251,36 @@ public class DiagramShareWithImagesWindow extends Dialog<DiagramShareWithImagesW
         preferences.setStringValue(CLIENT_ID_PREFERENCE,      clientIdField.getText());
         preferences.setStringValue(CLIENT_SECRET_PREFERENCE,  clientSecretField.getText());
 
-        List<Picture> pictures = imageList.stream().map(image ->
-                {
-                    try {
-                        return new Picture().picture(new ImageUtil(app).imageToPngBytes(image)).
-                                pictureContentType("image/png").
-                                showcase(imageList.getFirst().equals(image)).
-                                preview(null);
-                    } catch (IOException e) {
-                        throw new IllegalArgumentException(e);
-                    }
-                }
-        ).toList();
+        List<Picture> pictures = new ArrayList<>();
+
+        try {
+            for (Image image : imageList) {
+                pictures.add(new Picture().picture(new ImageUtil(app).imageToPngString(image)).
+                        pictureContentType("image/png").
+                        showcase("").
+                        preview(null)
+                );
+            }
+
+          imageList.add(1, initialImage);
+          pictures.add(1, new Picture().picture(new ImageUtil(app).imageToPngString(initialImage)).
+                  pictureContentType("image/png").
+                  showcase("").
+                  preview(null)
+          );
+
+          Image showcase = imageList.getFirst();
+          pictures.removeFirst();
+          pictures.addFirst(
+                  new Picture().picture("").
+                          pictureContentType("image/png").
+                          showcase(new ImageUtil(app).imageToPngString(showcase)).
+                          preview(null)
+          );
+
+        } catch (IOException e) {
+          throw new IllegalArgumentException(e);
+        }
 
         new ShareUtil(
                 app,
@@ -271,17 +289,6 @@ public class DiagramShareWithImagesWindow extends Dialog<DiagramShareWithImagesW
                 clientIdField.getText(),
                 clientSecretField.getText(),
                 pictures
-        );
-
-        return new Result(
-                usernameField.getText(),
-                nameField.getText(),
-                descriptionField.getText(),
-                clientIdField.getText(),
-                clientSecretField.getText(),
-                techniqueCombo.getValue(),
-                subTechniqueCombo.getValue(),
-                new ArrayList<>(imageList)
         );
       }
 
