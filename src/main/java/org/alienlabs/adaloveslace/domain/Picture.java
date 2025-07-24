@@ -25,7 +25,7 @@ public class Picture implements Serializable {
     @Expose
     private String showcase;
 
-    private Diagram preview;
+    private Long preview;
 
     public String getPicture() {
         return this.picture;
@@ -66,15 +66,15 @@ public class Picture implements Serializable {
         this.showcase = showcase;
     }
 
-    public Diagram getPreview() {
+    public Long getPreview() {
         return this.preview;
     }
 
-    public void setPreview(Diagram diagram) {
+    public void setPreview(Long diagram) {
         this.preview = diagram;
     }
 
-    public Picture preview(Diagram diagram) {
+    public Picture preview(Long diagram) {
         this.setPreview(diagram);
         return this;
     }

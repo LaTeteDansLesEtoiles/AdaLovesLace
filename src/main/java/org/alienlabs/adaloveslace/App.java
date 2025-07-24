@@ -60,7 +60,7 @@ public class App extends Application {
   public static final String STATE_TITLE              = "State";
   public static final String LACE_FILE_EXTENSION      = ".lace";
   public static final String LACE_FILE_MIME_TYPE      = "application/lace";
-  public static final String ADA_LOVES_LACE_WEB       = "http://localhost:18082/"; //https://app.adaloveslace.top";
+  public static final String ADA_LOVES_LACE_WEB       = "https://app.adaloveslace.top";
   public static final String ADA_LOVES_LACE_WEB_SHARE_ENDPOINT       = "/api/diagrams/upload-diagram";
   public static final String EXPORT_IMAGE_FILE_FORMAT = "png";
 
