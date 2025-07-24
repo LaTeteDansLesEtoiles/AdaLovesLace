@@ -10,13 +10,17 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.geometry.Pos;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.domain.Knot;
@@ -56,6 +60,7 @@ public class FileUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
     private App app;
+    private Diagram diagram;
 
     public FileUtil() {
         // Sometimes you don't need the Application
@@ -65,36 +70,34 @@ public class FileUtil {
         this.app = app;
     }
 
-    public void buildUiFromLaceFile(App app, File file) {
-        ProgressBar progressBar = new ProgressBar();
-        progressBar.setProgress(-1);
-        progressBar.setLayoutX(50d);
+    public void buildUiFromLaceFile(final App app, final File file) {
+        final Dialog<Diagram> dialog = getDialog(app, LoadingLaceInProgress);
 
-        Dialog<Diagram> progressDialog = new Dialog<>();
-        progressDialog.setTitle(resourceBundle.getString(ProcessingInProgress));
-        progressDialog.setHeaderText(resourceBundle.getString(LoadingLaceInProgress));
-        progressDialog.getDialogPane().setContent(progressBar);
-
-        Task<Diagram> longRunningTask = new Task<>() {
+        Task<Diagram> loadTask = new Task<>() {
             @Override
             protected Diagram call() {
                 return loadFromLaceFile(app, file);
             }
         };
 
-        longRunningTask.setOnSucceeded(_ -> {
-            Platform.runLater(() -> {
-                progressDialog.close();
-                Diagram diagram = longRunningTask.getValue();
-                preparePrimaryStage(app, diagram);
-                prepareGeometryAndToolbox(app, diagram);
-            });
+        loadTask.setOnSucceeded(_ -> {
+            Diagram value = loadTask.getValue();
+            dialog.setResult(value);
+            dialog.close();
+            new FileChooserUtil().restartGui(app, value);
         });
+        loadTask.setOnFailed(_ -> {
+            logger.error("Error loading task", loadTask.getException());
+            dialog.close();
+        });
+        loadTask.setOnCancelled(_ -> dialog.close());
 
-        Thread backgroundThread = new Thread(longRunningTask);
-        backgroundThread.setDaemon(true);
-        backgroundThread.start();
-        progressDialog.show();
+        Thread bg = new Thread(loadTask, "AdaLovesLace-LoaderThread");
+        bg.setDaemon(true);
+        bg.setPriority(Thread.MAX_PRIORITY);
+        bg.start();
+
+        dialog.showAndWait();
     }
 
     private static void prepareGeometryAndToolbox(App app, Diagram diagram) {
@@ -122,10 +125,12 @@ public class FileUtil {
 
     public Diagram loadFromLaceFile(App app, File file) {
         new ImageUtil(app).backupKnots();
-        return readZip(app, file, null);
+        return readZip(app, file);
     }
 
-    private Diagram readZip(App app, File file, Diagram diagram) {
+    private Diagram readZip(App app, File file) {
+        Diagram diagram = null;
+
         try (ZipFile zipFile = new ZipFile(file)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
@@ -139,12 +144,8 @@ public class FileUtil {
                     copyPattern(file, zipFile, entry);
                 }
             }
-
-            if (null != diagram) {
-                buildKnotsImageViews(app, diagram);
-            }
         } catch (JAXBException | IOException e) {
-            logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
+            logger.error("Error unmarshalling loaded file: {}", file.getAbsolutePath(), e);
         }
         return diagram;
     }
@@ -292,20 +293,13 @@ public class FileUtil {
             this.app.getOptionalDotGrid().layoutChildren();
         }
 
-        ProgressBar progressBar = new ProgressBar();
-        progressBar.setProgress(-1);
-        progressBar.setLayoutX(50d);
-
-        Dialog<File> progressDialog = new Dialog<>();
-        progressDialog.setTitle(resourceBundle.getString(ProcessingInProgress));
-        progressDialog.setHeaderText(resourceBundle.getString(SavingLaceInProgress));
-        progressDialog.getDialogPane().setContent(progressBar);
-
+        Dialog<Diagram> dialog = getDialog(app, SavingLaceInProgress);
         AtomicReference<File> output = new AtomicReference<>();
 
-        Task<File> longRunningTask = new Task<>() {
+        Task<File> saveTask = new Task<>() {
             @Override
             protected File call() {
+                Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
                 try {
                     diagram.getCurrentStep().getDisplayedKnots().addAll(new ArrayList<>(diagram.getCurrentStep().getSelectedKnots()));
                     diagram.getCurrentStep().getSelectedKnots().clear();
@@ -316,9 +310,9 @@ public class FileUtil {
                             diagram.getAllSteps().size()
                     );
                 } catch (JAXBException e) {
-                    logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
+                    logger.error("Error marshalling save file: {}", file.getAbsolutePath(), e);
                 } catch (CompletionException e) {
-                    logger.error("Error uploading file: " + file.getAbsolutePath(), e);
+                    logger.error("Error uploading file: {}", file.getAbsolutePath(), e);
                 } catch (IOException e) {
                     logger.error("Error deleting file to upload", e);
                 }
@@ -327,17 +321,44 @@ public class FileUtil {
             }
         };
 
-        longRunningTask.setOnSucceeded(_ -> {
-            output.set(longRunningTask.getValue());
-            Platform.runLater(progressDialog::close);
+        saveTask.setOnSucceeded(_ -> {
+            output.set(saveTask.getValue());
+            dialog.close();
+
         });
+        saveTask.setOnFailed(_ -> {
+            dialog.close();
+            Throwable err = saveTask.getException();
+            logger.error("Error loading diagram!", err);
+        });
+        saveTask.setOnCancelled(_ -> dialog.close());
 
-        Thread backgroundThread = new Thread(longRunningTask);
-        backgroundThread.setDaemon(true);
-        backgroundThread.start();
-        progressDialog.showAndWait();
+        Thread saveThread = new Thread(saveTask, "AdaLovesLace-saver-Thread");
+        saveThread.setDaemon(true);
+        saveThread.setPriority(Thread.MAX_PRIORITY);
+        saveThread.start();
 
+        dialog.showAndWait();
         return output.get();
+    }
+
+    public Dialog<Diagram> getDialog(App app, String operationInProgress) {
+        ProgressIndicator pi = new ProgressIndicator();
+        pi.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+
+        Dialog<Diagram> dialog = new Dialog<>();
+        dialog.initOwner(app.getPrimaryStage().getOwner());
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+        VBox content = new VBox(
+                10,
+                new Label(resourceBundle.getString(operationInProgress)),
+                pi
+        );
+        content.setAlignment(Pos.CENTER);
+        dialog.getDialogPane().setContent(content);
+
+        return dialog;
     }
 
     private void marshallLaceFile(File file, Diagram diagram, Integer currentStepIndex) throws JAXBException, IOException {

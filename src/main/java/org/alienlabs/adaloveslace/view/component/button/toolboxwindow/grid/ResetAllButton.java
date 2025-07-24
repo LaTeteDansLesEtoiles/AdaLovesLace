@@ -15,41 +15,41 @@ import java.util.Optional;
 
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 import static javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE;
-import static org.alienlabs.adaloveslace.App.RESET_KNOTS_BUTTON_NAME;
+import static org.alienlabs.adaloveslace.App.RESET_ALL_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.PATTERN_TEXT_AND_COLOR_BUTTON;
 
-public class ResetKnotsButton extends ToggleButton {
+public class ResetAllButton extends ToggleButton {
 
   private static App app;
 
-  private static final String RESET_KNOTS_WINDOW_TITLE        = "ResetKnotsWindowTitle";
-  private static final String RESET_KNOTS_HEADER_TEXT         = "ResetKnotsHeaderText";
-  private static final String RESET_KNOTS_CONTENT_TEXT        = "ResetKnotsContentText";
-  private static final String RESET_KNOTS_BUTTON_TEXT         = "ResetKnotsButtonText";
-  private static final String CANCEL_RESET_KNOTS_BUTTON_TEXT  = "CancelResetKnots";
+  private static final String RESET_ALL_WINDOW_TITLE        = "ResetAllWindowTitle";
+  private static final String RESET_ALL_HEADER_TEXT         = "ResetAllHeaderText";
+  private static final String RESET_ALL_CONTENT_TEXT        = "ResetAllContentText";
+  private static final String RESET_ALL_BUTTON_TEXT         = "ResetAllButtonText";
+  private static final String CANCEL_RESET_ALL_BUTTON_TEXT  = "CancelResetAll";
 
-  private static final Logger logger                  = LoggerFactory.getLogger(ResetKnotsButton.class);
+  private static final Logger logger                        = LoggerFactory.getLogger(ResetAllButton.class);
 
-  public ResetKnotsButton(App app) {
-    super(resourceBundle.getString(RESET_KNOTS_BUTTON_NAME));
+  public ResetAllButton(App app) {
+    super(resourceBundle.getString(RESET_ALL_BUTTON_NAME));
 
-    ResetKnotsButton.app = app;
+    ResetAllButton.app = app;
 
     this.getStyleClass().add(PATTERN_TEXT_AND_COLOR_BUTTON);
     this.setSelected(false);
 
-    this.setOnMouseClicked(onResetKnotsButtonClicked);
+    this.setOnMouseClicked(onResetAllButtonClicked);
   }
 
-  private final EventHandler<MouseEvent> onResetKnotsButtonClicked = _ -> {
+  private final EventHandler<MouseEvent> onResetAllButtonClicked = _ -> {
     Alert alert = new Alert(CONFIRMATION);
-    alert.setTitle(resourceBundle.getString(RESET_KNOTS_WINDOW_TITLE));
-    alert.setHeaderText(resourceBundle.getString(RESET_KNOTS_HEADER_TEXT));
-    alert.setContentText(resourceBundle.getString(RESET_KNOTS_CONTENT_TEXT));
+    alert.setTitle(resourceBundle.getString(RESET_ALL_WINDOW_TITLE));
+    alert.setHeaderText(resourceBundle.getString(RESET_ALL_HEADER_TEXT));
+    alert.setContentText(resourceBundle.getString(RESET_ALL_CONTENT_TEXT));
 
-    ButtonType resetKnotsButton  = new ButtonType(resourceBundle.getString(RESET_KNOTS_BUTTON_TEXT));
-    ButtonType cancelButton = new ButtonType(resourceBundle.getString(CANCEL_RESET_KNOTS_BUTTON_TEXT), CANCEL_CLOSE);
+    ButtonType resetKnotsButton  = new ButtonType(resourceBundle.getString(RESET_ALL_BUTTON_TEXT));
+    ButtonType cancelButton = new ButtonType(resourceBundle.getString(CANCEL_RESET_ALL_BUTTON_TEXT), CANCEL_CLOSE);
 
     alert.getButtonTypes().setAll(resetKnotsButton, cancelButton);
     Optional<ButtonType> result = alert.showAndWait();

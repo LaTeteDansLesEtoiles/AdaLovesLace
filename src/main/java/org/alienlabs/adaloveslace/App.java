@@ -60,7 +60,7 @@ public class App extends Application {
   public static final String STATE_TITLE              = "State";
   public static final String LACE_FILE_EXTENSION      = ".lace";
   public static final String LACE_FILE_MIME_TYPE      = "application/lace";
-  public static final String ADA_LOVES_LACE_WEB       = "https://app.adaloveslace.top";
+  public static final String ADA_LOVES_LACE_WEB       = "http://localhost:18082/"; //https://app.adaloveslace.top";
   public static final String ADA_LOVES_LACE_WEB_SHARE_ENDPOINT       = "/api/diagrams/upload-diagram";
   public static final String EXPORT_IMAGE_FILE_FORMAT = "png";
 
@@ -75,10 +75,9 @@ public class App extends Application {
   public static final String PRINT_BUTTON_NAME        = "PrintDiagram";
   public static final String TEXT_BUTTON_NAME         = "TextButton";
   public static final String ADD_KNOT_BUTTON_NAME     = "AddKnotButton";
-  public static final String RESET_KNOTS_BUTTON_NAME  = "ResetKnotsButton";
-  public static final String ADD_KNOT_WITH_SIZE_DIALOG_TITLE   = "AddKnotWithSize";
+  public static final String RESET_ALL_BUTTON_NAME    = "ResetAllButton";
+  public static final String ADD_KNOT_WITH_SIZE_DIALOG_TITLE = "AddKnotWithSize";
   public static final String COLOR_BUTTON_NAME        = "ColorButton";
-  public static final String ProcessingInProgress     = "ProcessingInProgress";
   public static final String LoadingLaceInProgress    = "LoadingLaceInProgress";
   public static final String SavingLaceInProgress     = "SavingLaceInProgress";
 
@@ -199,7 +198,7 @@ public class App extends Application {
     movablePane.getChildren().add(grid);
     root.setCenter(movablePane);
 
-    App.mainWindow.onMainWindowClicked(this, movablePane);
+    App.mainWindow.addGridEvents(this, movablePane);
 
     scene = new Scene(root, windowWidth, windowHeight);
     scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());

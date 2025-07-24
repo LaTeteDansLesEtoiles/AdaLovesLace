@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.util;
 
 import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.domain.Diagram;
 
 import java.io.File;
 
@@ -58,15 +59,21 @@ public class FileChooserUtil {
     return addKnot;
   }
 
-  public void restartGui(App app) {
+  public void restartGui(App app, Diagram... diagram) {
     app.getPrimaryStage().close();
+
+    if (diagram.length > 0) {
+      app.setDiagram(diagram[0]);
+      app.getOptionalDotGrid().setDiagram(diagram[0]);
+    }
+
     app.showMainWindow(
             app.getResizes().getMainWindowWidth(),
             app.getResizes().getMainWindowHeight(),
             app.getResizes().getGridWidth(),
             app.getResizes().getGridHeight(),
             app.getPrimaryStage(),
-            app.getOptionalDotGrid().getDiagram()
+            diagram.length > 0 ? diagram[0] : app.getOptionalDotGrid().getDiagram()
     );
     app.getToolboxStage().close();
     app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
