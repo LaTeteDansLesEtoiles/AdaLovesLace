@@ -78,6 +78,9 @@ public class App extends Application {
   public static final String RESET_KNOTS_BUTTON_NAME  = "ResetKnotsButton";
   public static final String ADD_KNOT_WITH_SIZE_DIALOG_TITLE   = "AddKnotWithSize";
   public static final String COLOR_BUTTON_NAME        = "ColorButton";
+  public static final String ProcessingInProgress     = "ProcessingInProgress";
+  public static final String LoadingLaceInProgress    = "LoadingLaceInProgress";
+  public static final String SavingLaceInProgress     = "SavingLaceInProgress";
 
   public static final double DEFAULT_MAIN_WINDOW_X    = 75d;
   public static final double DEFAULT_MAIN_WINDOW_Y    = 5d;

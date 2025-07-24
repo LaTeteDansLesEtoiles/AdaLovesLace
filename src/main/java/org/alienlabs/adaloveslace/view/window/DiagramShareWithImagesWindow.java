@@ -29,8 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.alienlabs.adaloveslace.App.EXPORT_IMAGE_FILE_TYPE;
-import static org.alienlabs.adaloveslace.App.resourceBundle;
+import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
 
 public class DiagramShareWithImagesWindow extends Dialog<DiagramShareWithImagesWindow.Result> {
@@ -60,6 +59,7 @@ public class DiagramShareWithImagesWindow extends Dialog<DiagramShareWithImagesW
   public static final String USERNAME_PREFERENCE            = "USERNAME_PREFERENCE";
   public static final String CLIENT_ID_PREFERENCE           = "CLIENT_ID_PREFERENCE";
   public static final String CLIENT_SECRET_PREFERENCE       = "CLIENT_SECRET_PREFERENCE";
+  public static final String SHARED_IMAGES_FOLDER_PREFERENCE= "SHARED_IMAGES_FOLDER_PREFERENCE";
 
   private final ObservableList<Image> imageList             = FXCollections.observableArrayList();
 
@@ -202,18 +202,35 @@ public class DiagramShareWithImagesWindow extends Dialog<DiagramShareWithImagesW
     ListView<Image> listView = getImageListView();
     Button loadButton = new Button(resourceBundle.getString(LOAD_IMAGE));
 
-    loadButton.setOnAction(e -> {
+    loadButton.setOnAction(_ -> {
       FileChooser chooser = new FileChooser();
       chooser.setTitle(resourceBundle.getString(CHOOSE_IMAGE));
+      File lastDir = new File(preferences.getStringValue(SHARED_IMAGES_FOLDER_PREFERENCE));
+      if (lastDir.exists() && lastDir.isDirectory()) {
+        chooser.setInitialDirectory(lastDir);
+      }
       chooser.getExtensionFilters().add(
               new FileChooser.ExtensionFilter(
                       "Images (*.png,*.jpg,*.jpeg,*.gif)",
                       "*.png","*.jpg","*.jpeg","*.gif"
               )
       );
-      File file = chooser.showOpenDialog(getOwner());
-      if (file != null) {
-        imageList.add(new Image(file.toURI().toString()));
+      List<File> selectedFiles;
+
+      try {
+        selectedFiles = chooser.showOpenMultipleDialog(getOwner());
+      } catch (IllegalArgumentException e) {
+        logger.error("Error opening file selector for sharing, retrying", e);
+        chooser.setInitialDirectory(new File(System.getProperty(USER_HOME)));
+        selectedFiles = chooser.showOpenMultipleDialog(getOwner());
+      }
+
+      if (selectedFiles != null) {
+        preferences.setStringValue(SHARED_IMAGES_FOLDER_PREFERENCE, selectedFiles.getFirst().getAbsolutePath());
+
+        for (File file : selectedFiles) {
+          imageList.add(new Image(file.toURI().toString()));
+        }
       }
     });
 

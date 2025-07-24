@@ -10,6 +10,10 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -27,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -61,10 +66,35 @@ public class FileUtil {
     }
 
     public void buildUiFromLaceFile(App app, File file) {
-        Diagram diagram = loadFromLaceFile(app, file);
+        ProgressBar progressBar = new ProgressBar();
+        progressBar.setProgress(-1);
+        progressBar.setLayoutX(50d);
 
-        preparePrimaryStage(app, diagram);
-        prepareGeometryAndToolbox(app, diagram);
+        Dialog<Diagram> progressDialog = new Dialog<>();
+        progressDialog.setTitle(resourceBundle.getString(ProcessingInProgress));
+        progressDialog.setHeaderText(resourceBundle.getString(LoadingLaceInProgress));
+        progressDialog.getDialogPane().setContent(progressBar);
+
+        Task<Diagram> longRunningTask = new Task<>() {
+            @Override
+            protected Diagram call() {
+                return loadFromLaceFile(app, file);
+            }
+        };
+
+        longRunningTask.setOnSucceeded(_ -> {
+            Platform.runLater(() -> {
+                progressDialog.close();
+                Diagram diagram = longRunningTask.getValue();
+                preparePrimaryStage(app, diagram);
+                prepareGeometryAndToolbox(app, diagram);
+            });
+        });
+
+        Thread backgroundThread = new Thread(longRunningTask);
+        backgroundThread.setDaemon(true);
+        backgroundThread.start();
+        progressDialog.show();
     }
 
     private static void prepareGeometryAndToolbox(App app, Diagram diagram) {
@@ -257,30 +287,57 @@ public class FileUtil {
         }
     }
 
-    public File saveFile(File file, Diagram diagram, boolean layoutChildren) {
+    public File saveFile(final File file, Diagram diagram, boolean layoutChildren) {
         if (this.app != null && app.getMainWindow() != null && this.app.getOptionalDotGrid() != null && layoutChildren) {
             this.app.getOptionalDotGrid().layoutChildren();
         }
 
-        try {
-            diagram.getCurrentStep().getDisplayedKnots().addAll(new ArrayList<>(diagram.getCurrentStep().getSelectedKnots()));
-            diagram.getCurrentStep().getSelectedKnots().clear();
-            diagram.getCurrentStep().clearStepsGreaterThanPresentStepPlusLimit(diagram);
-            marshallLaceFile(
-                    file,
-                    diagram,
-                    diagram.getAllSteps().size()
-            );
-        } catch (JAXBException e) {
-            logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
-        } catch (CompletionException e) {
-            logger.error("Error uploading file: " + file.getAbsolutePath(), e);
-        } catch (IOException e) {
-            logger.error("Error deleting file to upload", e);
-        }
+        ProgressBar progressBar = new ProgressBar();
+        progressBar.setProgress(-1);
+        progressBar.setLayoutX(50d);
 
+        Dialog<File> progressDialog = new Dialog<>();
+        progressDialog.setTitle(resourceBundle.getString(ProcessingInProgress));
+        progressDialog.setHeaderText(resourceBundle.getString(SavingLaceInProgress));
+        progressDialog.getDialogPane().setContent(progressBar);
 
-        return file;
+        AtomicReference<File> output = new AtomicReference<>();
+
+        Task<File> longRunningTask = new Task<>() {
+            @Override
+            protected File call() {
+                try {
+                    diagram.getCurrentStep().getDisplayedKnots().addAll(new ArrayList<>(diagram.getCurrentStep().getSelectedKnots()));
+                    diagram.getCurrentStep().getSelectedKnots().clear();
+                    diagram.getCurrentStep().clearStepsGreaterThanPresentStepPlusLimit(diagram);
+                    marshallLaceFile(
+                            file,
+                            diagram,
+                            diagram.getAllSteps().size()
+                    );
+                } catch (JAXBException e) {
+                    logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
+                } catch (CompletionException e) {
+                    logger.error("Error uploading file: " + file.getAbsolutePath(), e);
+                } catch (IOException e) {
+                    logger.error("Error deleting file to upload", e);
+                }
+
+                return file;
+            }
+        };
+
+        longRunningTask.setOnSucceeded(_ -> {
+            output.set(longRunningTask.getValue());
+            Platform.runLater(progressDialog::close);
+        });
+
+        Thread backgroundThread = new Thread(longRunningTask);
+        backgroundThread.setDaemon(true);
+        backgroundThread.start();
+        progressDialog.showAndWait();
+
+        return output.get();
     }
 
     private void marshallLaceFile(File file, Diagram diagram, Integer currentStepIndex) throws JAXBException, IOException {

@@ -32,10 +32,10 @@ public class Step implements Comparable<Step> {
     private List<Knot> selectedKnots = new ArrayList<>();
 
     @XmlTransient
-    private static final int MAX_NUMBER_OF_STEPS = 1000;
+    private static final int MAX_NUMBER_OF_STEPS = 100_000;
 
     @XmlTransient
-    public static final int MAX_NUMBER_OF_STEPS_IN_LACE_FILE = 10;
+    public static final int MAX_NUMBER_OF_STEPS_IN_LACE_FILE = 100_000;
 
     // For JAXB
     public Step() {
@@ -64,7 +64,7 @@ public class Step implements Comparable<Step> {
         this.selectedKnots.removeAll(this.displayedKnots);
 
         clearStepsGreaterThanPresentStep(app.getOptionalDotGrid().getDiagram());
-        limitToOneThousandSteps(app.getOptionalDotGrid().getDiagram());
+        limitToMaxNumberOfSteps(app.getOptionalDotGrid().getDiagram());
 
         diagram.getAllSteps().add(this);
         this.stepIndex = diagram.getAllSteps().size();
@@ -102,7 +102,7 @@ public class Step implements Comparable<Step> {
         diagram.getAllSteps().removeAll(stepsToRemove);
     }
 
-    private void limitToOneThousandSteps(Diagram diagram) {
+    private void limitToMaxNumberOfSteps(Diagram diagram) {
         diagram.setAllSteps(
                 diagram.getAllSteps().subList(
                         Math.max(

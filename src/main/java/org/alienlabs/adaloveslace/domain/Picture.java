@@ -25,7 +25,6 @@ public class Picture implements Serializable {
     @Expose
     private String showcase;
 
-    @Expose
     private Diagram preview;
 
     public String getPicture() {
