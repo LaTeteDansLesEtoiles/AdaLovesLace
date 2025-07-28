@@ -30,7 +30,7 @@ import static org.alienlabs.adaloveslace.domain.Knot.NEW_TEXT;
 
 public class MainWindow {
 
-  public static final double NEW_KNOT_GAP  = 15d;
+  public static final double NEW_KNOT_GAP  = 25d;
 
   private OptionalDotGrid optionalDotGrid;
 
