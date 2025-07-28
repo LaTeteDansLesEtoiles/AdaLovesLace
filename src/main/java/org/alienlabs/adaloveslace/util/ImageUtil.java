@@ -114,7 +114,7 @@ public class ImageUtil {
                 username(username).
                 clientId(UUID.fromString(clientId)).
                 clientSecret(UUID.fromString(clientSecret)).
-                previews(imageList);
+                previews(imageList.stream().map(Picture::getPicture).toList());
     }
 
     public WritableImage buildWritableImage(String pathname) {

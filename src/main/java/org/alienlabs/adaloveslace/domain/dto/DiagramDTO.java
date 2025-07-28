@@ -1,7 +1,6 @@
 package org.alienlabs.adaloveslace.domain.dto;
 
 import com.google.gson.annotations.Expose;
-import org.alienlabs.adaloveslace.domain.Picture;
 import org.alienlabs.adaloveslace.domain.enumeration.Language;
 import org.alienlabs.adaloveslace.domain.enumeration.SubTechnique;
 import org.alienlabs.adaloveslace.domain.enumeration.Technique;
@@ -57,7 +56,7 @@ public class DiagramDTO implements Serializable {
   private UUID clientSecret;
 
   @Expose
-  private List<Picture> previews = new ArrayList<>();
+  private List<String> previews = new ArrayList<>();
 
   public UUID getUuid() {
     return this.uuid;
@@ -209,15 +208,15 @@ public class DiagramDTO implements Serializable {
     this.clientSecret = clientSecret;
   }
 
-  public List<Picture> getPreviews() {
+  public List<String> getPreviews() {
     return previews;
   }
 
-  public void setPreviews(List<Picture> previews) {
+  public void setPreviews(List<String> previews) {
     this.previews = previews;
   }
 
-  public DiagramDTO previews(List<Picture> previews) {
+  public DiagramDTO previews(List<String> previews) {
     this.setPreviews(previews);
     return this;
   }
