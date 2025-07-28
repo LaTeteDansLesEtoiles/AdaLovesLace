@@ -50,6 +50,8 @@ public class AdaLovesLaceMenuBar {
     private static final String MISCELLANEOUS       = "Miscellaneous";
     private static final String CORNER_TO_CORNER    = "CornerToCorner";
     private static final String CROCHET             = "Crochet";
+    private static final String KNITTING            = "Knitting";
+    private static final String KNITTING_KNITTING   = "KnittingKnitting";
     private static final String EMBROIDERY          = "Embroidery";
     private static final String MOSAIC_CROCHET      = "MosaicCrochet";
     private static final String DIAMOND_PAINTING    = "DiamondPainting";
@@ -147,6 +149,7 @@ public class AdaLovesLaceMenuBar {
         printItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN));
 
         Menu crochetSubMenu         = new Menu(resourceBundle.getString(CROCHET));
+        Menu knittingSubMenu        = new Menu(resourceBundle.getString(KNITTING));
         Menu embroiderySubMenu      = new Menu(resourceBundle.getString(EMBROIDERY));
         Menu miscellaneousSubMenu   = new Menu(resourceBundle.getString(MISCELLANEOUS));
 
@@ -161,6 +164,10 @@ public class AdaLovesLaceMenuBar {
         MenuItem mosaicCrochetItem = new MenuItem(resourceBundle.getString(MOSAIC_CROCHET));
         mosaicCrochetItem.setOnAction(_ ->
                 this.loadQuickstartDiagram(app, "Crochet mosaique.lace")
+        );
+        MenuItem knittingKnittingItem = new MenuItem(resourceBundle.getString(KNITTING_KNITTING));
+        knittingKnittingItem.setOnAction(_ ->
+                this.loadQuickstartDiagram(app, "Tricot.lace")
         );
         MenuItem diamondPaintingItem = new MenuItem(resourceBundle.getString(DIAMOND_PAINTING));
         diamondPaintingItem.setOnAction(_ ->
@@ -213,9 +220,10 @@ public class AdaLovesLaceMenuBar {
         editMenu.getItems().addAll(undoKnotItem, redoKnotItem, separator2, resetDiagramItem);
         toolMenu.getItems().addAll(showHideGridItem, separator3, getPrintersItem, printItem);
         crochetSubMenu.getItems().addAll(cornerToCornerItem, crochetItem, mosaicCrochetItem, tapestryItem);
+        knittingSubMenu.getItems().addAll(knittingKnittingItem);
         embroiderySubMenu.getItems().addAll(crossStitchItem);
         miscellaneousSubMenu.getItems().addAll(diamondPaintingItem, pixelArtItem, peyoteWeavingItem);
-        quickStartMenu.getItems().addAll(crochetSubMenu, embroiderySubMenu, miscellaneousSubMenu);
+        quickStartMenu.getItems().addAll(crochetSubMenu, knittingSubMenu, embroiderySubMenu, miscellaneousSubMenu);
         languageMenu.getItems().addAll(frenchItem, englishItem);
 
         menuBar.getStyleClass().add("main-menu");
