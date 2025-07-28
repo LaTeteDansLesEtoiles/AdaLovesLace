@@ -64,6 +64,7 @@ public class ToolboxWindow {
     private static App app;
 
     private static final Logger logger = LoggerFactory.getLogger(ToolboxWindow.class);
+    private Label gridNameLabel;
 
     public ToolboxWindow() {
         this.allPatterns = new ArrayList<>();
@@ -299,7 +300,7 @@ public class ToolboxWindow {
         buildFileButtons(app, parent, posY);
         buildEditButtons(app, parent, posY);
         buildShowHideGridButton(app, parent, posY);
-        buildQuitButton(parent, posY);
+        buildQuitAndGridNameButtons(parent, posY);
     }
 
     /**
@@ -328,9 +329,11 @@ public class ToolboxWindow {
         printer.printButtonOnAction(printButton);
     }
 
-    private void buildQuitButton(GridPane buttonsPane, int posY) {
+    private void buildQuitAndGridNameButtons(GridPane buttonsPane, int posY) {
         QuitButton showQuitButton = new QuitButton(app, resourceBundle.getString(QUIT_APP));
         buttonsPane.add(showQuitButton, 0, posY + 6);
+        this.gridNameLabel = new Label(resourceBundle.getString(app.getOptionalDotGrid().getDiagram().getCurrentGridType().name()));
+        buttonsPane.add(gridNameLabel, 1, posY + 6);
     }
 
     private void buildShowHideGridButton(App app, GridPane buttonsPane, int posY) {
@@ -408,6 +411,10 @@ public class ToolboxWindow {
 
     public MenuBar getMenuBar() {
         return this.menuBar;
+    }
+
+    public Label getGridNameLabel() {
+        return this.gridNameLabel;
     }
 
 }

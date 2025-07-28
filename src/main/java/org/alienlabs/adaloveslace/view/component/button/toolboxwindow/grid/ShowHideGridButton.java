@@ -6,6 +6,8 @@ import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStr
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.alienlabs.adaloveslace.App.resourceBundle;
+
 public class ShowHideGridButton extends ImageButton {
 
   private static App app;
@@ -23,6 +25,7 @@ public class ShowHideGridButton extends ImageButton {
 
   public static void showHideGrid() {
     app.getGridStrategy().switchGridType();
+    app.getToolboxWindow().getGridNameLabel().setText(resourceBundle.getString(app.getOptionalDotGrid().getDiagram().getCurrentGridType().name()));
     ParentGridStrategy.setGridHasBeenDrawn(false);
 
     logger.debug("Event switch grid");
