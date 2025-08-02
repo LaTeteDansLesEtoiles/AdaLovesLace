@@ -26,7 +26,7 @@ public class DiagramDTO implements Serializable {
   private String name;
 
   @Expose
-  private byte[] preview;
+  private String showcase;
 
   @Expose
   private String previewContentType;
@@ -54,6 +54,9 @@ public class DiagramDTO implements Serializable {
 
   @Expose
   private UUID clientSecret;
+
+  @Expose
+  private String diagramPreview;
 
   @Expose
   private List<String> previews = new ArrayList<>();
@@ -84,17 +87,17 @@ public class DiagramDTO implements Serializable {
     this.name = name;
   }
 
-  public byte[] getPreview() {
-    return this.preview;
+  public String getShowcase() {
+    return this.showcase;
   }
 
-  public DiagramDTO preview(byte[] preview) {
-    this.setPreview(preview);
+  public DiagramDTO showcase(String preview) {
+    this.setShowcase(preview);
     return this;
   }
 
-  public void setPreview(byte[] preview) {
-    this.preview = preview;
+  public void setShowcase(String showcase) {
+    this.showcase = showcase;
   }
 
   public String getPreviewContentType() {
@@ -206,6 +209,19 @@ public class DiagramDTO implements Serializable {
 
   public void setClientSecret(UUID clientSecret) {
     this.clientSecret = clientSecret;
+  }
+
+  public String getDiagramPreview() {
+    return this.diagramPreview;
+  }
+
+  public void setDiagramPreview(String diagramPreview) {
+    this.diagramPreview = diagramPreview;
+  }
+
+  public DiagramDTO diagramPreview(String diagramPreview) {
+      this.diagramPreview = diagramPreview;
+      return this;
   }
 
   public List<String> getPreviews() {

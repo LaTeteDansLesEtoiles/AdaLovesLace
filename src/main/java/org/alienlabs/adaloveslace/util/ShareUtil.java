@@ -32,13 +32,14 @@ public class ShareUtil {
                    String username,
                    String clientId,
                    String clientSecret,
+                   String initialImage,
                    List<Picture> imageList) {
     logger.debug("Sharing in progress");
 
     Platform.runLater(() -> {
         DiagramDTO diagram;
         try {
-            diagram = new ImageUtil(app).getDiagram(diagramName, username, clientId, clientSecret, imageList);
+            diagram = new ImageUtil(app).getDiagram(diagramName, username, clientId, clientSecret, initialImage, imageList);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }

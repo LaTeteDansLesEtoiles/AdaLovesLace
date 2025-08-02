@@ -86,6 +86,7 @@ public class ImageUtil {
                                  String username,
                                  String clientId,
                                  String clientSecret,
+                                 String initialImage,
                                  List<Picture> imageList) throws IOException {
         UUID uuid         = UUID.randomUUID();
         new ImageUtil(app).
@@ -94,11 +95,10 @@ public class ImageUtil {
                 );
         File laceFilePath = new File(APP_FOLDER_IN_USER_HOME + diagramFilename + LACE_FILE_EXTENSION);
 
-        File previewFile  = ImageUtil.PATH_NAME;
         return new DiagramDTO().
                 uuid(uuid).
                 name(diagramFilename).
-                preview(Files.readAllBytes(previewFile.toPath())).previewContentType(EXPORT_IMAGE_CONTENT_TYPE).
+                showcase(imageList.getFirst().getShowcase()).previewContentType(EXPORT_IMAGE_CONTENT_TYPE).
                 technique(Technique.LACE).
                 subTechnique(SubTechnique.TATTING_LACE).
                 language(Language.FRENCH).
@@ -114,7 +114,10 @@ public class ImageUtil {
                 username(username).
                 clientId(UUID.fromString(clientId)).
                 clientSecret(UUID.fromString(clientSecret)).
-                previews(imageList.stream().map(Picture::getPicture).toList());
+                diagramPreview(initialImage).
+                previews(imageList.stream()
+                        .filter(picture -> picture.getShowcase() == null || picture.getShowcase().isEmpty())
+                        .map(Picture::getPicture).toList());
     }
 
     public WritableImage buildWritableImage(String pathname) {

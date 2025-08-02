@@ -279,13 +279,6 @@ public class DiagramShareWithImagesWindow extends Dialog<DiagramShareWithImagesW
                 );
             }
 
-          imageList.add(1, initialImage);
-          pictures.add(1, new Picture().picture(new ImageUtil(app).imageToPngString(initialImage)).
-                  pictureContentType("image/png").
-                  showcase("").
-                  preview(null)
-          );
-
           Image showcase = imageList.getFirst();
           pictures.removeFirst();
           pictures.addFirst(
@@ -299,14 +292,19 @@ public class DiagramShareWithImagesWindow extends Dialog<DiagramShareWithImagesW
           throw new IllegalArgumentException(e);
         }
 
-        new ShareUtil(
-                app,
-                nameField.getText(),
-                usernameField.getText(),
-                clientIdField.getText(),
-                clientSecretField.getText(),
-                pictures
-        );
+          try {
+              new ShareUtil(
+                      app,
+                      nameField.getText(),
+                      usernameField.getText(),
+                      clientIdField.getText(),
+                      clientSecretField.getText(),
+                      new ImageUtil(app).imageToPngString(initialImage),
+                      pictures
+              );
+          } catch (IOException e) {
+              throw new IllegalArgumentException(e);
+          }
       }
 
       logger.debug("Sharing cancelled");
