@@ -102,13 +102,14 @@ public class ImageUtil {
                 technique(Technique.LACE).
                 subTechnique(SubTechnique.TATTING_LACE).
                 language(Language.FRENCH).
-                diagram(Files.readAllBytes(
+                diagram(Base64.getEncoder().encodeToString(Files.readAllBytes(
                         new FileUtil(app).saveFile(
                                         laceFilePath,
                                         app.getOptionalDotGrid().getDiagram(),
-                                true
+                                        true
                                 )
                                 .toPath()
+                        )
                 )).
                 diagramContentType(LACE_FILE_MIME_TYPE).
                 username(username).

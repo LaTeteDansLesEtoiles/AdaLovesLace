@@ -41,7 +41,7 @@ public class DiagramDTO implements Serializable {
   private Language language;
 
   @Expose
-  private byte[] diagram;
+  private String diagram;
 
   @Expose
   private String diagramContentType;
@@ -151,16 +151,16 @@ public class DiagramDTO implements Serializable {
     this.language = language;
   }
 
-  public byte[] getDiagram() {
+  public String getDiagram() {
     return this.diagram;
   }
 
-  public DiagramDTO diagram(byte[] diagram) {
+  public DiagramDTO diagram(String diagram) {
     this.setDiagram(diagram);
     return this;
   }
 
-  public void setDiagram(byte[] diagram) {
+  public void setDiagram(String diagram) {
     this.diagram = diagram;
   }
 
