@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
@@ -248,7 +249,13 @@ public class ToolboxWindow {
         return resourceFiles;
     }
 
-    public void createToolboxStage(Stage toolboxStage, GridPane parent, App app, int posY) {
+    public void createToolboxStage(
+            Stage toolboxStage,
+            MenuBar menuBar,
+            GridPane parent,
+            App app,
+            int posY
+    ) {
         this.toolboxStage = toolboxStage;
 
         ScrollPane scrollPane = new ScrollPane();
@@ -257,9 +264,10 @@ public class ToolboxWindow {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        VBox root = new VBox(scrollPane);
+        VBox root = new VBox(menuBar, scrollPane);
         root.setPrefSize(app.getResizes().getToolboxWindowWidth(), computeWindowHeight(app));
         root.getStyleClass().add("toolbox");
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
         buildPrintButtons(app, parent, posY);
 

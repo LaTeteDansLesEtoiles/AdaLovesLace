@@ -291,7 +291,7 @@ public class App extends Application {
     this.diagram          = toolboxWindow.createToolboxPane(parent, classpathBase, resourcesPath, app, this.diagram);
     int posY              = this.diagram.getPatterns().size() / 2 + 5;
     toolboxWindow.createToolboxButtons(parent, app, posY);
-    toolboxWindow.createToolboxStage(this.toolboxStage, parent, app, posY);
+    toolboxWindow.createToolboxStage(this.toolboxStage, menuBar, parent, app, posY);
     return toolboxWindow;
   }
 
