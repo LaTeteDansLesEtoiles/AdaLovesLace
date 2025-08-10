@@ -14,7 +14,7 @@ public class ShareButton extends ImageButton {
 
   public ShareButton(App app, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onShareAction(app));
+    this.setOnMouseClicked(_ -> onShareAction(app));
     buildButtonImage("share.png");
   }
 
