@@ -192,8 +192,9 @@ public class OptionalDotGrid extends Pane {
                     && getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
 
                 logger.debug("Adding red rectangle for Knot {}", knot);
-                addSelectionToAKnot(knot, Color.rgb(255, 0, 0, 0.5));
-            } else if (getDiagram().getCurrentStep().getSelectedKnots().contains(knot)) {
+                addSelectionToAKnot(knot, Color.rgb(255, 0, 0, 1));
+            } else if (getDiagram().getCurrentStep().getSelectedKnots().contains(knot) &&
+            !getDiagram().getCurrentMode().equals(MouseMode.DRAWING)) {
                 Platform.runLater(() -> {
                     Rectangle rec = this.gridUtil.newRectangle(knot, Color.BLUE);
                     knot.setSelection(rec);
