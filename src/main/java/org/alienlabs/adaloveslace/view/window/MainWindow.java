@@ -54,6 +54,8 @@ public class MainWindow {
 
   public static final String REDO_KNOT      = "RedoKnot";
 
+  public static final String SELECT_ALL      = "SelectAll";
+
   public static final String RESET_DIAGRAM  = "ResetDiagram";
 
   public static final String MOUSE_CLICKED  = "MOUSE_CLICKED";

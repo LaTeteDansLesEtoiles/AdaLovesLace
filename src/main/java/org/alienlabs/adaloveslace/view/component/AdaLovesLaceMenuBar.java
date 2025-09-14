@@ -8,6 +8,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.util.PrintUtil;
@@ -32,10 +33,13 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.MENU_BAR_Y;
@@ -102,6 +106,10 @@ public class AdaLovesLaceMenuBar {
         MenuItem redoKnotItem = new MenuItem(resourceBundle.getString(REDO_KNOT));
         redoKnotItem.setOnAction(_ -> RedoKnotButton.redoKnot());
         redoKnotItem.setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
+
+        MenuItem selectAllItem = new MenuItem(resourceBundle.getString(SELECT_ALL));
+        selectAllItem.setOnAction(_ -> selectAllKnots(app));
+        selectAllItem.setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
 
         SeparatorMenuItem separator2 = new SeparatorMenuItem();
 
@@ -217,7 +225,7 @@ public class AdaLovesLaceMenuBar {
         englishItem.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN));
 
         fileMenu.getItems().addAll(saveItem, saveAsItem, loadItem, exportImageItem, separator1, quitItem);
-        editMenu.getItems().addAll(undoKnotItem, redoKnotItem, separator2, resetDiagramItem);
+        editMenu.getItems().addAll(undoKnotItem, redoKnotItem, selectAllItem, separator2, resetDiagramItem);
         toolMenu.getItems().addAll(showHideGridItem, separator3, getPrintersItem, printItem);
         crochetSubMenu.getItems().addAll(cornerToCornerItem, crochetItem, mosaicCrochetItem, tapestryItem);
         knittingSubMenu.getItems().addAll(knittingKnittingItem);
@@ -231,6 +239,11 @@ public class AdaLovesLaceMenuBar {
         menuBar.setTranslateY(MENU_BAR_Y);
 
         return menuBar;
+    }
+
+    private void selectAllKnots(App app) {
+        List<Knot> allSelected = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots());
+        newStep(new ArrayList<>(), allSelected, true);
     }
 
     private void loadQuickstartDiagram(App app, String diagramName) {

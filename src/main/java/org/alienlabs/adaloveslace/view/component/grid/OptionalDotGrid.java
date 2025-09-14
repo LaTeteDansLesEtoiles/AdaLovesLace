@@ -266,6 +266,7 @@ public class OptionalDotGrid extends Pane {
   public void drawGuideLines(final Step step, final Knot knot) {
     Platform.runLater(() -> {
       if ((diagram.getCurrentMode() != MouseMode.CREATE_PATTERN) && (diagram.getCurrentMode() != MouseMode.MIRROR)) {
+          GuideLinesUtil.CURRENT_NUMBER_OF_GUIDELINES = 0;
         for (Knot otherKnot : step.getAllVisibleKnots()) {
           if (!otherKnot.equals(knot) && otherKnot.isVisible()) {
             new GuideLinesUtil(knot, otherKnot, root);
