@@ -18,11 +18,11 @@
       <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
     </encoder>
   </appender>
-  <logger name="org.alienlabs.adaloveslace" level="DEBUG">
+  <logger name="org.alienlabs.adaloveslace" level="INFO">
     <appender-ref ref="FILE" />
     <appender-ref ref="STDOUT" />
   </logger>
-  <logger name="org.alienlabs.adaloveslace.unittest" level="INFO">
+  <logger name="org.alienlabs.adaloveslace.unittest" level="DEBUG">
     <appender-ref ref="FILE" />
     <appender-ref ref="STDOUT" />
   </logger>
