@@ -220,7 +220,8 @@ public class OptionalDotGrid extends Pane {
                 });
             }
 
-            if (firstKnot.isPresent() && firstKnot.get().equals(knot)) {
+            if (firstKnot.isPresent() && firstKnot.get().equals(knot) &&
+                    !getDiagram().getCurrentMode().equals(MouseMode.DRAWING)) {
                 addHandleToAKnot(knot, BLUE_HANDLE);
             } else {
                 knot.setHandle(null);

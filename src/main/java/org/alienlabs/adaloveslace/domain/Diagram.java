@@ -368,7 +368,7 @@ public class Diagram {
     }
 
     private void createImageViewWithStep(double x, double y, ImageView imageView, Pattern pattern, Color currentColor) {
-        if (this.getCurrentStep().getSelectedKnots().size() > 1) {
+        if (!this.getCurrentStep().getSelectedKnots().isEmpty()) {
             return;
         }
 
@@ -401,7 +401,9 @@ public class Diagram {
 
         currentKnot.setTypedText(oldCurrentKnot == null ? null : oldCurrentKnot.getTypedText());
         this.setCurrentKnot(currentKnot);
-        currentKnot.setSelection(new GridUtil(app.getMovablePane()).newRectangle(currentKnot, Color.BLUE));
+        currentKnot.setSelection(null);
+        currentKnot.setHandle(null);
+        currentKnot.setHovered(null);
 
         if (pattern == null) {
             currentKnot.setHandle(new GridUtil(app.getMovablePane()).newHandleForText(currentKnot, (Rectangle) currentKnot.getSelection()));
@@ -427,8 +429,10 @@ public class Diagram {
 
         if (currentKnot.getPattern().isEmpty() && null != currentKnot.getTypedText()) {
             currentKnot.setText(Optional.of(currentKnot.getTypedText().toString()));
+            selectedKnots.add(currentKnot);
+        } else {
+            displayedKnots.add(currentKnot);
         }
-        selectedKnots.add(currentKnot);
         isNewText = false;
 
         newStep(
