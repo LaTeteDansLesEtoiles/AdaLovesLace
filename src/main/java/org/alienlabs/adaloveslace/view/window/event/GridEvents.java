@@ -231,7 +231,7 @@ public class GridEvents {
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
     List<Knot> copiedKnots = new ArrayList<>();
 
-    Knot eventSourceKnot = selectedKnots.stream().filter(knot -> knot.getHandle().equals(sourceHandle)).findFirst().orElse(null);
+    Knot eventSourceKnot = selectedKnots.stream().filter(knot -> knot.getHandle() != null && knot.getHandle().equals(sourceHandle)).findFirst().orElse(null);
     if (null == eventSourceKnot) {
       event.consume();
       return;
@@ -244,12 +244,16 @@ public class GridEvents {
       copiedKnot.setY(knot.getY() + currentEvent.getY());
       copiedKnot.getImageView().setLayoutX(copiedKnot.getX());
       copiedKnot.getImageView().setLayoutY(copiedKnot.getY());
-      copiedKnot.getHandle().setLayoutX(copiedKnot.getHandle().getLayoutX() + currentEvent.getX());
-      copiedKnot.getHandle().setLayoutY(copiedKnot.getHandle().getLayoutY() + currentEvent.getY());
+      if (copiedKnot.getHandle() != null) {
+          copiedKnot.getHandle().setLayoutX(copiedKnot.getHandle().getLayoutX() + currentEvent.getX());
+          copiedKnot.getHandle().setLayoutY(copiedKnot.getHandle().getLayoutY() + currentEvent.getY());
+      }
       copiedKnot.getSelection().setLayoutX(copiedKnot.getX());
       copiedKnot.getSelection().setLayoutY(copiedKnot.getY());
-      copiedKnot.getHovered().setLayoutX(copiedKnot.getX());
-      copiedKnot.getHovered().setLayoutY(copiedKnot.getY());
+      if (copiedKnot.getHovered() != null) {
+          copiedKnot.getHovered().setLayoutX(copiedKnot.getX());
+          copiedKnot.getHovered().setLayoutY(copiedKnot.getY());
+      }
 
       copiedKnots.add(copiedKnot);
       GridEvents.logger.debug("Knot to move");

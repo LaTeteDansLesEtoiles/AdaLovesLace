@@ -405,8 +405,6 @@ public class Diagram {
 
         if (pattern == null) {
             currentKnot.setHandle(new GridUtil(app.getMovablePane()).newHandleForText(currentKnot, (Rectangle) currentKnot.getSelection()));
-        } else {
-            currentKnot.setHandle(new GridUtil(app.getMovablePane()).newHandleForPattern(currentKnot, (Rectangle) currentKnot.getSelection()));
         }
 
         putAllEventsOnKnot(app, currentKnot);

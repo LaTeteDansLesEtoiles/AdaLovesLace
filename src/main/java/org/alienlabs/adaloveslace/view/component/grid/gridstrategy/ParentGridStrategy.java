@@ -16,7 +16,7 @@ public class ParentGridStrategy {
     public static Pane gridPane;
     public static List<Shape> grid = new ArrayList<>();
     private final EnumMap<GridType, IDotGridStrategy> childStrategies = new EnumMap<>(GridType.class);
-    private static  App app;
+    public static App app;
     private static boolean gridHasBeenDrawn = false;
 
     public ParentGridStrategy(App app, Pane gridPane) {
