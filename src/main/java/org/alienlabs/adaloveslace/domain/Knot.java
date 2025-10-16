@@ -87,6 +87,7 @@ public class Knot implements Comparable<Knot> {
 
   public Knot() {
     this.uuid                 = UUID.randomUUID();
+    this.imageView           = new ImageView(); // Toujours initialiser l'ImageView
   }
 
   public Knot(

@@ -7,6 +7,7 @@ import javafx.scene.effect.ColorInput;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.domain.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,24 @@ public class PatternImageCache {
     public static ImageView getImageView(Pattern pattern, Optional<Color> color) {
         PatternColorKey key = new PatternColorKey(pattern, color.orElse(null));
         return cache.computeIfAbsent(key, __ -> createImageView(pattern, color));
+    }
+
+    public static void updateKnotImageView(Knot knot) {
+        if (!knot.getPattern().isPresent()) {
+            return;
+        }
+
+        ImageView cachedView = getImageView(knot.getPattern().get(), knot.getColor());
+        
+        if (knot.getImageView() == null) {
+            // Première initialisation
+            knot.setImageView(new ImageView(cachedView.getImage()));
+            knot.getImageView().setEffect(cachedView.getEffect());
+        } else {
+            // Mise à jour d'une ImageView existante
+            knot.getImageView().setImage(cachedView.getImage());
+            knot.getImageView().setEffect(cachedView.getEffect());
+        }
     }
     
     private static ImageView createImageView(Pattern pattern, Optional<Color> color) {

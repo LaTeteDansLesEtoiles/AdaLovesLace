@@ -224,12 +224,17 @@ public class NodeUtil {
                         ? Optional.of(currentKnot == null ? NEW_TEXT.toString() : currentKnot.getTypedText().toString())
                         : Optional.of(NEW_TEXT.toString()),
                 currentColor == null ? Optional.empty() : Optional.of(currentColor),
-                imageView
+                null
         );
 
         if (knot.getPattern().isPresent()) {
             knot.getPattern().get().setCenterX(x);
             knot.getPattern().get().setCenterY(y);
+            org.alienlabs.adaloveslace.view.component.grid.PatternImageCache.updateKnotImageView(knot);
+        } else if (imageView != null) {
+            knot.setImageView(imageView);
+        } else {
+            knot.setImageView(new ImageView());
         }
 
         return knot;
