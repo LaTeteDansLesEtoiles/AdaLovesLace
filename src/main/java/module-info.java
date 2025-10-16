@@ -7,7 +7,8 @@ module org.alienlabs.adaloveslace {
   requires jakarta.xml.bind;
   requires java.net.http;
   requires java.prefs;
-  requires javafx.graphics;
+  requires transitive javafx.graphics;
+  requires transitive javafx.base;
   requires javafx.swing;
   requires org.slf4j;
   requires static com.github.spotbugs.annotations;

@@ -90,16 +90,16 @@ public class OptionalDotGrid extends Pane {
       currentPatternProperty = new SimpleObjectProperty<>();
     }
 
-    currentPatternProperty.addListener(observable -> this.diagram.setCurrentPattern(currentPatternProperty.getValue()));
+    currentPatternProperty.addListener((__, ___, ____) -> this.diagram.setCurrentPattern(currentPatternProperty.getValue()));
     currentPatternOrTextModeProperty = new SimpleObjectProperty<>(PatternOrTextMode.PATTERN);
 
     showHideGridProperty = new SimpleBooleanProperty(this.showHideGrid);
-    showHideGridProperty.addListener(observable -> {
+    showHideGridProperty.addListener((__, ___, ____) -> {
       this.showHideGrid = showHideGridProperty.getValue();
       setNeedsLayout(true);
     });
 
-    moveKnotPause.setOnFinished(e -> {
+    moveKnotPause.setOnFinished(__ -> {
       List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
       List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
       List<Knot> copiedKnots = new ArrayList<>();
@@ -344,7 +344,18 @@ public class OptionalDotGrid extends Pane {
       imageView = rotateTextKnot(knot);
       this.gridUtil.zoomTextKnot(knot);
     } else if (knot.getPattern().isPresent()) {
-
+      // Obtenir l'ImageView du cache avec la couleur appropriée
+      ImageView cachedView = PatternImageCache.getImageView(
+          knot.getPattern().get(), 
+          knot.getColor()
+      );
+        
+      // Créer une nouvelle ImageView qui clone les propriétés de l'ImageView en cache
+      imageView = new ImageView(cachedView.getImage());
+      // Copier l'effet de couleur si présent
+      imageView.setEffect(cachedView.getEffect());
+      knot.setImageView(imageView);
+        
       imageView = this.gridUtil.rotatePatternKnot(knot);
       this.gridUtil.zoomAndFlipPatternKnot(knot);
     }
@@ -352,6 +363,10 @@ public class OptionalDotGrid extends Pane {
     if (null != imageView) {
       imageView.setLayoutX(x);
       imageView.setLayoutY(y);
+
+      if (!root.getChildren().contains(imageView)) {
+        root.getChildren().add(imageView);
+      }
 
       logger.debug("drawing top left corner of knot {} to ({},{})", knot, x, y);
     }
@@ -393,12 +408,23 @@ public class OptionalDotGrid extends Pane {
 
       drawGuideLines(step, knot);
     } else if (knot.getPattern().isPresent()) {
+      // Obtenir l'ImageView du cache avec la couleur appropriée
+      ImageView cachedView = PatternImageCache.getImageView(
+          knot.getPattern().get(), 
+          knot.getColor()
+      );
+        
+      // Créer une nouvelle ImageView qui clone les propriétés de l'ImageView en cache
+      imageView = new ImageView(cachedView.getImage());
+      // Copier l'effet de couleur si présent
+      imageView.setEffect(cachedView.getEffect());
+      knot.setImageView(imageView);
+        
       imageView = this.gridUtil.rotatePatternKnot(knot);
       this.gridUtil.zoomAndFlipPatternKnot(knot);
 
       imageView.setLayoutX(x);
       imageView.setLayoutY(y);
-      knot.setImageView(imageView);
 
       drawGuideLines(step, knot);
     }
