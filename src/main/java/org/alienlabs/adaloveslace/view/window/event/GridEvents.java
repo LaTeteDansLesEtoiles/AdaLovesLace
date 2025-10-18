@@ -19,6 +19,7 @@ import org.alienlabs.adaloveslace.domain.Pattern;
 import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.domain.enumeration.PatternOrTextMode;
 import org.alienlabs.adaloveslace.util.NodeUtil;
+import org.alienlabs.adaloveslace.view.component.GridUtil;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,33 @@ public class GridEvents {
       }
 
       isNewText = false;
+
+      if (app.getOptionalDotGrid().getDiagram().getCurrentKnot() == null) {
+        Point2D mouseInParent = app.getMovablePane().sceneToLocal(app.getScene().getWidth() / 2, app.getScene().getHeight() / 2);
+        double x = mouseInParent.getX();
+        double y = mouseInParent.getY();
+
+        Knot knot = new NodeUtil().newKnot(
+          x, y,
+          null, // imageView
+          null, // pattern
+          null, // currentKnot
+          app.getOptionalDotGrid().getDiagram().getCurrentColor()
+        );
+
+        knot.setTypedText(new StringBuilder(NEW_TEXT));
+        knot.setText(Optional.of(NEW_TEXT.toString()));
+
+        ImageView imageView = new NodeUtil().createText(
+          x, y,
+          null,
+          null,
+          app.getOptionalDotGrid().getDiagram().getCurrentColor()
+        );
+        knot.setImageView(imageView);
+
+        app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+      }
 
       StringBuilder typedText = app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText();
       if (typedText == null) {
@@ -201,17 +229,12 @@ public class GridEvents {
     event.consume();
   };
 
-  public static final EventHandler<MouseEvent> dragOverHandleWithSelectionMode = event -> {
-    String eType = event.getEventType().toString();
-    Circle sourceHandle = (Circle)event.getSource();
-    logger.debug(
-            "Event type dragOverHandleWithSelectionMode -> {}, source {} current Step index {}, current mode: {}",
-            eType,
-            sourceHandle,
-            app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-            app.getOptionalDotGrid().getDiagram().getCurrentMode()
-    );
+  private static List<Knot> dragKnots = null;
 
+  public static final EventHandler<MouseEvent> dragOverHandleWithSelectionMode = event -> {
+    Circle sourceHandle = (Circle)event.getSource();
+
+    // Calculer le déplacement
     double targetCircleCenterXScene = event.getSceneX() - handleOffsetX;
     double targetCircleCenterYScene = event.getSceneY() - handleOffsetY;
     Point2D currentEvent = new Point2D(targetCircleCenterXScene, targetCircleCenterYScene);
@@ -228,60 +251,85 @@ public class GridEvents {
       }
     }
 
-    List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-    List<Knot> copiedKnots = new ArrayList<>();
+    // Initialiser les listes de nœuds et positions si c'est le premier mouvement
+    if (dragKnots == null) {
+      List<Knot> selectedKnots = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
+      // Vérifier que le nœud source est dans la sélection
+      Knot eventSourceKnot = selectedKnots.stream()
+        .filter(knot -> knot.getHandle() != null && knot.getHandle().equals(sourceHandle))
+        .findFirst()
+        .orElse(null);
+      if (null == eventSourceKnot) {
+        event.consume();
+        return;
+      }
 
-    Knot eventSourceKnot = selectedKnots.stream().filter(knot -> knot.getHandle() != null && knot.getHandle().equals(sourceHandle)).findFirst().orElse(null);
-    if (null == eventSourceKnot) {
-      event.consume();
-      return;
+      // Copier les nœuds une seule fois au début du drag
+      dragKnots = new ArrayList<>(selectedKnots.size());
+
+      // Nettoyer les sélections et décorations
+      app.getOptionalDotGrid().clearSelections();
+      app.getOptionalDotGrid().clearHovered();
+
+      // Déplacer les nœuds sélectionnés vers les nœuds affichés
+      List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+      displayedKnots.addAll(selectedKnots);
+      app.getOptionalDotGrid().getDiagram().getCurrentStep().setDisplayedKnots(displayedKnots);
+
+      // Créer les copies avec leurs nouveaux rectangles de sélection
+      for (Knot knot : selectedKnots) {
+        // Copier le nœud avec sa position actuelle
+        Knot copiedKnot = new NodeUtil().copyKnot(knot);
+        dragKnots.add(copiedKnot);
+
+        // Créer un nouveau rectangle de sélection pour la copie
+        Rectangle rec = new GridUtil(app.getMovablePane()).newRectangle(copiedKnot, Color.BLUE);
+        copiedKnot.setSelection(rec);
+        app.getMovablePane().getChildren().add(rec);
+      }
+
+      // Mettre à jour la liste des nœuds sélectionnés
+      app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(dragKnots);
     }
 
-    for (Knot knot : selectedKnots) {
-      Knot copiedKnot = new NodeUtil().copyKnot(knot);
+    // Mettre à jour la position des nœuds
+    for (int i = 0; i < dragKnots.size(); i++) {
+      Knot copiedKnot = dragKnots.get(i);
 
-      copiedKnot.setX(knot.getX() + currentEvent.getX());
-      copiedKnot.setY(knot.getY() + currentEvent.getY());
+      // Mettre à jour les positions
+      copiedKnot.setX(copiedKnot.getX() + currentEvent.getX());
+      copiedKnot.setY(copiedKnot.getY() + currentEvent.getY());
       copiedKnot.getImageView().setLayoutX(copiedKnot.getX());
       copiedKnot.getImageView().setLayoutY(copiedKnot.getY());
-      if (copiedKnot.getHandle() != null) {
-          copiedKnot.getHandle().setLayoutX(copiedKnot.getHandle().getLayoutX() + currentEvent.getX());
-          copiedKnot.getHandle().setLayoutY(copiedKnot.getHandle().getLayoutY() + currentEvent.getY());
-      }
       copiedKnot.getSelection().setLayoutX(copiedKnot.getX());
       copiedKnot.getSelection().setLayoutY(copiedKnot.getY());
-      if (copiedKnot.getHovered() != null) {
-          copiedKnot.getHovered().setLayoutX(copiedKnot.getX());
-          copiedKnot.getHovered().setLayoutY(copiedKnot.getY());
+
+      // Mettre à jour la poignée si elle existe
+      if (copiedKnot.getHandle() != null) {
+        copiedKnot.getHandle().setLayoutX(copiedKnot.getHandle().getLayoutX() + currentEvent.getX());
+        copiedKnot.getHandle().setLayoutY(copiedKnot.getHandle().getLayoutY() + currentEvent.getY());
       }
 
-      copiedKnots.add(copiedKnot);
-      GridEvents.logger.debug("Knot to move");
+      // Mettre à jour le survol s'il existe
+      if (copiedKnot.getHovered() != null) {
+        copiedKnot.getHovered().setLayoutX(copiedKnot.getX());
+        copiedKnot.getHovered().setLayoutY(copiedKnot.getY());
+      }
     }
 
-    app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(copiedKnots);
-
-    if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size() == 1) {
-      app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnots.getLast());
+    // Mettre à jour la sélection
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(dragKnots);
+    if (dragKnots.size() == 1) {
+      app.getOptionalDotGrid().getDiagram().setCurrentKnot(dragKnots.get(0));
     }
 
-    app.getOptionalDotGrid().layoutChildren();
-
-    logger.debug("Event type: {}, X: {}, Y: {}", event.getEventType(), event.getX(), event.getY());
     event.consume();
   };
 
   public static final EventHandler<MouseEvent> dragDroppedHandleWithSelectionMode = event -> {
-    String eType = event.getEventType().toString();
-
-    logger.debug(
-            "Event type -> {},  current Step index: {}, current mode: {}, X: {}, Y: {}",
-            eType,
-            app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-            app.getOptionalDotGrid().getDiagram().getCurrentMode(),
-            event.getSceneX(),
-            event.getSceneY()
-    );
+    // Nettoyer les variables de drag
+    dragKnots = null;
+    previousEvent = null;
 
     app.getOptionalDotGrid().getDiagram().setCurrentMode(app.getOptionalDotGrid().getDiagram().getOldMode());
     app.getOptionalDotGrid().layoutChildren();

@@ -42,9 +42,10 @@ import static org.alienlabs.adaloveslace.domain.Knot.NEW_TEXT;
  */
 public class OptionalDotGrid extends Pane {
 
-  public static final Color BLUE_HANDLE = Color.rgb(0, 0, 255, 0.5);
-  double GRID_WIDTH                     = 1400d;
-  double GRID_HEIGHT                    = 600d;
+  public static final Color BLUE_HANDLE             = Color.rgb(0, 0, 255, 0.5);
+  public static final int MAX_NUMBER_OF_GUIDELINES  = 21;
+  double GRID_WIDTH                                 = 1400d;
+  double GRID_HEIGHT                                = 600d;
 
   private final App app;
   private boolean showHideGrid = true;
@@ -397,7 +398,9 @@ public class OptionalDotGrid extends Pane {
       imageView.setLayoutY(y);
       knot.setImageView(imageView);
 
-      drawGuideLines(step, knot);
+      if (this.getDiagram().getCurrentStep().getSelectedKnots().size() < MAX_NUMBER_OF_GUIDELINES) {
+          drawGuideLines(step, knot);
+      }
     } else if (knot.getPattern().isPresent()) {
       PatternImageCache.updateKnotImageView(knot);
       imageView = knot.getImageView();
@@ -408,7 +411,9 @@ public class OptionalDotGrid extends Pane {
       imageView.setLayoutX(x);
       imageView.setLayoutY(y);
 
-      drawGuideLines(step, knot);
+        if (this.getDiagram().getCurrentStep().getSelectedKnots().size() < MAX_NUMBER_OF_GUIDELINES) {
+            drawGuideLines(step, knot);
+        }
     }
 
     logger.debug("drawing top left corner of knot {} to ({},{})",

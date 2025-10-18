@@ -167,6 +167,7 @@ public class ToolboxWindow {
 
         if (i == 1) {
             this.snowflakeButton = button;
+            this.snowflakeButton.setId("snowflakeButton");
         }
 
         diagram.addPattern(pattern);

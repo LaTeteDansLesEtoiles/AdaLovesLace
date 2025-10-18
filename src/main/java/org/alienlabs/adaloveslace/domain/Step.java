@@ -61,6 +61,8 @@ public class Step implements Comparable<Step> {
         this.selectedKnots = selectedKnots;
 
         this.displayedKnots.removeAll(this.selectedKnots);
+        this.app.getMovablePane().getChildren().removeAll(
+                this.displayedKnots.stream().map(Knot::getSelection).toList());
         this.selectedKnots.removeAll(this.displayedKnots);
 
         clearStepsGreaterThanPresentStep(app.getOptionalDotGrid().getDiagram());

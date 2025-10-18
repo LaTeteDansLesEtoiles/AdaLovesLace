@@ -160,21 +160,25 @@ public class GridUtil {
 
         if (knot.getText().isPresent() && (knot.getPattern().isEmpty())) {
             rec = new Rectangle(
-                    knot.getX(),
-                    knot.getY(),
+                    0, // x
+                    0, // y
                     knot.getImageView().getImage().getWidth(),
                     knot.getImageView().getImage().getHeight()
             );
             setRectangleProperties(knot, color, rec);
+            rec.setLayoutX(knot.getX());
+            rec.setLayoutY(knot.getY());
             return rec;
         } else if (knot.getPattern().isPresent()) {
             rec = new Rectangle(
-                    knot.getX(),
-                    knot.getY(),
+                    0, // x
+                    0, // y
                     knot.getPattern().get().getWidth(),
                     knot.getPattern().get().getHeight()
             );
             setRectangleProperties(knot, color, rec);
+            rec.setLayoutX(knot.getX());
+            rec.setLayoutY(knot.getY());
             return rec;
         }
 

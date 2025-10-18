@@ -35,14 +35,14 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_duplicate_one_knot(final FxRobot robot) {
     // Given
-    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-    synchronizeTask(() -> drawSecondSnowflake(robot));
-    synchronizeTask(() -> drawASnowflake(robot));
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectFirstSnowflake(robot));
+    selectAndClickOnSnowflakePatternButton(robot);
+    drawSecondSnowflake(robot);
+    drawASnowflake(robot);
+    clickSelectButton(robot);
+    selectSnowflake(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y, 0);
 
     // When
-    synchronizeLongTask(() -> duplicateKnots(robot));
+    duplicateKnots(robot);
 
     // Then
     // 2 selected knots: the original and the copy
@@ -83,14 +83,14 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_duplicate_one_knot_leaving_other_knot_untouched(final FxRobot robot) {
     // Given
-    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-    synchronizeTask(() -> drawSecondSnowflake(robot));
-    synchronizeTask(() -> drawASnowflake(robot));
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectFirstSnowflake(robot));
+    selectAndClickOnSnowflakePatternButton(robot);
+    drawSecondSnowflake(robot);
+    drawASnowflake(robot);
+    clickSelectButton(robot);
+    selectSnowflake(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y, 0);
 
     // When
-    synchronizeLongTask(() -> duplicateKnots(robot));
+    duplicateKnots(robot);
 
     // Then
     assertEquals(315d,
@@ -112,18 +112,19 @@ class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_duplicate_two_knots(final FxRobot robot) {
     // Given
-    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-    synchronizeTask(() -> drawOtherSnowflake(robot)); // Not to be duplicated
-    synchronizeTask(() -> drawASnowflake(robot)); // To duplicate
-    synchronizeTask(() -> drawSecondSnowflake(robot)); // To duplicate
+    selectAndClickOnSnowflakePatternButton(robot);
+    drawOtherSnowflake(robot); // Not to be duplicated
+    drawASnowflake(robot); // To duplicate
+    drawSecondSnowflake(robot); // To duplicate
 
-    synchronizeTask(() -> clickSelectButton(robot));
-    synchronizeTask(() -> selectFirstSnowflake(robot));
+    clickSelectButton(robot);
+    selectSnowflake(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y, 0);
 
-    synchronizeLongTask(() -> selectSecondSnowflake(robot)); // The first 2 snowflakes shall be selected, ready to be copied
+    selectSnowflake(SECOND_SNOWFLAKE_PIXEL_X, SECOND_SNOWFLAKE_PIXEL_Y, 1); // The first 2 snowflakes shall be selected, ready to be copied
 
-    // When
-    synchronizeLongTask(() -> duplicateKnots(robot)); // Copy the first 2 snowflakes
+
+      // When
+    duplicateKnots(robot); // Copy the first 2 snowflakes
 
     // Then
     assertEquals(2,

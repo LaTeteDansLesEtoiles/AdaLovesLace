@@ -8,8 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.testfx.api.FxAssert.verifyThat;
 
 class StepsFunctionalTest extends AppFunctionalTestParent {
 
@@ -27,401 +28,328 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
     @Test
     void test_add_3_steps_undo_a_step_add_a_step(FxRobot robot) {
         // Given a diagram with an empty step
-        synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+        selectAndClickOnSnowflakePatternButton(robot);
 
         // When
-        synchronizeTask(() -> drawSnowFlake(robot, 60, 70));
+        drawSnowFlake(robot, 60, 70);
 
-        synchronizeTask(() -> drawSnowFlake(robot, 300, 70));
+        drawSnowFlake(robot, 300, 70);
 
-        synchronizeTask(() -> drawSnowFlake(robot, 140, 70));
+        drawSnowFlake(robot, 140, 70);
 
-        synchronizeTask(UndoKnotButton::undoKnot);
+        UndoKnotButton.undoKnot();
 
-        synchronizeTask(() -> drawSnowFlake(robot, 220, 70));
+        drawSnowFlake(robot, 220, 70);
 
         // Then
-        assertEquals(4,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().size(),
-                "We should have 4 Steps!");
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps(), hasSize(4));
 
-        assertEquals(3,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots().size(),
-                "We should have 3 visible Steps in the last Step!");
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots(), hasSize(3));
 
-        assertEquals(1,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(1).getDisplayedKnots().size(),
-                "We should have only one knot in the 1st Step!");
-        assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(1).getDisplayedKnots(), hasSize(1));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .findFirst()
                         .get()
-                        .getX(),
-                "We should have only one knot in the 1st non-empty Step, at X=60!");
+                        .getX(), is(60));
 
         // There is always a Y offset of -10 pixels between where we clicked and where the knot appears
-        assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .findFirst()
                         .get()
-                        .getY(),
-                "We should have only one knot in the 1st non-empty Step, at Y=60!");
+                        .getY(), is(60));
 
-        assertEquals(2,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(2).getDisplayedKnots().size(),
-                "We should have only two knots in the 2nd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(2).getDisplayedKnots(), hasSize(2));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getX() == 300),
-                "We should have a knot in the 2nd non-empty Step, at X=300!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+                        .anyMatch(k -> k.getX() == 300), is(true));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getY() == 60),
-                "We should have a knot in the 2nd non-empty Step, at Y=60!");
+                        .anyMatch(k -> k.getY() == 60), is(true));
 
-        assertEquals(3,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots().size(),
-                "We should have 3 knots in the 3rd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots(), hasSize(3));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getX() == 220),
-                "We should have a knot in the 3rd non-empty Step, at X=220!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+                        .anyMatch(k -> k.getX() == 220), is(true));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getY() == 60),
-                "We should have a knot in the 3rd non-empty Step, at Y=60!");
+                        .anyMatch(k -> k.getY() == 60), is(true));
     }
 
     @Test
     void test_add_3_steps_undo_and_redo_a_step_and_add_a_step(FxRobot robot) {
         // Given a diagram with an empty step
-        synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+        selectAndClickOnSnowflakePatternButton(robot);
 
         // When
-        synchronizeTask(() -> drawSnowFlake(robot, 60, 70));
+        drawSnowFlake(robot, 60, 70);
 
-        synchronizeTask(() -> drawSnowFlake(robot, 40, 45));
+        drawSnowFlake(robot, 40, 45);
 
-        synchronizeTask(() -> drawSnowFlake(robot, 110, 120));
+        drawSnowFlake(robot, 110, 120);
 
-        synchronizeTask(UndoKnotButton::undoKnot);
-        synchronizeTask(RedoKnotButton::redoKnot);
+        UndoKnotButton.undoKnot();
+        RedoKnotButton.redoKnot();
 
-        synchronizeTask(() -> drawSnowFlake(robot, 80, 85));
+        drawSnowFlake(robot, 80, 85);
 
         // Then
-        assertEquals(6,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().size(),
-                "We should have 5 Steps!");
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps(), hasSize(6));
 
-        assertEquals(1,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(1).getDisplayedKnots().size(),
-                "We should have only one knot in the 1st Step!");
-        assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(1).getDisplayedKnots(), hasSize(1));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .findFirst()
                         .get()
-                        .getX(),
-                "We should have only one knot in the 1st non-empty Step, at X=60!");
+                        .getX(), is(60));
 
         // There is always a Y offset of -10 pixels between where we clicked and where the knot appears
-        assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .findFirst()
                         .get()
-                        .getY(),
-                "We should have only one knot in the 1st non-empty Step, at Y=60!");
+                        .getY(), is(60));
 
-        assertEquals(2,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(2).getDisplayedKnots().size(),
-                "We should have only two knots in the 2nd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(2).getDisplayedKnots(), hasSize(2));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getX() == 40),
-                "We should have a knot in the 2nd non-empty Step, at X=20!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+                        .anyMatch(k -> k.getX() == 40), is(true));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getY() == 35),
-                "We should have a knot in the 2nd non-empty Step, at Y=35!");
+                        .anyMatch(k -> k.getY() == 35), is(true));
 
-        assertEquals(3,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots().size(),
-                "We should have 3 knots in the 3rd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots(), hasSize(3));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getX() == 110),
-                "We should have a knot in the 3rd non-empty Step, at X=100!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+                        .anyMatch(k -> k.getX() == 110), is(true));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getY() == 110),
-                "We should have a knot in the 3rd non-empty Step, at Y=55!");
+                        .anyMatch(k -> k.getY() == 110), is(true));
 
-        assertEquals(4,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(4).getDisplayedKnots().size(),
-                "We should have 3 knots in the 3rd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 5)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(4).getDisplayedKnots(), hasSize(4));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 5)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getX() == 80),
-                "We should have a knot in the 3rd non-empty Step, at X=80!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 5)
+                        .anyMatch(k -> k.getX() == 80), is(true));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 5)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getY() == 75),
-                "We should have a knot in the 3rd non-empty Step, at Y=75!");
+                        .anyMatch(k -> k.getY() == 75), is(true));
     }
 
     @Test
     void test_add_3_steps_and_do_many_undo_redo(FxRobot robot) {
         // Given a diagram with an empty step
-        synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+        selectAndClickOnSnowflakePatternButton(robot);
 
         // When
-        synchronizeTask(() -> drawSnowFlake(robot, 60, 70));
+        drawSnowFlake(robot, 60, 70);
 
-        synchronizeTask(() -> drawSnowFlake(robot, 110, 120));
+        drawSnowFlake(robot, 110, 120);
 
-        synchronizeTask(() -> drawSnowFlake(robot, 160, 160));
+        drawSnowFlake(robot, 160, 160);
 
-        synchronizeTask(UndoKnotButton::undoKnot);
-        synchronizeTask(UndoKnotButton::undoKnot);
-        synchronizeTask(UndoKnotButton::undoKnot);
-        synchronizeTask(UndoKnotButton::undoKnot);
-        synchronizeTask(UndoKnotButton::undoKnot);
-        synchronizeTask(UndoKnotButton::undoKnot);
-        synchronizeTask(UndoKnotButton::undoKnot);
-        synchronizeTask(UndoKnotButton::undoKnot);
-        synchronizeTask(UndoKnotButton::undoKnot);
-        synchronizeTask(UndoKnotButton::undoKnot);
-        synchronizeTask(UndoKnotButton::undoKnot);
-        synchronizeTask(UndoKnotButton::undoKnot);
+        UndoKnotButton.undoKnot();
+        UndoKnotButton.undoKnot();
+        UndoKnotButton.undoKnot();
+        UndoKnotButton.undoKnot();
+        UndoKnotButton.undoKnot();
+        UndoKnotButton.undoKnot();
+        UndoKnotButton.undoKnot();
+        UndoKnotButton.undoKnot();
+        UndoKnotButton.undoKnot();
+        UndoKnotButton.undoKnot();
+        UndoKnotButton.undoKnot();
+        UndoKnotButton.undoKnot();
+        UndoKnotButton.undoKnot();
 
-        synchronizeTask(RedoKnotButton::redoKnot);
-        synchronizeTask(RedoKnotButton::redoKnot);
-        synchronizeTask(RedoKnotButton::redoKnot);
+        RedoKnotButton.redoKnot();
+        RedoKnotButton.redoKnot();
+        RedoKnotButton.redoKnot();
 
-        synchronizeTask(() -> drawSnowFlake(robot, 220, 160));
+        drawSnowFlake(robot, 220, 160);
 
         // Then
-        assertEquals(5,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().size(),
-                "We should have 5 Steps!");
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps(), hasSize(5));
 
-        assertEquals(1,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(1).getDisplayedKnots().size(),
-                "We should have only one knot in the 1st Step!");
-        assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(1).getDisplayedKnots(), hasSize(1));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .findFirst()
                         .get()
-                        .getX(),
-                "We should have only one knot in the 1st non-empty Step, at X=60!");
+                        .getX(), is(60));
         
         // There is always a Y offset of -10 pixels between where we clicked and where the knot appears
-        assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .findFirst()
                         .get()
-                        .getY(),
-                "We should have only one knot in the 1st non-empty Step, at Y=60!");
+                        .getY(), is(60));
 
-        assertEquals(2,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(2).getDisplayedKnots().size(),
-                "We should have only two knots in the 2nd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(2).getDisplayedKnots(), hasSize(2));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getX() == 110),
-                "We should have a knot in the 2nd non-empty Step, at X=110!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+                        .anyMatch(k -> k.getX() == 110), is(true));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getY() == 110),
-                "We should have a knot in the 2nd non-empty Step, at Y=110!");
+                        .anyMatch(k -> k.getY() == 110), is(true));
 
-        assertEquals(3,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots().size(),
-                "We should have 3 knots in the 3rd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots(), hasSize(3));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getX() == 160),
-                "We should have a knot in the 3rd non-empty Step, at X=160!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+                        .anyMatch(k -> k.getX() == 160), is(true));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getY() == 150),
-                "We should have a knot in the 3rd non-empty Step, at Y=150!");
+                        .anyMatch(k -> k.getY() == 150), is(true));
         
-        assertEquals(4,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(4).getDisplayedKnots().size(),
-                "We should have 3 knots in the 3rd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 5)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(4).getDisplayedKnots(), hasSize(4));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 5)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getX() == 220),
-                "We should have a knot in the 3rd non-empty Step, at X=220!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 5)
+                        .anyMatch(k -> k.getX() == 220), is(true));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 5)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getY() == 150),
-                "We should have a knot in the 3rd non-empty Step, at Y=150!");
+                        .anyMatch(k -> k.getY() == 150), is(true));
     }
 
     @Test
     void test_add_3_steps_and_do_many_redo_undo(FxRobot robot) {
         // Given a diagram with an empty step
-        synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
+        selectAndClickOnSnowflakePatternButton(robot);
 
         // When
-        synchronizeTask(() -> drawSnowFlake(robot, 60, 70));
+        drawSnowFlake(robot, 60, 70);
 
-        synchronizeTask(() -> drawSnowFlake(robot, 110, 120));
+        drawSnowFlake(robot, 110, 120);
 
-        synchronizeTask(() -> drawSnowFlake(robot, 160, 160));
+        drawSnowFlake(robot, 160, 160);
 
-        synchronizeTask(UndoKnotButton::undoKnot);
+        UndoKnotButton.undoKnot();
 
-        synchronizeTask(RedoKnotButton::redoKnot);
-        synchronizeTask(RedoKnotButton::redoKnot);
-        synchronizeTask(RedoKnotButton::redoKnot);
-        synchronizeTask(RedoKnotButton::redoKnot);
-        synchronizeTask(RedoKnotButton::redoKnot);
+        RedoKnotButton.redoKnot();
+        RedoKnotButton.redoKnot();
+        RedoKnotButton.redoKnot();
+        RedoKnotButton.redoKnot();
+        RedoKnotButton.redoKnot();
 
-        synchronizeTask(UndoKnotButton::undoKnot);
+        UndoKnotButton.undoKnot();
 
-        synchronizeTask(() -> drawSnowFlake(robot, 220, 160));
+        drawSnowFlake(robot, 220, 160);
 
         // Then
-        assertEquals(4,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().size(),
-                "We should have 5 Steps!");
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps(), hasSize(4));
 
-        assertEquals(1,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(1).getDisplayedKnots().size(),
-                "We should have only one knot in the 1st Step!");
-        assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(1).getDisplayedKnots(), hasSize(1));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .findFirst()
                         .get()
-                        .getX(),
-                "We should have only one knot in the 1st non-empty Step, at X=60!");
+                        .getX(), is(60));
 
         // There is always a Y offset of -10 pixels between where we clicked and where the knot appears
-        assertEquals(60,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 2)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
                         .findFirst()
                         .get()
-                        .getY(),
-                "We should have only one knot in the 1st non-empty Step, at Y=60!");
+                        .getY(), is(60));
 
-        assertEquals(2,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(2).getDisplayedKnots().size(),
-                "We should have only two knots in the 2nd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(2).getDisplayedKnots(), hasSize(2));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getX() == 110),
-                "We should have a knot in the 2nd non-empty Step, at X=110!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
+                        .anyMatch(k -> k.getX() == 110), is(true));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 3)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getY() == 110),
-                "We should have a knot in the 2nd non-empty Step, at Y=110!");
+                        .anyMatch(k -> k.getY() == 110), is(true));
 
-        assertEquals(3,
-                app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots().size(),
-                "We should have 3 knots in the 3rd non-empty Step!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().get(3).getDisplayedKnots(), hasSize(3));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getX() == 220),
-                "We should have a knot in the 3rd non-empty Step, at X=160!");
-        assertTrue(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
+                        .anyMatch(k -> k.getX() == 220), is(true));
+        verifyThat(app.getOptionalDotGrid().getDiagram().getAllSteps().stream().filter(step -> step.getStepIndex() == 4)
                         .findFirst()
                         .get()
                         .getDisplayedKnots()
                         .stream()
-                        .anyMatch(k -> k.getY() == 150),
-                "We should have a knot in the 3rd non-empty Step, at Y=150!");
+                        .anyMatch(k -> k.getY() == 150), is(true));
     }
 
 }

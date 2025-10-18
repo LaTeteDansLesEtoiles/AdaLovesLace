@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static org.alienlabs.adaloveslace.App.*;
+import static org.alienlabs.adaloveslace.view.component.AdaLovesLaceMenuBar.selectAllKnots;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.restartApp;
 
@@ -50,7 +51,7 @@ public class KeyboardUtil {
             app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN),
                     FastMoveModeButton::onSwitchFastModeAction);
 
-            app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN),
+            app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN),
                     SaveAsButton::onSaveAsAction);
 
             app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN),
@@ -102,6 +103,9 @@ public class KeyboardUtil {
                         restartApp();
                     });
         });
+
+        app.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN),
+                () -> selectAllKnots(app));
     }
 
 }

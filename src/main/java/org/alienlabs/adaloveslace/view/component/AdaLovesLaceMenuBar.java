@@ -109,7 +109,7 @@ public class AdaLovesLaceMenuBar {
 
         MenuItem selectAllItem = new MenuItem(resourceBundle.getString(SELECT_ALL));
         selectAllItem.setOnAction(_ -> selectAllKnots(app));
-        selectAllItem.setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
+        selectAllItem.setAccelerator(new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN));
 
         SeparatorMenuItem separator2 = new SeparatorMenuItem();
 
@@ -241,7 +241,7 @@ public class AdaLovesLaceMenuBar {
         return menuBar;
     }
 
-    private void selectAllKnots(App app) {
+    public static void selectAllKnots(App app) {
         List<Knot> allSelected = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots());
         newStep(new ArrayList<>(), allSelected, true);
     }

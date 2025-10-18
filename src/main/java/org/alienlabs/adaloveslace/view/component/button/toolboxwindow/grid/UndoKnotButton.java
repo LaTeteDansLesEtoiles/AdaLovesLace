@@ -16,6 +16,7 @@ public class UndoKnotButton extends ImageButton {
       UndoKnotButton.app = app;
         this.setOnMouseClicked(_ -> undoKnot());
     buildButtonImage("undo.png");
+    setId("undoButton");
   }
 
   public static void undoKnot() {

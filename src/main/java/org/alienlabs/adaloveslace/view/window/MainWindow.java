@@ -60,7 +60,7 @@ public class MainWindow {
 
   public static final String MOUSE_CLICKED  = "MOUSE_CLICKED";
 
-  public static final KeyCodeCombination SAVE_AS_KEY_COMBINATION = new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN);
+  public static final KeyCodeCombination SAVE_AS_KEY_COMBINATION = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
 
   private StackPane grid;
 

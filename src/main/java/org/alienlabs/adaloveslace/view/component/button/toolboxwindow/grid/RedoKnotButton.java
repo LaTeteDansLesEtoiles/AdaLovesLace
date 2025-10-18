@@ -16,6 +16,7 @@ public class RedoKnotButton extends ImageButton {
     RedoKnotButton.app = app;
     this.setOnMouseClicked(_ -> redoKnot());
     buildButtonImage("redo.png");
+    setId("redoButton");
   }
 
   public static void redoKnot() {

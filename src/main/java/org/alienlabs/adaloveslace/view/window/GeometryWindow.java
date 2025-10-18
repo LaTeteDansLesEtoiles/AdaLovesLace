@@ -101,6 +101,7 @@ public class GeometryWindow {
     util.getImageView("deletion.png", deletionButton, false);
 
     this.duplicationButton = new DuplicationButton(app, this, resourceBundle.getString(DUPLICATION_BUTTON_NAME));
+    this.duplicationButton.setId("duplicationButton");
     util.getImageView("duplication.png", duplicationButton, false);
 
     VerticalFlippingButton verticalFlippingButton = new VerticalFlippingButton(app, resourceBundle.getString(VERTICAL_FLIPPING_BUTTON_NAME));
@@ -123,10 +124,16 @@ public class GeometryWindow {
 
     this.rotationSpinner1 = new Spinner<>(ROTATION_SPINNER_MIN_VALUE, ROTATION_SPINNER_MAX_VALUE,
       DEFAULT_ROTATION, ROTATION_SPINNER_INCREMENTS_1);
+      this.rotationSpinner1.setId("rotationSpinner1");
+      this.rotationSpinner1.setEditable(true);
     this.rotationSpinner2 = new Spinner<>(ROTATION_SPINNER_MIN_VALUE, ROTATION_SPINNER_MAX_VALUE,
       DEFAULT_ROTATION, ROTATION_SPINNER_INCREMENTS_2);
+      this.rotationSpinner2.setId("rotationSpinner2");
+      this.rotationSpinner2.setEditable(true);
     this.rotationSpinner3 = new Spinner<>(ROTATION_SPINNER_MIN_VALUE, ROTATION_SPINNER_MAX_VALUE,
       DEFAULT_ROTATION, ROTATION_SPINNER_INCREMENTS_3);
+      this.rotationSpinner3.setId("rotationSpinner3");
+      this.rotationSpinner3.setEditable(true);
 
     RotationSpinner rotationSpinnerObject1 = new RotationSpinner();
     rotationSpinnerObject1.buildRotationSpinner(app, this.rotationSpinner1,
@@ -141,8 +148,14 @@ public class GeometryWindow {
       this.rotationSpinner1.getValueFactory(), this.rotationSpinner2.getValueFactory());
 
     this.zoomSpinner1 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, DEFAULT_ZOOM, ZOOM_SPINNER_INCREMENTS_1);
+    this.zoomSpinner1.setId("zoomSpinner1");
+    this.zoomSpinner1.setEditable(true);
     this.zoomSpinner2 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, DEFAULT_ZOOM, ZOOM_SPINNER_INCREMENTS_2);
+    this.zoomSpinner2.setId("zoomSpinner2");
+    this.zoomSpinner2.setEditable(true);
     this.zoomSpinner3 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, DEFAULT_ZOOM, ZOOM_SPINNER_INCREMENTS_3);
+    this.zoomSpinner3.setId("zoomSpinner3");
+    this.zoomSpinner3.setEditable(true);
 
     ZoomSpinner zoomSpinnerObject1 = new ZoomSpinner();
     zoomSpinnerObject1.buildZoomSpinner(app, this.zoomSpinner1, this.zoomSpinner2.getValueFactory(),

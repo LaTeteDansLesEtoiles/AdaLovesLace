@@ -13,7 +13,6 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.api.FxAssert.verifyThat;
 
 class MainWindowFunctionalTest extends AppFunctionalTestParent {
@@ -35,12 +34,12 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
   @Test
   void testMainWindowShallBeDisplayedByDefault() {
-    assertTrue(isMainWindowDisplayed());
+    verifyThat(this.app.getPrimaryStage().isShowing(), org.hamcrest.Matchers.is(true));
   }
 
   @Test
   void testMainWindowTitle() {
-    assertEquals(MAIN_WINDOW_TITLE, getMainWindowTitle());
+    verifyThat(this.app.getPrimaryStage().getTitle(), org.hamcrest.Matchers.is(MAIN_WINDOW_TITLE));
   }
 
   /**
@@ -51,27 +50,33 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testDrawSnowflake(FxRobot robot) {
     // Given
-    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-    synchronizeTask(() -> drawASnowflake(robot));
-    sleepMainThread();
+    selectAndClickOnSnowflakePatternButton(robot);
+    drawASnowflake(robot);
+    
+    // Wait for the snowflake to be properly drawn
+    assertCondition(() -> {
+      Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
+      Color color = getColor(pointToCheck);
+      return !ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(color) && 
+             !ColorMatchers.isColor(Color.WHITE).matches(color);
+    }, "Snowflake to be properly drawn on canvas");
 
     // When
     // Move mouse and get the color of the pixel under the pointer
     Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
-    synchronizeTask(() -> robot.moveTo(pointToCheck));
+    robot.moveTo(pointToCheck);
 
     // Then
     foundColorOnGrid = getColor(pointToCheck);
 
     // If we choose a point in the snowflake, it must not be of the same color as the grid dots
-    assertFalse(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
+    verifyThat(foundColorOnGrid, org.hamcrest.Matchers.not(ColorMatchers.isColor(GRAY_DOTS_COLOR)));
 
     // If we choose a point in the snowflake, it must not be of the same color as the grid background
-    assertFalse(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
+    verifyThat(foundColorOnGrid, org.hamcrest.Matchers.not(ColorMatchers.isColor(Color.WHITE)));
 
     // If we choose a point in the snowflake, it must be of the right color
-    assertTrue(ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR).matches(foundColorOnGrid),
-      "Expected color: " + SNOWFLAKE_DOT_COLOR + ", actual color: " + foundColorOnGrid);
+    verifyThat(foundColorOnGrid, ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR));
   }
 
   /**
@@ -113,7 +118,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     // If we click on a grid dot, it is gray
-    assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
+    verifyThat(foundColorOnGrid, ColorMatchers.isColor(GRAY_DOTS_COLOR));
   }
 
 
@@ -125,8 +130,8 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testUndoSnowflake(FxRobot robot) {
     // Given
-    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-    synchronizeTask(() -> drawASnowflake(robot));
+    selectAndClickOnSnowflakePatternButton(robot);
+    drawASnowflake(robot);
 
     Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
 
@@ -135,15 +140,14 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
 
     // When: issue an "Undo knot" command
-    synchronizeTask(UndoKnotButton::undoKnot);
+    UndoKnotButton.undoKnot();
 
     // Then
     // Move the mouse and get the color of the pixel under the pointer
     snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     Color foundColorOnGridAfterUndo = getColor(snowflakePoint);
 
-    assertNotEquals(foundColorOnGridAfterUndo, foundColorOnGridBeforeUndo,
-      "The color before and after undo must not be the same!");
+    verifyThat(foundColorOnGridAfterUndo, org.hamcrest.Matchers.not(ColorMatchers.isColor(foundColorOnGridBeforeUndo)));
   }
 
   /**
@@ -154,8 +158,8 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testRedoSnowflake(FxRobot robot) {
     // Given
-    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-    synchronizeTask(() -> drawASnowflake(robot));
+    selectAndClickOnSnowflakePatternButton(robot);
+    drawASnowflake(robot);
 
     Point2D snowflakePoint = new Point2D(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
 
@@ -164,18 +168,17 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     Color foundColorOnGridBeforeRedo = getColor(snowflakePoint);
 
     // Issue an "Undo knot" command
-    synchronizeTask(UndoKnotButton::undoKnot);
+    UndoKnotButton.undoKnot();
 
     // When: Issue a "Redo knot" command
-    synchronizeTask(RedoKnotButton::redoKnot);
+    RedoKnotButton.redoKnot();
 
     // Then
     //  Move the mouse and get the color of the pixel under the pointer
     snowflakePoint = new Point2D(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
     Color foundColorOnGridAfterRedo = getColor(snowflakePoint);
 
-    assertEquals(foundColorOnGridAfterRedo, foundColorOnGridBeforeRedo,
-      "The color before and after redo must be the same!");
+    verifyThat(foundColorOnGridAfterRedo, ColorMatchers.isColor(foundColorOnGridBeforeRedo));
   }
 
   /**
@@ -186,8 +189,8 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
   @Test
   void testResetGrid(FxRobot robot) {
     // Given
-    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-    synchronizeTask(() -> drawASnowflake(robot));
+    selectAndClickOnSnowflakePatternButton(robot);
+    drawASnowflake(robot);
 
     // Move mouse and get the color of the pixel under the pointer
     Point2D pointToCheck = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
@@ -196,7 +199,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     Color foundColorOnGridBeforeReset = getColor(pointToCheck);
 
     // When: issue a "Reset diagram" command
-    synchronizeTask(ResetDiagramButton::resetDiagram);
+    ResetDiagramButton.resetDiagram();
 
     // Then
     //  Move the mouse and get the color of the pixel under the pointer
@@ -204,8 +207,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     robot.moveTo(pointToCheck);
     Color foundColorOnGridAfterReset = getColor(pointToCheck);
 
-    assertNotEquals(foundColorOnGridAfterReset, foundColorOnGridBeforeReset,
-      "The color before and after 'reset diagram' must not be the same!");
+    verifyThat(foundColorOnGridAfterReset, org.hamcrest.Matchers.not(ColorMatchers.isColor(foundColorOnGridBeforeReset)));
   }
 
   private String getMainWindowTitle() {

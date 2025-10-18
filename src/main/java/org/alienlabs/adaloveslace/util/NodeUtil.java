@@ -5,6 +5,7 @@ import javafx.scene.image.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.alienlabs.adaloveslace.App;
@@ -56,6 +57,12 @@ public class NodeUtil {
                 knot.getImageView()
         );
         copy(knot, copy);
+
+        // S'assurer que le nœud copié a un rectangle de sélection
+        if (copy.getSelection() == null) {
+            Rectangle rec = new GridUtil(app.getMovablePane()).newRectangle(copy, Color.BLUE);
+            copy.setSelection(rec);
+        }
 
         return copy;
     }

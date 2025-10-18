@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.testfx.api.FxAssert.verifyThat;
 
 class DeletionButtonFunctionalTest extends AppFunctionalTestParent {
 
@@ -30,24 +29,36 @@ class DeletionButtonFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_delete_one_knot_leaving_other_knot_untouched(final FxRobot robot) {
     // Given
-    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-    synchronizeTask(() -> drawSecondSnowflake(robot));
-    synchronizeTask(() -> drawASnowflake(robot));
+    selectAndClickOnSnowflakePatternButton(robot);
+    drawSecondSnowflake(robot);
+    drawASnowflake(robot);
 
     // When
-    synchronizeTask(() -> selectDeleteMode(robot));
-    synchronizeTask(() -> selectFirstSnowflake(robot));
+    selectDeleteMode(robot);
+    selectSnowflake(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y, 0);
 
     // Then
-    this.sleepMainThread();
-    assertEquals(1, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().
-            stream().toList().size());
-    assertTrue(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().toList().isEmpty());
+    // Wait for the deletion to complete
+    assertCondition(() -> {
+      try {
+        int displayedKnots = this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().stream().toList().size();
+        return displayedKnots == 1;
+      } catch (Exception e) {
+        return false;
+      }
+    }, "One knot to be deleted, leaving one remaining");
+    
+    // Verify that exactly one knot remains displayed
+    verifyThat(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().stream().toList().size(), 
+               org.hamcrest.Matchers.is(1));
+    
+    // Verify that no knots are selected
+    verifyThat(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().stream().toList().isEmpty(), 
+               org.hamcrest.Matchers.is(true));
 
-    assertEquals(SECOND_SNOWFLAKE_PIXEL_X, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().
-            stream().findFirst().get().getX());
-    assertEquals(315d, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().
-            stream().findFirst().get().getX());
+    // Verify the remaining knot is at the correct position
+    verifyThat(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().
+            stream().findFirst().get().getX(), org.hamcrest.Matchers.is(SECOND_SNOWFLAKE_PIXEL_X));
   }
 
   /**
@@ -58,23 +69,39 @@ class DeletionButtonFunctionalTest extends AppFunctionalTestParent {
   @Test
   void should_delete_two_knots_leaving_other_knot_untouched(final FxRobot robot) {
     // Given
-    synchronizeTask(() -> selectAndClickOnSnowflakePatternButton(robot));
-    synchronizeTask(() -> drawASnowflake(robot));
-    synchronizeTask(() -> drawSecondSnowflake(robot));
-    synchronizeTask(() -> drawOtherSnowflake(robot)); // Not to be duplicated
+    selectAndClickOnSnowflakePatternButton(robot);
+    drawASnowflake(robot);
+    drawSecondSnowflake(robot);
+    drawOtherSnowflake(robot); // Not to be duplicated
 
     // When
-    synchronizeTask(() -> selectDeleteMode(robot));
-    synchronizeTask(() -> selectFirstSnowflake(robot));
-    synchronizeTask(() -> selectSecondSnowflake(robot));
+    selectDeleteMode(robot);
+    selectSnowflake(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y, 0);
+    selectSnowflake(SECOND_SNOWFLAKE_PIXEL_X, SECOND_SNOWFLAKE_PIXEL_Y, 1); // The first 2 snowflakes shall be selected, ready to be copied
 
     // Then
-    this.sleepMainThread();
-    assertTrue(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().stream().toList().isEmpty());
-    assertEquals(1, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size());
+    // Wait for the deletion to complete
+    assertCondition(() -> {
+      try {
+        int displayedKnots = this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().stream().toList().size();
+        int selectedKnots = this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size();
+        return displayedKnots == 0 && selectedKnots == 1;
+      } catch (Exception e) {
+        return false;
+      }
+    }, "Two knots to be deleted, leaving one selected");
+    
+    // Verify that no knots are displayed
+    verifyThat(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().stream().toList().isEmpty(), 
+               org.hamcrest.Matchers.is(true));
+    
+    // Verify that one knot is selected
+    verifyThat(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size(), 
+               org.hamcrest.Matchers.is(1));
 
-    assertEquals(OTHER_SNOWFLAKE_PIXEL_X, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
-            stream().findFirst().get().getX());
+    // Verify the selected knot is at the correct position
+    verifyThat(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().
+            stream().findFirst().get().getX(), org.hamcrest.Matchers.is(OTHER_SNOWFLAKE_PIXEL_X));
   }
 
 }
