@@ -271,10 +271,21 @@ public class GridEvents {
       app.getOptionalDotGrid().clearSelections();
       app.getOptionalDotGrid().clearHovered();
 
-      // Déplacer les nœuds sélectionnés vers les nœuds affichés
-      List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-      displayedKnots.addAll(selectedKnots);
-      app.getOptionalDotGrid().getDiagram().getCurrentStep().setDisplayedKnots(displayedKnots);
+      // Nettoyer les sélections et hover des nœuds originaux
+      for (Knot knot : selectedKnots) {
+        if (knot.getSelection() != null) {
+          app.getMovablePane().getChildren().remove(knot.getSelection());
+          knot.setSelection(null);
+        }
+        if (knot.getHovered() != null) {
+          app.getMovablePane().getChildren().remove(knot.getHovered());
+          knot.setHovered(null);
+        }
+        // Garder les handles car ils sont nécessaires pour le drag and drop
+      }
+
+      // Ne pas ajouter les nœuds originaux à displayedKnots pour éviter qu'ils se déplacent
+      // Les nœuds originaux restent dans selectedKnots mais ne sont pas visibles
 
       // Créer les copies avec leurs nouveaux rectangles de sélection
       for (Knot knot : selectedKnots) {
@@ -287,6 +298,7 @@ public class GridEvents {
         copiedKnot.setSelection(rec);
         app.getMovablePane().getChildren().add(rec);
       }
+
 
       // Mettre à jour la liste des nœuds sélectionnés
       app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(dragKnots);
