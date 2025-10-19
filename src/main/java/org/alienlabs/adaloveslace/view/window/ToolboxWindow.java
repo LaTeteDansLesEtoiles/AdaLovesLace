@@ -142,11 +142,11 @@ public class ToolboxWindow {
         this.colorButton = new ColorButton(app);
         this.backInBlackButton = new BackInBlackButton(app);
         
-        // Positionner les boutons juste en dessous des patterns dans l'ordre original
+        // Positionner les boutons avec un espace entre le bouton "texte" et les patterns
         parent.add(
                 this.textButton,
                 0,
-                1
+                1  // Décalé d'une ligne pour laisser de l'espace avec les patterns
         );
         
         // Les boutons de StateWindow seront ajoutés au VBox arrowsContainer à droite
@@ -155,22 +155,22 @@ public class ToolboxWindow {
         parent.add(
                 this.addKnotButton,
                 0,
-                2
+                4  // Décalé de deux lignes
         );
         parent.add(
                 this.resetAllButton,
                 1,
-                2
+                4  // Décalé de deux lignes
         );
         parent.add(
                 this.colorButton,
                 0,
-                3
+                5  // Décalé de deux lignes
         );
         parent.add(
                 this.backInBlackButton,
                 1,
-                3
+                5  // Décalé de deux lignes
         );
 
         // Les boutons de géométrie et les flèches sont maintenant gérés dans createToolboxStage
@@ -406,20 +406,18 @@ public class ToolboxWindow {
         geometryGrid.add(rotationButton, 0, 3);
         geometryGrid.add(zoomButton, 1, 3);
         
-        // Ligne 4 : Boutons de dessin et sélection
         if (this.drawingButton != null) {
-            geometryGrid.add(this.drawingButton, 0, 4);
+            geometryGrid.add(this.drawingButton, 0, 7);
         }
         if (this.selectionButton != null) {
-            geometryGrid.add(this.selectionButton, 1, 4);
+            geometryGrid.add(this.selectionButton, 1, 7);
         }
         
-        // Ligne 5 : Boutons d'effacement et copie
         if (this.deletionButton != null) {
-            geometryGrid.add(this.deletionButton, 0, 5);
+            geometryGrid.add(this.deletionButton, 0, 8);
         }
         if (this.duplicationButton != null) {
-            geometryGrid.add(this.duplicationButton, 1, 5);
+            geometryGrid.add(this.duplicationButton, 1, 8);
         }
         
         topRow.getChildren().add(geometryGrid);
@@ -432,6 +430,7 @@ public class ToolboxWindow {
         arrowsGrid.setVgap(5);
         arrowsGrid.setHgap(5);
         arrowsGrid.setPadding(new Insets(5));
+        arrowsGrid.setAlignment(Pos.CENTER); // Aligner les flèches au centre de leur colonne
         
         // Ajouter les flèches au GridPane séparé (carré 3x3)
         // Ligne du haut : UpLeft, Up, UpRight
@@ -492,6 +491,9 @@ public class ToolboxWindow {
         arrowsContainer.setAlignment(Pos.TOP_CENTER);
         arrowsContainer.setSpacing(10);
         
+        // Ajouter un espace pour aligner verticalement avec les patterns et spinners
+        arrowsContainer.getChildren().add(new Region()); // Espace pour aligner avec les patterns
+        
         // Ajouter les flèches
         arrowsContainer.getChildren().add(arrowsGrid);
         
@@ -514,17 +516,20 @@ public class ToolboxWindow {
         visibleButton.setPrefWidth(BUTTON_MAX_WIDTH); // Largeur suffisante pour le texte français
         
         // Ajouter les boutons dans l'ordre souhaité
+        arrowsContainer.getChildren().add(new Region());
         arrowsContainer.getChildren().add(changeGridButton); // Bouton changer grille sous les flèches
         arrowsContainer.getChildren().add(this.gridNameLabel); // Nom de la grille sous le bouton changer grille
-        arrowsContainer.getChildren().add(showQuitButton); // Bouton quitter en dessous du label de la grille
         
+        // Ajouter des espaces pour descendre le bouton quitter d'une ligne
+        arrowsContainer.getChildren().add(new Region()); // Espace pour descendre le bouton quitter
+        
+        arrowsContainer.getChildren().add(new Region()); // Espace 1
+        arrowsContainer.getChildren().add(showQuitButton); // Bouton quitter descendu d'une ligne
+
         // Ajouter des espaces pour descendre de 5 lignes au total
         arrowsContainer.getChildren().add(new Region()); // Espace 1
-        arrowsContainer.getChildren().add(new Region()); // Espace 2
-        arrowsContainer.getChildren().add(new Region()); // Espace 3
-        arrowsContainer.getChildren().add(new Region()); // Espace 4
-        arrowsContainer.getChildren().add(new Region()); // Espace 5
-        
+        arrowsContainer.getChildren().add(new Region()); // Espace 1
+
         // Ajouter les boutons d'édition au-dessus des boutons StateWindow
         arrowsContainer.getChildren().add(this.undoKnotButton); // Bouton annuler un noeud
         arrowsContainer.getChildren().add(new RedoKnotButton(resourceBundle.getString(REDO_KNOT), app)); // Bouton refaire un noeud
@@ -599,10 +604,10 @@ public class ToolboxWindow {
         tooltip2.setShowDuration(TOOLTIPS_DURATION);
         printButton.setTooltip(tooltip2);
 
-        parent.add(getPrintersButton, 0, 7);
-        parent.add(printButton, 1, 7);
+        parent.add(getPrintersButton, 0, 12);  // Décalé de deux lignes
+        parent.add(printButton, 1, 12);  // Décalé de deux lignes
         PrintersListView listView = new PrintersListView();
-        parent.add(listView, 0, 8);
+        parent.add(listView, 0, 13);  // Décalé d'une ligne
 
         PrintUtil printer = new PrintUtil(app);
         printer.printersButtonOnAction(listView, getPrintersButton);
@@ -633,12 +638,12 @@ public class ToolboxWindow {
         ExportImageButton exportImageButton = new ExportImageButton(app, resourceBundle.getString(EXPORT_IMAGE));
         ExportPdfButton exportPdfButton = new ExportPdfButton(app, resourceBundle.getString(EXPORT_PDF_BUTTON_NAME));
 
-        buttonsPane.add(saveButton, 0, 4);
-        buttonsPane.add(saveAsButton, 1, 4);
-        buttonsPane.add(loadButton, 0, 5);
-        buttonsPane.add(shareButton, 1, 5);
-        buttonsPane.add(exportImageButton, 0, 6);
-        buttonsPane.add(exportPdfButton, 1, 6);
+        buttonsPane.add(saveButton, 0, 8);  // Décalé de deux lignes
+        buttonsPane.add(saveAsButton, 1, 8);  // Décalé de deux lignes
+        buttonsPane.add(loadButton, 0, 9);  // Décalé de deux lignes
+        buttonsPane.add(shareButton, 1, 9);  // Décalé de deux lignes
+        buttonsPane.add(exportImageButton, 0, 10);  // Décalé de deux lignes
+        buttonsPane.add(exportPdfButton, 1, 10);  // Décalé de deux lignes
     }
 
     public UndoKnotButton getUndoKnotButton() {
