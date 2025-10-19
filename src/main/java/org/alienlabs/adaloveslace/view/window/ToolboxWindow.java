@@ -1,14 +1,12 @@
 package org.alienlabs.adaloveslace.view.window;
 
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
@@ -64,7 +62,7 @@ public class ToolboxWindow {
 
     public static final double DEFAULT_TOOLBOX_WINDOW_X         = 600d;
     public static final double DEFAULT_TOOLBOX_WINDOW_Y         = DEFAULT_MAIN_WINDOW_Y;
-    public static final double DEFAULT_TOOLBOX_WINDOW_WIDTH     = 950d; // Agrandi de 550 à 950
+    public static final double DEFAULT_TOOLBOX_WINDOW_WIDTH     = 1000d; // Agrandi de 550 à 950
     public static final double MENU_BAR_Y                       = 0d;
     public static final int MAX_PATTERNS_WITHOUT_SCROLL         = 14; // 7 lignes × 2 colonnes = 14 patterns max
     
@@ -92,6 +90,7 @@ public class ToolboxWindow {
     public static final int ZOOM_SPINNER_INCREMENTS_2             = 2;
     public static final int ZOOM_SPINNER_INCREMENTS_3             = 3;
     public static final double BUTTON_MAX_WIDTH                   = 400d;
+    public static final double MIN_TOOLBOX_WIDTH_FOR_SCROLL       = 700d;
 
     private List<String> classpathResourceFiles;
 
@@ -148,36 +147,7 @@ public class ToolboxWindow {
         this.colorButton = new ColorButton(app);
         this.backInBlackButton = new BackInBlackButton(app);
         
-        // Positionner les boutons avec un espace entre le bouton "texte" et les patterns
-        parent.add(
-                this.textButton,
-                0,
-                1  // Décalé d'une ligne pour laisser de l'espace avec les patterns
-        );
-        
-        // Les boutons de StateWindow seront ajoutés au VBox arrowsContainer à droite
-        
-        // Les boutons StateWindow sont maintenant dans le VBox arrowsContainer à droite
-        parent.add(
-                this.addKnotButton,
-                0,
-                4  // Décalé de deux lignes
-        );
-        parent.add(
-                this.resetAllButton,
-                1,
-                4  // Décalé de deux lignes
-        );
-        parent.add(
-                this.colorButton,
-                0,
-                5  // Décalé de deux lignes
-        );
-        parent.add(
-                this.backInBlackButton,
-                1,
-                5  // Décalé de deux lignes
-        );
+        // Les boutons sont maintenant ajoutés dans createToolboxStage avec un GridPane séparé
 
         // Les boutons de géométrie et les flèches sont maintenant gérés dans createToolboxStage
 
@@ -380,55 +350,113 @@ public class ToolboxWindow {
         GridPane geometryGrid = new GridPane();
         geometryGrid.setVgap(5);
         geometryGrid.setHgap(5);
-        geometryGrid.setPadding(new Insets(5));
+        geometryGrid.setPadding(new Insets(10, 5, 5, 5)); // Plus d'espace en haut (10px au lieu de 5px)
+        geometryGrid.setAlignment(Pos.TOP_CENTER); // Aligner en haut pour que les spinners soient au même niveau Y
         
         // Ajouter les boutons de géométrie au GridPane (2 colonnes)
         // Ligne 0 : Spinners de rotation et zoom
         if (this.rotationSpinner1 != null) {
             geometryGrid.add(this.rotationSpinner1, 0, 0);
+            GridPane.setHalignment(this.rotationSpinner1, HPos.CENTER);
         }
         if (this.zoomSpinner1 != null) {
             geometryGrid.add(this.zoomSpinner1, 1, 0);
+            GridPane.setHalignment(this.zoomSpinner1, HPos.CENTER);
         }
         
         // Ligne 1 : Spinners de rotation et zoom
         if (this.rotationSpinner2 != null) {
             geometryGrid.add(this.rotationSpinner2, 0, 1);
+            GridPane.setHalignment(this.rotationSpinner2, HPos.CENTER);
         }
         if (this.zoomSpinner2 != null) {
             geometryGrid.add(this.zoomSpinner2, 1, 1);
+            GridPane.setHalignment(this.zoomSpinner2, HPos.CENTER);
         }
         
         // Ligne 2 : Spinners de rotation et zoom
         if (this.rotationSpinner3 != null) {
             geometryGrid.add(this.rotationSpinner3, 0, 2);
+            GridPane.setHalignment(this.rotationSpinner3, HPos.CENTER);
         }
         if (this.zoomSpinner3 != null) {
             geometryGrid.add(this.zoomSpinner3, 1, 2);
+            GridPane.setHalignment(this.zoomSpinner3, HPos.CENTER);
         }
         
         // Ligne 3 : Boutons rotation et zoom
         geometryGrid.add(rotationButton, 0, 3);
+        GridPane.setHalignment(rotationButton, HPos.CENTER);
         geometryGrid.add(zoomButton, 1, 3);
+        GridPane.setHalignment(zoomButton, HPos.CENTER);
         
         if (this.drawingButton != null) {
             geometryGrid.add(this.drawingButton, 0, 7);
+            GridPane.setHalignment(this.drawingButton, HPos.CENTER);
         }
         if (this.selectionButton != null) {
             geometryGrid.add(this.selectionButton, 1, 7);
+            GridPane.setHalignment(this.selectionButton, HPos.CENTER);
         }
         
         if (this.deletionButton != null) {
             geometryGrid.add(this.deletionButton, 0, 8);
+            GridPane.setHalignment(this.deletionButton, HPos.CENTER);
         }
         if (this.duplicationButton != null) {
             geometryGrid.add(this.duplicationButton, 1, 8);
+            GridPane.setHalignment(this.duplicationButton, HPos.CENTER);
         }
         
-        topRow.getChildren().add(geometryGrid);
+        // Ajouter les boutons de miroir avec 2 lignes d'espace supplémentaires
+        VerticalFlippingButton verticalFlippingButton = new VerticalFlippingButton(app, resourceBundle.getString(VERTICAL_FLIPPING_BUTTON_NAME));
+        util.getImageView("flip_vertically.png", verticalFlippingButton, false);
+        geometryGrid.add(verticalFlippingButton, 0, 12); // Ligne 12 pour avoir 2 lignes d'espace supplémentaires
+        GridPane.setHalignment(verticalFlippingButton, HPos.CENTER);
+        
+        HorizontalFlippingButton horizontalFlippingButton = new HorizontalFlippingButton(app, resourceBundle.getString(HORIZONTAL_FLIPPING_BUTTON_NAME));
+        util.getImageView("flip_horizontally.png", horizontalFlippingButton, false);
+        geometryGrid.add(horizontalFlippingButton, 1, 12); // Ligne 12 pour avoir 2 lignes d'espace supplémentaires
+        GridPane.setHalignment(horizontalFlippingButton, HPos.CENTER);
         
         // Ajouter le HBox au GridPane principal
         parent.add(topRow, 0, 0, 4, 1);
+        
+        // Créer un GridPane séparé pour les boutons de la première colonne avec marge
+        GridPane buttonsGrid = new GridPane();
+        buttonsGrid.setPadding(new Insets(20, 0, 0, 0)); // Marge haute de 20px seulement
+        buttonsGrid.setVgap(5);
+        buttonsGrid.setHgap(5);
+        
+        // Créer un HBox pour contenir la marge fixe et les boutons
+        HBox buttonsContainer = new HBox();
+        buttonsContainer.setSpacing(0);
+        
+        // Ajouter une marge fixe de 8 pixels
+        Region leftMargin = new Region();
+        leftMargin.setMinWidth(8);
+        leftMargin.setMaxWidth(8);
+        leftMargin.setPrefWidth(8);
+        leftMargin.setStyle("-fx-background-color: transparent;"); // S'assurer qu'elle ne s'agrandit pas
+        HBox.setHgrow(leftMargin, Priority.NEVER); // Empêcher l'agrandissement
+        buttonsContainer.getChildren().add(leftMargin);
+        
+        // Ajouter les boutons au GridPane séparé
+        buttonsGrid.add(this.textButton, 0, 0);
+        buttonsGrid.add(this.addKnotButton, 0, 1);
+        buttonsGrid.add(this.resetAllButton, 1, 1);
+        buttonsGrid.add(this.colorButton, 0, 2);
+        buttonsGrid.add(this.backInBlackButton, 1, 2);
+        
+        // Ajouter les boutons de sauvegarde et impression
+        buildFileButtons(app, buttonsGrid);
+        buildPrintButtons(app, buttonsGrid);
+        
+        // Ajouter le buttonsGrid au buttonsContainer
+        buttonsContainer.getChildren().add(buttonsGrid);
+        
+        // Ajouter le buttonsContainer au GridPane principal
+        parent.add(buttonsContainer, 0, 1, 2, 1); // Colonnes 0-1, ligne 1
         
         // Créer un GridPane séparé pour les flèches avec espacement uniforme
         GridPane arrowsGrid = new GridPane();
@@ -480,16 +508,18 @@ public class ToolboxWindow {
         // Créer un layout séparé pour les flèches - ne pas les ajouter au GridPane principal
         // Les flèches seront ajoutées au VBox root séparément
         
-        // Les boutons de base sont déjà correctement positionnés dans createToolboxPane
+        // Les boutons de base sont maintenant dans le GridPane buttonsGrid avec marge
 
-        buildPrintButtons(app, parent);
-
-        // Créer un HBox pour contenir le GridPane principal et les flèches
+        // Créer un HBox pour contenir les 3 colonnes : patterns, spinners, flèches
         HBox mainContainer = new HBox();
-        mainContainer.setSpacing(10);
+        mainContainer.setSpacing(20);
+        mainContainer.setAlignment(Pos.TOP_CENTER); // Centrer automatiquement tous les éléments
         
-        // Ajouter le GridPane principal à gauche
+        // Ajouter le GridPane principal (patterns + boutons) à gauche
         mainContainer.getChildren().add(parent);
+        
+        // Ajouter la colonne du milieu (spinners et boutons de géométrie) au centre
+        mainContainer.getChildren().add(geometryGrid);
         
         // Créer un VBox pour les flèches et les boutons supplémentaires à droite
         VBox arrowsContainer = new VBox();
@@ -559,13 +589,39 @@ public class ToolboxWindow {
         root.setPrefSize(app.getResizes().getToolboxWindowWidth(), computeWindowHeight(app));
         root.getStyleClass().add("toolbox");
 
-        Scene toolboxScene = new Scene(root);
+        // Créer un ScrollPane global pour toute la ToolboxWindow
+        ScrollPane globalScrollPane = new ScrollPane();
+        globalScrollPane.setContent(root);
+        globalScrollPane.setFitToWidth(true); // Ajuster automatiquement la largeur
+        globalScrollPane.setFitToHeight(true);
+        
+        // Ne pas définir de largeur minimale sur le contenu pour éviter la barre au lancement
+        // La barre horizontale apparaîtra seulement si la fenêtre est redimensionnée en dessous de MIN_TOOLBOX_WIDTH_FOR_SCROLL
+        
+        // Ajouter un listener pour ajuster la largeur minimale du contenu quand la fenêtre est redimensionnée
+        toolboxStage.widthProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.doubleValue() < MIN_TOOLBOX_WIDTH_FOR_SCROLL) {
+                root.setMinWidth(MIN_TOOLBOX_WIDTH_FOR_SCROLL);
+            } else {
+                root.setMinWidth(Region.USE_PREF_SIZE);
+            }
+        });
+        
+        // Barre horizontale : AS_NEEDED seulement quand nécessaire
+        globalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        globalScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        globalScrollPane.setPannable(true);
+
+        Scene toolboxScene = new Scene(globalScrollPane);
         toolboxScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 
         toolboxStage.setX(app.getWindowRepositionEvents().getToolboxWindowX());
         toolboxStage.setY(app.getWindowRepositionEvents().getToolboxWindowY());
         toolboxStage.setWidth(app.getResizes().getToolboxWindowWidth());
         toolboxStage.setHeight(computeWindowHeight(app));
+        toolboxStage.setMinWidth(400); // Largeur minimale pour permettre le redimensionnement
+        toolboxStage.setMinHeight(300); // Hauteur minimale pour permettre le redimensionnement
+        toolboxStage.setResizable(true); // Permettre le redimensionnement
         toolboxStage.setScene(toolboxScene);
         toolboxStage.setTitle(resourceBundle.getString(TOOLBOX_TITLE));
 
@@ -587,14 +643,14 @@ public class ToolboxWindow {
     }
 
     public void createToolboxButtons(GridPane parent, App app) {
-        buildFileButtons(app, parent);
+        // Les boutons de fichier sont maintenant dans le buttonsGrid
         buildEditButtons(app);
     }
 
     /**
      * Print diagram buttons.
      */
-    public void buildPrintButtons(App app, GridPane parent) {
+    public void buildPrintButtons(App app, GridPane buttonsPane) {
         Button getPrintersButton = new Button(resourceBundle.getString(GET_PRINTERS_BUTTON_NAME));
         final Tooltip tooltip = new Tooltip();
         tooltip.setText(resourceBundle.getString("GET_PRINTERS_BUTTON_TOOLTIP"));
@@ -607,10 +663,10 @@ public class ToolboxWindow {
         tooltip2.setShowDuration(TOOLTIPS_DURATION);
         printButton.setTooltip(tooltip2);
 
-        parent.add(getPrintersButton, 0, 12);  // Décalé de deux lignes
-        parent.add(printButton, 1, 12);  // Décalé de deux lignes
+        buttonsPane.add(getPrintersButton, 0, 6);  // Ligne 6
+        buttonsPane.add(printButton, 1, 6);  // Ligne 6
         PrintersListView listView = new PrintersListView();
-        parent.add(listView, 0, 13);  // Décalé d'une ligne
+        buttonsPane.add(listView, 0, 7);  // Ligne 7
 
         PrintUtil printer = new PrintUtil(app);
         printer.printersButtonOnAction(listView, getPrintersButton);
@@ -631,12 +687,12 @@ public class ToolboxWindow {
         ExportImageButton exportImageButton = new ExportImageButton(app, resourceBundle.getString(EXPORT_IMAGE));
         ExportPdfButton exportPdfButton = new ExportPdfButton(app, resourceBundle.getString(EXPORT_PDF_BUTTON_NAME));
 
-        buttonsPane.add(saveButton, 0, 8);  // Décalé de deux lignes
-        buttonsPane.add(saveAsButton, 1, 8);  // Décalé de deux lignes
-        buttonsPane.add(loadButton, 0, 9);  // Décalé de deux lignes
-        buttonsPane.add(shareButton, 1, 9);  // Décalé de deux lignes
-        buttonsPane.add(exportImageButton, 0, 10);  // Décalé de deux lignes
-        buttonsPane.add(exportPdfButton, 1, 10);  // Décalé de deux lignes
+        buttonsPane.add(saveButton, 0, 3);  // Ligne 3
+        buttonsPane.add(saveAsButton, 1, 3);  // Ligne 3
+        buttonsPane.add(loadButton, 0, 4);  // Ligne 4
+        buttonsPane.add(shareButton, 1, 4);  // Ligne 4
+        buttonsPane.add(exportImageButton, 0, 5);  // Ligne 5
+        buttonsPane.add(exportPdfButton, 1, 5);  // Ligne 5
     }
 
     public UndoKnotButton getUndoKnotButton() {
@@ -764,32 +820,7 @@ public class ToolboxWindow {
         zoomSpinnerObject3.buildZoomSpinner(app, this.zoomSpinner3, this.zoomSpinner1.getValueFactory(),
             this.zoomSpinner2.getValueFactory());
 
-        // Organiser les boutons directement dans le GridPane sur plusieurs lignes compactes
-        // Ligne 1 : Spinners de rotation et zoom
-        parent.add(this.rotationSpinner1, 2, startRow);
-        parent.add(this.zoomSpinner1, 3, startRow);
-        parent.add(this.rotationSpinner2, 2, startRow + 1);
-        parent.add(this.zoomSpinner2, 3, startRow + 1);
-        parent.add(this.rotationSpinner3, 2, startRow + 2);
-        parent.add(this.zoomSpinner3, 3, startRow + 2);
-        
-        // Ligne 2 : Boutons rotation et zoom
-        parent.add(rotationButton, 2, startRow + 3);
-        parent.add(zoomButton, 3, startRow + 3);
-        
-        // Ligne vide pour espacement
-        
-        // Ligne 3 : Boutons principaux
-        parent.add(this.drawingButton, 2, startRow + 5);
-        parent.add(this.selectionButton, 3, startRow + 5);
-        parent.add(this.deletionButton, 2, startRow + 6);
-        parent.add(this.duplicationButton, 3, startRow + 6);
-        
-        // Ligne vide pour espacement
-        
-        // Ligne 4 : Boutons de retournement
-        parent.add(verticalFlippingButton, 2, startRow + 8);
-        parent.add(horizontalFlippingButton, 3, startRow + 8);
+        // Les boutons de géométrie sont maintenant ajoutés dans le geometryGrid dans createToolboxStage
     }
 
     // Getters pour les éléments de GeometryWindow

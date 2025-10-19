@@ -4,6 +4,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Pattern;
 import org.alienlabs.adaloveslace.domain.enumeration.PatternOrTextMode;
@@ -30,7 +32,18 @@ public class PatternButton extends ToggleButton {
     ImageView imageView = new ImageView(image);
     imageView.setFitWidth(BUTTONS_PREF_WIDTH);
     imageView.setFitHeight(BUTTONS_PREF_HEIGHT);
-    this.setGraphic(imageView);
+    
+    // Créer un Region avec fond blanc pour l'image
+    Region backgroundRegion = new Region();
+    backgroundRegion.setPrefWidth(BUTTONS_PREF_WIDTH + 4);
+    backgroundRegion.setPrefHeight(BUTTONS_PREF_HEIGHT + 4);
+    backgroundRegion.setStyle("-fx-background-color: white; -fx-background-radius: 2;");
+    
+    // Créer un StackPane pour contenir le fond et l'image
+    StackPane imageContainer = new StackPane();
+    imageContainer.getChildren().addAll(backgroundRegion, imageView);
+    
+    this.setGraphic(imageContainer);
     this.setGraphicTextGap(10d);
 
     this.getStyleClass().add(PATTERN_TEXT_AND_COLOR_BUTTON);

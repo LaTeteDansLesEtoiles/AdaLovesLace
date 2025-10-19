@@ -1,14 +1,11 @@
 package org.alienlabs.adaloveslace.view.component.grid;
 
-import javafx.scene.effect.Blend;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.ColorInput;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.domain.Pattern;
+import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +46,7 @@ public class PatternImageCache {
     
     public static ImageView getImageView(Pattern pattern, Optional<Color> color) {
         PatternColorKey key = new PatternColorKey(pattern, color.orElse(null));
-        return cache.computeIfAbsent(key, __ -> createImageView(pattern, color));
+        return cache.computeIfAbsent(key, k -> createImageView(pattern, color));
     }
 
     public static void updateKnotImageView(Knot knot) {
@@ -75,25 +72,12 @@ public class PatternImageCache {
             Image image = new Image(new FileInputStream(pattern.getAbsoluteFilename()));
             ImageView imageView = new ImageView(image);
             
-            // Si une couleur est spécifiée, l'appliquer
+            // Si une couleur est spécifiée, l'appliquer en remplaçant le noir
             if (color.isPresent()) {
-                // Créer un effet de coloration
-                ColorAdjust monochrome = new ColorAdjust();
-                monochrome.setSaturation(-1.0);
-                
-                Blend colorize = new Blend(
-                    BlendMode.MULTIPLY,
-                    monochrome,
-                    new ColorInput(
-                        0,
-                        0,
-                        image.getWidth(),
-                        image.getHeight(),
-                        color.get()
-                    )
-                );
-                
-                imageView.setEffect(colorize);
+                // Utiliser NodeUtil pour remplacer le noir par la couleur choisie
+                NodeUtil nodeUtil = new NodeUtil();
+                Image coloredImage = nodeUtil.replaceColoredPixels(image, color.get());
+                imageView.setImage(coloredImage);
             }
             
             return imageView;

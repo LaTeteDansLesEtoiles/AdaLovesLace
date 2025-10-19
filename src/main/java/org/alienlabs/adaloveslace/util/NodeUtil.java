@@ -140,16 +140,19 @@ public class NodeUtil {
         PixelReader reader = image.getPixelReader();
         PixelWriter writer = result.getPixelWriter();
 
+
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 Color color = reader.getColor(x, y);
                 if (backgroundColor.length == 0) {
+                    // Mode par défaut: remplacer le NOIR par la couleur choisie
                     if (isBlack(color)) {
                         writer.setColor(x, y, replacementColor);
                     } else {
                         writer.setColor(x, y, color);
                     }
                 } else {
+                    // Mode avec couleur de fond spécifiée: remplacer cette couleur
                     if (isBackgroundColor(backgroundColor[0], color)) {
                         writer.setColor(x, y, replacementColor);
                     } else {
@@ -158,13 +161,21 @@ public class NodeUtil {
                 }
             }
         }
+        
 
         return result;
     }
 
     private boolean isBlack(Color color) {
-        return color.getRed() == 0.0d && color.getGreen() == 0.0d && color.getBlue() == 0.0d && color.getOpacity() != 0.0d;
+        // Tolérance pour détecter les nuances de noir (RGB proche de 0)
+        double tolerance = 0.3;
+
+        return color.getRed() <= tolerance &&
+                         color.getGreen() <= tolerance &&
+                         color.getBlue() <= tolerance &&
+                         color.getOpacity() > (1d - tolerance);
     }
+    
 
     private boolean isBackgroundColor(Color backgroundColor, Color color) {
         return color.getRed() == backgroundColor.getRed() &&
@@ -175,26 +186,16 @@ public class NodeUtil {
 
     public void colorizeKnot(App app, Knot copiedKnot) {
         if (app.getOptionalDotGrid().getDiagram().getCurrentColor() != null) {
-            Color oldColor = copiedKnot.getColor().orElse(null);
+            Color newColor = app.getOptionalDotGrid().getDiagram().getCurrentColor();
 
-            if (oldColor != null) {
-                copiedKnot.setColor(Optional.of(app.getOptionalDotGrid().getDiagram().getCurrentColor()));
-                copiedKnot.getImageView().setImage(
-                        new NodeUtil().replaceColoredPixels(
-                                copiedKnot.getImageView().getImage(),
-                                app.getOptionalDotGrid().getDiagram().getCurrentColor(),
-                                oldColor
-                        )
-                );
-            } else {
-                copiedKnot.setColor(Optional.of(app.getOptionalDotGrid().getDiagram().getCurrentColor()));
-                copiedKnot.getImageView().setImage(
-                        new NodeUtil().replaceColoredPixels(
-                                copiedKnot.getImageView().getImage(),
-                                app.getOptionalDotGrid().getDiagram().getCurrentColor()
-                        )
-                );
-            }
+            // Toujours remplacer le noir, peu importe l'ancienne couleur
+            copiedKnot.setColor(Optional.of(newColor));
+            copiedKnot.getImageView().setImage(
+                    new NodeUtil().replaceColoredPixels(
+                            copiedKnot.getImageView().getImage(),
+                            newColor
+                    )
+            );
         }
     }
 

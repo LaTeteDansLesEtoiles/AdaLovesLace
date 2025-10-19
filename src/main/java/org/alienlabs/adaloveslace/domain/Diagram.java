@@ -427,6 +427,31 @@ public class Diagram {
                         .toList()
         );
 
+        // Vérifier s'il y a déjà un nœud du même type à la même position et le remplacer
+        Knot existingKnot = displayedKnots.stream()
+                .filter(knot -> Math.abs(knot.getX() - currentKnot.getX()) < 0.1 && 
+                               Math.abs(knot.getY() - currentKnot.getY()) < 0.1 &&
+                               // Même type : pattern sur pattern ou texte sur texte
+                               ((currentKnot.getPattern().isPresent() && knot.getPattern().isPresent()) ||
+                                (currentKnot.getPattern().isEmpty() && knot.getPattern().isEmpty())))
+                .findFirst()
+                .orElse(null);
+        
+        if (existingKnot != null) {
+            // Supprimer l'ancien nœud du même type
+            displayedKnots.remove(existingKnot);
+            app.getMovablePane().getChildren().remove(existingKnot.getImageView());
+            if (existingKnot.getSelection() != null) {
+                app.getMovablePane().getChildren().remove(existingKnot.getSelection());
+            }
+            if (existingKnot.getHovered() != null) {
+                app.getMovablePane().getChildren().remove(existingKnot.getHovered());
+            }
+            if (existingKnot.getHandle() != null) {
+                app.getMovablePane().getChildren().remove(existingKnot.getHandle());
+            }
+        }
+
         if (currentKnot.getPattern().isEmpty() && null != currentKnot.getTypedText()) {
             currentKnot.setText(Optional.of(currentKnot.getTypedText().toString()));
             selectedKnots.add(currentKnot);
