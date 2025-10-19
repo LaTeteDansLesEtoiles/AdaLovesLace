@@ -204,10 +204,11 @@ public class NodeUtil {
 
         app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
         app.getOptionalDotGrid().getDiagram()           .setCurrentMode(MouseMode.SELECTION);
-        app.getGeometryWindow().getDrawingButton()      .setSelected(false);
-        app.getGeometryWindow().getSelectionButton()    .setSelected(true);
-        app.getGeometryWindow().getDeletionButton()     .setSelected(false);
-        app.getGeometryWindow().getDuplicationButton()  .setSelected(false);
+        // Les boutons sont maintenant dans ToolboxWindow
+        // app.getGeometryWindow().getDrawingButton()      .setSelected(false);
+        // app.getGeometryWindow().getSelectionButton()    .setSelected(true);
+        // app.getGeometryWindow().getDeletionButton()     .setSelected(false);
+        // app.getGeometryWindow().getDuplicationButton()  .setSelected(false);
 
         app.getOptionalDotGrid().getDiagram().setCurrentKnot(null);
         diagram.getUpdateImage().run();

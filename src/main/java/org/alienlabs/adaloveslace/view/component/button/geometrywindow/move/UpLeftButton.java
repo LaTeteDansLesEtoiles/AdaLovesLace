@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid.moveKnotPause;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class UpLeftButton extends Button {
 

@@ -56,7 +56,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
       initDrawAndSelectSnowFlake(robot);
 
     // When
-    setSpinnerValue(robot, this.geometryWindow.getZoomSpinner1(), spinnerValue);
+    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner1(), spinnerValue);
 
     // Then
     assertZoomFactorEquals(expectedZoomFactor);
@@ -75,7 +75,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
       initDrawAndSelectSnowFlake(robot);
 
     // When
-    setSpinnerValue(robot, this.geometryWindow.getZoomSpinner2(), spinnerValue);
+    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner2(), spinnerValue);
 
     // Then
     assertZoomFactorEquals(expectedZoomFactor);
@@ -93,7 +93,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
       initDrawAndSelectSnowFlake(robot);
 
     // When
-    setSpinnerValue(robot, this.geometryWindow.getZoomSpinner3(), spinnerValue);
+    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner3(), spinnerValue);
 
     // Then
     assertZoomFactorEquals(expectedZoomFactor);
@@ -113,11 +113,11 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
       initDrawAndSelectSnowFlake(robot);
 
     // When
-    setSpinnerValue(robot, this.geometryWindow.getZoomSpinner1(), spinnerValue);
+    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner1(), spinnerValue);
 
     // Then
-    verifyThat(this.geometryWindow.getZoomSpinner2().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
-    verifyThat(this.geometryWindow.getZoomSpinner3().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+    verifyThat(this.toolboxWindow.getZoomSpinner2().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+    verifyThat(this.toolboxWindow.getZoomSpinner3().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
   }
 
   /**
@@ -134,11 +134,11 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
       initDrawAndSelectSnowFlake(robot);
 
     // When
-    setSpinnerValue(robot, this.geometryWindow.getZoomSpinner2(), spinnerValue);
+    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner2(), spinnerValue);
 
     // Then
-    verifyThat(this.geometryWindow.getZoomSpinner1().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
-    verifyThat(this.geometryWindow.getZoomSpinner3().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+    verifyThat(this.toolboxWindow.getZoomSpinner1().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+    verifyThat(this.toolboxWindow.getZoomSpinner3().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
   }
 
 
@@ -156,11 +156,11 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
       initDrawAndSelectSnowFlake(robot);
 
     // When
-    setSpinnerValue(robot, this.geometryWindow.getZoomSpinner3(), spinnerValue);
+    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner3(), spinnerValue);
 
     // Then
-    verifyThat(this.geometryWindow.getZoomSpinner1().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
-    verifyThat(this.geometryWindow.getZoomSpinner2().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+    verifyThat(this.toolboxWindow.getZoomSpinner1().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+    verifyThat(this.toolboxWindow.getZoomSpinner2().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
   }
 
   /**
@@ -174,7 +174,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     initDrawAndSelectSnowFlake(robot);
 
     // When
-    incrementSpinner(robot, this.geometryWindow.getZoomSpinner1());
+    incrementSpinner(robot, this.toolboxWindow.getZoomSpinner1());
 
     // Then
     assertZoomFactorEquals(1.1d);
@@ -191,7 +191,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     initDrawAndSelectSnowFlake(robot);
 
     // When
-    decrementSpinner(robot, this.geometryWindow.getZoomSpinner1());
+    decrementSpinner(robot, this.toolboxWindow.getZoomSpinner1());
 
     // Then
     assertZoomFactorEquals(0.9d);
@@ -208,7 +208,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     initDrawAndSelectSnowFlake(robot);
 
     // When
-    incrementSpinner(robot, this.geometryWindow.getZoomSpinner2());
+    incrementSpinner(robot, this.toolboxWindow.getZoomSpinner2());
 
     // Then
     assertZoomFactorEquals(1.2d);
@@ -225,7 +225,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     initDrawAndSelectSnowFlake(robot);
 
     // When
-    decrementSpinner(robot, this.geometryWindow.getZoomSpinner2());
+    decrementSpinner(robot, this.toolboxWindow.getZoomSpinner2());
 
     // Then
     assertZoomFactorEquals(0.8d);
@@ -242,7 +242,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     initDrawAndSelectSnowFlake(robot);
 
     // When
-    incrementSpinner(robot, this.geometryWindow.getZoomSpinner3());
+    incrementSpinner(robot, this.toolboxWindow.getZoomSpinner3());
 
     // Then
     assertZoomFactorEquals(1.3d);
@@ -259,7 +259,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     initDrawAndSelectSnowFlake(robot);
 
     // When
-    decrementSpinner(robot, this.geometryWindow.getZoomSpinner3());
+    decrementSpinner(robot, this.toolboxWindow.getZoomSpinner3());
 
     // Then
     assertZoomFactorEquals(0.7d);

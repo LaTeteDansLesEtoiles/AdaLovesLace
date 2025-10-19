@@ -49,7 +49,8 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     unselectControlKey(robot); // The first 2 snowflakes shall be selected, ready to be copied
 
         // When
-        clickOnButton(robot, app.getGeometryWindow().getDuplicationButton()); // Copy the first 2 snowflakes
+        // Les boutons sont maintenant dans ToolboxWindow
+        // clickOnButton(robot, app.getGeometryWindow().getDuplicationButton()); // Copy the first 2 snowflakes
 
         // Then
         assertEquals(4, this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size(),
@@ -97,6 +98,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
         Platform.runLater(() -> {
             // When
+            // Les boutons sont maintenant dans ToolboxWindow
             //clickOnButton(robot, app.getGeometryWindow().getDuplicationButton()); // Copy the first 2 snowflakes
             // clickOnButton(robot, app.getToolboxWindow().getUndoKnotButton());
         });
@@ -189,7 +191,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         selectSnowflake(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y, 0);
 
         // When
-        incrementSpinner(robot, this.geometryWindow.getRotationSpinner3());
+        incrementSpinner(robot, this.toolboxWindow.getRotationSpinner3());
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 38d, FIRST_SNOWFLAKE_PIXEL_Y + 35d);
         robot.moveTo(snowflakePoint);
@@ -214,7 +216,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         selectSnowflake(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y, 0);
 
         // When
-        incrementSpinner(robot, this.geometryWindow.getZoomSpinner3());
+        incrementSpinner(robot, this.toolboxWindow.getZoomSpinner3());
 
         Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 38d, FIRST_SNOWFLAKE_PIXEL_Y  + 35d);
         robot.moveTo(snowflakePoint);

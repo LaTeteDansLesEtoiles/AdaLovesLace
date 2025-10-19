@@ -6,14 +6,13 @@ import javafx.scene.input.KeyEvent;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
-import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.GEOMETRY_BUTTONS_HEIGHT;
 import static org.alienlabs.adaloveslace.view.window.event.GridEvents.keyHandler;
 
 public class SelectionButton extends ToggleButton {
@@ -22,9 +21,9 @@ public class SelectionButton extends ToggleButton {
 
   private static final Logger logger                  = LoggerFactory.getLogger(SelectionButton.class);
 
-  public SelectionButton(App app, GeometryWindow window, String buttonLabel) {
+  public SelectionButton(App app, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(_ -> onSetSelectionModeAction(app, window));
+    this.setOnMouseClicked(_ -> onSetSelectionModeAction(app));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
@@ -33,7 +32,7 @@ public class SelectionButton extends ToggleButton {
     this.setTooltip(tooltip);
   }
 
-  public static void onSetSelectionModeAction(App app, GeometryWindow window) {
+  public static void onSetSelectionModeAction(App app) {
     logger.debug("Setting selection mode");
 
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
@@ -45,10 +44,10 @@ public class SelectionButton extends ToggleButton {
 
     GridEvents.removeEventsFromGrid(app);
 
-    window.getDrawingButton()     .setSelected(false);
-    window.getSelectionButton()   .setSelected(true);
-    window.getDeletionButton()    .setSelected(false);
-    window.getDuplicationButton() .setSelected(false);
+    app.getToolboxWindow().getDrawingButton()     .setSelected(false);
+    app.getToolboxWindow().getSelectionButton()   .setSelected(true);
+    app.getToolboxWindow().getDeletionButton()    .setSelected(false);
+    app.getToolboxWindow().getDuplicationButton() .setSelected(false);
   }
 
   public static void putAllEventsOnKnot(App app, Knot knot) {

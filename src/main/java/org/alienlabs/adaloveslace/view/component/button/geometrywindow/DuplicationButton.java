@@ -6,7 +6,6 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.util.NodeUtil;
-import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +16,8 @@ import java.util.List;
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.NEW_KNOT_GAP;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class DuplicationButton extends ToggleButton {
 
@@ -26,9 +25,9 @@ public class DuplicationButton extends ToggleButton {
 
   private static final Logger logger                  = LoggerFactory.getLogger(DuplicationButton.class);
 
-  public DuplicationButton(App app, GeometryWindow window, String buttonLabel) {
+  public DuplicationButton(App app, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onSetDuplicationModeAction(app, window));
+    this.setOnMouseClicked(event -> onSetDuplicationModeAction(app));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
     this.setId("duplicationButton");
 
@@ -38,7 +37,7 @@ public class DuplicationButton extends ToggleButton {
     this.setTooltip(tooltip);
   }
 
-  public static void onSetDuplicationModeAction(final App app, final GeometryWindow window) {
+  public static void onSetDuplicationModeAction(final App app) {
     logger.debug("Duplicating");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DUPLICATION);
 
@@ -62,10 +61,10 @@ public class DuplicationButton extends ToggleButton {
     newStep(displayedKnots, selectedKnotsCopy, true);
     GridEvents.removeEventsFromGrid(app);
 
-    window.getDrawingButton()     .setSelected(false);
-    window.getSelectionButton()   .setSelected(false);
-    window.getDeletionButton()    .setSelected(false);
-    window.getDuplicationButton() .setSelected(true);
+    app.getToolboxWindow().getDrawingButton()     .setSelected(false);
+    app.getToolboxWindow().getSelectionButton()   .setSelected(false);
+    app.getToolboxWindow().getDeletionButton()    .setSelected(false);
+    app.getToolboxWindow().getDuplicationButton() .setSelected(true);
   }
 
 }

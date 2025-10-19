@@ -16,7 +16,7 @@ import java.util.List;
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
-import static org.alienlabs.adaloveslace.view.window.StateWindow.STATE_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.STATE_BUTTONS_HEIGHT;
 
 public class SelectableButton extends ImageButton {
 

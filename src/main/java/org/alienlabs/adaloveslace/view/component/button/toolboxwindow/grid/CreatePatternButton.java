@@ -22,7 +22,7 @@ import java.util.List;
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class CreatePatternButton extends ImageButton {
 
@@ -55,10 +55,11 @@ public class CreatePatternButton extends ImageButton {
 
         app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.CREATE_PATTERN);
 
-        app.getGeometryWindow().getDrawingButton().setSelected(false);
-        app.getGeometryWindow().getSelectionButton().setSelected(false);
-        app.getGeometryWindow().getDeletionButton().setSelected(false);
-        app.getGeometryWindow().getDuplicationButton().setSelected(false);
+        // Les boutons sont maintenant dans ToolboxWindow
+        // app.getGeometryWindow().getDrawingButton().setSelected(false);
+        // app.getGeometryWindow().getSelectionButton().setSelected(false);
+        // app.getGeometryWindow().getDeletionButton().setSelected(false);
+        // app.getGeometryWindow().getDuplicationButton().setSelected(false);
 
         app.getOptionalDotGrid().clearSelections();
         app.getOptionalDotGrid().clearHovered();

@@ -105,7 +105,7 @@ public class FileUtil {
         app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
         diagram.setApp(app);
         app.getOptionalDotGrid().layoutChildren();
-        DrawingButton.onSetDrawModeAction(app, app.getGeometryWindow());
+        DrawingButton.onSetDrawModeAction(app);
     }
 
     private static void preparePrimaryStage(App app, Diagram diagram) {

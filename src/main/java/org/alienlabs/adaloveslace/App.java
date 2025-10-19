@@ -18,15 +18,15 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.domain.Diagram;
-import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
-import org.alienlabs.adaloveslace.util.*;
+import org.alienlabs.adaloveslace.util.FileUtil;
+import org.alienlabs.adaloveslace.util.NodeUtil;
+import org.alienlabs.adaloveslace.util.Preferences;
+import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.alienlabs.adaloveslace.view.component.AdaLovesLaceMenuBar;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
-import org.alienlabs.adaloveslace.view.window.GeometryWindow;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
-import org.alienlabs.adaloveslace.view.window.StateWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.alienlabs.adaloveslace.view.window.event.WindowRepositionEvents;
 import org.alienlabs.adaloveslace.view.window.event.WindowResizeEvents;
@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_BUTTONS;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.BUTTON_SELECTED;
 import static org.alienlabs.adaloveslace.view.window.event.GridEvents.getMouseDoubleRightClickOnGridEventHendler;
@@ -114,9 +113,7 @@ public class App extends Application {
   private Slider slider;
   private Scene scene;
   private Stage geometryStage;
-  private GeometryWindow geometryWindow;
   private Stage stateStage;
-  private StateWindow stateWindow;
   private static ToolboxWindow toolboxWindow;
 
   private Pane movablePane;
@@ -167,8 +164,9 @@ public class App extends Application {
     // logger.debug("Opening geometry window");
     // showGeometryWindow(this);
 
-    logger.debug("Opening state window");
-    showStateWindow(this);
+    // StateWindow est maintenant intégrée dans ToolboxWindow
+    // logger.debug("Opening state window");
+    // showStateWindow(this);
 
     if (!filePath.isEmpty()) {
       new FileUtil().buildUiFromLaceFile(this, new File(filePath));
@@ -296,37 +294,15 @@ public class App extends Application {
     return toolboxWindow;
   }
 
-  public GeometryWindow showGeometryWindow(App app) {
-    geometryStage   = new Stage(StageStyle.DECORATED);
-    GridPane parent = newGridPane();
-    geometryWindow  = new GeometryWindow();
-    geometryWindow.createGeometryButtons(app, parent);
-    geometryWindow.createMoveKnotButtons(app, parent);
 
-    geometryWindow.createGeometryStage(app, geometryStage, parent);
-
-    new KeyboardUtil().initializeKeyboardShorcuts(this);
-    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
-    return geometryWindow;
-  }
-
-  public StateWindow showStateWindow(App app) {
-    stateStage   = new Stage(StageStyle.DECORATED);
-    GridPane parent = newGridPane();
-    stateWindow  = new StateWindow();
-    stateWindow.createStateButtons(app, parent);
-    stateWindow.createStateStage(app, stateStage, parent);
-
-    return stateWindow;
-  }
   public GridPane newGridPane() {
     GridPane parent = new GridPane();
     parent.setAlignment(Pos.TOP_CENTER);
     //Setting the padding
     parent.setPadding(new Insets(10, 10, 10, 10));
     //Setting the vertical and horizontal gaps between the columns
-    parent.setVgap(GAP_BETWEEN_BUTTONS);
-    parent.setHgap(GAP_BETWEEN_BUTTONS);
+    parent.setVgap(5);
+    parent.setHgap(5);
     return parent;
   }
 
@@ -393,13 +369,6 @@ public class App extends Application {
     App.mainWindow = mainWindow;
   }
 
-  public GeometryWindow getGeometryWindow() {
-    return geometryWindow;
-  }
-
-  public StateWindow getStateWindow() {
-    return this.stateWindow;
-  }
 
   public Pane getMovablePane() {
     return movablePane;

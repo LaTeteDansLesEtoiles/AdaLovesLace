@@ -67,6 +67,12 @@ public class ToolboxWindow {
     public static final double DEFAULT_TOOLBOX_WINDOW_WIDTH     = 950d; // Agrandi de 550 à 950
     public static final double MENU_BAR_Y                       = 0d;
     public static final int MAX_PATTERNS_WITHOUT_SCROLL         = 14; // 7 lignes × 2 colonnes = 14 patterns max
+    
+    // Constantes pour les boutons StateWindow (anciennement dans StateWindow.java)
+    public static final double STATE_BUTTONS_HEIGHT = 30d;
+    
+    // Constantes pour les boutons GeometryWindow (anciennement dans GeometryWindow.java)
+    public static final double GEOMETRY_BUTTONS_HEIGHT = 30d;
 
     public static final String THE_FOLLOWING_FOLDER_STRING      = "The following folder: '";
     public static final String BUTTON_SELECTED                  = "button-selected";
@@ -682,7 +688,8 @@ public class ToolboxWindow {
         // GeometryWindow est maintenant intégrée dans ToolboxWindow
         // app.getGeometryWindow().getGeometryStage().close();
         app.getToolboxWindow().getToolboxStage().close();
-        app.getStateWindow().getStateStage().close();
+        // StateWindow est maintenant intégrée dans ToolboxWindow
+        // app.getStateWindow().getStateStage().close();
         app.getPrimaryStage().close();
         app.start(new Stage());
     }
@@ -699,10 +706,10 @@ public class ToolboxWindow {
     public void createGeometryButtons(App app, GridPane parent, int startRow) {
         ImageUtil util = new ImageUtil(app);
 
-        this.deletionButton = new DeletionButton(app, null, resourceBundle.getString(DELETION_BUTTON_NAME));
+        this.deletionButton = new DeletionButton(app, resourceBundle.getString(DELETION_BUTTON_NAME));
         util.getImageView("deletion.png", deletionButton, false);
 
-        this.duplicationButton = new DuplicationButton(app, null, resourceBundle.getString(DUPLICATION_BUTTON_NAME));
+        this.duplicationButton = new DuplicationButton(app, resourceBundle.getString(DUPLICATION_BUTTON_NAME));
         this.duplicationButton.setId("duplicationButton");
         util.getImageView("duplication.png", duplicationButton, false);
 
@@ -712,10 +719,10 @@ public class ToolboxWindow {
         HorizontalFlippingButton horizontalFlippingButton = new HorizontalFlippingButton(app, resourceBundle.getString(HORIZONTAL_FLIPPING_BUTTON_NAME));
         util.getImageView("flip_horizontally.png", horizontalFlippingButton, false);
 
-        this.drawingButton = new DrawingButton(app, null, resourceBundle.getString(DrawingButton.DRAWING_BUTTON_NAME));
+        this.drawingButton = new DrawingButton(app, resourceBundle.getString(DrawingButton.DRAWING_BUTTON_NAME));
         util.getImageView("drawing.png", drawingButton, true);
 
-        this.selectionButton = new SelectionButton(app, null, resourceBundle.getString(SELECTION_BUTTON_NAME));
+        this.selectionButton = new SelectionButton(app, resourceBundle.getString(SELECTION_BUTTON_NAME));
         util.getImageView("selection.png", selectionButton, false);
 
         RotationButton rotationButton = new RotationButton(resourceBundle.getString(ROTATION_BUTTON_NAME));

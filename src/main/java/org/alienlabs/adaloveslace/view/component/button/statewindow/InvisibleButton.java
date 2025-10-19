@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.view.window.StateWindow.STATE_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.STATE_BUTTONS_HEIGHT;
 
 public class InvisibleButton extends ImageButton {
 

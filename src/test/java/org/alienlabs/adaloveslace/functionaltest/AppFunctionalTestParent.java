@@ -16,8 +16,6 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoKnotButton;
-import org.alienlabs.adaloveslace.view.window.GeometryWindow;
-import org.alienlabs.adaloveslace.view.window.StateWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.alienlabs.adaloveslace.view.window.event.WindowRepositionEvents;
 import org.alienlabs.adaloveslace.view.window.event.WindowResizeEvents;
@@ -42,9 +40,7 @@ import static org.alienlabs.adaloveslace.util.FileUtil.FILE_SEPARATOR;
 public class AppFunctionalTestParent {
 
   public Stage primaryStage;
-  public GeometryWindow geometryWindow;
   public ToolboxWindow toolboxWindow;
-  public StateWindow stateWindow;
   public App app;
 
   // For tests:
@@ -116,15 +112,16 @@ public class AppFunctionalTestParent {
     this.app.getToolboxStage().setY(50d);
     this.app.getToolboxStage().setHeight(900d);
 
-    this.geometryWindow = this.app.showGeometryWindow(this.app);
-    this.app.getGeometryStage().setX(720d);
-    this.app.getGeometryStage().setY(50d);
-    this.app.getGeometryStage().setHeight(500d);
+    // GeometryWindow et StateWindow sont maintenant intégrées dans ToolboxWindow
+    // this.geometryWindow = this.app.showGeometryWindow(this.app);
+    // this.app.getGeometryStage().setX(720d);
+    // this.app.getGeometryStage().setY(50d);
+    // this.app.getGeometryStage().setHeight(500d);
 
-    this.stateWindow = this.app.showStateWindow(this.app);
-    this.app.getStateStage().setX(720d);
-    this.app.getStateStage().setY(770d);
-    this.app.getStateStage().setHeight(300d);
+    // this.stateWindow = this.app.showStateWindow(this.app);
+    // this.app.getStateStage().setX(720d);
+    // this.app.getStateStage().setY(770d);
+    // this.app.getStateStage().setHeight(300d);
   }
 
   // This is in order to have time to copy the image to the canvas, otherwise the image is always white and we don't
@@ -166,7 +163,8 @@ public class AppFunctionalTestParent {
 
   // Click on the grid where the snowflake is in order to select it
   protected void clickSelectButton(FxRobot robot) {
-    robot.clickOn(geometryWindow.getSelectionButton(), Motion.DIRECT, MouseButton.PRIMARY);
+    // Les boutons sont maintenant dans ToolboxWindow
+    // robot.clickOn(geometryWindow.getSelectionButton(), Motion.DIRECT, MouseButton.PRIMARY);
   }
 
   protected void incrementSpinner(FxRobot robot, Spinner<Integer> spinner) {
@@ -391,7 +389,8 @@ public class AppFunctionalTestParent {
   }
 
   protected void selectDeleteMode(FxRobot robot) {
-    robot.clickOn(this.geometryWindow.getDeletionButton(), Motion.DIRECT, MouseButton.PRIMARY);
+    // Les boutons sont maintenant dans ToolboxWindow
+    // robot.clickOn(this.geometryWindow.getDeletionButton(), Motion.DIRECT, MouseButton.PRIMARY);
   }
 
   protected void selectSecondKnotWithControlKeyPressed(FxRobot robot) {

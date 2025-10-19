@@ -10,10 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.alienlabs.adaloveslace.App.*;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.DEFAULT_GEOMETRY_WINDOW_HEIGHT;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.DEFAULT_GEOMETRY_WINDOW_WIDTH;
-import static org.alienlabs.adaloveslace.view.window.StateWindow.DEFAULT_STATE_WINDOW_HEIGHT;
-import static org.alienlabs.adaloveslace.view.window.StateWindow.DEFAULT_STATE_WINDOW_WIDTH;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.DEFAULT_TOOLBOX_WINDOW_WIDTH;
 
 public class WindowResizeEvents {
@@ -41,7 +37,8 @@ public class WindowResizeEvents {
     public void onWindowsResize() {
         this.onDoMainWindowResize();
         this.onDoToolboxWindowResize();
-        this.onDoStateWindowResize();
+        // StateWindow est maintenant intégrée dans ToolboxWindow
+        // this.onDoStateWindowResize();
     }
 
     public void onDoMainWindowResize() {
@@ -55,10 +52,6 @@ public class WindowResizeEvents {
         onDoChangeHeight(this.app.getToolboxStage().heightProperty(), TOOLBOX_WINDOW_HEIGHT, "Toolbox window height: {}");
     }
 
-    public void onDoStateWindowResize() {
-        onDoChangeWidth(this.app.getStateStage().widthProperty(), STATE_WINDOW_WIDTH, "State window width: {}");
-        onDoChangeHeight(this.app.getStateStage().heightProperty(), STATE_WINDOW_HEIGHT, "State window height: {}");
-    }
 
     private void onDoMainWindowChangeWidth(ReadOnlyDoubleProperty stage) {
         stage.addListener((obs, oldVal, newVal) ->
@@ -169,40 +162,6 @@ public class WindowResizeEvents {
         }
 
         return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.TOOLBOX_WINDOW_HEIGHT)) - 32d;
-    }
-    public double getGeometryWindowWidth() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowResizeEvents.GEOMETRY_WINDOW_WIDTH).isEmpty()) {
-            return DEFAULT_GEOMETRY_WINDOW_WIDTH;
-        }
-
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.GEOMETRY_WINDOW_WIDTH));
-    }
-
-    public double getGeometryWindowHeight() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowResizeEvents.GEOMETRY_WINDOW_HEIGHT).isEmpty()) {
-            return DEFAULT_GEOMETRY_WINDOW_HEIGHT;
-        }
-
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.GEOMETRY_WINDOW_HEIGHT)) - 48d;
-    }
-    public double getStateWindowWidth() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowResizeEvents.STATE_WINDOW_WIDTH).isEmpty()) {
-            return DEFAULT_STATE_WINDOW_WIDTH;
-        }
-
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.STATE_WINDOW_WIDTH));
-    }
-
-    public double getStateWindowHeight() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowResizeEvents.STATE_WINDOW_HEIGHT).isEmpty()) {
-            return DEFAULT_STATE_WINDOW_HEIGHT;
-        }
-
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.STATE_WINDOW_HEIGHT)) - 48d;
     }
 
 }
