@@ -77,7 +77,8 @@ public class FileChooserUtil {
     );
     app.getToolboxStage().close();
     app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
-    app.getGeometryStage().close();
+    // GeometryStage n'existe plus
+    // app.getGeometryStage().close();
     // GeometryWindow et StateWindow sont maintenant intégrées dans ToolboxWindow
     // app.showGeometryWindow(app);
     // app.getStateStage().close();

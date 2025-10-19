@@ -112,8 +112,6 @@ public class App extends Application {
   private static MainWindow mainWindow;
   private Slider slider;
   private Scene scene;
-  private Stage geometryStage;
-  private Stage stateStage;
   private static ToolboxWindow toolboxWindow;
 
   private Pane movablePane;
@@ -159,14 +157,6 @@ public class App extends Application {
 
     logger.debug("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
-
-    // GeometryWindow est maintenant intégrée dans ToolboxWindow
-    // logger.debug("Opening geometry window");
-    // showGeometryWindow(this);
-
-    // StateWindow est maintenant intégrée dans ToolboxWindow
-    // logger.debug("Opening state window");
-    // showStateWindow(this);
 
     if (!filePath.isEmpty()) {
       new FileUtil().buildUiFromLaceFile(this, new File(filePath));
@@ -283,14 +273,12 @@ public class App extends Application {
     scrollPane.setFitToHeight(true);
 
     toolboxWindow         = new ToolboxWindow();
-
     MenuBar menuBar       = new AdaLovesLaceMenuBar().createMenuBar(this);
     // La barre de menu sera ajoutée dans createToolboxStage, pas ici
 
     this.diagram          = toolboxWindow.createToolboxPane(parent, classpathBase, resourcesPath, app, this.diagram);
-    int posY              = this.diagram.getPatterns().size() / 2 + 5;
-    toolboxWindow.createToolboxButtons(parent, app, posY);
-    toolboxWindow.createToolboxStage(this.toolboxStage, menuBar, parent, app, posY, this.diagram);
+    toolboxWindow.createToolboxButtons(parent, app);
+    toolboxWindow.createToolboxStage(this.toolboxStage, menuBar, parent, app, this.diagram);
     return toolboxWindow;
   }
 
@@ -345,9 +333,6 @@ public class App extends Application {
     return toolboxWindow;
   }
 
-  public Stage getGeometryStage() {
-    return geometryStage;
-  }
 
   public void setDiagram(Diagram diagram) {
     this.diagram = diagram;
@@ -394,9 +379,6 @@ public class App extends Application {
     this.primaryStage = primaryStage;
   }
 
-  public Stage getStateStage() {
-    return this.stateStage;
-  }
 
   public double getGridWidth() {
     return this.gridWidth;

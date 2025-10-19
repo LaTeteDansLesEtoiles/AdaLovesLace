@@ -319,7 +319,6 @@ public class ToolboxWindow {
             MenuBar menuBar,
             GridPane parent,
             App app,
-            int posY,
             Diagram diagram
     ) {
         this.toolboxStage = toolboxStage;
@@ -355,7 +354,7 @@ public class ToolboxWindow {
         } else {
             // Si moins de 14 patterns, calculer la hauteur exacte nécessaire
             int patternsRows = (int) Math.ceil((double) this.classpathResourceFiles.size() / 2);
-            double exactHeight = patternsRows * 60 + 20; // 60px par ligne + padding
+            double exactHeight = patternsRows * 60d + 20d; // 60px par ligne + padding
             patternsScrollPane.setMaxHeight(exactHeight);
             patternsScrollPane.setMinHeight(exactHeight);
         }
@@ -483,7 +482,7 @@ public class ToolboxWindow {
         
         // Les boutons de base sont déjà correctement positionnés dans createToolboxPane
 
-        buildPrintButtons(app, parent, posY);
+        buildPrintButtons(app, parent);
 
         // Créer un HBox pour contenir le GridPane principal et les flèches
         HBox mainContainer = new HBox();
@@ -587,17 +586,15 @@ public class ToolboxWindow {
         return 800; // Hauteur plus grande pour laisser plus d'espace au ScrollPane
     }
 
-    public void createToolboxButtons(GridPane parent, App app, int posY) {
-        buildFileButtons(app, parent, posY);
-        buildEditButtons(app, parent, posY);
-        buildShowHideGridButton(app, parent, posY);
-        buildQuitAndGridNameButtons(parent, posY);
+    public void createToolboxButtons(GridPane parent, App app) {
+        buildFileButtons(app, parent);
+        buildEditButtons(app);
     }
 
     /**
      * Print diagram buttons.
      */
-    public void buildPrintButtons(App app, GridPane parent, int posY) {
+    public void buildPrintButtons(App app, GridPane parent) {
         Button getPrintersButton = new Button(resourceBundle.getString(GET_PRINTERS_BUTTON_NAME));
         final Tooltip tooltip = new Tooltip();
         tooltip.setText(resourceBundle.getString("GET_PRINTERS_BUTTON_TOOLTIP"));
@@ -620,23 +617,13 @@ public class ToolboxWindow {
         printer.printButtonOnAction(printButton);
     }
 
-    private void buildQuitAndGridNameButtons(GridPane buttonsPane, int posY) {
-        // Ces boutons sont maintenant dans le VBox arrowsContainer
-        // Ne plus les ajouter au GridPane principal
-    }
-
-    private void buildShowHideGridButton(App app, GridPane buttonsPane, int posY) {
-        // Ce bouton est maintenant dans le VBox arrowsContainer
-        // Ne plus l'ajouter au GridPane principal
-    }
-
-    private void buildEditButtons(App app, GridPane buttonsPane, int posY) {
+    private void buildEditButtons(App app) {
         // Ces boutons sont maintenant dans le VBox arrowsContainer
         // Ne plus les ajouter au GridPane principal
         this.undoKnotButton = new UndoKnotButton(resourceBundle.getString(UNDO_KNOT), app);
     }
 
-    private void buildFileButtons(App app, GridPane buttonsPane, int posY) {
+    private void buildFileButtons(App app, GridPane buttonsPane) {
         SaveButton saveButton = new SaveButton(app, resourceBundle.getString(SAVE_FILE));
         SaveAsButton saveAsButton = new SaveAsButton(app, resourceBundle.getString(SAVE_FILE_AS));
         LoadButton loadButton = new LoadButton(app, resourceBundle.getString(LOAD_FILE));
@@ -685,11 +672,7 @@ public class ToolboxWindow {
     }
 
     public static void restartApp() {
-        // GeometryWindow est maintenant intégrée dans ToolboxWindow
-        // app.getGeometryWindow().getGeometryStage().close();
         app.getToolboxWindow().getToolboxStage().close();
-        // StateWindow est maintenant intégrée dans ToolboxWindow
-        // app.getStateWindow().getStateStage().close();
         app.getPrimaryStage().close();
         app.start(new Stage());
     }
@@ -807,54 +790,6 @@ public class ToolboxWindow {
         // Ligne 4 : Boutons de retournement
         parent.add(verticalFlippingButton, 2, startRow + 8);
         parent.add(horizontalFlippingButton, 3, startRow + 8);
-    }
-
-    public void createMoveKnotButtons(App app, GridPane parent, int startRow) {
-        ImageUtil util = new ImageUtil(app);
-
-        // Ajouter les boutons de mouvement avec un espacement uniforme
-        // en respectant leurs positions respectives
-        
-        // Carré de 3x3 compact avec espacements uniformes
-        // Utiliser les colonnes 2, 3, 4 pour un carré parfait
-        // Ligne du haut : UpLeft, Up, UpRight
-        UpLeftButton upLeftButton = new UpLeftButton(app);
-        util.getImageView("up_left.png", upLeftButton, false);
-        parent.add(upLeftButton, 2, startRow);
-
-        UpButton upButton = new UpButton(app);
-        util.getImageView("up.png", upButton, false);
-        parent.add(upButton, 3, startRow);
-
-        UpRightButton upRightButton = new UpRightButton(app);
-        util.getImageView("up_right.png", upRightButton, false);
-        parent.add(upRightButton, 4, startRow);
-
-        // Ligne du milieu : Left, Fast, Right
-        LeftButton leftButton = new LeftButton(app);
-        util.getImageView("left.png", leftButton, false);
-        parent.add(leftButton, 2, startRow + 1);
-
-        FastMoveModeButton fastMoveModeButton = new FastMoveModeButton();
-        util.getImageView("fast.png", fastMoveModeButton, false);
-        parent.add(fastMoveModeButton, 3, startRow + 1);
-
-        RightButton rightButton = new RightButton(app);
-        util.getImageView("right.png", rightButton, false);
-        parent.add(rightButton, 4, startRow + 1);
-
-        // Ligne du bas : DownLeft, Down, DownRight
-        DownLeftButton downLeftButton = new DownLeftButton(app);
-        util.getImageView("down_left.png", downLeftButton, false);
-        parent.add(downLeftButton, 2, startRow + 2);
-
-        DownButton downButton = new DownButton(app);
-        util.getImageView("down.png", downButton, false);
-        parent.add(downButton, 3, startRow + 2);
-
-        DownRightButton downRightButton = new DownRightButton(app);
-        util.getImageView("down_right.png", downRightButton, false);
-        parent.add(downRightButton, 4, startRow + 2);
     }
 
     // Getters pour les éléments de GeometryWindow
