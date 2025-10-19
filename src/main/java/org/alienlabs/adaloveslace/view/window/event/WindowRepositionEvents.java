@@ -37,7 +37,6 @@ public class WindowRepositionEvents {
     public void onWindowsReposition() {
         this.onDoMainWindowReposition();
         this.onDoToolboxWindowReposition();
-        this.onDoGeometryWindowReposition();
         this.onDoStateWindowReposition();
     }
 
@@ -51,10 +50,6 @@ public class WindowRepositionEvents {
         onDoChangeY(this.app.getToolboxStage().yProperty(), TOOLBOX_WINDOW_Y, "Toolbox window sceneY: {}");
     }
 
-    public void onDoGeometryWindowReposition() {
-        onDoChangeX(this.app.getGeometryStage().xProperty(), GEOMETRY_WINDOW_X, "Geometry window sceneX: {}");
-        onDoChangeY(this.app.getGeometryStage().yProperty(), GEOMETRY_WINDOW_Y, "Geometry window sceneY: {}");
-    }
     public void onDoStateWindowReposition() {
         onDoChangeX(this.app.getStateStage().xProperty(), STATE_WINDOW_X, "State window sceneX: {}");
         onDoChangeY(this.app.getStateStage().yProperty(), STATE_WINDOW_Y, "State window sceneY: {}");

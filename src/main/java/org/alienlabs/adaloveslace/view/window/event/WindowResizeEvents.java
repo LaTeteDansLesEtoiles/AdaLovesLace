@@ -41,7 +41,6 @@ public class WindowResizeEvents {
     public void onWindowsResize() {
         this.onDoMainWindowResize();
         this.onDoToolboxWindowResize();
-        this.onDoGeometryWindowResize();
         this.onDoStateWindowResize();
     }
 
@@ -56,10 +55,6 @@ public class WindowResizeEvents {
         onDoChangeHeight(this.app.getToolboxStage().heightProperty(), TOOLBOX_WINDOW_HEIGHT, "Toolbox window height: {}");
     }
 
-    public void onDoGeometryWindowResize() {
-        onDoChangeWidth(this.app.getGeometryStage().widthProperty(), GEOMETRY_WINDOW_WIDTH, "Geometry window width: {}");
-        onDoChangeHeight(this.app.getGeometryStage().heightProperty(), GEOMETRY_WINDOW_HEIGHT, "Geometry window height: {}");
-    }
     public void onDoStateWindowResize() {
         onDoChangeWidth(this.app.getStateStage().widthProperty(), STATE_WINDOW_WIDTH, "State window width: {}");
         onDoChangeHeight(this.app.getStateStage().heightProperty(), STATE_WINDOW_HEIGHT, "State window height: {}");

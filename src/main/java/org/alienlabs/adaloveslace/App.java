@@ -163,8 +163,9 @@ public class App extends Application {
     logger.debug("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
 
-    logger.debug("Opening geometry window");
-    showGeometryWindow(this);
+    // GeometryWindow est maintenant intégrée dans ToolboxWindow
+    // logger.debug("Opening geometry window");
+    // showGeometryWindow(this);
 
     logger.debug("Opening state window");
     showStateWindow(this);
@@ -286,12 +287,12 @@ public class App extends Application {
     toolboxWindow         = new ToolboxWindow();
 
     MenuBar menuBar       = new AdaLovesLaceMenuBar().createMenuBar(this);
-    parent.add(menuBar, 0, 0);
+    // La barre de menu sera ajoutée dans createToolboxStage, pas ici
 
     this.diagram          = toolboxWindow.createToolboxPane(parent, classpathBase, resourcesPath, app, this.diagram);
     int posY              = this.diagram.getPatterns().size() / 2 + 5;
     toolboxWindow.createToolboxButtons(parent, app, posY);
-    toolboxWindow.createToolboxStage(this.toolboxStage, menuBar, parent, app, posY);
+    toolboxWindow.createToolboxStage(this.toolboxStage, menuBar, parent, app, posY, this.diagram);
     return toolboxWindow;
   }
 
