@@ -18,10 +18,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.domain.Diagram;
-import org.alienlabs.adaloveslace.util.FileUtil;
-import org.alienlabs.adaloveslace.util.NodeUtil;
-import org.alienlabs.adaloveslace.util.Preferences;
-import org.alienlabs.adaloveslace.util.SystemInfo;
+import org.alienlabs.adaloveslace.util.*;
 import org.alienlabs.adaloveslace.view.component.AdaLovesLaceMenuBar;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
@@ -279,6 +276,10 @@ public class App extends Application {
     this.diagram          = toolboxWindow.createToolboxPane(parent, classpathBase, resourcesPath, app, this.diagram);
     toolboxWindow.createToolboxButtons(parent, app);
     toolboxWindow.createToolboxStage(this.toolboxStage, menuBar, parent, app, this.diagram);
+    
+    // Initialiser les raccourcis clavier
+    new KeyboardUtil().initializeKeyboardShorcuts(this);
+    
     return toolboxWindow;
   }
 
