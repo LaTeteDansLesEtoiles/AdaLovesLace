@@ -74,6 +74,12 @@ public class OptionalDotGrid extends Pane {
     this.root = root;
     this.root.toFront();
     this.diagram = Objects.requireNonNullElseGet(diagram, () -> new Diagram(app));
+    
+    // Vérification supplémentaire pour s'assurer que le diagramme n'est pas null
+    if (this.diagram == null) {
+      logger.warn("Diagram is still null after initialization, creating new one");
+      this.diagram = new Diagram(app);
+    }
 
     this.gridPane = new Pane();
     this.gridPane.toBack();
@@ -130,6 +136,12 @@ public class OptionalDotGrid extends Pane {
   }
 
   private void drawDiagram() {
+    // Vérification de sécurité pour éviter NullPointerException
+    if (this.diagram == null) {
+      logger.warn("Diagram is null in drawDiagram, creating new one");
+      this.diagram = new Diagram(app);
+    }
+    
     // We shall not display the undone knots => delete them from canvas, then draw the grid again
     deleteKnotsFromCanvas();
 
@@ -155,6 +167,12 @@ public class OptionalDotGrid extends Pane {
 
   // We shall not display the undone knots => delete them from canvas, then draw the grid again
   public void deleteKnotsFromCanvas() {
+    // Vérification de sécurité pour éviter NullPointerException
+    if (this.diagram == null) {
+      logger.warn("Diagram is null in deleteKnotsFromCanvas, creating new one");
+      this.diagram = new Diagram(app);
+    }
+    
     this.diagram.deleteKnotDecorationsFromFollowingSteps(root);
     List<Node> nodeListToRemove = new ArrayList<>();
     Step step = this.diagram.getCurrentStep();
@@ -282,16 +300,18 @@ public class OptionalDotGrid extends Pane {
   }
 
   public void drawGuideLines(final Step step, final Knot knot) {
-    Platform.runLater(() -> {
-      if ((diagram.getCurrentMode() != MouseMode.CREATE_PATTERN) && (diagram.getCurrentMode() != MouseMode.MIRROR)) {
-          GuideLinesUtil.CURRENT_NUMBER_OF_GUIDELINES = 0;
-        for (Knot otherKnot : step.getAllVisibleKnots()) {
-          if (!otherKnot.equals(knot) && otherKnot.isVisible()) {
-            new GuideLinesUtil(knot, otherKnot, root);
-          }
-        }
+      if (this.getDiagram().getCurrentStep().getSelectedKnots().size() < MAX_NUMBER_OF_GUIDELINES) {
+          Platform.runLater(() -> {
+              if ((diagram.getCurrentMode() != MouseMode.CREATE_PATTERN) && (diagram.getCurrentMode() != MouseMode.MIRROR)) {
+                  GuideLinesUtil.CURRENT_NUMBER_OF_GUIDELINES = 0;
+                  for (Knot otherKnot : step.getAllVisibleKnots()) {
+                      if (!otherKnot.equals(knot) && otherKnot.isVisible()) {
+                          new GuideLinesUtil(knot, otherKnot, root);
+                      }
+                  }
+              }
+          });
       }
-    });
   }
 
   public void removeKnotDecorations() {
@@ -398,9 +418,7 @@ public class OptionalDotGrid extends Pane {
       imageView.setLayoutY(y);
       knot.setImageView(imageView);
 
-      if (this.getDiagram().getCurrentStep().getSelectedKnots().size() < MAX_NUMBER_OF_GUIDELINES) {
-          drawGuideLines(step, knot);
-      }
+      drawGuideLines(step, knot);
     } else if (knot.getPattern().isPresent()) {
       PatternImageCache.updateKnotImageView(knot);
       imageView = knot.getImageView();
@@ -411,9 +429,7 @@ public class OptionalDotGrid extends Pane {
       imageView.setLayoutX(x);
       imageView.setLayoutY(y);
 
-        if (this.getDiagram().getCurrentStep().getSelectedKnots().size() < MAX_NUMBER_OF_GUIDELINES) {
-            drawGuideLines(step, knot);
-        }
+      drawGuideLines(step, knot);
     }
 
     logger.debug("drawing top left corner of knot {} to ({},{})",
@@ -458,7 +474,12 @@ public class OptionalDotGrid extends Pane {
   }
 
   public void setDiagram(Diagram diagram) {
-    this.diagram = diagram;
+    if (diagram == null) {
+      logger.warn("Attempting to set null diagram, creating new one");
+      this.diagram = new Diagram(app);
+    } else {
+      this.diagram = diagram;
+    }
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

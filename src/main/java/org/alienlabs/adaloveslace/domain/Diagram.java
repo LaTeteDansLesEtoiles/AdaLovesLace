@@ -406,7 +406,17 @@ public class Diagram {
         currentKnot.setHovered(null);
 
         if (pattern == null) {
-            currentKnot.setHandle(new GridUtil(app.getMovablePane()).newHandleForText(currentKnot, (Rectangle) currentKnot.getSelection()));
+            Node selection = currentKnot.getSelection();
+            if (selection != null && selection instanceof Rectangle) {
+                Circle handle = new GridUtil(app.getMovablePane()).newHandleForText(currentKnot, (Rectangle) selection);
+                if (handle != null) {
+                    currentKnot.setHandle(handle);
+                } else {
+                    logger.warn("Failed to create handle for text knot");
+                }
+            } else {
+                logger.warn("Cannot create handle for text: selection is null or not a Rectangle");
+            }
         }
 
         putAllEventsOnKnot(app, currentKnot);

@@ -1,6 +1,7 @@
 package org.alienlabs.adaloveslace;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,6 +24,7 @@ import org.alienlabs.adaloveslace.view.component.AdaLovesLaceMenuBar;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
+import org.alienlabs.adaloveslace.view.splash.SplashScreen;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.alienlabs.adaloveslace.view.window.event.WindowRepositionEvents;
@@ -48,7 +50,7 @@ public class App extends Application {
 
   public static final String TOOLBOX_BUTTON           = "toolbox-btn-";
   public static final String ADA_LOVES_LACE           = "AdaLovesLace";
-  public static final String MAIN_WINDOW_TITLE        = ADA_LOVES_LACE;
+  public static final String MAIN_WINDOW_TITLE        = "AdaLovesLace";
   public static final String PROJECT_NAME             = "adaloveslace";
   public static final String USER_HOME                = "user.home";
   public static final String TOOLBOX_TITLE            = "Toolbox";
@@ -79,7 +81,7 @@ public class App extends Application {
 
   public static final double DEFAULT_MAIN_WINDOW_X    = 75d;
   public static final double DEFAULT_MAIN_WINDOW_Y    = 5d;
-  public static final double DEFAULT_MAIN_WINDOW_WIDTH = 525d;
+  public static final double DEFAULT_MAIN_WINDOW_WIDTH = 650d;
   public static final double DEFAULT_MAIN_WINDOW_HEIGHT = 780d;
   public static final double DEFAULT_GRID_WIDTH       = 650d;
   public static final double DEFAULT_GRID_HEIGHT      = 550d;
@@ -119,11 +121,11 @@ public class App extends Application {
   private static final Logger logger = LoggerFactory.getLogger(App.class);
   private WindowResizeEvents resizes;
   private WindowRepositionEvents windowRepositionEvents;
+  private String filePath = "";
 
   @Override
   public void start(Stage primaryStage) {
     Application.Parameters params = getParameters();
-    String filePath = "";
 
     if (params.getRaw() != null && !params.getRaw().isEmpty()) {
       filePath = String.join(" ", params.getRaw());
@@ -139,7 +141,31 @@ public class App extends Application {
       this.diagram = new Diagram(this);
     }
 
+    // Afficher le splash screen d'abord
+    showSplashScreen(primaryStage, filePath);
+  }
+
+  private void showSplashScreen(Stage primaryStage, String filePath) {
+    // Stocker le filePath pour plus tard
+    this.filePath = filePath;
+    
+    // Créer et afficher le splash screen
+    SplashScreen splashScreen = new SplashScreen();
+    splashScreen.show(this);
+  }
+
+  public void showMainApplication() {
+    startMainApplication(this.primaryStage, this.filePath);
+  }
+
+  private void startMainApplication(Stage primaryStage, String filePath) {
     logger.debug("Starting app: opening main window");
+    
+    // S'assurer que le diagramme est initialisé
+    if (this.diagram == null) {
+      this.diagram = new Diagram(this);
+    }
+    
     this.resizes = new WindowResizeEvents(this);
     this.windowRepositionEvents = new WindowRepositionEvents(this);
 
@@ -149,27 +175,40 @@ public class App extends Application {
             this.resizes.getGridWidth(),
             this.resizes.getGridHeight(),
             primaryStage,
-            diagram
+            this.diagram
     );
 
     logger.debug("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
 
-    if (!filePath.isEmpty()) {
-      new FileUtil().buildUiFromLaceFile(this, new File(filePath));
-      new NodeUtil().clearTechnicalElements(this);
-    }
-
     this.resizes.onWindowsResize();
     this.windowRepositionEvents.onWindowsReposition();
     this.getPrimaryStage().requestFocus();
+    
+    // Retarder le chargement du fichier pour éviter les conflits avec les animations
+    if (!filePath.isEmpty()) {
+      Platform.runLater(() -> {
+        try {
+          new FileUtil().buildUiFromLaceFile(this, new File(filePath));
+          new NodeUtil().clearTechnicalElements(this);
+        } catch (Exception e) {
+          logger.error("Error loading lace file: " + filePath, e);
+        }
+      });
+    }
   }
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
                              Stage primaryStage, Diagram diagram) {
     BorderPane root;
     App.mainWindow = new MainWindow();
-    this.diagram = diagram;
+    
+    // S'assurer que le diagramme n'est pas null
+    if (diagram != null) {
+      this.diagram = diagram;
+    } else if (this.diagram == null) {
+      this.diagram = new Diagram(this);
+    }
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();

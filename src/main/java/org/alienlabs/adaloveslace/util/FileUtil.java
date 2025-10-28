@@ -25,8 +25,6 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.domain.Step;
-import org.alienlabs.adaloveslace.view.component.button.geometrywindow.DrawingButton;
-import org.alienlabs.adaloveslace.view.window.event.WindowResizeEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,29 +98,6 @@ public class FileUtil {
         dialog.showAndWait();
     }
 
-    private static void prepareGeometryAndToolbox(App app, Diagram diagram) {
-        app.getToolboxStage().close();
-        app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
-        diagram.setApp(app);
-        app.getOptionalDotGrid().layoutChildren();
-        DrawingButton.onSetDrawModeAction(app);
-    }
-
-    private static void preparePrimaryStage(App app, Diagram diagram) {
-        app.getPrimaryStage().close();
-        app.showMainWindow(
-                app.getResizes().getMainWindowWidth(),
-                app.getResizes().getMainWindowHeight(),
-                app.getResizes().getGridWidth(),
-                app.getResizes().getGridHeight(),
-                app.getPrimaryStage(),
-                diagram
-        );
-        app.getOptionalDotGrid().setDiagram(diagram);
-        new KeyboardUtil().initializeKeyboardShorcuts(app);
-        new WindowResizeEvents(app).onDoMainWindowResize();
-    }
-
     public Diagram loadFromLaceFile(App app, File file) {
         new ImageUtil(app).backupKnots();
         return readZip(app, file);
@@ -139,14 +114,30 @@ public class FileUtil {
 
                 if (XML_FILE_TO_SAVE_IN_LACE_FILE.equals(entry.getName())) {
                     diagram = buildDiagram(zipFile, entry);
-                    app.getOptionalDotGrid().setDiagram(diagram);
+                    // S'assurer que le diagramme n'est pas null avant de l'assigner
+                    if (diagram != null) {
+                        app.getOptionalDotGrid().setDiagram(diagram);
+                    } else {
+                        logger.warn("Built diagram is null, creating new one");
+                        diagram = new Diagram(app);
+                        app.getOptionalDotGrid().setDiagram(diagram);
+                    }
                 } else {
                     copyPattern(file, zipFile, entry);
                 }
             }
         } catch (JAXBException | IOException e) {
-            logger.error("Error unmarshalling loaded file: {}", file.getAbsolutePath(), e);
+            logger.error("Error loading lace file: {}", file.getAbsolutePath(), e);
+            // Retourner un diagramme vide au lieu de null pour éviter les erreurs
+            diagram = new Diagram(app);
         }
+        
+        // S'assurer qu'un diagramme valide est toujours retourné
+        if (diagram == null) {
+            logger.warn("Diagram is null after loading, creating new one");
+            diagram = new Diagram(app);
+        }
+        
         return diagram;
     }
 
@@ -238,7 +229,12 @@ public class FileUtil {
         try (InputStream initialStream = zipFile.getInputStream(entry)) {
             copyTargetFile(entry, initialStream);
         } catch (IOException e) {
-            logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
+            // Gestion spécifique pour les images manquantes (comme splashscreen.jpg)
+            if (entry.getName().contains("splashscreen") || entry.getName().endsWith(".jpg") || entry.getName().endsWith(".png")) {
+                logger.warn("Image file not found in lace file: {}, skipping...", entry.getName());
+            } else {
+                logger.error("Error copying pattern from loaded file: " + file.getAbsolutePath() + ", entry: " + entry.getName(), e);
+            }
         }
     }
 

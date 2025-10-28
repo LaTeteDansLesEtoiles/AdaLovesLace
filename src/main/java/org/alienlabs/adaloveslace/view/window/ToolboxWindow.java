@@ -60,9 +60,9 @@ import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
 public class ToolboxWindow {
 
-    public static final double DEFAULT_TOOLBOX_WINDOW_X         = 600d;
+    public static final double DEFAULT_TOOLBOX_WINDOW_X         = DEFAULT_MAIN_WINDOW_X + DEFAULT_MAIN_WINDOW_WIDTH;
     public static final double DEFAULT_TOOLBOX_WINDOW_Y         = DEFAULT_MAIN_WINDOW_Y;
-    public static final double DEFAULT_TOOLBOX_WINDOW_WIDTH     = 1000d; // Agrandi de 550 à 950
+    public static final double DEFAULT_TOOLBOX_WINDOW_WIDTH     = 1100d;
     public static final double MENU_BAR_Y                       = 0d;
     public static final int MAX_PATTERNS_WITHOUT_SCROLL         = 14; // 7 lignes × 2 colonnes = 14 patterns max
     
@@ -89,7 +89,6 @@ public class ToolboxWindow {
     public static final int ZOOM_SPINNER_INCREMENTS_1             = 1;
     public static final int ZOOM_SPINNER_INCREMENTS_2             = 2;
     public static final int ZOOM_SPINNER_INCREMENTS_3             = 3;
-    public static final double BUTTON_MAX_WIDTH                   = 400d;
     public static final double MIN_TOOLBOX_WIDTH_FOR_SCROLL       = 700d;
 
     private List<String> classpathResourceFiles;
@@ -309,6 +308,8 @@ public class ToolboxWindow {
         patternsScrollPane.setContent(patternsPane);
         patternsScrollPane.setFitToWidth(true);
         patternsScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        patternsScrollPane.setMinWidth(450); // Largeur minimale pour les patterns
+        patternsScrollPane.setPrefWidth(450);
         
         // Activer la barre de défilement verticale si plus de 14 patterns
         if (this.classpathResourceFiles.size() > MAX_PATTERNS_WITHOUT_SCROLL) {
@@ -424,24 +425,12 @@ public class ToolboxWindow {
         
         // Créer un GridPane séparé pour les boutons de la première colonne avec marge
         GridPane buttonsGrid = new GridPane();
-        buttonsGrid.setPadding(new Insets(20, 0, 0, 0)); // Marge haute de 20px seulement
-        buttonsGrid.setVgap(5);
-        buttonsGrid.setHgap(5);
+        buttonsGrid.setPadding(new Insets(20, 0, 10, 10)); // Padding réduit à droite pour décaler la 2° sous-colonne
+        buttonsGrid.setVgap(10); // Espacement vertical plus grand
+        buttonsGrid.setHgap(10); // Espacement horizontal plus grand
         
-        // Créer un HBox pour contenir la marge fixe et les boutons
-        HBox buttonsContainer = new HBox();
-        buttonsContainer.setSpacing(0);
-        
-        // Ajouter une marge fixe de 8 pixels
-        Region leftMargin = new Region();
-        leftMargin.setMinWidth(8);
-        leftMargin.setMaxWidth(8);
-        leftMargin.setPrefWidth(8);
-        leftMargin.setStyle("-fx-background-color: transparent;"); // S'assurer qu'elle ne s'agrandit pas
-        HBox.setHgrow(leftMargin, Priority.NEVER); // Empêcher l'agrandissement
-        buttonsContainer.getChildren().add(leftMargin);
-        
-        // Ajouter les boutons au GridPane séparé
+        // Ajouter les boutons directement au GridPane principal (sans marge interne)
+        // La marge sera gérée par le mainContainer
         buttonsGrid.add(this.textButton, 0, 0);
         buttonsGrid.add(this.addKnotButton, 0, 1);
         buttonsGrid.add(this.resetAllButton, 1, 1);
@@ -452,11 +441,8 @@ public class ToolboxWindow {
         buildFileButtons(app, buttonsGrid);
         buildPrintButtons(app, buttonsGrid);
         
-        // Ajouter le buttonsGrid au buttonsContainer
-        buttonsContainer.getChildren().add(buttonsGrid);
-        
-        // Ajouter le buttonsContainer au GridPane principal
-        parent.add(buttonsContainer, 0, 1, 2, 1); // Colonnes 0-1, ligne 1
+        // Ajouter le buttonsGrid au GridPane principal
+        parent.add(buttonsGrid, 0, 1, 2, 1); // Colonnes 0-1, ligne 1
         
         // Créer un GridPane séparé pour les flèches avec espacement uniforme
         GridPane arrowsGrid = new GridPane();
@@ -510,18 +496,47 @@ public class ToolboxWindow {
         
         // Les boutons de base sont maintenant dans le GridPane buttonsGrid avec marge
 
-        // Créer un HBox pour contenir les 3 colonnes : patterns, spinners, flèches
+        // Créer des colonnes avec marges dynamiques qui s'agrandissent
         HBox mainContainer = new HBox();
-        mainContainer.setSpacing(20);
-        mainContainer.setAlignment(Pos.TOP_CENTER); // Centrer automatiquement tous les éléments
+        mainContainer.setSpacing(0); // Pas d'espacement fixe
+        mainContainer.setAlignment(Pos.TOP_LEFT);
         
-        // Ajouter le GridPane principal (patterns + boutons) à gauche
-        mainContainer.getChildren().add(parent);
+        // Colonne 1 : patterns + boutons avec largeur maximale pour le texte
+        VBox leftColumn = new VBox();
+        leftColumn.setMinWidth(700); // Largeur encore plus grande
+        leftColumn.setPrefWidth(700);
+        leftColumn.setMaxWidth(800); // Limite maximale
+        leftColumn.setSpacing(15); // Espacement vertical entre les éléments
+        leftColumn.setPadding(new Insets(0, 5, 0, 0)); // Padding droit très réduit
+        leftColumn.getChildren().add(parent);
+        mainContainer.getChildren().add(leftColumn);
         
-        // Ajouter la colonne du milieu (spinners et boutons de géométrie) au centre
-        mainContainer.getChildren().add(geometryGrid);
+        // Marge flexible qui s'agrandit dynamiquement mais reste dans le viewport
+        Region spacer1 = new Region();
+        spacer1.setMinWidth(0); // Marge normale
+        spacer1.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        spacer1.setMaxWidth(50); // Limite maximale normale
+        HBox.setHgrow(spacer1, Priority.NEVER); // Pas d'expansion
+        mainContainer.getChildren().add(spacer1);
         
-        // Créer un VBox pour les flèches et les boutons supplémentaires à droite
+        // Colonne 2 : spinners + boutons de géométrie avec décalage de 50px vers la gauche
+        VBox centerColumn = new VBox();
+        centerColumn.setAlignment(Pos.TOP_CENTER);
+        centerColumn.setMinWidth(350); // Largeur minimale augmentée pour les libellés
+        centerColumn.setPrefWidth(350);
+        centerColumn.setTranslateX(-135); // Décalage de 135px vers la gauche
+        centerColumn.getChildren().add(geometryGrid);
+        mainContainer.getChildren().add(centerColumn);
+        
+        // Marge flexible qui s'agrandit dynamiquement mais reste dans le viewport
+        Region spacer2 = new Region();
+        spacer2.setMinWidth(20); // Marge normale entre colonnes 2 et 3
+        spacer2.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        spacer2.setMaxWidth(100); // Limite maximale normale
+        HBox.setHgrow(spacer2, Priority.SOMETIMES); // Expansion normale
+        mainContainer.getChildren().add(spacer2);
+        
+        // Colonne 3 : flèches + boutons
         VBox arrowsContainer = new VBox();
         arrowsContainer.setAlignment(Pos.TOP_CENTER);
         arrowsContainer.setSpacing(10);
@@ -540,15 +555,11 @@ public class ToolboxWindow {
         // Créer le bouton "changer la grille"
         ShowHideGridButton changeGridButton = new ShowHideGridButton(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME), app);
         
-        // Créer les boutons de StateWindow avec une largeur de texte
+        // Créer les boutons de StateWindow
         UnselectableButton unselectableButton = new UnselectableButton(app, resourceBundle.getString(UNSELECTABLE_BUTTON_NAME));
-        unselectableButton.setPrefWidth(BUTTON_MAX_WIDTH); // Largeur suffisante pour le texte français
         SelectableButton selectableButton = new SelectableButton(app, resourceBundle.getString(SELECTABLE_BUTTON_NAME));
-        selectableButton.setPrefWidth(BUTTON_MAX_WIDTH); // Largeur suffisante pour le texte français
         InvisibleButton invisibleButton = new InvisibleButton(app, resourceBundle.getString(INVISIBLE_BUTTON_NAME));
-        invisibleButton.setPrefWidth(BUTTON_MAX_WIDTH); // Largeur suffisante pour le texte français
         VisibleButton visibleButton = new VisibleButton(app, resourceBundle.getString(VISIBLE_BUTTON_NAME));
-        visibleButton.setPrefWidth(BUTTON_MAX_WIDTH); // Largeur suffisante pour le texte français
         
         // Ajouter les boutons dans l'ordre souhaité
         arrowsContainer.getChildren().add(new Region());
@@ -582,11 +593,19 @@ public class ToolboxWindow {
         arrowsContainer.getChildren().add(invisibleButton); // Bouton invisible
         arrowsContainer.getChildren().add(visibleButton); // Bouton visible
         
-        // Ajouter le conteneur des flèches à droite
-        mainContainer.getChildren().add(arrowsContainer);
+        // Colonne 3 : flèches + boutons
+        VBox rightColumn = new VBox();
+        rightColumn.setAlignment(Pos.TOP_CENTER);
+        rightColumn.setSpacing(10);
+        rightColumn.setTranslateX(-175); // Décalage de 175px vers la gauche
+        rightColumn.getChildren().add(arrowsContainer);
+        mainContainer.getChildren().add(rightColumn);
+        
+        // Définir une largeur minimale pour forcer les scrollbars si nécessaire
+        mainContainer.setMinWidth(1080); // 700 + 0 + 150 + 20 + 150 + 60 = 1080px minimum
         
         VBox root = new VBox(menuBar, mainContainer);
-        root.setPrefSize(app.getResizes().getToolboxWindowWidth(), computeWindowHeight(app));
+        root.setPrefSize(app.getResizes().getToolboxWindowWidth() + 60, computeWindowHeight(app));
         root.getStyleClass().add("toolbox");
 
         // Créer un ScrollPane global pour toute la ToolboxWindow
@@ -617,7 +636,7 @@ public class ToolboxWindow {
 
         toolboxStage.setX(app.getWindowRepositionEvents().getToolboxWindowX());
         toolboxStage.setY(app.getWindowRepositionEvents().getToolboxWindowY());
-        toolboxStage.setWidth(app.getResizes().getToolboxWindowWidth());
+        toolboxStage.setWidth(app.getResizes().getToolboxWindowWidth() + 60);
         toolboxStage.setHeight(computeWindowHeight(app));
         toolboxStage.setMinWidth(400); // Largeur minimale pour permettre le redimensionnement
         toolboxStage.setMinHeight(300); // Hauteur minimale pour permettre le redimensionnement
@@ -689,6 +708,7 @@ public class ToolboxWindow {
 
         buttonsPane.add(saveButton, 0, 3);  // Ligne 3
         buttonsPane.add(saveAsButton, 1, 3);  // Ligne 3
+        GridPane.setColumnSpan(saveAsButton, 2); // Étendre le bouton "sauvegarder sous" sur 2 colonnes
         buttonsPane.add(loadButton, 0, 4);  // Ligne 4
         buttonsPane.add(shareButton, 1, 4);  // Ligne 4
         buttonsPane.add(exportImageButton, 0, 5);  // Ligne 5

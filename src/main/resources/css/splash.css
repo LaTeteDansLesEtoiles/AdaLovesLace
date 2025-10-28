@@ -1,0 +1,137 @@
+/* Splash Screen Styles */
+
+.splash-screen {
+    -fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.splash-background {
+    -fx-fill: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -fx-arc-width: 20;
+    -fx-arc-height: 20;
+    -fx-stroke: rgba(255, 255, 255, 0.2);
+    -fx-stroke-width: 2;
+}
+
+.splash-content {
+    -fx-padding: 40;
+    -fx-spacing: 20;
+}
+
+.splash-logo {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 5);
+}
+
+.splash-title {
+    -fx-fill: white;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 5, 0, 0, 2);
+}
+
+.splash-subtitle {
+    -fx-fill: rgba(255, 255, 255, 0.9);
+    -fx-font-style: italic;
+}
+
+.splash-progress {
+    -fx-pref-height: 8;
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}
+
+.splash-progress .bar {
+    -fx-background-color: linear-gradient(90deg, #4CAF50, #8BC34A);
+    -fx-background-radius: 4;
+}
+
+.splash-progress .track {
+    -fx-background-color: transparent;
+}
+
+.splash-status {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
+.splash-version {
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+    -fx-font-size: 12px;
+}
+
+.splash-separator {
+    -fx-text-fill: rgba(255, 255, 255, 0.6);
+    -fx-font-size: 12px;
+}
+
+.splash-copyright {
+    -fx-text-fill: rgba(255, 255, 255, 0.7);
+    -fx-font-size: 11px;
+}
+
+.splash-animation {
+    -fx-padding: 20;
+}
+
+.loading-dot {
+    -fx-fill: white;
+    -fx-opacity: 0.3;
+}
+
+/* Animation pour les points de chargement */
+@keyframes pulse {
+    0% { -fx-opacity: 0.3; }
+    50% { -fx-opacity: 1.0; }
+    100% { -fx-opacity: 0.3; }
+}
+
+.loading-dot {
+    -fx-animation: pulse 1.5s infinite;
+}
+
+/* Effet de brillance pour le titre */
+.splash-title {
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.3), 0, 0, 0, 1),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 5, 0, 0, 2);
+}
+
+/* Style pour la barre de progression avec animation */
+.splash-progress .bar {
+    -fx-background-color: linear-gradient(90deg, #4CAF50, #8BC34A, #4CAF50);
+    -fx-background-size: 20px 20px;
+    -fx-background-repeat: repeat-x;
+    -fx-animation: progress-shine 2s linear infinite;
+}
+
+@keyframes progress-shine {
+    0% { -fx-background-position: -20px 0; }
+    100% { -fx-background-position: 20px 0; }
+}
+
+/* Effet de survol pour les éléments interactifs */
+.splash-logo:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.5), 15, 0, 0, 8);
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .splash-content {
+        -fx-padding: 20;
+        -fx-spacing: 15;
+    }
+    
+    .splash-title {
+        -fx-font-size: 28px;
+    }
+    
+    .splash-subtitle {
+        -fx-font-size: 14px;
+    }
+    
+    .splash-logo {
+        -fx-fit-height: 80;
+        -fx-fit-width: 80;
+    }
+}
