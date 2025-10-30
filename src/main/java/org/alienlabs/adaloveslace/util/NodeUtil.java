@@ -91,7 +91,12 @@ public class NodeUtil {
         copy.setFlippedVertically(knot.isFlippedVertically());
         copy.setFlippedHorizontally(knot.isFlippedHorizontally());
         copy.setTextId(knot.getTextId());
-        copy.setTypedText(knot.getTypedText());
+        // Créer une copie profonde du StringBuilder pour éviter la mutation partagée
+        if (knot.getTypedText() != null) {
+            copy.setTypedText(new StringBuilder(knot.getTypedText()));
+        } else {
+            copy.setTypedText(null);
+        }
         copy.setText(knot.getText());
 
         if (knot.getHovered() != null) {
@@ -252,23 +257,26 @@ public class NodeUtil {
     public ImageView createText(double x, double y, ImageView imageView, Knot currentKnot, Color currentColor) {
         if (null == imageView) {
             imageView = new ImageView();
-
-            final Text text = new Text();
-            SnapshotParameters params = new SnapshotParameters();
-            params.setFill(Color.TRANSPARENT);
-
-            text.setText(currentKnot == null ? NEW_TEXT.toString() : currentKnot.getTypedText().toString());
-            text.setFont(new Font(CANVAS_TEXT_FONT_SIZE));
-            text.setFill(currentColor);
-            text.setScaleX(currentKnot == null ? 1d : new GridUtil(app.getMovablePane()).computeZoomFactor(currentKnot.getZoomFactor()));
-            text.setScaleY(currentKnot == null ? 1d : new GridUtil(app.getMovablePane()).computeZoomFactor(currentKnot.getZoomFactor()));
-            text.setRotate(currentKnot == null ? 0d : currentKnot.getRotationAngle());
-            text.setLayoutX(currentKnot == null ? x : currentKnot.getX());
-            text.setLayoutY(currentKnot == null ? y : currentKnot.getY());
-
-            WritableImage s = text.snapshot(params, null);
-            imageView.setImage(s);
         }
+
+        final Text text = new Text();
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+
+        text.setText(currentKnot == null || currentKnot.getTypedText() == null 
+                ? NEW_TEXT.toString() 
+                : currentKnot.getTypedText().toString());
+        text.setFont(new Font(CANVAS_TEXT_FONT_SIZE));
+        text.setFill(currentColor);
+        text.setScaleX(currentKnot == null ? 1d : new GridUtil(app.getMovablePane()).computeZoomFactor(currentKnot.getZoomFactor()));
+        text.setScaleY(currentKnot == null ? 1d : new GridUtil(app.getMovablePane()).computeZoomFactor(currentKnot.getZoomFactor()));
+        text.setRotate(currentKnot == null ? 0d : currentKnot.getRotationAngle());
+        text.setLayoutX(currentKnot == null ? x : currentKnot.getX());
+        text.setLayoutY(currentKnot == null ? y : currentKnot.getY());
+
+        WritableImage s = text.snapshot(params, null);
+        imageView.setImage(s);
+        
         return imageView;
     }
 

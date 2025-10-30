@@ -5,6 +5,9 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.util.NodeUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +33,8 @@ public class Step implements Comparable<Step> {
     private List<Knot> displayedKnots = new ArrayList<>();
 
     private List<Knot> selectedKnots = new ArrayList<>();
+
+    private static final Logger logger = LoggerFactory.getLogger(Step.class);
 
     @XmlTransient
     private static final int MAX_NUMBER_OF_STEPS = 100_000;
@@ -57,13 +62,29 @@ public class Step implements Comparable<Step> {
                 boolean layoutChildren) {
         this.app = app;
 
-        this.displayedKnots = displayedKnots;
-        this.selectedKnots = selectedKnots;
+        // Créer des copies profondes des knots pour éviter la mutation partagée
+        NodeUtil nodeUtil = new NodeUtil();
+        this.displayedKnots = displayedKnots.stream()
+                .map(nodeUtil::copyKnot)
+                .collect(java.util.stream.Collectors.toList());
+        this.selectedKnots = selectedKnots.stream()
+                .map(nodeUtil::copyKnot)
+                .collect(java.util.stream.Collectors.toList());
 
         this.displayedKnots.removeAll(this.selectedKnots);
         this.app.getMovablePane().getChildren().removeAll(
                 this.displayedKnots.stream().map(Knot::getSelection).toList());
         this.selectedKnots.removeAll(this.displayedKnots);
+
+        logger.info("Step constructor: displayedKnots.size()={}, selectedKnots.size()={}, layoutChildren={}",
+                this.displayedKnots.size(), this.selectedKnots.size(), layoutChildren);
+        
+        for (Knot knot : this.selectedKnots) {
+            logger.info("  Selected knot: pattern={}, text={}, typedText={}",
+                    knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : "none",
+                    knot.getText().orElse("empty"),
+                    knot.getTypedText() != null ? knot.getTypedText().toString() : "null");
+        }
 
         clearStepsGreaterThanPresentStep(app.getOptionalDotGrid().getDiagram());
         limitToMaxNumberOfSteps(app.getOptionalDotGrid().getDiagram());

@@ -117,8 +117,18 @@ public class GridEvents {
         default:
           if (!event.isControlDown() && !event.getText().isEmpty()) {
             typedText.append(event.getText());
+            logger.info("KeyHandler: typedText after append='{}', currentKnot.getTypedText()='{}'",
+                    typedText,
+                    app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText() != null ?
+                    app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText().toString() : "null");
             app.getOptionalDotGrid().getDiagram().getCurrentKnot().setTypedText(typedText);
             app.getOptionalDotGrid().getDiagram().getCurrentKnot().setText(Optional.of(typedText.toString()));
+            logger.info("KeyHandler: After setTypedText, currentKnot.getTypedText()='{}', currentKnot hashCode={}, currentKnot in selectedKnots? {}", 
+                    app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText() != null ?
+                    app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText().toString() : "null",
+                    app.getOptionalDotGrid().getDiagram().getCurrentKnot().hashCode(),
+                    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(
+                            app.getOptionalDotGrid().getDiagram().getCurrentKnot()));
             app.getOptionalDotGrid().getDiagram().getUpdateImage().run();
           }
       }

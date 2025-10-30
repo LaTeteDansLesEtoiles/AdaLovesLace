@@ -25,8 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-import static org.alienlabs.adaloveslace.domain.Knot.DEFAULT_ROTATION;
-import static org.alienlabs.adaloveslace.domain.Knot.DEFAULT_ZOOM;
+import static org.alienlabs.adaloveslace.domain.Knot.*;
 import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton.putAllEventsOnKnot;
 
 /**
@@ -143,14 +142,25 @@ public class Diagram {
 
     private void setUpdateImage() {
         updateImage = () -> {
+            logger.info("updateImage() called: currentKnot={}, typedText={}",
+                    this.getCurrentKnot(),
+                    this.getCurrentKnot() != null && this.getCurrentKnot().getTypedText() != null ?
+                    this.getCurrentKnot().getTypedText().toString() : "null");
+            
             getCurrentStep().getAllVisibleKnots().forEach(
                     knot -> putAllEventsOnKnot(app, knot)
             );
 
+            ImageView currentImageView = null;
+            if (this.getCurrentKnot() != null && this.getCurrentKnot().getImageView() != null) {
+                currentImageView = this.getCurrentKnot().getImageView();
+            }
+
+            logger.info("updateImage() calling createImageViewWithStep with x={}, y={}", this.x, this.y);
             createImageViewWithStep(
                     this.x,
                     this.y,
-                    null,
+                    currentImageView,
                     null,
                     this.getCurrentColor()
             );
@@ -166,10 +176,16 @@ public class Diagram {
     }
 
     public void undoLastStep(App app, boolean layoutChildren) {
-        logger.debug("Undo step, current step={}", this.getCurrentStepIndex());
-
+        logger.info("Undo step, current step={}, total steps={}", 
+                this.getCurrentStepIndex(), 
+                this.getAllSteps().size());
+        
+        int previousStepIndex = this.getCurrentStepIndex();
         if (this.getCurrentStepIndex() > 1) {
             this.setCurrentStepIndex(this.getCurrentStepIndex() - 1);
+            logger.info("Undo: Decremented stepIndex from {} to {}", previousStepIndex, this.getCurrentStepIndex());
+        } else {
+            logger.info("Undo: Cannot go below step 1, staying at step {}", this.getCurrentStepIndex());
         }
 
         List<Node> nodeListToRemove = new ArrayList<>();
@@ -185,11 +201,24 @@ public class Diagram {
             }
         }
 
-        List<Knot> displayedKnots = new ArrayList<>(this.getCurrentStep().getDisplayedKnots());
+        Step currentStep = this.getCurrentStep();
+        logger.info("Undo: getCurrentStep() returned step with index={}, selectedKnots.size()={}, displayedKnots.size()={}",
+                currentStep.getStepIndex(),
+                currentStep.getSelectedKnots().size(),
+                currentStep.getDisplayedKnots().size());
+        
+        if (!currentStep.getSelectedKnots().isEmpty()) {
+            Knot firstSelected = currentStep.getSelectedKnots().get(0);
+            logger.info("Undo: First selected knot in current step: text='{}', typedText='{}'",
+                    firstSelected.getText().orElse("empty"),
+                    firstSelected.getTypedText() != null ? firstSelected.getTypedText().toString() : "null");
+        }
+        
+        List<Knot> displayedKnots = new ArrayList<>(currentStep.getDisplayedKnots());
         List<Knot> displayedCopy = new ArrayList<>();
         List<Knot> selectedCopy = new ArrayList<>();
 
-        for (Knot knot : this.getCurrentStep().getAllVisibleKnots()) {
+        for (Knot knot : currentStep.getAllVisibleKnots()) {
             if (!knot.isSelectable()) {
                 Knot knotCopy = this.nodeUtil.copyKnot(knot);
 
@@ -228,12 +257,37 @@ public class Diagram {
         app.getMovablePane().getChildren().removeAll(nodeListToRemove);
         this.getCurrentStep().setDisplayedKnots(displayedCopy);
         this.getCurrentStep().setSelectedKnots(selectedCopy);
+        
+        // Mettre à jour currentKnot pour pointer vers le knot restauré du step précédent
+        // Pour le texte, prendre le premier knot sélectionné s'il y en a un
+        if (!selectedCopy.isEmpty()) {
+            // Pour le texte, prendre le knot de texte sélectionné
+            Knot restoredKnot = selectedCopy.stream()
+                    .filter(knot -> knot.getPattern().isEmpty())
+                    .findFirst()
+                    .orElse(selectedCopy.get(0));
+            this.setCurrentKnot(restoredKnot);
+            logger.info("Undo: Updated currentKnot to restored knot: text='{}', typedText='{}'",
+                    restoredKnot.getText().orElse("empty"),
+                    restoredKnot.getTypedText() != null ? restoredKnot.getTypedText().toString() : "null");
+        } else if (!displayedCopy.isEmpty()) {
+            // S'il n'y a pas de knot sélectionné, prendre le premier displayed knot
+            this.setCurrentKnot(displayedCopy.get(0));
+            logger.info("Undo: Updated currentKnot to first displayed knot");
+        } else {
+            // Aucun knot dans le step restauré
+            this.setCurrentKnot(null);
+            logger.info("Undo: Set currentKnot to null (no knots in restored step)");
+        }
 
         if (layoutChildren) {
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
         }
 
-        logger.debug("Undo step, new step={}", this.getCurrentStepIndex());
+        logger.info("Undo step completed, new step={}, restored step has {} selectedKnots and {} displayedKnots", 
+                this.getCurrentStepIndex(),
+                selectedCopy.size(),
+                displayedCopy.size());
     }
 
     public void removeKnotDecorations(List<Node> nodeListToRemove, Knot k) {
@@ -368,21 +422,42 @@ public class Diagram {
     }
 
     private void createImageViewWithStep(double x, double y, ImageView imageView, Pattern pattern, Color currentColor) {
-        if (!this.getCurrentStep().getSelectedKnots().isEmpty()) {
-            return;
-        }
+        // Ne pas bloquer si selectedKnots n'est pas vide car on peut mettre à jour un texte existant
+        // Cette condition était là pour éviter les conflits, mais elle bloque la mise à jour du texte pendant la frappe
+        // if (!this.getCurrentStep().getSelectedKnots().isEmpty()) {
+        //     return;
+        // }
+
+        logger.info("createImageViewWithStep() called: x={}, y={}, pattern={}, currentKnot={}", 
+                x, y, pattern, this.getCurrentKnot());
 
         Knot oldCurrentKnot = (this.getCurrentKnot() == null)
                 ? null
                 : this.getCurrentKnot();
 
-        boolean textMode = (pattern == null);
+        logger.info("oldCurrentKnot hashCode={}, getCurrentKnot() hashCode={}, same object? {}", 
+                oldCurrentKnot != null ? oldCurrentKnot.hashCode() : "null",
+                this.getCurrentKnot() != null ? this.getCurrentKnot().hashCode() : "null",
+                oldCurrentKnot != null && this.getCurrentKnot() != null ? 
+                oldCurrentKnot == this.getCurrentKnot() : "N/A");
 
-        if (textMode) {
-            imageView = this.nodeUtil.createText(x, y, imageView, getCurrentKnot(), currentColor);
+        // Sauvegarder typedText AVANT de créer le nouveau nœud car newKnot() pourrait créer un nouveau nœud
+        // et getCurrentKnot() pourrait changer après l'appel à newKnot()
+        StringBuilder savedTypedText = null;
+        if (oldCurrentKnot != null) {
+            logger.info("oldCurrentKnot is not null, typedText={}", 
+                    oldCurrentKnot.getTypedText() != null ? oldCurrentKnot.getTypedText().toString() : "null");
+            if (oldCurrentKnot.getTypedText() != null) {
+                savedTypedText = new StringBuilder(oldCurrentKnot.getTypedText());
+                logger.info("Saved typedText from oldCurrentKnot: '{}'", savedTypedText.toString());
+            }
+        } else {
+            logger.info("oldCurrentKnot is null");
         }
 
-        currentKnot = this.nodeUtil.newKnot(x, y, imageView, pattern, getCurrentKnot(), this.getCurrentColor());
+        boolean textMode = (pattern == null);
+
+        Knot currentKnot = this.nodeUtil.newKnot(x, y, imageView, pattern, getCurrentKnot(), this.getCurrentColor());
 
         if (isNewText && currentKnot.getPattern().isEmpty()) {
             currentKnot.setTextId(UUID.randomUUID());
@@ -399,57 +474,204 @@ public class Diagram {
             currentKnot.setZoomFactor(oldCurrentKnot == null ? DEFAULT_ZOOM : oldCurrentKnot.getZoomFactor());
         }
 
-        currentKnot.setTypedText(oldCurrentKnot == null ? null : oldCurrentKnot.getTypedText());
+        // Restaurer typedText depuis oldCurrentKnot (qui avait le texte mis à jour par keyHandler)
+        // Utiliser savedTypedText qui a été sauvegardé AVANT l'appel à newKnot()
+        if (savedTypedText != null) {
+            currentKnot.setTypedText(savedTypedText);
+            logger.info("Restored typedText to new knot: '{}'", currentKnot.getTypedText().toString());
+        } else if (textMode) {
+            // Initialiser typedText avec NEW_TEXT si c'est null (premier clic)
+            currentKnot.setTypedText(new StringBuilder(NEW_TEXT));
+            logger.info("Initialized typedText with NEW_TEXT");
+        }
         this.setCurrentKnot(currentKnot);
-        currentKnot.setSelection(null);
+        
+        // Créer l'imageView du texte APRÈS avoir mis à jour typedText
+        if (textMode) {
+            imageView = this.nodeUtil.createText(x, y, currentKnot.getImageView(), currentKnot, currentColor);
+            currentKnot.setImageView(imageView);
+        }
+        
+        // Vérifier AVANT de créer la sélection si le dernier step contient juste un texte vide
+        // Cela évite d'avoir deux steps pour la première lettre (clic initial + première frappe)
+        // Et sauvegarder le rectangle et le handle pour les réutiliser
+        boolean shouldRemoveLastStep = false;
+        Node savedSelection = null;
+        Node savedHandle = null;
+        if (!this.getAllSteps().isEmpty()) {
+            Step lastStep = this.getAllSteps().get(this.getAllSteps().size() - 1);
+            List<Knot> allKnotsInLastStep = new ArrayList<>(lastStep.getSelectedKnots());
+            allKnotsInLastStep.addAll(lastStep.getDisplayedKnots());
+            for (Knot knot : allKnotsInLastStep) {
+                if (knot.getPattern().isEmpty()) {
+                    String typedTextStr = knot.getTypedText() != null ? knot.getTypedText().toString() : "null";
+                    boolean isEmptyOrSpace = typedTextStr.trim().isEmpty() || typedTextStr.equals(NEW_TEXT.toString());
+                    if (isEmptyOrSpace && (lastStep.getSelectedKnots().size() == 1 || lastStep.getDisplayedKnots().size() == 1)) {
+                        shouldRemoveLastStep = true;
+                        logger.info("Will remove last step with empty text before creating new step");
+                        // Sauvegarder le rectangle et le handle du nœud vide pour les transférer au nouveau step
+                        savedSelection = knot.getSelection();
+                        savedHandle = knot.getHandle();
+                        logger.info("Saved selection and handle from empty text knot");
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Pour le texte, ne pas supprimer la sélection si elle existe déjà (réutilisation lors de la mise à jour)
+        if (pattern != null) {
+            currentKnot.setSelection(null);
+        } else {
+            // Pour le texte, toujours supprimer l'ancienne sélection pour éviter les doublons
+            // et recréer une nouvelle avec la bonne taille basée sur le texte actuel
+            if (oldCurrentKnot != null && oldCurrentKnot.getSelection() != null) {
+                app.getMovablePane().getChildren().remove(oldCurrentKnot.getSelection());
+            }
+            currentKnot.setSelection(null);
+        }
         currentKnot.setHandle(null);
         currentKnot.setHovered(null);
+        
+        // Supprimer aussi l'ancien handle si il existe
+        if (oldCurrentKnot != null && oldCurrentKnot.getHandle() != null) {
+            app.getMovablePane().getChildren().remove(oldCurrentKnot.getHandle());
+        }
 
         if (pattern == null) {
+            // Créer la sélection si elle n'existe pas encore pour le texte
+            // Réutiliser le rectangle sauvegardé du step vide si disponible
             Node selection = currentKnot.getSelection();
+            GridUtil gridUtil = new GridUtil(app.getMovablePane());
+            if (savedSelection != null && savedSelection instanceof Rectangle) {
+                // Réutiliser le rectangle du step vide et le mettre à jour avec la bonne taille
+                Rectangle savedRect = (Rectangle) savedSelection;
+                currentKnot.setSelection(savedRect);
+                selection = savedRect;
+                // Mettre à jour la taille et la position du rectangle avec les nouvelles valeurs du texte
+                if (currentKnot.getImageView() != null && currentKnot.getImageView().getImage() != null) {
+                    savedRect.setWidth(currentKnot.getImageView().getImage().getWidth());
+                    savedRect.setHeight(currentKnot.getImageView().getImage().getHeight());
+                }
+                savedRect.setLayoutX(currentKnot.getX());
+                savedRect.setLayoutY(currentKnot.getY());
+                // Mettre à jour les propriétés (zoom, rotation) sans changer l'ID
+                double zoomFactor = gridUtil.computeZoomFactor(currentKnot);
+                savedRect.setScaleX(zoomFactor);
+                savedRect.setScaleY(zoomFactor);
+                savedRect.setRotate(currentKnot.getRotationAngle());
+                // S'assurer que le rectangle est dans le pane
+                if (!app.getMovablePane().getChildren().contains(savedRect)) {
+                    app.getMovablePane().getChildren().add(savedRect);
+                }
+                logger.info("Reusing saved selection from empty text step and updating size");
+            } else if (!(selection instanceof Rectangle)) {
+                Rectangle rec = gridUtil.newRectangle(currentKnot, Color.BLUE);
+                currentKnot.setSelection(rec);
+                selection = rec;
+                // Ajouter la sélection au pane si elle n'y est pas déjà
+                if (!app.getMovablePane().getChildren().contains(selection)) {
+                    app.getMovablePane().getChildren().add(selection);
+                }
+            }
+            
             if (selection != null && selection instanceof Rectangle) {
-                Circle handle = new GridUtil(app.getMovablePane()).newHandleForText(currentKnot, (Rectangle) selection);
-                if (handle != null) {
+                Circle handle = null;
+                if (savedHandle != null && savedHandle instanceof Circle) {
+                    // Réutiliser le handle du step vide et le mettre à jour avec la bonne position
+                    handle = (Circle) savedHandle;
                     currentKnot.setHandle(handle);
+                    // Mettre à jour la position du handle
+                    Circle newHandle = gridUtil.newHandleForText(currentKnot, (Rectangle) selection);
+                    if (newHandle != null) {
+                        handle.setLayoutX(newHandle.getLayoutX());
+                        handle.setLayoutY(newHandle.getLayoutY());
+                        handle.setRadius(newHandle.getRadius());
+                    }
+                    logger.info("Reusing saved handle from empty text step and updating position");
+                } else {
+                    handle = gridUtil.newHandleForText(currentKnot, (Rectangle) selection);
+                    if (handle != null) {
+                        currentKnot.setHandle(handle);
+                    }
+                }
+                if (handle != null) {
+                    // Ajouter le handle au pane s'il n'y est pas déjà
+                    if (!app.getMovablePane().getChildren().contains(handle)) {
+                        app.getMovablePane().getChildren().add(handle);
+                    }
                 } else {
                     logger.warn("Failed to create handle for text knot");
                 }
-            } else {
-                logger.warn("Cannot create handle for text: selection is null or not a Rectangle");
             }
+            
+            // L'imageView sera ajouté au pane par layoutChildren() via drawSelectedKnot()
         }
 
         putAllEventsOnKnot(app, currentKnot);
 
         if (null != oldCurrentKnot && textMode) {
-            app.getMovablePane().getChildren().remove(oldCurrentKnot.getImageView());
+            // Supprimer l'ancien imageView du pane pour permettre au nouveau de s'afficher
+            // car on crée un nouveau step avec un nouvel imageView
+            if (oldCurrentKnot.getImageView() != null) {
+                app.getMovablePane().getChildren().remove(oldCurrentKnot.getImageView());
+            }
         }
-
 
         List<Knot> displayedKnots = new ArrayList<>(this.getCurrentStep().getDisplayedKnots());
         List<Knot> selectedKnots = new ArrayList<>();
-        displayedKnots.addAll(
-                this.getCurrentStep().getSelectedKnots().stream().filter(
-                                knot -> (
-                                        knot.getPattern().isPresent() || isNewText
-                                )
-                        )
-                        .toList()
-        );
-
-        // Vérifier s'il y a déjà un nœud du même type à la même position et le remplacer
-        Knot existingKnot = displayedKnots.stream()
-                .filter(knot -> Math.abs(knot.getX() - currentKnot.getX()) < 0.1 && 
-                               Math.abs(knot.getY() - currentKnot.getY()) < 0.1 &&
-                               // Même type : pattern sur pattern ou texte sur texte
-                               ((currentKnot.getPattern().isPresent() && knot.getPattern().isPresent()) ||
-                                (currentKnot.getPattern().isEmpty() && knot.getPattern().isEmpty())))
-                .findFirst()
-                .orElse(null);
+        
+        // Pour le texte, garder les nœuds de texte précédents dans selectedKnots
+        // pour qu'ils continuent d'être affichés pendant la frappe
+        List<Knot> previousSelectedKnots = this.getCurrentStep().getSelectedKnots();
+        logger.info("Previous selectedKnots.size()={}", previousSelectedKnots.size());
+        
+        // Vérifier s'il y a déjà un nœud du même type à la même position dans les previousSelectedKnots
+        // pour le remplacer par currentKnot
+        Knot existingKnot = null;
+        if (textMode) {
+            existingKnot = previousSelectedKnots.stream()
+                    .filter(knot -> knot.getPattern().isEmpty() &&
+                                   Math.abs(knot.getX() - currentKnot.getX()) < 0.1 && 
+                                   Math.abs(knot.getY() - currentKnot.getY()) < 0.1)
+                    .findFirst()
+                    .orElse(null);
+            if (existingKnot != null) {
+                logger.info("Found existingKnot at same position: text='{}', typedText='{}'", 
+                        existingKnot.getText().orElse("empty"),
+                        existingKnot.getTypedText() != null ? existingKnot.getTypedText().toString() : "null");
+            } else {
+                logger.info("No existingKnot found at same position");
+            }
+        }
+        
+        for (Knot knot : previousSelectedKnots) {
+            logger.info("  Previous knot: pattern={}, text={}, typedText={}, equals existingKnot? {}", 
+                    knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : "none",
+                    knot.getText().orElse("empty"),
+                    knot.getTypedText() != null ? knot.getTypedText().toString() : "null",
+                    existingKnot != null && knot.equals(existingKnot));
+            // Garder les nœuds de texte (sans pattern) dans selectedKnots
+            // SAUF si c'est le nœud existant qui sera remplacé par currentKnot
+            if (knot.getPattern().isEmpty()) {
+                // Ne pas ajouter si c'est le nœud existant qui sera remplacé
+                // Utiliser la comparaison de référence ou equals pour être sûr
+                if (existingKnot == null || (knot != existingKnot && !knot.equals(existingKnot))) {
+                    selectedKnots.add(knot);
+                    logger.info("    Added previous knot to selectedKnots");
+                } else {
+                    logger.info("    Skipped existingKnot, will be replaced by currentKnot");
+                }
+            } else {
+                // Les patterns vont dans displayedKnots
+                displayedKnots.add(knot);
+            }
+        }
         
         if (existingKnot != null) {
             // Supprimer l'ancien nœud du même type
             displayedKnots.remove(existingKnot);
+            selectedKnots.remove(existingKnot);
             app.getMovablePane().getChildren().remove(existingKnot.getImageView());
             if (existingKnot.getSelection() != null) {
                 app.getMovablePane().getChildren().remove(existingKnot.getSelection());
@@ -462,14 +684,50 @@ public class Diagram {
             }
         }
 
-        if (currentKnot.getPattern().isEmpty() && null != currentKnot.getTypedText()) {
-            currentKnot.setText(Optional.of(currentKnot.getTypedText().toString()));
+        // Pour le texte, toujours ajouter aux selectedKnots pour qu'il soit affiché
+        if (currentKnot.getPattern().isEmpty()) {
+            // S'assurer que text est défini pour l'affichage
+            if (currentKnot.getTypedText() != null && currentKnot.getTypedText().length() > 0) {
+                currentKnot.setText(Optional.of(currentKnot.getTypedText().toString()));
+            } else {
+                currentKnot.setText(Optional.of(NEW_TEXT.toString()));
+            }
             selectedKnots.add(currentKnot);
+            logger.info("Added text knot to selectedKnots: typedText='{}', text='{}', selectedKnots.size()={}",
+                    currentKnot.getTypedText() != null ? currentKnot.getTypedText().toString() : "null",
+                    currentKnot.getText().orElse("empty"),
+                    selectedKnots.size());
         } else {
             displayedKnots.add(currentKnot);
         }
         isNewText = false;
 
+        // Supprimer le dernier step si nécessaire (décidé plus tôt)
+        if (shouldRemoveLastStep) {
+            logger.info("Removing last step with empty text before creating new step");
+            Step lastStep = this.getAllSteps().get(this.getAllSteps().size() - 1);
+            List<Step> allStepsList = this.getAllSteps();
+            List<Step> newSteps = new ArrayList<>();
+            for (Step step : allStepsList) {
+                if (!step.equals(lastStep)) {
+                    newSteps.add(step);
+                }
+            }
+            this.setAllSteps(newSteps);
+            // Mettre à jour les stepIndex des steps restants
+            for (int i = 0; i < newSteps.size(); i++) {
+                newSteps.get(i).setStepIndex(i + 1);
+            }
+            // Mettre à jour l'index pour pointer vers le nouveau dernier step
+            if (!newSteps.isEmpty()) {
+                this.setCurrentStepIndex(newSteps.size());
+            } else {
+                this.setCurrentStepIndex(0);
+            }
+        }
+
+        logger.info("Creating new step: displayedKnots.size()={}, selectedKnots.size()={}, layoutChildren=true",
+                displayedKnots.size(), selectedKnots.size());
         newStep(
                 displayedKnots,
                 selectedKnots,

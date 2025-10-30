@@ -156,6 +156,10 @@ public class OptionalDotGrid extends Pane {
       }
 
       for (Knot knot : this.diagram.getCurrentStep().getSelectedKnots()) {
+        logger.info("Drawing selected knot: pattern={}, text={}, typedText={}",
+                knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : "none",
+                knot.getText().orElse("empty"),
+                knot.getTypedText() != null ? knot.getTypedText().toString() : "null");
         if (knot.isVisible()) {
           drawSelectedKnot(this.diagram.getCurrentStep(), knot);
         }
@@ -213,12 +217,33 @@ public class OptionalDotGrid extends Pane {
                 logger.debug("Adding red rectangle for Knot {}", knot);
                 addSelectionToAKnot(knot, Color.rgb(255, 0, 0, 1));
             } else if (getDiagram().getCurrentStep().getSelectedKnots().contains(knot) &&
-            !getDiagram().getCurrentMode().equals(MouseMode.DRAWING)) {
+            (!getDiagram().getCurrentMode().equals(MouseMode.DRAWING) || knot.getPattern().isEmpty())) {
+                // Pour les knots de texte, toujours afficher le rectangle bleu même en mode DRAWING
                 Platform.runLater(() -> {
-                    Rectangle rec = this.gridUtil.newRectangle(knot, Color.BLUE);
-                    knot.setSelection(rec);
+                    Rectangle rec = (knot.getSelection() instanceof Rectangle) ? 
+                            (Rectangle) knot.getSelection() : 
+                            this.gridUtil.newRectangle(knot, Color.BLUE);
+                    if (rec != knot.getSelection()) {
+                        knot.setSelection(rec);
+                    } else {
+                        // Mettre à jour la taille du rectangle existant si le texte a changé
+                        if (knot.getPattern().isEmpty() && knot.getImageView() != null && 
+                            knot.getImageView().getImage() != null) {
+                            rec.setWidth(knot.getImageView().getImage().getWidth());
+                            rec.setHeight(knot.getImageView().getImage().getHeight());
+                            rec.setLayoutX(knot.getX());
+                            rec.setLayoutY(knot.getY());
+                            // Mettre à jour le zoom et la rotation
+                            double zoomFactor = this.gridUtil.computeZoomFactor(knot);
+                            rec.setScaleX(zoomFactor);
+                            rec.setScaleY(zoomFactor);
+                            rec.setRotate(knot.getRotationAngle());
+                        }
+                    }
                     logger.debug("Adding hover {} for Knot {}", rec, knot);
-                    root.getChildren().add(rec);
+                    if (!root.getChildren().contains(rec)) {
+                        root.getChildren().add(rec);
+                    }
                 });
             } else if (hovered) {
                 // If hovered & not selected: gray
@@ -241,11 +266,15 @@ public class OptionalDotGrid extends Pane {
             }
 
             if (firstKnot.isPresent() && firstKnot.get().equals(knot) &&
-                    !getDiagram().getCurrentMode().equals(MouseMode.DRAWING)) {
+                    (!getDiagram().getCurrentMode().equals(MouseMode.DRAWING) || knot.getPattern().isEmpty())) {
+                // Pour les knots de texte, toujours afficher le handle même en mode DRAWING
                 addHandleToAKnot(knot, BLUE_HANDLE);
             } else {
-                knot.setHandle(null);
-                root.getChildren().remove(knot.getHovered());
+                // Ne pas supprimer le handle si c'est un knot de texte sélectionné
+                if (!(knot.getPattern().isEmpty() && getDiagram().getCurrentStep().getSelectedKnots().contains(knot))) {
+                    knot.setHandle(null);
+                    root.getChildren().remove(knot.getHovered());
+                }
             }
         }
     }
@@ -385,9 +414,23 @@ public class OptionalDotGrid extends Pane {
   }
 
   public ImageView drawTextImageView(Knot knot, double x, double y) {
-    ImageView imageView;
+    ImageView imageView = knot.getImageView();
+    // Réutiliser l'imageView existant s'il existe, sinon en créer un nouveau
+    if (imageView == null) {
+      imageView = new ImageView();
+    }
+    
     Text text = new Text();
-    text.setText(knot.getText().get());
+    // Utiliser typedText s'il existe et n'est pas vide, sinon utiliser text
+    String textToDisplay;
+    if (knot.getTypedText() != null && !knot.getTypedText().isEmpty()) {
+      textToDisplay = knot.getTypedText().toString();
+    } else if (knot.getText().isPresent()) {
+      textToDisplay = knot.getText().get();
+    } else {
+      textToDisplay = NEW_TEXT.toString();
+    }
+    text.setText(textToDisplay);
     text.setFont(new Font(CANVAS_TEXT_FONT_SIZE));
     text.setFill(knot.getColor().isEmpty() ? Color.BLACK : knot.getColor().get());
     SnapshotParameters params = new SnapshotParameters();
@@ -395,12 +438,16 @@ public class OptionalDotGrid extends Pane {
     text.setLayoutX(x);
     text.setLayoutY(y);
 
-    imageView = new ImageView();
     WritableImage snapshot = text.snapshot(params, null);
     imageView.setImage(snapshot);
+    imageView.setLayoutX(x);
+    imageView.setLayoutY(y);
 
     knot.setImageView(imageView);
-    root.getChildren().add(knot.getImageView());
+    // Ne pas ajouter l'imageView s'il est déjà dans le pane
+    if (!root.getChildren().contains(knot.getImageView())) {
+      root.getChildren().add(knot.getImageView());
+    }
     return imageView;
   }
 
