@@ -14,6 +14,7 @@ import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.domain.Pattern;
 import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.view.component.GridUtil;
+import org.alienlabs.adaloveslace.view.component.grid.PatternImageCache;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,17 +191,38 @@ public class NodeUtil {
     }
 
     public void colorizeKnot(App app, Knot copiedKnot) {
-        if (app.getOptionalDotGrid().getDiagram().getCurrentColor() != null) {
+        // Vérifier si le bouton "Back to Black" est sélectionné
+        if (app.getToolboxWindow().getBackInBlackButton().isSelected()) {
+            // Mode "Back to Black": restaurer le nœud à sa couleur originale (noir)
+            copiedKnot.setColor(Optional.empty());
+            if (copiedKnot.getPattern().isPresent()) {
+                // Pour les patterns, restaurer l'image originale depuis le cache
+                PatternImageCache.updateKnotImageView(copiedKnot);
+            } else {
+                // Pour le texte, recréer l'image en noir
+                app.getOptionalDotGrid().drawTextImageView(
+                    copiedKnot,
+                    copiedKnot.getX(),
+                    copiedKnot.getY()
+                );
+            }
+        } else if (app.getOptionalDotGrid().getDiagram().getCurrentColor() != null) {
+            // Mode couleur: appliquer la couleur choisie
             Color newColor = app.getOptionalDotGrid().getDiagram().getCurrentColor();
 
             // Toujours remplacer le noir, peu importe l'ancienne couleur
             copiedKnot.setColor(Optional.of(newColor));
-            copiedKnot.getImageView().setImage(
-                    new NodeUtil().replaceColoredPixels(
-                            copiedKnot.getImageView().getImage(),
-                            newColor
-                    )
-            );
+            if (copiedKnot.getPattern().isPresent()) {
+                // Pour les patterns, utiliser le cache pour obtenir l'image colorisée
+                PatternImageCache.updateKnotImageView(copiedKnot);
+            } else {
+                // Pour le texte, recréer l'image avec la nouvelle couleur
+                app.getOptionalDotGrid().drawTextImageView(
+                    copiedKnot,
+                    copiedKnot.getX(),
+                    copiedKnot.getY()
+                );
+            }
         }
     }
 

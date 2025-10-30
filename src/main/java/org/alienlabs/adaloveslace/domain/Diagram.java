@@ -422,12 +422,6 @@ public class Diagram {
     }
 
     private void createImageViewWithStep(double x, double y, ImageView imageView, Pattern pattern, Color currentColor) {
-        // Ne pas bloquer si selectedKnots n'est pas vide car on peut mettre à jour un texte existant
-        // Cette condition était là pour éviter les conflits, mais elle bloque la mise à jour du texte pendant la frappe
-        // if (!this.getCurrentStep().getSelectedKnots().isEmpty()) {
-        //     return;
-        // }
-
         logger.info("createImageViewWithStep() called: x={}, y={}, pattern={}, currentKnot={}", 
                 x, y, pattern, this.getCurrentKnot());
 

@@ -3,13 +3,17 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid;
 import javafx.animation.PauseTransition;
 import javafx.event.EventHandler;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 
 import static org.alienlabs.adaloveslace.App.resourceBundle;
+import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton.putAllEventsOnKnot;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.*;
+import static org.alienlabs.adaloveslace.view.window.event.GridEvents.keyHandler;
 
 // 🤘
 public class BackInBlackButton extends ToggleButton {
@@ -23,8 +27,14 @@ public class BackInBlackButton extends ToggleButton {
     BackInBlackButton.app = app;
 
     this.getStyleClass().add(PATTERN_TEXT_AND_COLOR_BUTTON);
-    this.getStyleClass().add(BUTTON_SELECTED);
-    this.setSelected(true);
+    // Synchroniser l'état initial avec la couleur actuelle
+    // Si une couleur est déjà définie, ne pas sélectionner "Back to Black"
+    if (app.getOptionalDotGrid().getDiagram().getCurrentColor() == null) {
+      this.getStyleClass().add(BUTTON_SELECTED);
+      this.setSelected(true);
+    } else {
+      this.setSelected(false);
+    }
 
     this.setOnMouseClicked(onBackInBlackButtonClicked);
   }
@@ -40,6 +50,21 @@ public class BackInBlackButton extends ToggleButton {
       app.getToolboxWindow().getColorButton().getStyleClass().remove(BUTTON_SELECTED);
       app.getOptionalDotGrid().getDiagram().setCurrentColor(null);
       GridEvents.setCurrentImageView(null);
+      
+      // Mettre en mode sélection quand on active "Back to Black"
+      app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
+      app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
+      
+      for (org.alienlabs.adaloveslace.domain.Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
+        putAllEventsOnKnot(app, knot);
+      }
+      
+      GridEvents.removeEventsFromGrid(app);
+      
+      app.getToolboxWindow().getDrawingButton()     .setSelected(false);
+      app.getToolboxWindow().getSelectionButton()   .setSelected(true);
+      app.getToolboxWindow().getDeletionButton()    .setSelected(false);
+      app.getToolboxWindow().getDuplicationButton() .setSelected(false);
     });
 
     pause.playFromStart();
