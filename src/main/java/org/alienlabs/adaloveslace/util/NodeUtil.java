@@ -5,7 +5,6 @@ import javafx.scene.image.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.alienlabs.adaloveslace.App;
@@ -59,11 +58,8 @@ public class NodeUtil {
         );
         copy(knot, copy);
 
-        // S'assurer que le nœud copié a un rectangle de sélection
-        if (copy.getSelection() == null) {
-            Rectangle rec = new GridUtil(app.getMovablePane()).newRectangle(copy, Color.BLUE);
-            copy.setSelection(rec);
-        }
+        // Le rectangle de sélection sera créé dans drawHoveredOverOrSelectedDecorations()
+        // pour garantir qu'il est correctement ajouté au pane avec les bonnes propriétés
 
         return copy;
     }
@@ -103,9 +99,11 @@ public class NodeUtil {
         if (knot.getHovered() != null) {
             copy.setHovered(knot.getHovered());
         }
-        if (knot.getSelection() != null) {
-            copy.setSelection(knot.getSelection());
-        }
+        // Ne pas copier la référence du rectangle de sélection pour éviter que plusieurs nœuds
+        // partagent le même rectangle. Le rectangle sera créé dans drawHoveredOverOrSelectedDecorations()
+        // si nécessaire. Pour les copies créées lors du déplacement avec les flèches, cela garantit
+        // que chaque nœud a son propre rectangle qui sera mis à jour correctement.
+        copy.setSelection(null);
         if (knot.getHandle() != null) {
             copy.setHandle(knot.getHandle());
         }

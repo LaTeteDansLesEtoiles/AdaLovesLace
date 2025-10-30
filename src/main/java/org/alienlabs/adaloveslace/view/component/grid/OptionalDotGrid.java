@@ -220,15 +220,17 @@ public class OptionalDotGrid extends Pane {
             (!getDiagram().getCurrentMode().equals(MouseMode.DRAWING) || knot.getPattern().isEmpty())) {
                 // Pour les knots de texte, toujours afficher le rectangle bleu même en mode DRAWING
                 Platform.runLater(() -> {
-                    Rectangle rec = (knot.getSelection() instanceof Rectangle) ? 
-                            (Rectangle) knot.getSelection() : 
-                            this.gridUtil.newRectangle(knot, Color.BLUE);
-                    if (rec != knot.getSelection()) {
-                        knot.setSelection(rec);
-                    } else {
-                        // Mettre à jour la taille du rectangle existant si le texte a changé
+                    Rectangle rec;
+                    boolean rectangleExists = (knot.getSelection() instanceof Rectangle) && 
+                                             root.getChildren().contains(knot.getSelection());
+                    
+                    if (rectangleExists) {
+                        // Réutiliser le rectangle existant qui est dans le pane
+                        rec = (Rectangle) knot.getSelection();
+                        // Mettre à jour la position, la taille, le zoom et la rotation du rectangle existant
                         if (knot.getPattern().isEmpty() && knot.getImageView() != null && 
                             knot.getImageView().getImage() != null) {
+                            // Pour les nœuds de texte
                             rec.setWidth(knot.getImageView().getImage().getWidth());
                             rec.setHeight(knot.getImageView().getImage().getHeight());
                             rec.setLayoutX(knot.getX());
@@ -238,12 +240,22 @@ public class OptionalDotGrid extends Pane {
                             rec.setScaleX(zoomFactor);
                             rec.setScaleY(zoomFactor);
                             rec.setRotate(knot.getRotationAngle());
+                        } else if (knot.getPattern().isPresent()) {
+                            // Pour les patterns : mettre à jour la position, le zoom et la rotation
+                            rec.setLayoutX(knot.getX());
+                            rec.setLayoutY(knot.getY());
+                            double zoomFactor = this.gridUtil.computeZoomFactor(knot);
+                            rec.setScaleX(zoomFactor);
+                            rec.setScaleY(zoomFactor);
+                            rec.setRotate(knot.getRotationAngle());
                         }
-                    }
-                    logger.debug("Adding hover {} for Knot {}", rec, knot);
-                    if (!root.getChildren().contains(rec)) {
+                    } else {
+                        // Créer un nouveau rectangle si celui existant n'est pas dans le pane ou n'existe pas
+                        rec = this.gridUtil.newRectangle(knot, Color.BLUE);
+                        knot.setSelection(rec);
                         root.getChildren().add(rec);
                     }
+                    logger.debug("Adding hover {} for Knot {}", rec, knot);
                 });
             } else if (hovered) {
                 // If hovered & not selected: gray
