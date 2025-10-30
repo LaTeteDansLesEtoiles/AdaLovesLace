@@ -82,6 +82,8 @@ public class FileUtil {
             Diagram value = loadTask.getValue();
             dialog.setResult(value);
             dialog.close();
+            // Nous sommes sur le thread JavaFX ici: préparer les ImageView maintenant
+            buildKnotsImageViews(app, value);
             new FileChooserUtil().restartGui(app, value);
         });
         loadTask.setOnFailed(_ -> {
@@ -116,6 +118,8 @@ public class FileUtil {
                     diagram = buildDiagram(zipFile, entry);
                     // S'assurer que le diagramme n'est pas null avant de l'assigner
                     if (diagram != null) {
+                        // Initialiser typedText (OK en BG), préparation UI déplacée sur le thread FX
+                        initializeTypedTextFromLoadedText(diagram);
                         app.getOptionalDotGrid().setDiagram(diagram);
                     } else {
                         logger.warn("Built diagram is null, creating new one");
@@ -139,6 +143,26 @@ public class FileUtil {
         }
         
         return diagram;
+    }
+
+    /**
+     * Après chargement du diagramme depuis le fichier .lace, recopier le contenu du champ text
+     * (persisté) dans typedText (transient) pour les nœuds de texte, afin d'assurer leur affichage.
+     */
+    private void initializeTypedTextFromLoadedText(Diagram diagram) {
+        if (diagram == null || diagram.getAllSteps() == null) {
+            return;
+        }
+        for (Step step : diagram.getAllSteps()) {
+            for (Knot knot : step.getAllVisibleKnots()) {
+                if (knot.getPattern().isEmpty()) {
+                    String loaded = knot.getText().orElse("");
+                    if (!loaded.trim().isEmpty()) {
+                        knot.setTypedText(new StringBuilder(loaded));
+                    }
+                }
+            }
+        }
     }
 
     private void buildKnotsImageViews(App app, Diagram diagram) {
@@ -381,11 +405,35 @@ public class FileUtil {
         toSave.setCurrentStepIndex(currentStepIndex); // Not -1 because of the empty step at the beginning
         File xmlFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
                 XML_FILE_TO_SAVE_IN_LACE_FILE);
+        // S'assurer que le champ text contient bien le contenu affiché avant sauvegarde
+        normalizeTextBeforeSave(toSave);
         removeEmptyTexts(toSave);
         jaxbMarshaller.marshal(toSave, xmlFile);
 
         zipOut.putNextEntry(new ZipEntry(XML_FILE_TO_SAVE_IN_LACE_FILE));
         Files.copy(xmlFile.toPath(), zipOut);
+    }
+
+    /**
+     * Pour chaque nœud de texte, synchroniser le champ text (persisté) avec typedText (transient)
+     * afin que le contenu soit bien sauvegardé dans le .lace.
+     */
+    private static void normalizeTextBeforeSave(Diagram diagram) {
+        if (diagram == null || diagram.getAllSteps() == null) {
+            return;
+        }
+        for (Step step : diagram.getAllSteps()) {
+            for (Knot knot : step.getAllVisibleKnots()) {
+                if (knot.getPattern().isEmpty()) {
+                    String typed = knot.getTypedText() != null ? knot.getTypedText().toString() : knot.getText().orElse("");
+                    if (typed.trim().isEmpty()) {
+                        knot.setText(Optional.of(""));
+                    } else {
+                        knot.setText(Optional.of(typed));
+                    }
+                }
+            }
+        }
     }
 
     private static void removeEmptyTexts(Diagram toSave) {
