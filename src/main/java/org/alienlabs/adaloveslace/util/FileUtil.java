@@ -59,6 +59,7 @@ public class FileUtil {
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
     private App app;
     private Diagram diagram;
+    private static volatile File lastLoadedLaceFile;
 
     public FileUtil() {
         // Sometimes you don't need the Application
@@ -69,6 +70,7 @@ public class FileUtil {
     }
 
     public void buildUiFromLaceFile(final App app, final File file) {
+        lastLoadedLaceFile = file;
         final Dialog<Diagram> dialog = getDialog(app, LoadingLaceInProgress);
 
         Task<Diagram> loadTask = new Task<>() {
@@ -82,9 +84,11 @@ public class FileUtil {
             Diagram value = loadTask.getValue();
             dialog.setResult(value);
             dialog.close();
-            // Nous sommes sur le thread JavaFX ici: préparer les ImageView maintenant
-            buildKnotsImageViews(app, value);
+            // Afficher le diagramme tout de suite; le rendu normal dessinera patterns & textes
             new FileChooserUtil().restartGui(app, value);
+            // Extraction du reste des patterns en arrière-plan pour fluidifier l'affichage
+            Set<String> needed = getNeededPatternFilenamesInViewport(app, value);
+            copyRemainingPatternsAsync(file, needed);
         });
         loadTask.setOnFailed(_ -> {
             logger.error("Error loading task", loadTask.getException());
@@ -109,27 +113,27 @@ public class FileUtil {
         Diagram diagram = null;
 
         try (ZipFile zipFile = new ZipFile(file)) {
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-            while(entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-
-                if (XML_FILE_TO_SAVE_IN_LACE_FILE.equals(entry.getName())) {
-                    diagram = buildDiagram(zipFile, entry);
-                    // S'assurer que le diagramme n'est pas null avant de l'assigner
-                    if (diagram != null) {
-                        // Initialiser typedText (OK en BG), préparation UI déplacée sur le thread FX
-                        initializeTypedTextFromLoadedText(diagram);
-                        app.getOptionalDotGrid().setDiagram(diagram);
-                    } else {
-                        logger.warn("Built diagram is null, creating new one");
-                        diagram = new Diagram(app);
-                        app.getOptionalDotGrid().setDiagram(diagram);
-                    }
-                } else {
-                    copyPattern(file, zipFile, entry);
-                }
+            // 1) Lire uniquement le XML pour afficher vite
+            ZipEntry xmlEntry = zipFile.getEntry(XML_FILE_TO_SAVE_IN_LACE_FILE);
+            if (xmlEntry != null) {
+                diagram = buildDiagram(zipFile, xmlEntry);
             }
+
+            if (diagram == null) {
+                logger.warn("Built diagram is null, creating new one");
+                diagram = new Diagram(app);
+            }
+
+            // Initialiser typedText (OK en BG)
+            initializeTypedTextFromLoadedText(diagram);
+
+            // 2) Extraire en priorité les patterns visibles dans la zone de vue (blocant mais limité)
+            Set<String> needed = getNeededPatternFilenamesInViewport(app, diagram);
+            copyOnlyPatterns(zipFile, needed);
+
+            // 3) Laisser l'UI se mettre à jour tout de suite, puis extraire le reste en arrière-plan
+            // (fait après retour, dans setOnSucceeded)
+            app.getOptionalDotGrid().setDiagram(diagram);
         } catch (JAXBException | IOException e) {
             logger.error("Error loading lace file: {}", file.getAbsolutePath(), e);
             // Retourner un diagramme vide au lieu de null pour éviter les erreurs
@@ -143,6 +147,95 @@ public class FileUtil {
         }
         
         return diagram;
+    }
+
+    private Set<String> getNeededPatternFilenames(Diagram diagram) {
+        Set<String> needed = new HashSet<>();
+        if (diagram == null || diagram.getAllSteps() == null) return needed;
+        if (diagram.getCurrentStep() != null) {
+            for (Knot k : diagram.getCurrentStep().getAllVisibleKnots()) {
+                if (k.getPattern().isPresent()) {
+                    needed.add(k.getPattern().get().getFilename());
+                }
+            }
+        }
+        return needed;
+    }
+
+    private Set<String> getNeededPatternFilenamesInViewport(App app, Diagram diagram) {
+        Set<String> needed = new HashSet<>();
+        if (diagram == null || diagram.getCurrentStep() == null) return needed;
+        double vw = app.getResizes().getGridWidth();
+        double vh = app.getResizes().getGridHeight();
+        for (Knot k : diagram.getCurrentStep().getAllVisibleKnots()) {
+            if (k.getPattern().isPresent()) {
+                double w = k.getPattern().get().getWidth();
+                double h = k.getPattern().get().getHeight();
+                if (rectsIntersect(0, 0, vw, vh, k.getX(), k.getY(), w, h)) {
+                    needed.add(k.getPattern().get().getFilename());
+                }
+            }
+        }
+        return needed;
+    }
+
+    private boolean rectsIntersect(double x1, double y1, double w1, double h1,
+                                   double x2, double y2, double w2, double h2) {
+        return x1 < x2 + w2 && x2 < x1 + w1 && y1 < y2 + h2 && y2 < y1 + h1;
+    }
+
+    private void copyOnlyPatterns(ZipFile zipFile, Set<String> filenames) throws IOException {
+        for (String name : filenames) {
+            ZipEntry entry = zipFile.getEntry(name);
+            if (entry != null) {
+                try (InputStream in = zipFile.getInputStream(entry)) {
+                    copyTargetFile(entry, in);
+                }
+            }
+        }
+    }
+
+    private void copyRemainingPatternsAsync(File file, Set<String> alreadyCopied) {
+        Thread t = new Thread(() -> {
+            try (ZipFile zip = new ZipFile(file)) {
+                Enumeration<? extends ZipEntry> entries = zip.entries();
+                while (entries.hasMoreElements()) {
+                    ZipEntry entry = entries.nextElement();
+                    if (XML_FILE_TO_SAVE_IN_LACE_FILE.equals(entry.getName())) continue;
+                    String name = entry.getName();
+                    if (alreadyCopied.contains(name)) continue;
+                    try (InputStream in = zip.getInputStream(entry)) {
+                        copyTargetFile(entry, in);
+                    } catch (IOException ioe) {
+                        logger.warn("Background copy failed for {}", name, ioe);
+                    }
+                }
+            } catch (IOException e) {
+                logger.warn("Cannot open lace file for async copy", e);
+            }
+        }, "AdaLovesLace-PatternsCopier");
+        t.setDaemon(true);
+        t.setPriority(Thread.NORM_PRIORITY);
+        t.start();
+    }
+
+    public void copyPatternFromZipAsyncByName(String name) {
+        File file = lastLoadedLaceFile;
+        if (file == null || name == null) return;
+        Thread t = new Thread(() -> {
+            try (ZipFile zip = new ZipFile(file)) {
+                ZipEntry entry = zip.getEntry(name);
+                if (entry != null) {
+                    try (InputStream in = zip.getInputStream(entry)) {
+                        copyTargetFile(entry, in);
+                    }
+                }
+            } catch (IOException e) {
+                logger.warn("Cannot copy on-demand pattern {} from {}", name, file.getAbsolutePath(), e);
+            }
+        }, "AdaLovesLace-Pattern-OnDemand");
+        t.setDaemon(true);
+        t.start();
     }
 
     /**

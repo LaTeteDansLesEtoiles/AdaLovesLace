@@ -406,6 +406,18 @@ public class OptionalDotGrid extends Pane {
       imageView = rotateTextKnot(knot);
       this.gridUtil.zoomTextKnot(knot);
     } else if (knot.getPattern().isPresent()) {
+      // Chargement à la volée si le fichier pattern n'est pas encore extrait
+      String fname = knot.getPattern().get().getFilename();
+      java.io.File f = new java.io.File(org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME +
+              org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME + java.io.File.separator + fname);
+      if (!f.exists()) {
+        new org.alienlabs.adaloveslace.util.FileUtil().copyPatternFromZipAsyncByName(fname);
+        // Replanifier un rendu prochainement
+        javafx.animation.PauseTransition pt = new javafx.animation.PauseTransition(javafx.util.Duration.millis(150));
+        pt.setOnFinished(__ -> layoutChildren());
+        pt.play();
+        return; // on attend le prochain rendu
+      }
       PatternImageCache.updateKnotImageView(knot);
       imageView = knot.getImageView();
         
@@ -479,6 +491,16 @@ public class OptionalDotGrid extends Pane {
 
       drawGuideLines(step, knot);
     } else if (knot.getPattern().isPresent()) {
+      String fname = knot.getPattern().get().getFilename();
+      java.io.File f = new java.io.File(org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME +
+              org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME + java.io.File.separator + fname);
+      if (!f.exists()) {
+        new org.alienlabs.adaloveslace.util.FileUtil().copyPatternFromZipAsyncByName(fname);
+        javafx.animation.PauseTransition pt = new javafx.animation.PauseTransition(javafx.util.Duration.millis(150));
+        pt.setOnFinished(__ -> layoutChildren());
+        pt.play();
+        return;
+      }
       PatternImageCache.updateKnotImageView(knot);
       imageView = knot.getImageView();
         
