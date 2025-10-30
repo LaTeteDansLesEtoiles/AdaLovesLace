@@ -138,7 +138,7 @@ public class GridUtil {
     // @see https://stackoverflow.com/questions/41898990/find-corners-of-a-rotated-rectangle-given-its-center-point-and-rotation
     // And invert "TOP LEFT VERTEX:" & "BOTTOM LEFT VERTEX:" (small error from the author)
     public Circle newHandleForText(Knot knot, Rectangle rec) {
-        // Vérification de sécurité pour éviter NullPointerException
+        // Safety check to avoid NullPointerException
         if (rec == null) {
             logger.warn("Rectangle is null in newHandleForText, cannot create handle");
             return null;

@@ -29,8 +29,6 @@ public class WindowRepositionEvents {
     public void onWindowsReposition() {
         this.onDoMainWindowReposition();
         this.onDoToolboxWindowReposition();
-        // StateWindow est maintenant intégrée dans ToolboxWindow
-        // this.onDoStateWindowReposition();
     }
 
     public void onDoMainWindowReposition() {

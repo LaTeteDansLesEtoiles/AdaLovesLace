@@ -58,8 +58,8 @@ public class NodeUtil {
         );
         copy(knot, copy);
 
-        // Le rectangle de sélection sera créé dans drawHoveredOverOrSelectedDecorations()
-        // pour garantir qu'il est correctement ajouté au pane avec les bonnes propriétés
+        // The selection rectangle will be created in drawHoveredOverOrSelectedDecorations()
+        // to ensure it is correctly added to the pane with the proper properties
 
         return copy;
     }
@@ -88,7 +88,7 @@ public class NodeUtil {
         copy.setFlippedVertically(knot.isFlippedVertically());
         copy.setFlippedHorizontally(knot.isFlippedHorizontally());
         copy.setTextId(knot.getTextId());
-        // Créer une copie profonde du StringBuilder pour éviter la mutation partagée
+        // Create a deep copy of the StringBuilder to avoid shared mutation
         if (knot.getTypedText() != null) {
             copy.setTypedText(new StringBuilder(knot.getTypedText()));
         } else {
@@ -99,10 +99,10 @@ public class NodeUtil {
         if (knot.getHovered() != null) {
             copy.setHovered(knot.getHovered());
         }
-        // Ne pas copier la référence du rectangle de sélection pour éviter que plusieurs nœuds
-        // partagent le même rectangle. Le rectangle sera créé dans drawHoveredOverOrSelectedDecorations()
-        // si nécessaire. Pour les copies créées lors du déplacement avec les flèches, cela garantit
-        // que chaque nœud a son propre rectangle qui sera mis à jour correctement.
+        // Do not copy the selection rectangle reference to avoid multiple nodes sharing it.
+        // The rectangle will be created in drawHoveredOverOrSelectedDecorations() if needed.
+        // For copies created during arrow-key moves, this ensures each node has its own
+        // rectangle that will be updated correctly.
         copy.setSelection(null);
         if (knot.getHandle() != null) {
             copy.setHandle(knot.getHandle());
@@ -149,14 +149,14 @@ public class NodeUtil {
             for (int x = 0; x < width; x++) {
                 Color color = reader.getColor(x, y);
                 if (backgroundColor.length == 0) {
-                    // Mode par défaut: remplacer le NOIR par la couleur choisie
+                    // Default mode: replace BLACK with the chosen color
                     if (isBlack(color)) {
                         writer.setColor(x, y, replacementColor);
                     } else {
                         writer.setColor(x, y, color);
                     }
                 } else {
-                    // Mode avec couleur de fond spécifiée: remplacer cette couleur
+                    // Mode with specific background color: replace that color
                     if (isBackgroundColor(backgroundColor[0], color)) {
                         writer.setColor(x, y, replacementColor);
                     } else {
@@ -171,7 +171,7 @@ public class NodeUtil {
     }
 
     private boolean isBlack(Color color) {
-        // Tolérance pour détecter les nuances de noir (RGB proche de 0)
+        // Tolerance to detect shades of black (RGB close to 0)
         double tolerance = 0.3;
 
         return color.getRed() <= tolerance &&
@@ -189,15 +189,15 @@ public class NodeUtil {
     }
 
     public void colorizeKnot(App app, Knot copiedKnot) {
-        // Vérifier si le bouton "Back to Black" est sélectionné
+        // Check if the "Back in Black" button is selected
         if (app.getToolboxWindow().getBackInBlackButton().isSelected()) {
-            // Mode "Back to Black": restaurer le nœud à sa couleur originale (noir)
+            // "Back in Black" mode: restore the node to its original color (black)
             copiedKnot.setColor(Optional.empty());
             if (copiedKnot.getPattern().isPresent()) {
-                // Pour les patterns, restaurer l'image originale depuis le cache
+                // For patterns, restore the original image from cache
                 PatternImageCache.updateKnotImageView(copiedKnot);
             } else {
-                // Pour le texte, recréer l'image en noir
+                // For text, recreate the image in black
                 app.getOptionalDotGrid().drawTextImageView(
                     copiedKnot,
                     copiedKnot.getX(),
@@ -205,16 +205,16 @@ public class NodeUtil {
                 );
             }
         } else if (app.getOptionalDotGrid().getDiagram().getCurrentColor() != null) {
-            // Mode couleur: appliquer la couleur choisie
+            // Color mode: apply the chosen color
             Color newColor = app.getOptionalDotGrid().getDiagram().getCurrentColor();
 
-            // Toujours remplacer le noir, peu importe l'ancienne couleur
+            // Always replace black, regardless of the previous color
             copiedKnot.setColor(Optional.of(newColor));
             if (copiedKnot.getPattern().isPresent()) {
-                // Pour les patterns, utiliser le cache pour obtenir l'image colorisée
+                // For patterns, use the cache to get the colorized image
                 PatternImageCache.updateKnotImageView(copiedKnot);
             } else {
-                // Pour le texte, recréer l'image avec la nouvelle couleur
+                // For text, recreate the image with the new color
                 app.getOptionalDotGrid().drawTextImageView(
                     copiedKnot,
                     copiedKnot.getX(),
@@ -230,11 +230,6 @@ public class NodeUtil {
 
         app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
         app.getOptionalDotGrid().getDiagram()           .setCurrentMode(MouseMode.SELECTION);
-        // Les boutons sont maintenant dans ToolboxWindow
-        // app.getGeometryWindow().getDrawingButton()      .setSelected(false);
-        // app.getGeometryWindow().getSelectionButton()    .setSelected(true);
-        // app.getGeometryWindow().getDeletionButton()     .setSelected(false);
-        // app.getGeometryWindow().getDuplicationButton()  .setSelected(false);
 
         app.getOptionalDotGrid().getDiagram().setCurrentKnot(null);
         diagram.getUpdateImage().run();

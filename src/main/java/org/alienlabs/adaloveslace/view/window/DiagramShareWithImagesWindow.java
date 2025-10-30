@@ -123,7 +123,7 @@ public class DiagramShareWithImagesWindow extends Dialog<DiagramShareWithImagesW
             clientIdLabel,    clientIdField,
             clientSecretLabel, clientSecretField
     );
-    credentialsBox.setPadding(new Insets(0, 0, 0, 20)); // un peu de marge à gauche
+    credentialsBox.setPadding(new Insets(0, 0, 0, 20)); // a bit of left margin
     credentialsBox.setVisible(false);
     credentialsBox.managedProperty().bind(credentialsBox.visibleProperty());
 

@@ -64,12 +64,12 @@ public class ToolboxWindow {
     public static final double DEFAULT_TOOLBOX_WINDOW_Y         = DEFAULT_MAIN_WINDOW_Y;
     public static final double DEFAULT_TOOLBOX_WINDOW_WIDTH     = 1100d;
     public static final double MENU_BAR_Y                       = 0d;
-    public static final int MAX_PATTERNS_WITHOUT_SCROLL         = 14; // 7 lignes × 2 colonnes = 14 patterns max
+    public static final int MAX_PATTERNS_WITHOUT_SCROLL         = 14; // 7 rows × 2 columns = 14 patterns max
     
-    // Constantes pour les boutons StateWindow (anciennement dans StateWindow.java)
+    // Constants for StateWindow buttons (previously in StateWindow.java)
     public static final double STATE_BUTTONS_HEIGHT = 30d;
     
-    // Constantes pour les boutons GeometryWindow (anciennement dans GeometryWindow.java)
+    // Constants for GeometryWindow buttons (previously in GeometryWindow.java)
     public static final double GEOMETRY_BUTTONS_HEIGHT = 30d;
 
     public static final String THE_FOLLOWING_FOLDER_STRING      = "The following folder: '";
@@ -77,7 +77,7 @@ public class ToolboxWindow {
     public static final String BUTTON_WAITING_SELECTION         = "button-waiting-selection";
     public static final String PATTERN_TEXT_AND_COLOR_BUTTON    = "pattern-text-and-color-button";
 
-    // Constantes de GeometryWindow
+    // Constants for GeometryWindow
     public static final int ROTATION_SPINNER_MIN_VALUE            = -360;
     public static final int ROTATION_SPINNER_MAX_VALUE            = 360;
     public static final int ROTATION_SPINNER_INCREMENTS_1         = 1;
@@ -137,18 +137,16 @@ public class ToolboxWindow {
             managePatternResourceFiles(patternsDirectoryResourcesPath);
         }
 
-        // Les patterns sont maintenant gérés dans createToolboxStage avec ScrollPane
-        // Plus besoin d'ajouter les patterns ici
-
+        // Patterns are now handled in createToolboxStage with a ScrollPane
+        // No need to add patterns here
         this.textButton = new TextButton(app);
         this.addKnotButton = new AddKnotButton(app);
         this.resetAllButton = new ResetAllButton(app);
         this.colorButton = new ColorButton(app);
         this.backInBlackButton = new BackInBlackButton(app);
         
-        // Les boutons sont maintenant ajoutés dans createToolboxStage avec un GridPane séparé
-
-        // Les boutons de géométrie et les flèches sont maintenant gérés dans createToolboxStage
+        // Buttons are now added in createToolboxStage with a separate GridPane
+        // Geometry buttons and arrows are now handled in createToolboxStage
 
         return diagram;
     }
@@ -292,18 +290,18 @@ public class ToolboxWindow {
     ) {
         this.toolboxStage = toolboxStage;
 
-        // Créer un GridPane séparé pour les patterns avec défilement
+        // Create a separate GridPane for patterns with scrolling
         GridPane patternsPane = new GridPane();
         patternsPane.setVgap(5);
         patternsPane.setHgap(5);
         patternsPane.setPadding(new Insets(5));
         
-        // Ajouter les patterns au GridPane des patterns
+        // Add patterns to the patterns GridPane
         for (int i = 0; i < this.classpathResourceFiles.size(); i++) {
             patternsPane.add(buildPatternButton(app, diagram, i), i % 2, i / 2);
         }
         
-        // Créer un ScrollPane spécifiquement pour les patterns
+        // Create a ScrollPane specifically for patterns
         ScrollPane patternsScrollPane = new ScrollPane();
         patternsScrollPane.setContent(patternsPane);
         patternsScrollPane.setFitToWidth(true);
@@ -311,35 +309,35 @@ public class ToolboxWindow {
         patternsScrollPane.setMinWidth(450); // Largeur minimale pour les patterns
         patternsScrollPane.setPrefWidth(450);
         
-        // Activer la barre de défilement verticale si plus de 14 patterns
+        // Enable vertical scrollbar if more than 14 patterns
         if (this.classpathResourceFiles.size() > MAX_PATTERNS_WITHOUT_SCROLL) {
             patternsScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         } else {
             patternsScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         }
         
-        // Limiter la hauteur du ScrollPane pour qu'il ne prenne que l'espace nécessaire
+        // Limit the ScrollPane height so it takes only the needed space
         if (this.classpathResourceFiles.size() > MAX_PATTERNS_WITHOUT_SCROLL) {
-            patternsScrollPane.setMaxHeight(400); // Hauteur pour 7 lignes de patterns
-            patternsScrollPane.setMinHeight(400); // Hauteur minimale pour assurer la visibilité
+            patternsScrollPane.setMaxHeight(400); // Height for 7 rows of patterns
+            patternsScrollPane.setMinHeight(400); // Minimum height to ensure visibility
         } else {
-            // Si moins de 14 patterns, calculer la hauteur exacte nécessaire
+            // If fewer than 14 patterns, compute the exact required height
             int patternsRows = (int) Math.ceil((double) this.classpathResourceFiles.size() / 2);
-            double exactHeight = patternsRows * 60d + 20d; // 60px par ligne + padding
+            double exactHeight = patternsRows * 60d + 20d; // 60px per row + padding
             patternsScrollPane.setMaxHeight(exactHeight);
             patternsScrollPane.setMinHeight(exactHeight);
         }
 
-        // Créer un HBox horizontal pour mettre le ScrollPane des patterns et les boutons de géométrie côte à côte
+        // Create a horizontal HBox to place the patterns ScrollPane and geometry buttons side by side
         HBox topRow = new HBox();
         topRow.setSpacing(10);
         topRow.getChildren().add(patternsScrollPane);
         
-        // Créer un GridPane temporaire pour initialiser les boutons de géométrie
+        // Create a temporary GridPane to initialize geometry buttons
         GridPane tempGrid = new GridPane();
         createGeometryButtons(app, tempGrid, 0);
         
-        // Créer les boutons rotation et zoom manquants
+        // Create the missing rotation and zoom buttons
         ImageUtil util = new ImageUtil(app);
         RotationButton rotationButton = new RotationButton(resourceBundle.getString(ROTATION_BUTTON_NAME));
         util.getImageView("rotation.png", rotationButton, false);
@@ -347,15 +345,15 @@ public class ToolboxWindow {
         ZoomButton zoomButton = new ZoomButton(resourceBundle.getString(ZOOM_BUTTON_NAME));
         util.getImageView("zoom.png", zoomButton, false);
         
-        // Créer un GridPane pour les boutons de géométrie (2 colonnes)
+        // Create a GridPane for geometry buttons (2 columns)
         GridPane geometryGrid = new GridPane();
         geometryGrid.setVgap(5);
         geometryGrid.setHgap(5);
-        geometryGrid.setPadding(new Insets(10, 5, 5, 5)); // Plus d'espace en haut (10px au lieu de 5px)
-        geometryGrid.setAlignment(Pos.TOP_CENTER); // Aligner en haut pour que les spinners soient au même niveau Y
+        geometryGrid.setPadding(new Insets(10, 5, 5, 5)); // More space at top (10px instead of 5px)
+        geometryGrid.setAlignment(Pos.TOP_CENTER); // Align top so spinners share the same Y level
         
-        // Ajouter les boutons de géométrie au GridPane (2 colonnes)
-        // Ligne 0 : Spinners de rotation et zoom
+        // Add geometry buttons to the GridPane (2 columns)
+        // Row 0: rotation and zoom spinners
         if (this.rotationSpinner1 != null) {
             geometryGrid.add(this.rotationSpinner1, 0, 0);
             GridPane.setHalignment(this.rotationSpinner1, HPos.CENTER);
@@ -365,7 +363,7 @@ public class ToolboxWindow {
             GridPane.setHalignment(this.zoomSpinner1, HPos.CENTER);
         }
         
-        // Ligne 1 : Spinners de rotation et zoom
+        // Row 1: rotation and zoom spinners
         if (this.rotationSpinner2 != null) {
             geometryGrid.add(this.rotationSpinner2, 0, 1);
             GridPane.setHalignment(this.rotationSpinner2, HPos.CENTER);
@@ -375,7 +373,7 @@ public class ToolboxWindow {
             GridPane.setHalignment(this.zoomSpinner2, HPos.CENTER);
         }
         
-        // Ligne 2 : Spinners de rotation et zoom
+        // Row 2: rotation and zoom spinners
         if (this.rotationSpinner3 != null) {
             geometryGrid.add(this.rotationSpinner3, 0, 2);
             GridPane.setHalignment(this.rotationSpinner3, HPos.CENTER);
@@ -385,7 +383,7 @@ public class ToolboxWindow {
             GridPane.setHalignment(this.zoomSpinner3, HPos.CENTER);
         }
         
-        // Ligne 3 : Boutons rotation et zoom
+        // Row 3: rotation and zoom buttons
         geometryGrid.add(rotationButton, 0, 3);
         GridPane.setHalignment(rotationButton, HPos.CENTER);
         geometryGrid.add(zoomButton, 1, 3);
@@ -409,50 +407,50 @@ public class ToolboxWindow {
             GridPane.setHalignment(this.duplicationButton, HPos.CENTER);
         }
         
-        // Ajouter les boutons de miroir avec 2 lignes d'espace supplémentaires
+        // Add flipping buttons with 2 extra rows of spacing
         VerticalFlippingButton verticalFlippingButton = new VerticalFlippingButton(app, resourceBundle.getString(VERTICAL_FLIPPING_BUTTON_NAME));
         util.getImageView("flip_vertically.png", verticalFlippingButton, false);
-        geometryGrid.add(verticalFlippingButton, 0, 12); // Ligne 12 pour avoir 2 lignes d'espace supplémentaires
+        geometryGrid.add(verticalFlippingButton, 0, 12); // Row 12 to have 2 extra spacer rows
         GridPane.setHalignment(verticalFlippingButton, HPos.CENTER);
         
         HorizontalFlippingButton horizontalFlippingButton = new HorizontalFlippingButton(app, resourceBundle.getString(HORIZONTAL_FLIPPING_BUTTON_NAME));
         util.getImageView("flip_horizontally.png", horizontalFlippingButton, false);
-        geometryGrid.add(horizontalFlippingButton, 1, 12); // Ligne 12 pour avoir 2 lignes d'espace supplémentaires
+        geometryGrid.add(horizontalFlippingButton, 1, 12); // Row 12 to have 2 extra spacer rows
         GridPane.setHalignment(horizontalFlippingButton, HPos.CENTER);
         
-        // Ajouter le HBox au GridPane principal
+        // Add the HBox to the main GridPane
         parent.add(topRow, 0, 0, 4, 1);
         
-        // Créer un GridPane séparé pour les boutons de la première colonne avec marge
+        // Create a separate GridPane for first-column buttons with margin
         GridPane buttonsGrid = new GridPane();
-        buttonsGrid.setPadding(new Insets(20, 0, 10, 10)); // Padding réduit à droite pour décaler la 2° sous-colonne
-        buttonsGrid.setVgap(10); // Espacement vertical plus grand
-        buttonsGrid.setHgap(10); // Espacement horizontal plus grand
+        buttonsGrid.setPadding(new Insets(20, 0, 10, 10)); // Reduced right padding to shift the 2nd sub-column
+        buttonsGrid.setVgap(10); // Larger vertical spacing
+        buttonsGrid.setHgap(10); // Larger horizontal spacing
         
-        // Ajouter les boutons directement au GridPane principal (sans marge interne)
-        // La marge sera gérée par le mainContainer
+        // Add buttons directly to the main GridPane (no inner margin)
+        // The margin will be managed by mainContainer
         buttonsGrid.add(this.textButton, 0, 0);
         buttonsGrid.add(this.addKnotButton, 0, 1);
         buttonsGrid.add(this.resetAllButton, 1, 1);
         buttonsGrid.add(this.colorButton, 0, 2);
         buttonsGrid.add(this.backInBlackButton, 1, 2);
         
-        // Ajouter les boutons de sauvegarde et impression
+        // Add save and print buttons
         buildFileButtons(app, buttonsGrid);
         buildPrintButtons(app, buttonsGrid);
         
         // Ajouter le buttonsGrid au GridPane principal
         parent.add(buttonsGrid, 0, 1, 2, 1); // Colonnes 0-1, ligne 1
         
-        // Créer un GridPane séparé pour les flèches avec espacement uniforme
+        // Create a separate GridPane for arrows with even spacing
         GridPane arrowsGrid = new GridPane();
         arrowsGrid.setVgap(5);
         arrowsGrid.setHgap(5);
         arrowsGrid.setPadding(new Insets(5));
-        arrowsGrid.setAlignment(Pos.CENTER); // Aligner les flèches au centre de leur colonne
+        arrowsGrid.setAlignment(Pos.CENTER); // Center arrows within their column
         
-        // Ajouter les flèches au GridPane séparé (carré 3x3)
-        // Ligne du haut : UpLeft, Up, UpRight
+        // Add arrows to the separate GridPane (3x3 square)
+        // Top row: UpLeft, Up, UpRight
         UpLeftButton upLeftButton = new UpLeftButton(app);
         util.getImageView("up_left.png", upLeftButton, false);
         arrowsGrid.add(upLeftButton, 0, 0);
@@ -465,7 +463,7 @@ public class ToolboxWindow {
         util.getImageView("up_right.png", upRightButton, false);
         arrowsGrid.add(upRightButton, 2, 0);
 
-        // Ligne du milieu : Left, Fast, Right
+        // Middle row: Left, Fast, Right
         LeftButton leftButton = new LeftButton(app);
         util.getImageView("left.png", leftButton, false);
         arrowsGrid.add(leftButton, 0, 1);
@@ -478,7 +476,7 @@ public class ToolboxWindow {
         util.getImageView("right.png", rightButton, false);
         arrowsGrid.add(rightButton, 2, 1);
 
-        // Ligne du bas : DownLeft, Down, DownRight
+        // Bottom row: DownLeft, Down, DownRight
         DownLeftButton downLeftButton = new DownLeftButton(app);
         util.getImageView("down_left.png", downLeftButton, false);
         arrowsGrid.add(downLeftButton, 0, 2);
@@ -491,133 +489,133 @@ public class ToolboxWindow {
         util.getImageView("down_right.png", downRightButton, false);
         arrowsGrid.add(downRightButton, 2, 2);
         
-        // Créer un layout séparé pour les flèches - ne pas les ajouter au GridPane principal
-        // Les flèches seront ajoutées au VBox root séparément
+        // Create a separate layout for arrows - do not add them to the main GridPane
+        // The arrows will be added to the root VBox separately
         
-        // Les boutons de base sont maintenant dans le GridPane buttonsGrid avec marge
+        // Base buttons are now in the buttonsGrid GridPane with margin
 
-        // Créer des colonnes avec marges dynamiques qui s'agrandissent
+        // Create columns with dynamic margins that can grow
         HBox mainContainer = new HBox();
-        mainContainer.setSpacing(0); // Pas d'espacement fixe
+        mainContainer.setSpacing(0); // No fixed spacing
         mainContainer.setAlignment(Pos.TOP_LEFT);
         
-        // Colonne 1 : patterns + boutons avec largeur maximale pour le texte
+        // Column 1: patterns + buttons with maximum width for text
         VBox leftColumn = new VBox();
-        leftColumn.setMinWidth(700); // Largeur encore plus grande
+        leftColumn.setMinWidth(700); // Larger width
         leftColumn.setPrefWidth(700);
-        leftColumn.setMaxWidth(800); // Limite maximale
-        leftColumn.setSpacing(15); // Espacement vertical entre les éléments
-        leftColumn.setPadding(new Insets(0, 5, 0, 0)); // Padding droit très réduit
+        leftColumn.setMaxWidth(800); // Maximum limit
+        leftColumn.setSpacing(15); // Vertical spacing between elements
+        leftColumn.setPadding(new Insets(0, 5, 0, 0)); // Very small right padding
         leftColumn.getChildren().add(parent);
         mainContainer.getChildren().add(leftColumn);
         
-        // Marge flexible qui s'agrandit dynamiquement mais reste dans le viewport
+        // Flexible margin that grows dynamically but stays within the viewport
         Region spacer1 = new Region();
-        spacer1.setMinWidth(0); // Marge normale
+        spacer1.setMinWidth(0); // Normal margin
         spacer1.setPrefWidth(Region.USE_COMPUTED_SIZE);
-        spacer1.setMaxWidth(50); // Limite maximale normale
-        HBox.setHgrow(spacer1, Priority.NEVER); // Pas d'expansion
+        spacer1.setMaxWidth(50); // Normal maximum limit
+        HBox.setHgrow(spacer1, Priority.NEVER); // No expansion
         mainContainer.getChildren().add(spacer1);
         
-        // Colonne 2 : spinners + boutons de géométrie avec décalage de 50px vers la gauche
+        // Column 2: spinners + geometry buttons shifted 50px to the left
         VBox centerColumn = new VBox();
         centerColumn.setAlignment(Pos.TOP_CENTER);
-        centerColumn.setMinWidth(350); // Largeur minimale augmentée pour les libellés
+        centerColumn.setMinWidth(350); // Increased minimum width for labels
         centerColumn.setPrefWidth(350);
-        centerColumn.setTranslateX(-135); // Décalage de 135px vers la gauche
+        centerColumn.setTranslateX(-135); // Shift 135px to the left
         centerColumn.getChildren().add(geometryGrid);
         mainContainer.getChildren().add(centerColumn);
         
-        // Marge flexible qui s'agrandit dynamiquement mais reste dans le viewport
+        // Flexible margin that grows dynamically but stays within the viewport
         Region spacer2 = new Region();
-        spacer2.setMinWidth(20); // Marge normale entre colonnes 2 et 3
+        spacer2.setMinWidth(20); // Normal margin between columns 2 and 3
         spacer2.setPrefWidth(Region.USE_COMPUTED_SIZE);
-        spacer2.setMaxWidth(100); // Limite maximale normale
-        HBox.setHgrow(spacer2, Priority.SOMETIMES); // Expansion normale
+        spacer2.setMaxWidth(100); // Normal maximum limit
+        HBox.setHgrow(spacer2, Priority.SOMETIMES); // Normal expansion
         mainContainer.getChildren().add(spacer2);
         
-        // Colonne 3 : flèches + boutons
+        // Column 3: arrows + buttons
         VBox arrowsContainer = new VBox();
         arrowsContainer.setAlignment(Pos.TOP_CENTER);
         arrowsContainer.setSpacing(10);
         
-        // Ajouter un espace pour aligner verticalement avec les patterns et spinners
-        arrowsContainer.getChildren().add(new Region()); // Espace pour aligner avec les patterns
+        // Add a spacer to vertically align with patterns and spinners
+        arrowsContainer.getChildren().add(new Region()); // Spacer to align with patterns
         
-        // Ajouter les flèches
+        // Add arrows
         arrowsContainer.getChildren().add(arrowsGrid);
         
-        // Ajouter les boutons dans l'ordre : flèches -> changer grille -> nom grille -> quitter
-        // Récupérer les boutons existants depuis buildQuitAndGridNameButtons
+        // Add buttons in order: arrows -> change grid -> grid name -> quit
+        // Retrieve existing buttons from buildQuitAndGridNameButtons
         QuitButton showQuitButton = new QuitButton(app, resourceBundle.getString(QUIT_APP));
         this.gridNameLabel = new Label(resourceBundle.getString(app.getOptionalDotGrid().getDiagram().getCurrentGridType().name()));
         
-        // Créer le bouton "changer la grille"
+        // Create the "change grid" button
         ShowHideGridButton changeGridButton = new ShowHideGridButton(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME), app);
         
-        // Créer les boutons de StateWindow
+        // Create the StateWindow buttons
         UnselectableButton unselectableButton = new UnselectableButton(app, resourceBundle.getString(UNSELECTABLE_BUTTON_NAME));
         SelectableButton selectableButton = new SelectableButton(app, resourceBundle.getString(SELECTABLE_BUTTON_NAME));
         InvisibleButton invisibleButton = new InvisibleButton(app, resourceBundle.getString(INVISIBLE_BUTTON_NAME));
         VisibleButton visibleButton = new VisibleButton(app, resourceBundle.getString(VISIBLE_BUTTON_NAME));
         
-        // Ajouter les boutons dans l'ordre souhaité
+        // Add buttons in the desired order
         arrowsContainer.getChildren().add(new Region());
-        arrowsContainer.getChildren().add(changeGridButton); // Bouton changer grille sous les flèches
-        arrowsContainer.getChildren().add(this.gridNameLabel); // Nom de la grille sous le bouton changer grille
+        arrowsContainer.getChildren().add(changeGridButton); // Change grid button under the arrows
+        arrowsContainer.getChildren().add(this.gridNameLabel); // Grid name under the change grid button
         
-        // Ajouter des espaces pour descendre le bouton quitter d'une ligne
-        arrowsContainer.getChildren().add(new Region()); // Espace pour descendre le bouton quitter
+        // Add spacers to move the quit button down by one line
+        arrowsContainer.getChildren().add(new Region()); // Spacer to move the quit button down
         
         arrowsContainer.getChildren().add(new Region()); // Espace 1
-        arrowsContainer.getChildren().add(showQuitButton); // Bouton quitter descendu d'une ligne
+        arrowsContainer.getChildren().add(showQuitButton); // Quit button moved down by one line
 
-        // Ajouter des espaces pour descendre de 5 lignes au total
-        arrowsContainer.getChildren().add(new Region()); // Espace 1
-        arrowsContainer.getChildren().add(new Region()); // Espace 1
+        // Add spacers to move down by 5 lines in total
+        arrowsContainer.getChildren().add(new Region()); // Spacer 1
+        arrowsContainer.getChildren().add(new Region()); // Spacer 1
 
-        // Ajouter les boutons d'édition au-dessus des boutons StateWindow
-        arrowsContainer.getChildren().add(this.undoKnotButton); // Bouton annuler un noeud
-        arrowsContainer.getChildren().add(new RedoKnotButton(resourceBundle.getString(REDO_KNOT), app)); // Bouton refaire un noeud
-        arrowsContainer.getChildren().add(new CreatePatternButton(resourceBundle.getString(CREATE_PATTERN_BUTTON), app)); // Bouton créer un motif
-        arrowsContainer.getChildren().add(new ResetDiagramButton(resourceBundle.getString(RESET_DIAGRAM), app)); // Bouton réinitialiser le diagramme
+        // Add edit buttons above the StateWindow buttons
+        arrowsContainer.getChildren().add(this.undoKnotButton); // Undo knot button
+        arrowsContainer.getChildren().add(new RedoKnotButton(resourceBundle.getString(REDO_KNOT), app)); // Redo knot button
+        arrowsContainer.getChildren().add(new CreatePatternButton(resourceBundle.getString(CREATE_PATTERN_BUTTON), app)); // Create pattern button
+        arrowsContainer.getChildren().add(new ResetDiagramButton(resourceBundle.getString(RESET_DIAGRAM), app)); // Reset diagram button
         
-        // Ajouter des espaces pour descendre les boutons StateWindow
-        arrowsContainer.getChildren().add(new Region()); // Espace 6
-        arrowsContainer.getChildren().add(new Region()); // Espace 7
-        arrowsContainer.getChildren().add(new Region()); // Espace 8
+        // Add spacers to move down the StateWindow buttons
+        arrowsContainer.getChildren().add(new Region()); // Spacer 6
+        arrowsContainer.getChildren().add(new Region()); // Spacer 7
+        arrowsContainer.getChildren().add(new Region()); // Spacer 8
         
-        // Ajouter les 4 boutons StateWindow à la même coordonnée X, plus bas
-        arrowsContainer.getChildren().add(unselectableButton); // Bouton non-sélectionnable
-        arrowsContainer.getChildren().add(selectableButton); // Bouton sélectionnable
-        arrowsContainer.getChildren().add(invisibleButton); // Bouton invisible
-        arrowsContainer.getChildren().add(visibleButton); // Bouton visible
+        // Add the 4 StateWindow buttons at the same X coordinate, lower
+        arrowsContainer.getChildren().add(unselectableButton); // Unselectable button
+        arrowsContainer.getChildren().add(selectableButton); // Selectable button
+        arrowsContainer.getChildren().add(invisibleButton); // Invisible button
+        arrowsContainer.getChildren().add(visibleButton); // Visible button
         
-        // Colonne 3 : flèches + boutons
+        // Column 3: arrows + buttons
         VBox rightColumn = new VBox();
         rightColumn.setAlignment(Pos.TOP_CENTER);
         rightColumn.setSpacing(10);
-        rightColumn.setTranslateX(-175); // Décalage de 175px vers la gauche
+        rightColumn.setTranslateX(-175); // Shift 175px to the left
         rightColumn.getChildren().add(arrowsContainer);
         mainContainer.getChildren().add(rightColumn);
         
-        // Définir une largeur minimale pour forcer les scrollbars si nécessaire
+        // Set a minimum width to force scrollbars if needed
         mainContainer.setMinWidth(1080); // 700 + 0 + 150 + 20 + 150 + 60 = 1080px minimum
         
         VBox root = new VBox(menuBar, mainContainer);
         root.setPrefSize(app.getResizes().getToolboxWindowWidth() + 60, computeWindowHeight(app));
         root.getStyleClass().add("toolbox");
 
-        // Créer un ScrollPane global pour toute la ToolboxWindow
+        // Create a global ScrollPane for the entire ToolboxWindow
         ScrollPane globalScrollPane = new ScrollPane();
         globalScrollPane.setContent(root);
-        globalScrollPane.setFitToWidth(true); // Ajuster automatiquement la largeur
+        globalScrollPane.setFitToWidth(true); // Automatically adjust width
         globalScrollPane.setFitToHeight(true);
         
-        // Ne pas définir de largeur minimale sur le contenu pour éviter la barre au lancement
-        // La barre horizontale apparaîtra seulement si la fenêtre est redimensionnée en dessous de MIN_TOOLBOX_WIDTH_FOR_SCROLL
+        // Do not set a minimum width on the content to avoid a bar at startup
+        // The horizontal bar will appear only if the window is resized below MIN_TOOLBOX_WIDTH_FOR_SCROLL
         
-        // Ajouter un listener pour ajuster la largeur minimale du contenu quand la fenêtre est redimensionnée
+        // Add a listener to adjust the content's minimum width when the window is resized
         toolboxStage.widthProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.doubleValue() < MIN_TOOLBOX_WIDTH_FOR_SCROLL) {
                 root.setMinWidth(MIN_TOOLBOX_WIDTH_FOR_SCROLL);
@@ -638,9 +636,9 @@ public class ToolboxWindow {
         toolboxStage.setY(app.getWindowRepositionEvents().getToolboxWindowY());
         toolboxStage.setWidth(app.getResizes().getToolboxWindowWidth() + 60);
         toolboxStage.setHeight(computeWindowHeight(app));
-        toolboxStage.setMinWidth(400); // Largeur minimale pour permettre le redimensionnement
-        toolboxStage.setMinHeight(300); // Hauteur minimale pour permettre le redimensionnement
-        toolboxStage.setResizable(true); // Permettre le redimensionnement
+        toolboxStage.setMinWidth(400); // Minimum width to allow resizing
+        toolboxStage.setMinHeight(300); // Minimum height to allow resizing
+        toolboxStage.setResizable(true); // Allow resizing
         toolboxStage.setScene(toolboxScene);
         toolboxStage.setTitle(resourceBundle.getString(TOOLBOX_TITLE));
 
@@ -657,12 +655,12 @@ public class ToolboxWindow {
             return (int) app.getResizes().getToolboxWindowHeight();
         }
         
-        // Hauteur fixe pour la fenêtre, le défilement est géré par le ScrollPane des patterns
-        return 800; // Hauteur plus grande pour laisser plus d'espace au ScrollPane
+        // Fixed window height; scrolling is handled by the patterns ScrollPane
+        return 800; // Larger height to leave more space for the ScrollPane
     }
 
     public void createToolboxButtons(GridPane parent, App app) {
-        // Les boutons de fichier sont maintenant dans le buttonsGrid
+        // File buttons are now in the buttonsGrid
         buildEditButtons(app);
     }
 
@@ -693,8 +691,8 @@ public class ToolboxWindow {
     }
 
     private void buildEditButtons(App app) {
-        // Ces boutons sont maintenant dans le VBox arrowsContainer
-        // Ne plus les ajouter au GridPane principal
+        // These buttons are now in the VBox arrowsContainer
+        // Do not add them to the main GridPane anymore
         this.undoKnotButton = new UndoKnotButton(resourceBundle.getString(UNDO_KNOT), app);
     }
 
@@ -761,7 +759,7 @@ public class ToolboxWindow {
         return this.gridNameLabel;
     }
 
-    // Méthodes ajoutées de GeometryWindow
+    // Methods added from GeometryWindow
     public void createGeometryButtons(App app, GridPane parent, int startRow) {
         ImageUtil util = new ImageUtil(app);
 
@@ -790,7 +788,7 @@ public class ToolboxWindow {
         ZoomButton zoomButton = new ZoomButton(resourceBundle.getString(ZOOM_BUTTON_NAME));
         util.getImageView("zoom.png", zoomButton, false);
 
-        // Spinners de rotation
+        // Rotation spinners
         this.rotationSpinner1 = new Spinner<>(ROTATION_SPINNER_MIN_VALUE, ROTATION_SPINNER_MAX_VALUE,
             DEFAULT_ROTATION, ROTATION_SPINNER_INCREMENTS_1);
         this.rotationSpinner1.setId("rotationSpinner1");
@@ -804,7 +802,7 @@ public class ToolboxWindow {
         this.rotationSpinner3.setId("rotationSpinner3");
         this.rotationSpinner3.setEditable(true);
 
-        // Spinners de zoom
+        // Zoom spinners
         this.zoomSpinner1 = new Spinner<>(ZOOM_SPINNER_MIN_VALUE, ZOOM_SPINNER_MAX_VALUE, DEFAULT_ZOOM, ZOOM_SPINNER_INCREMENTS_1);
         this.zoomSpinner1.setId("zoomSpinner1");
         this.zoomSpinner1.setEditable(true);
@@ -815,7 +813,7 @@ public class ToolboxWindow {
         this.zoomSpinner3.setId("zoomSpinner3");
         this.zoomSpinner3.setEditable(true);
 
-        // Configuration des spinners
+        // Spinners configuration
         RotationSpinner rotationSpinnerObject1 = new RotationSpinner();
         rotationSpinnerObject1.buildRotationSpinner(app, this.rotationSpinner1,
             this.rotationSpinner2.getValueFactory(), this.rotationSpinner3.getValueFactory());
@@ -840,7 +838,7 @@ public class ToolboxWindow {
         zoomSpinnerObject3.buildZoomSpinner(app, this.zoomSpinner3, this.zoomSpinner1.getValueFactory(),
             this.zoomSpinner2.getValueFactory());
 
-        // Les boutons de géométrie sont maintenant ajoutés dans le geometryGrid dans createToolboxStage
+        // Geometry buttons are now added into geometryGrid in createToolboxStage
     }
 
     // Getters pour les éléments de GeometryWindow

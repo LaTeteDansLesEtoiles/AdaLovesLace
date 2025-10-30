@@ -121,7 +121,7 @@ public class MainWindow {
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
     NodeUtil nodeUtil = new NodeUtil();
     
-    // Vérifier si Control est pressé directement depuis l'événement MouseEvent
+    // Check if Control is pressed directly from the MouseEvent
     boolean isControlDown = event.isControlDown();
     
     logger.info("Multi-selection check: isControlDown={}, currentlyActiveKeys contains CONTROL={}", 
@@ -134,7 +134,7 @@ public class MainWindow {
 
       hasClickedOnAGivenKnot = nodeUtil.isMouseOverKnot(knot);
       
-      // Vérifier si le nœud est déjà sélectionné en vérifiant s'il est dans selectedKnots
+      // Check if the knot is already selected by testing membership in selectedKnots
       boolean isAlreadySelected = selectedKnots.stream()
               .anyMatch(k -> k.getImageView() == knot.getImageView());
 
@@ -165,32 +165,32 @@ public class MainWindow {
 
           newStep(displayedKnots, selectedKnots, true);
         } else {
-          // Multi-selection mode: ajouter le nœud à la sélection existante
+          // Multi-selection mode: add the knot to the existing selection
           logger.info("Multi-selection: adding knot to selection. Current selectedKnots size: {}", selectedKnots.size());
           
-          // Copier tous les nœuds déjà sélectionnés pour créer une nouvelle liste propre
+          // Copy all already selected knots to create a fresh list
           List<Knot> newSelectedKnots = new ArrayList<>();
           for (Knot alreadySelected : selectedKnots) {
             Knot copiedSelected = nodeUtil.copyKnot(alreadySelected);
             nodeUtil.colorizeKnot(app, copiedSelected);
             newSelectedKnots.add(copiedSelected);
             
-            // Retirer les nœuds déjà sélectionnés de displayedKnots s'ils y sont
+            // Remove already selected knots from displayedKnots if present
             displayedKnots.remove(alreadySelected);
           }
           
-          // Copier et ajouter le nouveau nœud à la sélection
+          // Copy and add the new knot to the selection
           Knot copiedKnot = nodeUtil.copyKnot(knot);
           nodeUtil.colorizeKnot(app, copiedKnot);
           
-          // Retirer le nœud original de displayedKnots avant d'ajouter la copie
+          // Remove the original knot from displayedKnots before adding the copy
           displayedKnots.remove(knot);
           
-          // Ajouter la copie du nouveau nœud à selectedKnots
+          // Add the copy of the new knot to selectedKnots
           newSelectedKnots.add(copiedKnot);
           logger.info("Multi-selection: after adding, newSelectedKnots size: {}", newSelectedKnots.size());
 
-          // Ne pas modifier le step actuel, créer directement un nouveau step avec tous les nœuds sélectionnés
+          // Do not modify the current step; create a new step with all selected knots
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, newSelectedKnots, true);
@@ -227,20 +227,20 @@ public class MainWindow {
 
           break;
         } else {
-          // Multi-selection mode: désélectionner ce nœud mais garder les autres sélectionnés
+          // Multi-selection mode: unselect this knot but keep the others selected
           
-          // Copier tous les nœuds déjà sélectionnés pour créer une nouvelle liste propre
+          // Copy all already selected knots to create a fresh list
           List<Knot> newSelectedKnots = new ArrayList<>();
           for (Knot alreadySelected : selectedKnots) {
-            // Ne pas copier le nœud qu'on veut désélectionner
+            // Do not copy the knot we want to unselect
             if (alreadySelected.getImageView() == knot.getImageView()) {
-              continue; // Skip ce nœud, il sera désélectionné
+              continue; // Skip this knot; it will be unselected
             }
             Knot copiedSelected = nodeUtil.copyKnot(alreadySelected);
             nodeUtil.colorizeKnot(app, copiedSelected);
             newSelectedKnots.add(copiedSelected);
             
-            // Retirer les nœuds sélectionnés de displayedKnots s'ils y sont
+            // Remove selected knots from displayedKnots if present
             displayedKnots.remove(alreadySelected);
           }
           
@@ -251,8 +251,8 @@ public class MainWindow {
           displayedKnots.remove(knot);
           displayedKnots.add(copiedKnot);
 
-          // Utiliser la liste newSelectedKnots (avec le nœud retiré)
-          // Si d'autres nœuds sont encore sélectionnés, garder le dernier comme currentKnot
+          // Use the newSelectedKnots list (with the knot removed)
+          // If other knots remain selected, keep the last one as currentKnot
           if (!newSelectedKnots.isEmpty()) {
             app.getOptionalDotGrid().getDiagram().setCurrentKnot(newSelectedKnots.get(newSelectedKnots.size() - 1));
           } else {

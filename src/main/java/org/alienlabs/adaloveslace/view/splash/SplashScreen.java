@@ -38,9 +38,9 @@ import static javafx.animation.Animation.INDEFINITE;
 import static org.alienlabs.adaloveslace.App.ASSETS_DIRECTORY;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 
-/**
- * Splash screen JavaFX sans FXML
- */
+    /**
+     * JavaFX splash screen without FXML
+     */
 public class SplashScreen {
     
     private static final Logger logger = LoggerFactory.getLogger(SplashScreen.class);
@@ -57,10 +57,10 @@ public class SplashScreen {
         this.mainApp = app;
         
         try {
-            // Créer la scène du splash screen
+            // Create the splash screen scene
             Scene splashScene = createSplashScene();
             
-            // Créer la fenêtre du splash screen
+            // Create the splash screen window
             splashStage = new Stage();
             splashStage.initStyle(StageStyle.UNDECORATED);
             splashStage.setScene(splashScene);
@@ -68,25 +68,25 @@ public class SplashScreen {
             splashStage.setAlwaysOnTop(true);
             splashStage.show();
             
-            // Démarrer les animations
+            // Start animations
             startAnimations();
             
-            // Simuler le chargement de l'application
+            // Simulate application loading
             simulateLoading();
             
         } catch (Exception e) {
             logger.error("Error creating splash screen", e);
-            // En cas d'erreur, démarrer directement l'application
+            // In case of error, start the application directly
             app.showMainApplication();
         }
     }
     
     private Scene createSplashScene() {
-        // Conteneur principal
+        // Main container
         StackPane root = new StackPane();
         root.setStyle("-fx-background-color: #667eea;");
         
-        // Fond avec coins arrondis
+        // Rounded background
         Rectangle background = new Rectangle(600, 475);
         background.setFill(createGradientBackground());
         background.setArcWidth(20);
@@ -94,10 +94,10 @@ public class SplashScreen {
         background.setStroke(Color.rgb(255, 255, 255, 0.2));
         background.setStrokeWidth(2);
         
-        // Contenu principal
+        // Main content
         VBox content = createMainContent();
         
-        // Animation des points de chargement
+        // Loading dots animation
         VBox animationContainer = createLoadingAnimation();
         
         root.getChildren().addAll(background, content, animationContainer);
@@ -124,16 +124,16 @@ public class SplashScreen {
         // Logo
         ImageView logoImageView = createLogo();
         
-        // Titre
+        // Title
         Label titleLabel = createTitle();
         
-        // Sous-titre
+        // Subtitle
         Label subtitleLabel = createSubtitle();
         
-        // Barre de progression et statut
+        // Progress bar and status
         VBox progressContainer = createProgressContainer();
         
-        // Informations de version
+        // Version information
         HBox versionInfo = createVersionInfo();
         
         // Copyright
@@ -162,7 +162,7 @@ public class SplashScreen {
             logoImageView.setImage(logoImage);
         } catch (Exception e) {
             logger.warn("Could not load logo image, using fallback", e);
-            // Créer un logo de remplacement simple
+            // Create a simple fallback logo
             logoImageView = createFallbackLogo();
         }
         
@@ -177,26 +177,26 @@ public class SplashScreen {
     }
     
     private ImageView createFallbackLogo() {
-        // Créer une image simple avec un cercle
+        // Create a simple image with a circle
         ImageView fallbackLogo = new ImageView();
         
-        // Créer un Canvas pour dessiner un logo simple
+        // Create a Canvas to draw a simple logo
         Canvas canvas = new Canvas(120, 120);
         GraphicsContext gc = canvas.getGraphicsContext2D();
         
-        // Dessiner un cercle blanc avec bordure
+        // Draw a white circle with a border
         gc.setFill(Color.WHITE);
         gc.fillOval(15, 15, 100, 100);
         gc.setStroke(Color.rgb(102, 126, 234));
         gc.setLineWidth(3);
         gc.strokeOval(15, 15, 100, 100);
         
-        // Dessiner les initiales "AL"
+        // Draw the initials "ALL"
         gc.setFill(Color.rgb(102, 126, 234));
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         gc.fillText("ALL", 45, 70);
         
-        // Convertir le Canvas en Image
+        // Convert the Canvas to an Image
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT);
         Image fallbackImage = canvas.snapshot(params, null);
@@ -221,7 +221,7 @@ public class SplashScreen {
         try {
             subtitleLabel.setText(resourceBundle.getString("SplashSubtitle"));
         } catch (Exception e) {
-            subtitleLabel.setText("Application de création de diagrammes de dentelle");
+            subtitleLabel.setText("Lace diagram creation application");
         }
         
         subtitleLabel.setFont(Font.font("Patrick Hand", 16));
@@ -235,7 +235,7 @@ public class SplashScreen {
         VBox progressContainer = new VBox(10);
         progressContainer.setAlignment(Pos.CENTER);
         
-        // Barre de progression
+        // Progress bar
         progressBar = new ProgressBar(0.0);
         progressBar.setPrefWidth(300);
         progressBar.setPrefHeight(8);
@@ -246,12 +246,12 @@ public class SplashScreen {
             "-fx-accent: #4CAF50;"
         );
         
-        // Label de statut
+        // Status label
         statusLabel = new Label();
         try {
             statusLabel.setText(resourceBundle.getString("LoadingApplication"));
         } catch (Exception e) {
-            statusLabel.setText("Chargement de l'application...");
+            statusLabel.setText("Loading application...");
         }
         
         statusLabel.setTextFill(Color.WHITE);
@@ -305,7 +305,7 @@ public class SplashScreen {
         HBox dotsContainer = new HBox(5);
         dotsContainer.setAlignment(Pos.CENTER);
         
-        // Créer les points de chargement
+        // Create loading dots
         dot1 = new Circle(4, Color.WHITE);
         dot2 = new Circle(4, Color.WHITE);
         dot3 = new Circle(4, Color.WHITE);
@@ -321,7 +321,7 @@ public class SplashScreen {
     }
     
     private void startAnimations() {
-        // Animation du logo (fade in)
+        // Logo animation (fade in)
         if (splashStage != null && splashStage.getScene() != null) {
             ImageView logo = (ImageView) ((VBox) ((StackPane) splashStage.getScene().getRoot()).getChildren().get(1)).getChildren().getFirst();
             FadeTransition logoFade = new FadeTransition(Duration.seconds(1.5), logo);
@@ -330,24 +330,24 @@ public class SplashScreen {
             logoFade.play();
         }
         
-        // Animation des points de chargement
+        // Loading dots animation
         startLoadingDotsAnimation();
     }
     
     private void startLoadingDotsAnimation() {
         Timeline dotsTimeline = new Timeline();
         
-        // Point 1
+        // Dot 1
         KeyFrame dot1Key1 = new KeyFrame(Duration.ZERO, new KeyValue(dot1.opacityProperty(), 0.3));
         KeyFrame dot1Key2 = new KeyFrame(Duration.seconds(0.5), new KeyValue(dot1.opacityProperty(), 1.0));
         KeyFrame dot1Key3 = new KeyFrame(Duration.seconds(1.0), new KeyValue(dot1.opacityProperty(), 0.3));
         
-        // Point 2
+        // Dot 2
         KeyFrame dot2Key1 = new KeyFrame(Duration.seconds(0.2), new KeyValue(dot2.opacityProperty(), 0.3));
         KeyFrame dot2Key2 = new KeyFrame(Duration.seconds(0.7), new KeyValue(dot2.opacityProperty(), 1.0));
         KeyFrame dot2Key3 = new KeyFrame(Duration.seconds(1.2), new KeyValue(dot2.opacityProperty(), 0.3));
         
-        // Point 3
+        // Dot 3
         KeyFrame dot3Key1 = new KeyFrame(Duration.seconds(0.4), new KeyValue(dot3.opacityProperty(), 0.3));
         KeyFrame dot3Key2 = new KeyFrame(Duration.seconds(0.9), new KeyValue(dot3.opacityProperty(), 1.0));
         KeyFrame dot3Key3 = new KeyFrame(Duration.seconds(1.4), new KeyValue(dot3.opacityProperty(), 0.3));
@@ -380,11 +380,11 @@ public class SplashScreen {
                         statusLabel.setText(loadingSteps[finalI]);
                     });
                     
-                    // Mettre à jour la barre de progression
+                    // Update the progress bar
                     double progress = (i + 1) / (double) loadingSteps.length;
                     Platform.runLater(() -> progressBar.setProgress(progress));
                     
-                    // Attendre un peu
+                    // Wait a bit
                     Thread.sleep(800);
                 }
                 

@@ -75,7 +75,7 @@ public class OptionalDotGrid extends Pane {
     this.root.toFront();
     this.diagram = Objects.requireNonNullElseGet(diagram, () -> new Diagram(app));
     
-    // Vérification supplémentaire pour s'assurer que le diagramme n'est pas null
+    // Additional check to ensure diagram is not null
     if (this.diagram == null) {
       logger.warn("Diagram is still null after initialization, creating new one");
       this.diagram = new Diagram(app);
@@ -136,7 +136,7 @@ public class OptionalDotGrid extends Pane {
   }
 
   private void drawDiagram() {
-    // Vérification de sécurité pour éviter NullPointerException
+    // Safety check to avoid NullPointerException
     if (this.diagram == null) {
       logger.warn("Diagram is null in drawDiagram, creating new one");
       this.diagram = new Diagram(app);
@@ -171,7 +171,7 @@ public class OptionalDotGrid extends Pane {
 
   // We shall not display the undone knots => delete them from canvas, then draw the grid again
   public void deleteKnotsFromCanvas() {
-    // Vérification de sécurité pour éviter NullPointerException
+    // Safety check to avoid NullPointerException
     if (this.diagram == null) {
       logger.warn("Diagram is null in deleteKnotsFromCanvas, creating new one");
       this.diagram = new Diagram(app);
@@ -218,30 +218,30 @@ public class OptionalDotGrid extends Pane {
                 addSelectionToAKnot(knot, Color.rgb(255, 0, 0, 1));
             } else if (getDiagram().getCurrentStep().getSelectedKnots().contains(knot) &&
             (!getDiagram().getCurrentMode().equals(MouseMode.DRAWING) || knot.getPattern().isEmpty())) {
-                // Pour les knots de texte, toujours afficher le rectangle bleu même en mode DRAWING
+                // For text knots, always show the blue rectangle even in DRAWING mode
                 Platform.runLater(() -> {
                     Rectangle rec;
                     boolean rectangleExists = (knot.getSelection() instanceof Rectangle) && 
                                              root.getChildren().contains(knot.getSelection());
                     
                     if (rectangleExists) {
-                        // Réutiliser le rectangle existant qui est dans le pane
+                        // Reuse the existing rectangle that is already in the pane
                         rec = (Rectangle) knot.getSelection();
-                        // Mettre à jour la position, la taille, le zoom et la rotation du rectangle existant
+                        // Update position, size, zoom and rotation of the existing rectangle
                         if (knot.getPattern().isEmpty() && knot.getImageView() != null && 
                             knot.getImageView().getImage() != null) {
-                            // Pour les nœuds de texte
+                            // For text nodes
                             rec.setWidth(knot.getImageView().getImage().getWidth());
                             rec.setHeight(knot.getImageView().getImage().getHeight());
                             rec.setLayoutX(knot.getX());
                             rec.setLayoutY(knot.getY());
-                            // Mettre à jour le zoom et la rotation
+                            // Update zoom and rotation
                             double zoomFactor = this.gridUtil.computeZoomFactor(knot);
                             rec.setScaleX(zoomFactor);
                             rec.setScaleY(zoomFactor);
                             rec.setRotate(knot.getRotationAngle());
                         } else if (knot.getPattern().isPresent()) {
-                            // Pour les patterns : mettre à jour la position, le zoom et la rotation
+                            // For patterns: update position, zoom and rotation
                             rec.setLayoutX(knot.getX());
                             rec.setLayoutY(knot.getY());
                             double zoomFactor = this.gridUtil.computeZoomFactor(knot);
@@ -250,7 +250,7 @@ public class OptionalDotGrid extends Pane {
                             rec.setRotate(knot.getRotationAngle());
                         }
                     } else {
-                        // Créer un nouveau rectangle si celui existant n'est pas dans le pane ou n'existe pas
+                        // Create a new rectangle if the existing one is not in the pane or does not exist
                         rec = this.gridUtil.newRectangle(knot, Color.BLUE);
                         knot.setSelection(rec);
                         root.getChildren().add(rec);
@@ -279,10 +279,10 @@ public class OptionalDotGrid extends Pane {
 
             if (firstKnot.isPresent() && firstKnot.get().equals(knot) &&
                     (!getDiagram().getCurrentMode().equals(MouseMode.DRAWING) || knot.getPattern().isEmpty())) {
-                // Pour les knots de texte, toujours afficher le handle même en mode DRAWING
+                // For text knots, always show the handle even in DRAWING mode
                 addHandleToAKnot(knot, BLUE_HANDLE);
             } else {
-                // Ne pas supprimer le handle si c'est un knot de texte sélectionné
+                // Do not remove the handle if it is a selected text knot
                 if (!(knot.getPattern().isEmpty() && getDiagram().getCurrentStep().getSelectedKnots().contains(knot))) {
                     knot.setHandle(null);
                     root.getChildren().remove(knot.getHovered());
@@ -406,17 +406,17 @@ public class OptionalDotGrid extends Pane {
       imageView = rotateTextKnot(knot);
       this.gridUtil.zoomTextKnot(knot);
     } else if (knot.getPattern().isPresent()) {
-      // Chargement à la volée si le fichier pattern n'est pas encore extrait
+      // Load on the fly if the pattern file is not yet extracted
       String fname = knot.getPattern().get().getFilename();
       java.io.File f = new java.io.File(org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME +
               org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME + java.io.File.separator + fname);
       if (!f.exists()) {
         new org.alienlabs.adaloveslace.util.FileUtil().copyPatternFromZipAsyncByName(fname);
-        // Replanifier un rendu prochainement
+        // Reschedule a render shortly
         javafx.animation.PauseTransition pt = new javafx.animation.PauseTransition(javafx.util.Duration.millis(150));
         pt.setOnFinished(__ -> layoutChildren());
         pt.play();
-        return; // on attend le prochain rendu
+        return; // wait for the next render
       }
       PatternImageCache.updateKnotImageView(knot);
       imageView = knot.getImageView();
@@ -439,13 +439,13 @@ public class OptionalDotGrid extends Pane {
 
   public ImageView drawTextImageView(Knot knot, double x, double y) {
     ImageView imageView = knot.getImageView();
-    // Réutiliser l'imageView existant s'il existe, sinon en créer un nouveau
+    // Reuse the existing imageView if it exists, otherwise create a new one
     if (imageView == null) {
       imageView = new ImageView();
     }
     
     Text text = new Text();
-    // Utiliser typedText s'il existe et n'est pas vide, sinon utiliser text
+    // Use typedText if it exists and is not empty, otherwise use text
     String textToDisplay;
     if (knot.getTypedText() != null && !knot.getTypedText().isEmpty()) {
       textToDisplay = knot.getTypedText().toString();
@@ -468,7 +468,7 @@ public class OptionalDotGrid extends Pane {
     imageView.setLayoutY(y);
 
     knot.setImageView(imageView);
-    // Ne pas ajouter l'imageView s'il est déjà dans le pane
+    // Do not add the imageView if it is already in the pane
     if (!root.getChildren().contains(knot.getImageView())) {
       root.getChildren().add(knot.getImageView());
     }

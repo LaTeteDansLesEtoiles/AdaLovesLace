@@ -33,13 +33,13 @@ public class PatternButton extends ToggleButton {
     imageView.setFitWidth(BUTTONS_PREF_WIDTH);
     imageView.setFitHeight(BUTTONS_PREF_HEIGHT);
     
-    // Créer un Region avec fond blanc pour l'image
+    // Create a Region with a white background for the image
     Region backgroundRegion = new Region();
     backgroundRegion.setPrefWidth(BUTTONS_PREF_WIDTH + 4);
     backgroundRegion.setPrefHeight(BUTTONS_PREF_HEIGHT + 4);
     backgroundRegion.setStyle("-fx-background-color: white; -fx-background-radius: 2;");
     
-    // Créer un StackPane pour contenir le fond et l'image
+    // Create a StackPane to contain the background and the image
     StackPane imageContainer = new StackPane();
     imageContainer.getChildren().addAll(backgroundRegion, imageView);
     

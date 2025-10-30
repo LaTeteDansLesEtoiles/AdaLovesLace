@@ -84,9 +84,9 @@ public class FileUtil {
             Diagram value = loadTask.getValue();
             dialog.setResult(value);
             dialog.close();
-            // Afficher le diagramme tout de suite; le rendu normal dessinera patterns & textes
+            // Show the diagram immediately; normal rendering will draw patterns & texts
             new FileChooserUtil().restartGui(app, value);
-            // Extraction du reste des patterns en arrière-plan pour fluidifier l'affichage
+            // Extract the remaining patterns in the background to keep UI smooth
             Set<String> needed = getNeededPatternFilenamesInViewport(app, value);
             copyRemainingPatternsAsync(file, needed);
         });
@@ -113,7 +113,7 @@ public class FileUtil {
         Diagram diagram = null;
 
         try (ZipFile zipFile = new ZipFile(file)) {
-            // 1) Lire uniquement le XML pour afficher vite
+            // 1) Read only the XML to display quickly
             ZipEntry xmlEntry = zipFile.getEntry(XML_FILE_TO_SAVE_IN_LACE_FILE);
             if (xmlEntry != null) {
                 diagram = buildDiagram(zipFile, xmlEntry);
@@ -124,23 +124,23 @@ public class FileUtil {
                 diagram = new Diagram(app);
             }
 
-            // Initialiser typedText (OK en BG)
+            // Initialize typedText (OK in background)
             initializeTypedTextFromLoadedText(diagram);
 
-            // 2) Extraire en priorité les patterns visibles dans la zone de vue (blocant mais limité)
+            // 2) Extract with priority the patterns visible in the viewport (blocking but limited)
             Set<String> needed = getNeededPatternFilenamesInViewport(app, diagram);
             copyOnlyPatterns(zipFile, needed);
 
-            // 3) Laisser l'UI se mettre à jour tout de suite, puis extraire le reste en arrière-plan
-            // (fait après retour, dans setOnSucceeded)
+            // 3) Let the UI update immediately, then extract the rest in the background
+            // (done after return, in setOnSucceeded)
             app.getOptionalDotGrid().setDiagram(diagram);
         } catch (JAXBException | IOException e) {
             logger.error("Error loading lace file: {}", file.getAbsolutePath(), e);
-            // Retourner un diagramme vide au lieu de null pour éviter les erreurs
+            // Return an empty diagram instead of null to avoid errors
             diagram = new Diagram(app);
         }
         
-        // S'assurer qu'un diagramme valide est toujours retourné
+        // Ensure a valid diagram is always returned
         if (diagram == null) {
             logger.warn("Diagram is null after loading, creating new one");
             diagram = new Diagram(app);
@@ -239,8 +239,8 @@ public class FileUtil {
     }
 
     /**
-     * Après chargement du diagramme depuis le fichier .lace, recopier le contenu du champ text
-     * (persisté) dans typedText (transient) pour les nœuds de texte, afin d'assurer leur affichage.
+     * After loading the diagram from the .lace file, copy the content of the persisted text field
+     * into the transient typedText for text nodes, to ensure they display.
      */
     private void initializeTypedTextFromLoadedText(Diagram diagram) {
         if (diagram == null || diagram.getAllSteps() == null) {
@@ -346,7 +346,7 @@ public class FileUtil {
         try (InputStream initialStream = zipFile.getInputStream(entry)) {
             copyTargetFile(entry, initialStream);
         } catch (IOException e) {
-            // Gestion spécifique pour les images manquantes (comme splashscreen.jpg)
+            // Specific handling for missing images (like splashscreen.jpg)
             if (entry.getName().contains("splashscreen") || entry.getName().endsWith(".jpg") || entry.getName().endsWith(".png")) {
                 logger.warn("Image file not found in lace file: {}, skipping...", entry.getName());
             } else {
@@ -498,7 +498,7 @@ public class FileUtil {
         toSave.setCurrentStepIndex(currentStepIndex); // Not -1 because of the empty step at the beginning
         File xmlFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
                 XML_FILE_TO_SAVE_IN_LACE_FILE);
-        // S'assurer que le champ text contient bien le contenu affiché avant sauvegarde
+        // Ensure the text field contains the displayed content before saving
         normalizeTextBeforeSave(toSave);
         removeEmptyTexts(toSave);
         jaxbMarshaller.marshal(toSave, xmlFile);
@@ -508,8 +508,8 @@ public class FileUtil {
     }
 
     /**
-     * Pour chaque nœud de texte, synchroniser le champ text (persisté) avec typedText (transient)
-     * afin que le contenu soit bien sauvegardé dans le .lace.
+     * For each text node, synchronize the persisted text field with the transient typedText
+     * so the content is correctly saved into the .lace file.
      */
     private static void normalizeTextBeforeSave(Diagram diagram) {
         if (diagram == null || diagram.getAllSteps() == null) {

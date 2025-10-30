@@ -37,8 +37,6 @@ public class WindowResizeEvents {
     public void onWindowsResize() {
         this.onDoMainWindowResize();
         this.onDoToolboxWindowResize();
-        // StateWindow est maintenant intégrée dans ToolboxWindow
-        // this.onDoStateWindowResize();
     }
 
     public void onDoMainWindowResize() {
