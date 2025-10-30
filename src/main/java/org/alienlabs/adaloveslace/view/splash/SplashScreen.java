@@ -87,7 +87,7 @@ public class SplashScreen {
         root.setStyle("-fx-background-color: #667eea;");
         
         // Fond avec coins arrondis
-        Rectangle background = new Rectangle(600, 400);
+        Rectangle background = new Rectangle(600, 475);
         background.setFill(createGradientBackground());
         background.setArcWidth(20);
         background.setArcHeight(20);
@@ -102,7 +102,7 @@ public class SplashScreen {
         
         root.getChildren().addAll(background, content, animationContainer);
         
-        Scene scene = new Scene(root, 600, 400);
+        Scene scene = new Scene(root, 600, 475);
         scene.setFill(Color.TRANSPARENT);
         
         return scene;
@@ -170,9 +170,9 @@ public class SplashScreen {
         logoImageView.setFitWidth(200);
         logoImageView.setPreserveRatio(true);
         logoImageView.setStyle(
-            "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 5);"
+            "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 5); "
         );
-        
+
         return logoImageView;
     }
     
