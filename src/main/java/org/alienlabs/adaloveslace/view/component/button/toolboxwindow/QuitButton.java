@@ -45,7 +45,7 @@ public class QuitButton extends ImageButton {
   }
 
   public void onQuitAction(Event event) {
-    logger.debug("Exiting app?");
+    logger.info("Exiting app?");
 
     Alert quitAlert = new Alert(CONFIRMATION);
     quitAlert.setTitle(resourceBundle.getString(QUIT_WINDOW_TITLE));
@@ -60,7 +60,7 @@ public class QuitButton extends ImageButton {
     Optional<ButtonType> result = quitAlert.showAndWait();
 
     if (result.isPresent() && result.get() == quitButton) {
-      logger.debug("Exiting app");
+      logger.info("Exiting app");
       Platform.exit();
     }
 
@@ -68,12 +68,12 @@ public class QuitButton extends ImageButton {
       saveAndQuit(app);
     }
 
-    logger.debug("Cancelled exiting app");
+    logger.info("Cancelled exiting app");
     event.consume();
   }
 
   private void saveAndQuit(App app) {
-    logger.debug("Saving diagram & exiting app");
+    logger.info("Saving diagram & exiting app");
 
     FileChooser saveAs = new FileChooser();
     saveAs.setTitle(resourceBundle.getString(SAVE_FILE_AS));
@@ -92,7 +92,7 @@ public class QuitButton extends ImageButton {
 
   private void treatFile(App app, File file, Preferences preferences) {
     if (file != null) {
-      logger.debug("Saving file as");
+      logger.info("Saving file as");
 
       if (!file.getName().endsWith(LACE_FILE_EXTENSION)) {
         file = new File(file.getAbsolutePath() + LACE_FILE_EXTENSION);

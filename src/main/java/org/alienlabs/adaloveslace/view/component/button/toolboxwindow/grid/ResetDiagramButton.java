@@ -33,7 +33,7 @@ public class ResetDiagramButton extends ImageButton {
   }
 
   public static void resetDiagram() {
-    logger.debug("Event reset diagram");
+    logger.info("Event reset diagram");
 
     Alert alert = new Alert(CONFIRMATION);
     alert.setTitle(resourceBundle.getString(RESET_DIAGRAM_WINDOW_TITLE));
@@ -47,13 +47,13 @@ public class ResetDiagramButton extends ImageButton {
     Optional<ButtonType> result = alert.showAndWait();
 
     if (result.isPresent() && result.get() == resetDiagramButton) {
-      logger.debug("Reset diagram");
+      logger.info("Reset diagram");
 
       app.getOptionalDotGrid().getDiagram().resetDiagram(app);
       app.getOptionalDotGrid().layoutChildren();
     }
 
-    logger.debug("Cancelled reset diagram");
+    logger.info("Cancelled reset diagram");
   }
 
 }

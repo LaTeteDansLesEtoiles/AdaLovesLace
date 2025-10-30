@@ -126,7 +126,7 @@ public class NodeUtil {
             iv.setLayoutY(y);
             iv.setRotate(0d);
 
-            logger.debug("Top left corner of the knot {} is ({},{})", currentPattern.getFilename(), x, y);
+            logger.info("Top left corner of the knot {} is ({},{})", currentPattern.getFilename(), x, y);
         } catch (IOException e) {
             logger.error("Problem with pattern resource file!", e);
         }

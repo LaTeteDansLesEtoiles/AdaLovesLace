@@ -645,7 +645,7 @@ public class ToolboxWindow {
         toolboxStage.setTitle(resourceBundle.getString(TOOLBOX_TITLE));
 
         toolboxStage.setOnCloseRequest(windowEvent -> {
-            logger.debug("You shall not close the toolbox window directly!");
+            logger.info("You shall not close the toolbox window directly!");
             windowEvent.consume();
         });
 

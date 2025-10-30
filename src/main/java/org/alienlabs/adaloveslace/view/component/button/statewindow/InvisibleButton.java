@@ -33,7 +33,7 @@ public class InvisibleButton extends ImageButton {
   }
 
   public static void onSetInvisibleAction(App app) {
-    logger.debug("Setting draw mode");
+    logger.info("Setting draw mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
     app.getOptionalDotGrid().clearSelections();
     app.getOptionalDotGrid().clearHovered();

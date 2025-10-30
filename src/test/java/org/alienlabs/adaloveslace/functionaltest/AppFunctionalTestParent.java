@@ -294,10 +294,10 @@ public class AppFunctionalTestParent {
    * @return true if condition was met, false if timeout
    */
   public boolean waitForCondition(java.util.function.BooleanSupplier condition, long timeoutMs, long pollIntervalMs, String description) {
-    logger.debug("Waiting for condition: {}", description);
+    logger.info("Waiting for condition: {}", description);
     boolean result = waitForCondition(condition, timeoutMs, pollIntervalMs);
     if (result) {
-      logger.debug("Condition satisfied: {}", description);
+      logger.info("Condition satisfied: {}", description);
     } else {
       logger.warn("Condition timeout after {} ms: {}", timeoutMs, description);
     }
@@ -346,7 +346,7 @@ public class AppFunctionalTestParent {
     int y = Double.valueOf(pointToMoveTo.getY() - this.primaryStage.getY()).intValue();
 
     this.foundColorOnGrid = pr.getColor(x, y);
-    logger.debug("# argb: {} at ({}, {}), with stage at ({}, {})", this.foundColorOnGrid, x, y, this.primaryStage.getX(), this.primaryStage.getY());
+    logger.info("# argb: {} at ({}, {}), with stage at ({}, {})", this.foundColorOnGrid, x, y, this.primaryStage.getX(), this.primaryStage.getY());
   }
 
   protected Point2D newPointOnGrid(double pixelX, double pixelY) {

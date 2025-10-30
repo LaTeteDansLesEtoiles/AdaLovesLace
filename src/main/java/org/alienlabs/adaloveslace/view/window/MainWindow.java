@@ -114,12 +114,18 @@ public class MainWindow {
     movablePane.setOnMouseReleased(GridEvents.getGridDragReleasedEventHandler(app));
   }
 
-  public void onClickWithSelectionMode(App app) {
+  public void onClickWithSelectionMode(App app, javafx.scene.input.MouseEvent event) {
     Iterator<Knot> it = optionalDotGrid.getDiagram().getCurrentStep().getAllVisibleKnots().iterator();
     boolean hasClickedOnAGivenKnot = false;
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
     NodeUtil nodeUtil = new NodeUtil();
+    
+    // Vérifier si Control est pressé directement depuis l'événement MouseEvent
+    boolean isControlDown = event.isControlDown();
+    
+    logger.info("Multi-selection check: isControlDown={}, currentlyActiveKeys contains CONTROL={}", 
+            isControlDown, app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL));
 
     // We iterate on the Knots as long as they are still Knots left to iterate
     // And we stop at the first clicked Knot
@@ -127,15 +133,19 @@ public class MainWindow {
       Knot knot = it.next();
 
       hasClickedOnAGivenKnot = nodeUtil.isMouseOverKnot(knot);
+      
+      // Vérifier si le nœud est déjà sélectionné en vérifiant s'il est dans selectedKnots
+      boolean isAlreadySelected = selectedKnots.stream()
+              .anyMatch(k -> k.getImageView() == knot.getImageView());
 
-      if (hasClickedOnAGivenKnot && (knot.getSelection() == null)) {
-        logger.debug("Clicked Knot {} in order to select it",
+      if (hasClickedOnAGivenKnot && !isAlreadySelected) {
+        logger.info("Clicked Knot {} in order to select it",
                 knot.getPattern().isPresent() ?
                         knot.getPattern().get().getFilename() :
                         knot.getText().get());
 
         // If the "Control" key is pressed, we are in multi-selection mode
-        if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
+        if (!isControlDown) {
           Knot copiedKnot = nodeUtil.copyKnot(knot);
           nodeUtil.colorizeKnot(app, copiedKnot);
           removeNodeAndDecorationsForNowDisplayedKnots(app, selectedKnots);
@@ -155,30 +165,48 @@ public class MainWindow {
 
           newStep(displayedKnots, selectedKnots, true);
         } else {
+          // Multi-selection mode: ajouter le nœud à la sélection existante
+          logger.info("Multi-selection: adding knot to selection. Current selectedKnots size: {}", selectedKnots.size());
+          
+          // Copier tous les nœuds déjà sélectionnés pour créer une nouvelle liste propre
+          List<Knot> newSelectedKnots = new ArrayList<>();
+          for (Knot alreadySelected : selectedKnots) {
+            Knot copiedSelected = nodeUtil.copyKnot(alreadySelected);
+            nodeUtil.colorizeKnot(app, copiedSelected);
+            newSelectedKnots.add(copiedSelected);
+            
+            // Retirer les nœuds déjà sélectionnés de displayedKnots s'ils y sont
+            displayedKnots.remove(alreadySelected);
+          }
+          
+          // Copier et ajouter le nouveau nœud à la sélection
           Knot copiedKnot = nodeUtil.copyKnot(knot);
           nodeUtil.colorizeKnot(app, copiedKnot);
-          selectedKnots.add(copiedKnot);
+          
+          // Retirer le nœud original de displayedKnots avant d'ajouter la copie
           displayedKnots.remove(knot);
+          
+          // Ajouter la copie du nouveau nœud à selectedKnots
+          newSelectedKnots.add(copiedKnot);
+          logger.info("Multi-selection: after adding, newSelectedKnots size: {}", newSelectedKnots.size());
 
-          List<Knot> selectedKnotsOfStep = new ArrayList<>();
-          selectedKnotsOfStep.add(copiedKnot);
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
+          // Ne pas modifier le step actuel, créer directement un nouveau step avec tous les nœuds sélectionnés
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           hideHandlesForNotSelectedKnots(app, displayedKnots);
-          newStep(displayedKnots, selectedKnots, true);
+          newStep(displayedKnots, newSelectedKnots, true);
         }
 
         break;
       } else if (hasClickedOnAGivenKnot) {
-        logger.debug("Clicked Knot displayed {}, pattern {} in order to unselect it",
+        logger.info("Clicked Knot displayed {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot),
                 knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : knot.getText().get());
-        logger.debug("Clicked Knot selected {}, pattern {} in order to unselect it",
+        logger.info("Clicked Knot selected {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot),
                 knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : knot.getText().get());
 
         // If the "Control" key is pressed, we are in multi-selection mode
-        if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
+        if (!isControlDown) {
           Knot copiedKnot = nodeUtil.copyKnot(knot);
           nodeUtil.colorizeKnot(app, copiedKnot);
           displayedKnots.addAll(new ArrayList<>(selectedKnots));
@@ -199,19 +227,39 @@ public class MainWindow {
 
           break;
         } else {
+          // Multi-selection mode: désélectionner ce nœud mais garder les autres sélectionnés
+          
+          // Copier tous les nœuds déjà sélectionnés pour créer une nouvelle liste propre
+          List<Knot> newSelectedKnots = new ArrayList<>();
+          for (Knot alreadySelected : selectedKnots) {
+            // Ne pas copier le nœud qu'on veut désélectionner
+            if (alreadySelected.getImageView() == knot.getImageView()) {
+              continue; // Skip ce nœud, il sera désélectionné
+            }
+            Knot copiedSelected = nodeUtil.copyKnot(alreadySelected);
+            nodeUtil.colorizeKnot(app, copiedSelected);
+            newSelectedKnots.add(copiedSelected);
+            
+            // Retirer les nœuds sélectionnés de displayedKnots s'ils y sont
+            displayedKnots.remove(alreadySelected);
+          }
+          
           Knot copiedKnot = nodeUtil.copyKnot(knot);
           nodeUtil.colorizeKnot(app, copiedKnot);
           copiedKnot.setSelection(null);
-          selectedKnots.remove(knot);
+          
           displayedKnots.remove(knot);
           displayedKnots.add(copiedKnot);
 
-          List<Knot> selectedKnotsOfStep = new ArrayList<>();
-          selectedKnotsOfStep.add(copiedKnot);
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
-          app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          // Utiliser la liste newSelectedKnots (avec le nœud retiré)
+          // Si d'autres nœuds sont encore sélectionnés, garder le dernier comme currentKnot
+          if (!newSelectedKnots.isEmpty()) {
+            app.getOptionalDotGrid().getDiagram().setCurrentKnot(newSelectedKnots.get(newSelectedKnots.size() - 1));
+          } else {
+            app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          }
           hideHandlesForNotSelectedKnots(app, displayedKnots);
-          newStep(displayedKnots, selectedKnots, true);
+          newStep(displayedKnots, newSelectedKnots, true);
           break;
         }
       }
@@ -276,7 +324,7 @@ public class MainWindow {
 
     newStep(displayedKnotsToFilterOut, selectedKnotsToFilterOut, true);
 
-    logger.debug("Removing Knot {}, current index = {}", knot, diagram.getCurrentStepIndex());
+    logger.info("Removing Knot {}, current index = {}", knot, diagram.getCurrentStepIndex());
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

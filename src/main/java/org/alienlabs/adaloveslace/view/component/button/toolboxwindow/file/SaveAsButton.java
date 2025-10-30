@@ -33,7 +33,7 @@ public class SaveAsButton extends ImageButton {
   }
 
   public static void onSaveAsAction() {
-    logger.debug("Saving file as");
+    logger.info("Saving file as");
 
     FileChooser saveAs = new FileChooser();
     saveAs.setTitle(resourceBundle.getString(SAVE_FILE_AS_DIALOG_TITLE));

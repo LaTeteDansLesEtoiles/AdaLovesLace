@@ -30,7 +30,7 @@ public class LoadButton extends ImageButton {
   }
 
   public static void onLoadAction(App app) {
-    logger.debug("Load file");
+    logger.info("Load file");
 
     FileChooser load = new FileChooserUtil().getFileChooser(
             resourceBundle.getString(LOAD_FILE_DIALOG_TITLE),

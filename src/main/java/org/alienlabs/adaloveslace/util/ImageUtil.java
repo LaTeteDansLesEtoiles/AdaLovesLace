@@ -59,7 +59,7 @@ public class ImageUtil {
         File image = buildImage(pathname);
 
         this.showTechnicalElementsFromRootGroup(isGridDisplayed);
-        logger.debug("Snapshot done!");
+        logger.info("Snapshot done!");
 
         return image;
     }
@@ -69,7 +69,7 @@ public class ImageUtil {
         this.hideTechnicalElementsFromRootGroup(false);
 
         WritableImage snapshot = buildWritableImage(pathname);
-        logger.debug("Snapshot done!");
+        logger.info("Snapshot done!");
 
         this.showTechnicalElementsFromRootGroup(isGridDisplayed);
         return snapshot;
@@ -77,7 +77,7 @@ public class ImageUtil {
 
     public WritableImage buildWritableImageWithTechnicalElements(String pathname) {
         WritableImage snapshot = buildWritableImage(pathname);
-        logger.debug("Snapshot done!");
+        logger.info("Snapshot done!");
 
         return snapshot;
     }
@@ -176,7 +176,7 @@ public class ImageUtil {
 
     private void createPattern(double xMin, double yMin, double wLog, double hLog) {
         Platform.runLater(() -> {
-            logger.debug(
+            logger.info(
                     "Create Pattern => ImageView: X= {}, Y= {}, width= {}, height= {}",
                     xMin,
                     yMin,
@@ -309,7 +309,7 @@ public class ImageUtil {
             Files.createDirectories(destination.getParent());
             Files.move(file, destination, StandardCopyOption.REPLACE_EXISTING);
 
-            logger.debug("Copied: {} -> {}", file, destination);
+            logger.info("Copied: {} -> {}", file, destination);
         }
     }
 

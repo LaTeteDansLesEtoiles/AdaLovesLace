@@ -44,7 +44,7 @@ public class DownRightButton extends Button {
       moveKnotPause.playFromStart();
 
 
-      logger.debug("Moving down right knot {}", knot);
+      logger.info("Moving down right knot {}", knot);
     }
 
     displayedKnots.removeAll(toRemoveKnots);

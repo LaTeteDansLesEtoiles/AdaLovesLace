@@ -31,7 +31,7 @@ public class DeletionButton extends ToggleButton {
   }
 
   public static void onSetDeletionModeAction(App app) {
-    logger.debug("Setting deletion mode");
+    logger.info("Setting deletion mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DELETION);
 
     // Les boutons sont maintenant dans ToolboxWindow

@@ -19,7 +19,7 @@ public class ShareButton extends ImageButton {
   }
 
   public static void onShareAction(App app) {
-    logger.debug("Share file");
+    logger.info("Share file");
     DiagramShareWithImagesWindow.show(app);
   }
 

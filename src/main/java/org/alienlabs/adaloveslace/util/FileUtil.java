@@ -422,7 +422,7 @@ public class FileUtil {
     public List<String> getResources(Object classpathBase, final Pattern pattern) {
         final List<String> retval = new ArrayList<>();
         final String classPath = JAVA_CLASS_PATH_PROPERTY;
-        logger.debug("classpath: {}", classPath);
+        logger.info("classpath: {}", classPath);
 
         if (classPath != null && !classPath.trim().isEmpty()) {
             processClasspath(pattern, retval, classPath);
@@ -436,7 +436,7 @@ public class FileUtil {
     private void processLocationPath(Object classpathBase, Pattern pattern, List<String> retval) {
         File file = new File(classpathBase.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
         String absolutePath = file.getAbsolutePath();
-        logger.debug("absolute path: {}", absolutePath);
+        logger.info("absolute path: {}", absolutePath);
 
         retval.addAll(getResources(absolutePath, pattern));
     }
@@ -444,7 +444,7 @@ public class FileUtil {
     private void processClasspath(Pattern pattern, List<String> retval, String classPath) {
         final String[] classPathElements = classPath.split(PATH_SEPARATOR);
         for (final String element : classPathElements) {
-            logger.debug("element: {}, pattern: {}", element, pattern);
+            logger.info("element: {}, pattern: {}", element, pattern);
 
             retval.addAll(getResources(element, pattern));
         }
@@ -459,7 +459,7 @@ public class FileUtil {
      */
     public List<String> getDirectoryResources(File directory, final Pattern pattern) {
         String absolutePath = directory.getAbsolutePath();
-        logger.debug("absolute path: {}", absolutePath);
+        logger.info("absolute path: {}", absolutePath);
         return new ArrayList<>(getResources(absolutePath, pattern));
     }
 
@@ -471,7 +471,7 @@ public class FileUtil {
             image.getXObject().getPdfObject().setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
             doc.add(image);
 
-            logger.debug("PDF file generated successfully!");
+            logger.info("PDF file generated successfully!");
         } catch (IOException e){
             logger.error("Error generating PDF document!", e);
         }
@@ -498,7 +498,7 @@ public class FileUtil {
         try {
             zf = new ZipFile(file);
         } catch(final IOException e) {
-            logger.debug("Error reading classpath .jar file!", e);
+            logger.info("Error reading classpath .jar file!", e);
             return retval;
         }
         return getStrings(pattern, zf, retval);
@@ -536,7 +536,7 @@ public class FileUtil {
         final List<String> retval = new ArrayList<>();
         final File[] fileList = directory.listFiles();
 
-        logger.debug("Directory: {}", directory.getAbsolutePath());
+        logger.info("Directory: {}", directory.getAbsolutePath());
 
         if (null != fileList) {
             for (final File file : fileList) {
@@ -549,7 +549,7 @@ public class FileUtil {
 
     private void getResourceFromFileOrDirectory(Pattern pattern, List<String> retval, File file) {
         if (file.isDirectory()) {
-            logger.debug("loading from directory: {}", file.getAbsolutePath());
+            logger.info("loading from directory: {}", file.getAbsolutePath());
             retval.addAll(getResourcesFromDirectory(file, pattern));
         } else {
             getResourceFromFile(pattern, retval, file);
@@ -557,16 +557,16 @@ public class FileUtil {
     }
 
     private void getResourceFromFile(Pattern pattern, List<String> retval, File file) {
-        logger.debug("loading from file: {}", file.getAbsolutePath());
+        logger.info("loading from file: {}", file.getAbsolutePath());
 
         try {
             final String fileName = file.getCanonicalPath();
 
             if (pattern.matcher(fileName).matches()) {
-                logger.debug("matches");
+                logger.info("matches");
                 retval.add(fileName);
             } else {
-                logger.debug("doesn't match");
+                logger.info("doesn't match");
             }
         } catch (final IOException e) {
             throw new IllegalStateException("Error reading file / directory from classpath: " + file, e);

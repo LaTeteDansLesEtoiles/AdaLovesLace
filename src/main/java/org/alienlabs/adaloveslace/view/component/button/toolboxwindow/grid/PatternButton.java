@@ -57,7 +57,7 @@ public class PatternButton extends ToggleButton {
       this.getStyleClass().add(BUTTON_SELECTED);
 
       Pattern newCurrentPattern = ((PatternButton) event.getSource()).getPattern();
-      logger.debug("Event type -> {}, new current Pattern -> {}", event.getEventType(), newCurrentPattern);
+      logger.info("Event type -> {}, new current Pattern -> {}", event.getEventType(), newCurrentPattern);
 
       app.getOptionalDotGrid().getCurrentPatternProperty().set(newCurrentPattern);
       GridEvents.setCurrentImageView(imageView);

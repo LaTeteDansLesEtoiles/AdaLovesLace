@@ -36,7 +36,7 @@ public class FileAlreadyExistsWindow {
     Optional<ButtonType> result = alert.showAndWait();
 
     if (result.isPresent() && result.get() == saveFileButton) {
-      logger.debug("Accepted file overwrite");
+      logger.info("Accepted file overwrite");
 
       try {
         Files.delete(fileToSave.toPath());
@@ -47,7 +47,7 @@ public class FileAlreadyExistsWindow {
       }
     } else {
       this.cancelled = true;
-      logger.debug("File overwrite cancelled");
+      logger.info("File overwrite cancelled");
     }
 
     alert.close();

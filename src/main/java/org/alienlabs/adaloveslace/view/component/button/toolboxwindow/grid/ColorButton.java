@@ -67,7 +67,7 @@ public class ColorButton extends ToggleButton {
 
       Platform.runLater(() -> {
         Optional<Color> result = dialog.showAndWait();
-        result.ifPresent(color -> logger.debug("Chosen color: {}", color));
+        result.ifPresent(color -> logger.info("Chosen color: {}", color));
         app.getOptionalDotGrid().getDiagram().setCurrentColor(result.orElse(null));
         GridEvents.setCurrentImageView(null);
         

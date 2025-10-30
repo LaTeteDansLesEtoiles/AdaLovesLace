@@ -33,7 +33,7 @@ public class VisibleButton extends ImageButton {
   }
 
   public static void onSetVisibleAction(App app) {
-    logger.debug("Setting draw mode");
+    logger.info("Setting draw mode");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
     app.getOptionalDotGrid().clearSelections();
     app.getOptionalDotGrid().clearHovered();

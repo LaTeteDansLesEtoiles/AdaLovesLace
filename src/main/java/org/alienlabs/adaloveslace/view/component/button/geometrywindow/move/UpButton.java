@@ -42,7 +42,7 @@ public class UpButton extends Button {
       copiedKnots.add(copiedKnot);
       moveKnotPause.playFromStart();
 
-      logger.debug("Moving up knot {}", knot);
+      logger.info("Moving up knot {}", knot);
     }
 
 

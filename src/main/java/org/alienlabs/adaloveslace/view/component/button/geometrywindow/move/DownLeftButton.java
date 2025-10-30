@@ -43,7 +43,7 @@ public class DownLeftButton extends Button {
       copiedKnots.add(copiedKnot);
       moveKnotPause.playFromStart();
 
-      logger.debug("Moving down left knot {}", knot);
+      logger.info("Moving down left knot {}", knot);
     }
 
     displayedKnots.removeAll(toRemoveKnots);

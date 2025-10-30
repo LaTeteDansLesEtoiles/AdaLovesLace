@@ -156,7 +156,7 @@ public class OptionalDotGrid extends Pane {
       }
 
       for (Knot knot : this.diagram.getCurrentStep().getSelectedKnots()) {
-        logger.info("Drawing selected knot: pattern={}, text={}, typedText={}",
+        logger.debug("Drawing selected knot: pattern={}, text={}, typedText={}",
                 knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : "none",
                 knot.getText().orElse("empty"),
                 knot.getTypedText() != null ? knot.getTypedText().toString() : "null");

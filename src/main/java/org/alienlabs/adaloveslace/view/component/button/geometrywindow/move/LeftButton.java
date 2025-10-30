@@ -42,7 +42,7 @@ public class LeftButton extends Button {
       copiedKnots.add(copiedKnot);
       moveKnotPause.playFromStart();
 
-      logger.debug("Moving left knot {}", knot);
+      logger.info("Moving left knot {}", knot);
     }
 
     displayedKnots.removeAll(toRemoveKnots);

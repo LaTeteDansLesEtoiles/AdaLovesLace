@@ -37,7 +37,7 @@ public class VerticalFlippingButton extends ImageButton {
   }
 
   public static void onFlipVerticallyAction(final App app) {
-    logger.debug("Flipping vertically");
+    logger.info("Flipping vertically");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MIRROR);
 
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());

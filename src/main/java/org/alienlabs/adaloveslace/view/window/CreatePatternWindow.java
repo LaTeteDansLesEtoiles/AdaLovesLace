@@ -48,13 +48,13 @@ public class CreatePatternWindow {
       Optional<ButtonType> result = alert.showAndWait();
 
       if (result.isPresent() && result.get() == createPatternButton) {
-        logger.debug("Accepted pattern creation");
+        logger.info("Accepted pattern creation");
 
         app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_MOVED, CreatePatternButton.getMouseMovedListener());
         app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, CreatePatternButton.getMouseClickedListener());
         new FileChooserUtil().restartGui(app);
       } else {
-        logger.debug("Pattern creation cancelled");
+        logger.info("Pattern creation cancelled");
 
         try {
           if (Files.exists(this.previewFile.toPath())) {

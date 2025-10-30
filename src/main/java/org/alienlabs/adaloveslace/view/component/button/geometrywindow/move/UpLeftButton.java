@@ -43,7 +43,7 @@ public class UpLeftButton extends Button {
       copiedKnots.add(copiedKnot);
       moveKnotPause.playFromStart();
 
-      logger.debug("Moving up left knot {}", knot);
+      logger.info("Moving up left knot {}", knot);
 
     }
 

@@ -37,7 +37,7 @@ public class UnselectableButton extends ImageButton {
   }
 
   public static void onSetUnselectableModeAction(App app) {
-    logger.debug("Setting unselectable");
+    logger.info("Setting unselectable");
 
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());

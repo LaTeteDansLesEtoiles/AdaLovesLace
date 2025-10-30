@@ -37,7 +37,7 @@ public class SelectableButton extends ImageButton {
   }
 
   public static void onSetSelectableModeAction(App app) {
-    logger.debug("Setting selectable");
+    logger.info("Setting selectable");
 
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());

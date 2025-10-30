@@ -28,7 +28,7 @@ public class ShowHideGridButton extends ImageButton {
     app.getToolboxWindow().getGridNameLabel().setText(resourceBundle.getString(app.getOptionalDotGrid().getDiagram().getCurrentGridType().name()));
     ParentGridStrategy.setGridHasBeenDrawn(false);
 
-    logger.debug("Event switch grid");
+    logger.info("Event switch grid");
     app.getOptionalDotGrid().layoutChildren();
   }
 

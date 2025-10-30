@@ -33,7 +33,7 @@ public class SaveButton extends ImageButton {
     }
 
     public static void onSaveAction(App app) {
-        logger.debug("Saving file");
+        logger.info("Saving file");
 
         File file;
 

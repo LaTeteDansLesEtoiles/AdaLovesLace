@@ -307,7 +307,7 @@ public class DiagramShareWithImagesWindow extends Dialog<DiagramShareWithImagesW
           }
       }
 
-      logger.debug("Sharing cancelled");
+      logger.info("Sharing cancelled");
       return null;
     });
   }

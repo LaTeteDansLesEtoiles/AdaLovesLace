@@ -38,7 +38,7 @@ public class DuplicationButton extends ToggleButton {
   }
 
   public static void onSetDuplicationModeAction(final App app) {
-    logger.debug("Duplicating");
+    logger.info("Duplicating");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DUPLICATION);
 
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());

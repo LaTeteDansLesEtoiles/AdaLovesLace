@@ -137,10 +137,10 @@ public class AdaLovesLaceMenuBar {
         MenuItem printItem = new MenuItem(resourceBundle.getString(PRINT_BUTTON_NAME));
         printItem.setOnAction(_ -> {
             if (!printers.isEmpty()) {
-                logger.debug("Printing attempt of diagram");
+                logger.info("Printing attempt of diagram");
 
                 Printer printer = printers.iterator().next();
-                logger.debug("Printing attempt of diagram with printer {}", printer.getName());
+                logger.info("Printing attempt of diagram with printer {}", printer.getName());
 
                 PrinterJob pJ = PrinterJob.createPrinterJob(printer);
 
@@ -150,7 +150,7 @@ public class AdaLovesLaceMenuBar {
                 if (proceed) {
                     new PrintUtil(app).print(pJ);
                 } else {
-                    logger.debug("Printing diagram aborted by user!");
+                    logger.info("Printing diagram aborted by user!");
                 }
             }
         });
@@ -249,7 +249,7 @@ public class AdaLovesLaceMenuBar {
     private void loadQuickstartDiagram(App app, String diagramName) {
         String path = DIAGRAMS_DIRECTORY + diagramName;
         URL url = getClass().getResource(path);
-        logger.debug("Found URL? {}", url);
+        logger.info("Found URL? {}", url);
 
         URL resourceUrl = AdaLovesLaceMenuBar.class.getResource(path);
         File toLoad;

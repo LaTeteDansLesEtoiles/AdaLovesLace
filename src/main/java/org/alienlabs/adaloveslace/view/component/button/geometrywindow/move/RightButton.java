@@ -42,7 +42,7 @@ public class RightButton extends Button {
       copiedKnots.add(copiedKnot);
       moveKnotPause.playFromStart();
 
-      logger.debug("Moving up right knot {}", copiedKnot);
+      logger.info("Moving up right knot {}", copiedKnot);
     }
 
     displayedKnots.removeAll(toRemoveKnots);

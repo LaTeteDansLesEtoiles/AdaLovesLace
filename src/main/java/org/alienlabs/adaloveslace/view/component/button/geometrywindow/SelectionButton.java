@@ -33,7 +33,7 @@ public class SelectionButton extends ToggleButton {
   }
 
   public static void onSetSelectionModeAction(App app) {
-    logger.debug("Setting selection mode");
+    logger.info("Setting selection mode");
 
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
     app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);

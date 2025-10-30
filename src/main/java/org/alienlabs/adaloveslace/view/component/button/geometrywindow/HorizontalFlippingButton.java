@@ -37,7 +37,7 @@ public class HorizontalFlippingButton extends ImageButton {
   }
 
   public static void onFlipHorizontallyAction(final App app) {
-    logger.debug("Flipping horizontally");
+    logger.info("Flipping horizontally");
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.MIRROR);
 
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());

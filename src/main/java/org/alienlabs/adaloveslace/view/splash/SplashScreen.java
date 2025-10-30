@@ -394,7 +394,7 @@ public class SplashScreen {
             @Override
             protected void succeeded() {
                 Platform.runLater(() -> {
-                    logger.debug("Splash screen loading completed");
+                    logger.info("Splash screen loading completed");
                     closeSplashScreen();
                 });
             }

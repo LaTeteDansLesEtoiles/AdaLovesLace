@@ -9,6 +9,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -129,7 +130,7 @@ public class App extends Application {
 
     if (params.getRaw() != null && !params.getRaw().isEmpty()) {
       filePath = String.join(" ", params.getRaw());
-      logger.debug(filePath);
+      logger.info(filePath);
     }
 
     Font.loadFont(getClass().getResource("/fonts/PatrickHand-Regular.ttf").toExternalForm(), 12);
@@ -159,7 +160,7 @@ public class App extends Application {
   }
 
   private void startMainApplication(Stage primaryStage, String filePath) {
-    logger.debug("Starting app: opening main window");
+    logger.info("Starting app: opening main window");
     
     // S'assurer que le diagramme est initialisé
     if (this.diagram == null) {
@@ -178,7 +179,7 @@ public class App extends Application {
             this.diagram
     );
 
-    logger.debug("Opening toolbox window");
+    logger.info("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
 
     this.resizes.onWindowsResize();
@@ -252,14 +253,15 @@ public class App extends Application {
 
   private void onCloseApplication(Stage primaryStage) {
     primaryStage.setOnCloseRequest(event -> {
-      logger.debug("You shall close the app by closing this window!");
+      logger.info("You shall close the app by closing this window!");
       new QuitButton(this, resourceBundle.getString(QUIT_APP)).onQuitAction(event);
     });
   }
 
   private void onSceneKeyPressed() {
     // For multi-selection with "Control" key
-    scene.setOnKeyPressed(event -> {
+    // Utiliser addEventHandler au lieu de setOnKeyPressed pour ne pas remplacer les handlers existants
+    scene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
       KeyCode codeString = event.getCode();
       if (!currentlyActiveKeys.containsKey(codeString)) {
         currentlyActiveKeys.put(codeString, true);
@@ -268,7 +270,8 @@ public class App extends Application {
   }
 
   private void onSceneKeyReleased() {
-    scene.setOnKeyReleased(event ->
+    // Utiliser addEventHandler au lieu de setOnKeyReleased pour ne pas remplacer les handlers existants
+    scene.addEventHandler(KeyEvent.KEY_RELEASED, event ->
       currentlyActiveKeys.remove(event.getCode())
     );
   }

@@ -51,7 +51,7 @@ public class CreatePatternButton extends ImageButton {
     }
 
     public static void onCreatePatternModeAction(App app) {
-        logger.debug("Setting create pattern mode");
+        logger.info("Setting create pattern mode");
 
         app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.CREATE_PATTERN);
 
@@ -113,10 +113,10 @@ public class CreatePatternButton extends ImageButton {
 
             if (firstClickLocal == null) {
                 firstClickLocal = local;
-                logger.debug("Create Pattern => first click {}", firstClickLocal);
+                logger.info("Create Pattern => first click {}", firstClickLocal);
             } else if (secondClickLocal == null) {
                 secondClickLocal = local;
-                logger.debug("Create Pattern => second click {}", secondClickLocal);
+                logger.info("Create Pattern => second click {}", secondClickLocal);
 
                 double xMin = Math.min(firstClickLocal.getX(), secondClickLocal.getX());
                 double yMin = Math.min(firstClickLocal.getY(), secondClickLocal.getY());

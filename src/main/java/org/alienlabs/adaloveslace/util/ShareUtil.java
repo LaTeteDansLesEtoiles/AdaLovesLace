@@ -34,7 +34,7 @@ public class ShareUtil {
                    String clientSecret,
                    String initialImage,
                    List<Picture> imageList) {
-    logger.debug("Sharing in progress");
+    logger.info("Sharing in progress");
 
     Platform.runLater(() -> {
         DiagramDTO diagram;
@@ -62,7 +62,7 @@ public class ShareUtil {
           throw new IllegalArgumentException(e);
       }
 
-      logger.debug("Sharing success");
+      logger.info("Sharing success");
     });
   }
 
@@ -74,7 +74,7 @@ public class ShareUtil {
     completableFuture.join();
 
     try {
-      logger.debug("Response status code: {}", completableFuture.get().statusCode());
+      logger.info("Response status code: {}", completableFuture.get().statusCode());
     } catch (InterruptedException | ExecutionException e) {
       throw new RuntimeException("Error getting response status code!", e);
     }
