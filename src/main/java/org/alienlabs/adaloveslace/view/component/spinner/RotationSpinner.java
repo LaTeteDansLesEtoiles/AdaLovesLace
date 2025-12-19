@@ -5,7 +5,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 
 import java.util.ArrayList;
@@ -13,8 +13,8 @@ import java.util.List;
 
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class RotationSpinner {
 
@@ -41,7 +41,7 @@ public class RotationSpinner {
           copiedKnots.add(copiedKnot);
         }
 
-        app.getOptionalDotGrid().getDiagram().setCurrentKnot(selectedKnots.getLast());
+        app.getOptionalDotGrid().getDiagram().setCurrentKnot(selectedKnots.isEmpty() ? null : selectedKnots.getLast());
         newStep(displayedKnots, copiedKnots, true);
       }
 

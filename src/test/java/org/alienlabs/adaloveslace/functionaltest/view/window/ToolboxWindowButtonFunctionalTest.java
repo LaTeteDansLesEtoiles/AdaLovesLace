@@ -33,7 +33,7 @@ class ToolboxWindowButtonFunctionalTest extends AppFunctionalTestParent {
   }
 
   /**
-   * Checks if 2nd pattern toolbox button contains image "snowflake_small.jpg"
+   * Checks if 2nd pattern toolbox button contains image "snowflake_small.png"
    *
    */
   @Test

@@ -1,48 +1,52 @@
 package org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy;
 
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Line;
-import org.alienlabs.adaloveslace.business.model.Coordinate;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.IDotGridStrategy;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 
-import static org.alienlabs.adaloveslace.business.model.Diagram.*;
+import static org.alienlabs.adaloveslace.domain.Diagram.*;
 
 public class CrissCrossDotGridStrategy implements IDotGridStrategy {
 
     private double width;
     private double height;
-    private double offsetX;
+    private double translateX;
+    private double translateY;
+    private final double offsetX;
 
     /**
      * This shall only be called by the ParentGridStrategy.
      */
     public CrissCrossDotGridStrategy() {
         // This shall only be called by the ParentGridStrategy.
-        offsetX = SPACING_X_FOR_CRISS_CROSS / 2d;
+        this.offsetX = SPACING_X_FOR_CRISS_CROSS;
     }
 
     /**
      * This shall only be called by the ParentGridStrategy.
      */
-    public void setViewPort(double width, double height) {
+    public void setViewPort(double width, double height, double translateX, double translateY) {
         this.width = width;
         this.height = height;
+        this.translateX = translateX;
+        this.translateY = translateY;
     }
 
     @Override
     public void drawGrid() {
         ParentGridStrategy.hideGrid();
 
-        for (double gridX = 0d; gridX < this.width; gridX += SPACING_X_FOR_CRISS_CROSS) {
-            for (double gridY = 0d; gridY < this.height; gridY += SPACING_Y_FOR_CRISS_CROSS) {
-                Line l1 = new Line(gridX + offsetX, gridY, width, gridY);
+        for (double gridX = 0d; gridX < this.width - this.translateX; gridX += SPACING_X_FOR_CRISS_CROSS) {
+            for (double gridY = 0d; gridY < this.height - this.translateY; gridY += SPACING_Y_FOR_CRISS_CROSS) {
+                Line l1 = new Line(0, gridY, this.width - this.translateX, gridY);
                 l1.setStroke(CRISS_CROSS_GRID_COLOR);
                 l1.setStrokeWidth(1);
                 l1.toBack();
 
                 ParentGridStrategy.grid.add(l1);
 
-                Line l2 = new Line(gridX + offsetX, gridY, gridX + offsetX, height);
+                Line l2 = new Line(gridX, 0, gridX, this.height - this.translateY);
                 l2.setStroke(CRISS_CROSS_GRID_COLOR);
                 l2.setStrokeWidth(1);
                 l2.toFront();
@@ -50,6 +54,7 @@ public class CrissCrossDotGridStrategy implements IDotGridStrategy {
                 ParentGridStrategy.grid.add(l2);
             }
         }
+
         ParentGridStrategy.gridPane.getChildren().addAll(ParentGridStrategy.grid);
         ParentGridStrategy.gridPane.toBack();
         ParentGridStrategy.gridPane.getStyleClass().add("grid");
@@ -57,8 +62,8 @@ public class CrissCrossDotGridStrategy implements IDotGridStrategy {
     }
 
     @Override
-    public Coordinate getDrawCoordinates(double x, double y) {
-        return new Coordinate(nearestGridX(x), nearestGridY(y));
+    public Point2D getSnapToGridDrawCoordinates(double x, double y) {
+        return new Point2D(nearestGridX(x), nearestGridY(y));
     }
 
     private double nearestGridX(double xDraw) {
@@ -67,7 +72,7 @@ public class CrissCrossDotGridStrategy implements IDotGridStrategy {
             return offsetX;
         }
 
-        double maxDelta = this.width;
+        double maxDelta = this.width - this.translateX;
         if (delta >= maxDelta) {
             double maxK = Math.floor(maxDelta / SPACING_X_FOR_CRISS_CROSS);
             return offsetX + maxK * SPACING_X_FOR_CRISS_CROSS;
@@ -83,7 +88,7 @@ public class CrissCrossDotGridStrategy implements IDotGridStrategy {
         double index   = Math.floor(quotient);
         double yGrid   = index * spacing;
         if (yGrid < 0)             yGrid = 0;
-        if (yGrid > this.width)    yGrid = Math.floor(this.width / spacing) * spacing;
+        if (yGrid > this.width - this.translateY)    yGrid = Math.floor((this.width - this.translateY) / spacing) * spacing;
         return yGrid;
     }
 

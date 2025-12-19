@@ -14,11 +14,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.Pattern;
-import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
-import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
+import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.Pattern;
+import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.domain.enumeration.PatternOrTextMode;
 import org.alienlabs.adaloveslace.util.NodeUtil;
+import org.alienlabs.adaloveslace.view.component.GridUtil;
+import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.alienlabs.adaloveslace.business.model.Diagram.isNewText;
-import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
+import static org.alienlabs.adaloveslace.domain.Diagram.isNewText;
+import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
+import static org.alienlabs.adaloveslace.domain.Knot.NEW_TEXT;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.MOUSE_CLICKED;
 
 public class GridEvents {
@@ -53,7 +55,7 @@ public class GridEvents {
   public static final EventHandler<KeyEvent> keyHandler = event -> {
     if (app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.DRAWING ||
             app.getOptionalDotGrid().getDiagram().getCurrentMode() == MouseMode.SELECTION) {
-      logger.debug("key pressed -> {}", event.getCode());
+      logger.info("key pressed -> {}", event.getCode());
 
       if ((app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size() > 1) ||
               (app.getOptionalDotGrid().getDiagram().getCurrentKnot() != null &&
@@ -62,6 +64,33 @@ public class GridEvents {
       }
 
       isNewText = false;
+
+      if (app.getOptionalDotGrid().getDiagram().getCurrentKnot() == null) {
+        Point2D mouseInParent = app.getMovablePane().sceneToLocal(app.getScene().getWidth() / 2, app.getScene().getHeight() / 2);
+        double x = mouseInParent.getX();
+        double y = mouseInParent.getY();
+
+        Knot knot = new NodeUtil().newKnot(
+          x, y,
+          null, // imageView
+          null, // pattern
+          null, // currentKnot
+          app.getOptionalDotGrid().getDiagram().getCurrentColor()
+        );
+
+        knot.setTypedText(new StringBuilder(NEW_TEXT));
+        knot.setText(Optional.of(NEW_TEXT.toString()));
+
+        ImageView imageView = new NodeUtil().createText(
+          x, y,
+          null,
+          null,
+          app.getOptionalDotGrid().getDiagram().getCurrentColor()
+        );
+        knot.setImageView(imageView);
+
+        app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+      }
 
       StringBuilder typedText = app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText();
       if (typedText == null) {
@@ -88,8 +117,18 @@ public class GridEvents {
         default:
           if (!event.isControlDown() && !event.getText().isEmpty()) {
             typedText.append(event.getText());
+            logger.info("KeyHandler: typedText after append='{}', currentKnot.getTypedText()='{}'",
+                    typedText,
+                    app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText() != null ?
+                    app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText().toString() : "null");
             app.getOptionalDotGrid().getDiagram().getCurrentKnot().setTypedText(typedText);
             app.getOptionalDotGrid().getDiagram().getCurrentKnot().setText(Optional.of(typedText.toString()));
+            logger.info("KeyHandler: After setTypedText, currentKnot.getTypedText()='{}', currentKnot hashCode={}, currentKnot in selectedKnots? {}", 
+                    app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText() != null ?
+                    app.getOptionalDotGrid().getDiagram().getCurrentKnot().getTypedText().toString() : "null",
+                    app.getOptionalDotGrid().getDiagram().getCurrentKnot().hashCode(),
+                    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(
+                            app.getOptionalDotGrid().getDiagram().getCurrentKnot()));
             app.getOptionalDotGrid().getDiagram().getUpdateImage().run();
           }
       }
@@ -98,7 +137,7 @@ public class GridEvents {
 
   public static final EventHandler<MouseEvent> mouseClickEventHandler = event -> {
     String eType = event.getEventType().toString();
-    logger.debug("Event type mouseClickEventHandler -> {}, source {} current Step index {}, current mode: {}",
+    logger.info("Event type mouseClickEventHandler -> {}, source {} current Step index {}, current mode: {}",
             eType,
             event.getSource(),
             app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
@@ -109,10 +148,10 @@ public class GridEvents {
       Double x = mouseInParent.getX();
       Double y = mouseInParent.getY();
 
-      logger.debug("Coordinate X     -> {}", x);
-      logger.debug("Coordinate Y     -> {}", y);
+      logger.info("Coordinate X     -> {}", x);
+      logger.info("Coordinate Y     -> {}", y);
 
-      processMouseClick(x, y);
+      processMouseClick(x, y, event);
     }
   };
 
@@ -126,7 +165,7 @@ public class GridEvents {
   public static final EventHandler<MouseEvent> mouseGridDraggedEventHandler = event -> {
     if (event.getButton() == MouseButton.SECONDARY) {
       Pane movablePane = app.getMovablePane();
-      logger.debug("Pane in scene : {}", movablePane.localToScene(0, 0));
+      logger.info("Pane in scene : {}", movablePane.localToScene(0, 0));
 
       double dx = event.getSceneX() - dragStartX;
       double dy = event.getSceneY() - dragStartY;
@@ -135,6 +174,13 @@ public class GridEvents {
 
       dragStartX = event.getSceneX();
       dragStartY = event.getSceneY();
+    }
+  };
+
+  public static final EventHandler<MouseEvent> mouseGridDragReleasedEventHandler = event -> {
+    if (event.getButton() == MouseButton.SECONDARY) {
+      ParentGridStrategy.setGridHasBeenDrawn(false);
+      app.getOptionalDotGrid().layoutChildren();
     }
   };
 
@@ -158,7 +204,7 @@ public class GridEvents {
   // @see https://stackoverflow.com/questions/40982787/change-cursor-in-javafx-listview-during-drag-and-drop/40984625#40984625
   public static final EventHandler<MouseEvent> dragInitiatedOverOnHandle = event -> {
     String eType = event.getEventType().toString();
-    logger.debug(
+    logger.info(
             "Event type -> dragInitiatedOverOnHandle {}, source {} current Step index {}, current mode {}, X {}, Y {}",
             eType,
             event.getSource(),
@@ -193,17 +239,12 @@ public class GridEvents {
     event.consume();
   };
 
-  public static final EventHandler<MouseEvent> dragOverHandleWithSelectionMode = event -> {
-    String eType = event.getEventType().toString();
-    Circle sourceHandle = (Circle)event.getSource();
-    logger.debug(
-            "Event type dragOverHandleWithSelectionMode -> {}, source {} current Step index {}, current mode: {}",
-            eType,
-            sourceHandle,
-            app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-            app.getOptionalDotGrid().getDiagram().getCurrentMode()
-    );
+  private static List<Knot> dragKnots = null;
 
+  public static final EventHandler<MouseEvent> dragOverHandleWithSelectionMode = event -> {
+    Circle sourceHandle = (Circle)event.getSource();
+
+    // Calculer le d?placement
     double targetCircleCenterXScene = event.getSceneX() - handleOffsetX;
     double targetCircleCenterYScene = event.getSceneY() - handleOffsetY;
     Point2D currentEvent = new Point2D(targetCircleCenterXScene, targetCircleCenterYScene);
@@ -220,56 +261,97 @@ public class GridEvents {
       }
     }
 
-    List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-    List<Knot> copiedKnots = new ArrayList<>();
+    // Initialiser les listes de n?uds et positions si c'est le premier mouvement
+    if (dragKnots == null) {
+      List<Knot> selectedKnots = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
+      // V?rifier que le n?ud source est dans la s?lection
+      Knot eventSourceKnot = selectedKnots.stream()
+        .filter(knot -> knot.getHandle() != null && knot.getHandle().equals(sourceHandle))
+        .findFirst()
+        .orElse(null);
+      if (null == eventSourceKnot) {
+        event.consume();
+        return;
+      }
 
-    Knot eventSourceKnot = selectedKnots.stream().filter(knot -> knot.getHandle().equals(sourceHandle)).findFirst().orElse(null);
-    if (null == eventSourceKnot) {
-      event.consume();
-      return;
+      // Copier les n?uds une seule fois au d?but du drag
+      dragKnots = new ArrayList<>(selectedKnots.size());
+
+      // Nettoyer les s?lections et d?corations
+      app.getOptionalDotGrid().clearSelections();
+      app.getOptionalDotGrid().clearHovered();
+
+      // Nettoyer les s?lections et hover des n?uds originaux
+      for (Knot knot : selectedKnots) {
+        if (knot.getSelection() != null) {
+          app.getMovablePane().getChildren().remove(knot.getSelection());
+          knot.setSelection(null);
+        }
+        if (knot.getHovered() != null) {
+          app.getMovablePane().getChildren().remove(knot.getHovered());
+          knot.setHovered(null);
+        }
+        // Garder les handles car ils sont n?cessaires pour le drag and drop
+      }
+
+      // Ne pas ajouter les n?uds originaux ? displayedKnots pour ?viter qu'ils se d?placent
+      // Les n?uds originaux restent dans selectedKnots mais ne sont pas visibles
+
+      // Cr?er les copies avec leurs nouveaux rectangles de s?lection
+      for (Knot knot : selectedKnots) {
+        // Copier le n?ud avec sa position actuelle
+        Knot copiedKnot = new NodeUtil().copyKnot(knot);
+        dragKnots.add(copiedKnot);
+
+        // Cr?er un nouveau rectangle de s?lection pour la copie
+        Rectangle rec = new GridUtil(app.getMovablePane()).newRectangle(copiedKnot, Color.BLUE);
+        copiedKnot.setSelection(rec);
+        app.getMovablePane().getChildren().add(rec);
+      }
+
+
+      // Mettre ? jour la liste des n?uds s?lectionn?s
+      app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(dragKnots);
     }
 
-    for (Knot knot : selectedKnots) {
-      Knot copiedKnot = new NodeUtil().copyKnot(knot);
+    // Mettre ? jour la position des n?uds
+    for (int i = 0; i < dragKnots.size(); i++) {
+      Knot copiedKnot = dragKnots.get(i);
 
-      copiedKnot.setX(knot.getX() + currentEvent.getX());
-      copiedKnot.setY(knot.getY() + currentEvent.getY());
+      // Mettre ? jour les positions
+      copiedKnot.setX(copiedKnot.getX() + currentEvent.getX());
+      copiedKnot.setY(copiedKnot.getY() + currentEvent.getY());
       copiedKnot.getImageView().setLayoutX(copiedKnot.getX());
       copiedKnot.getImageView().setLayoutY(copiedKnot.getY());
-      copiedKnot.getHandle().setLayoutX(copiedKnot.getHandle().getLayoutX() + currentEvent.getX());
-      copiedKnot.getHandle().setLayoutY(copiedKnot.getHandle().getLayoutY() + currentEvent.getY());
       copiedKnot.getSelection().setLayoutX(copiedKnot.getX());
       copiedKnot.getSelection().setLayoutY(copiedKnot.getY());
-      copiedKnot.getHovered().setLayoutX(copiedKnot.getX());
-      copiedKnot.getHovered().setLayoutY(copiedKnot.getY());
 
-      copiedKnots.add(copiedKnot);
-      GridEvents.logger.debug("Knot to move");
+      // Mettre ? jour la poign?e si elle existe
+      if (copiedKnot.getHandle() != null) {
+        copiedKnot.getHandle().setLayoutX(copiedKnot.getHandle().getLayoutX() + currentEvent.getX());
+        copiedKnot.getHandle().setLayoutY(copiedKnot.getHandle().getLayoutY() + currentEvent.getY());
+      }
+
+      // Mettre ? jour le survol s'il existe
+      if (copiedKnot.getHovered() != null) {
+        copiedKnot.getHovered().setLayoutX(copiedKnot.getX());
+        copiedKnot.getHovered().setLayoutY(copiedKnot.getY());
+      }
     }
 
-    app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(copiedKnots);
-
-    if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size() == 1) {
-      app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnots.getLast());
+    // Mettre ? jour la s?lection
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(dragKnots);
+    if (dragKnots.size() == 1) {
+      app.getOptionalDotGrid().getDiagram().setCurrentKnot(dragKnots.get(0));
     }
 
-    app.getOptionalDotGrid().layoutChildren();
-
-    logger.debug("Event type: {}, X: {}, Y: {}", event.getEventType(), event.getX(), event.getY());
     event.consume();
   };
 
   public static final EventHandler<MouseEvent> dragDroppedHandleWithSelectionMode = event -> {
-    String eType = event.getEventType().toString();
-
-    logger.debug(
-            "Event type -> {},  current Step index: {}, current mode: {}, X: {}, Y: {}",
-            eType,
-            app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
-            app.getOptionalDotGrid().getDiagram().getCurrentMode(),
-            event.getSceneX(),
-            event.getSceneY()
-    );
+    // Nettoyer les variables de drag
+    dragKnots = null;
+    previousEvent = null;
 
     app.getOptionalDotGrid().getDiagram().setCurrentMode(app.getOptionalDotGrid().getDiagram().getOldMode());
     app.getOptionalDotGrid().layoutChildren();
@@ -279,10 +361,10 @@ public class GridEvents {
             app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app)));
   };
 
-  private static void processMouseClick(double x, double y) {
+  private static void processMouseClick(double x, double y, MouseEvent event) {
     switch (app.getOptionalDotGrid().getDiagram().getCurrentMode()) {
       case DRAWING          -> app.getOptionalDotGrid().getDiagram().drawKnot(x, y);
-      case SELECTION        -> app.getMainWindow().onClickWithSelectionMode(app);
+      case SELECTION        -> app.getMainWindow().onClickWithSelectionMode(app, event);
       case DELETION         -> app.getMainWindow().onClickWithDeletionMode(app, app.getOptionalDotGrid().getDiagram()) ;
       case DUPLICATION      -> { /* This is managed in DuplicationButton */ }
       case CREATE_PATTERN   -> { /* This is managed in CreatePatternButton */ }
@@ -345,8 +427,12 @@ public class GridEvents {
           Point2D mouseInParent = app.getMovablePane().sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
           Double x = mouseInParent.getX();
           Double y = mouseInParent.getY();
-          currentImageView.setLayoutX(x);
-          currentImageView.setLayoutY(y);
+
+          Point2D coord = app.getGridStrategy().getDrawCoordinates(x, y);
+          currentImageView.setLayoutX(coord.getX());
+          currentImageView.setLayoutY(coord.getY());
+          currentPattern.setCenterX(coord.getX());
+          currentPattern.setCenterY(coord.getY());
           app.getMovablePane().getChildren().add(currentImageView);
         }
       } else {
@@ -405,6 +491,11 @@ public class GridEvents {
   public static EventHandler<MouseEvent> getGridDraggedEventHandler(App app) {
     GridEvents.app = app;
     return mouseGridDraggedEventHandler;
+  }
+
+  public static EventHandler<MouseEvent> getGridDragReleasedEventHandler(App app) {
+    GridEvents.app = app;
+    return mouseGridDragReleasedEventHandler;
   }
 
   public static EventHandler<MouseEvent> getMouseDoubleRightClickOnGridEventHendler(App app) {

@@ -1,0 +1,192 @@
+package org.alienlabs.adaloveslace.domain;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
+import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.util.NodeUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * What is drawn on a Canvas at any given time: we can move back and forward the Step list in order to undo / redo
+ * the user's actions.
+ *
+ * @see Diagram
+ * @see Knot
+ *
+ */
+@XmlType(name = "Step")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Step implements Comparable<Step> {
+
+    private Integer stepIndex;
+
+    @XmlTransient
+    public App app;
+
+    private List<Knot> displayedKnots = new ArrayList<>();
+
+    private List<Knot> selectedKnots = new ArrayList<>();
+
+    private static final Logger logger = LoggerFactory.getLogger(Step.class);
+
+    @XmlTransient
+    private static final int MAX_NUMBER_OF_STEPS = 100_000;
+
+    @XmlTransient
+    public static final int MAX_NUMBER_OF_STEPS_IN_LACE_FILE = 100_000;
+
+    // For JAXB
+    public Step() {
+        this.stepIndex = 0;
+    }
+
+    /**
+     * Creates a step given the displayed knots and the selected knots. A knot can only be in one of those, not both.
+     *
+     * @param diagram        the diagram onto which to work
+     * @param displayedKnots the knots to add to the new Step as displayed
+     * @param selectedKnots  the knots to add to the new Step as selected
+     * @param layoutChildren shall we redisplay grid content?
+     */
+    public Step(App app,
+                Diagram diagram,
+                List<Knot> displayedKnots,
+                List<Knot> selectedKnots,
+                boolean layoutChildren) {
+        this.app = app;
+
+        // Créer des copies profondes des knots pour éviter la mutation partagée
+        NodeUtil nodeUtil = new NodeUtil();
+        this.displayedKnots = displayedKnots.stream()
+                .map(nodeUtil::copyKnot)
+                .collect(java.util.stream.Collectors.toList());
+        this.selectedKnots = selectedKnots.stream()
+                .map(nodeUtil::copyKnot)
+                .collect(java.util.stream.Collectors.toList());
+
+        this.displayedKnots.removeAll(this.selectedKnots);
+        this.app.getMovablePane().getChildren().removeAll(
+                this.displayedKnots.stream().map(Knot::getSelection).toList());
+        this.selectedKnots.removeAll(this.displayedKnots);
+
+        logger.info("Step constructor: displayedKnots.size()={}, selectedKnots.size()={}, layoutChildren={}",
+                this.displayedKnots.size(), this.selectedKnots.size(), layoutChildren);
+        
+        for (Knot knot : this.selectedKnots) {
+            logger.info("  Selected knot: pattern={}, text={}, typedText={}",
+                    knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : "none",
+                    knot.getText().orElse("empty"),
+                    knot.getTypedText() != null ? knot.getTypedText().toString() : "null");
+        }
+
+        clearStepsGreaterThanPresentStep(app.getOptionalDotGrid().getDiagram());
+        limitToMaxNumberOfSteps(app.getOptionalDotGrid().getDiagram());
+
+        diagram.getAllSteps().add(this);
+        this.stepIndex = diagram.getAllSteps().size();
+        diagram.setCurrentStepIndex(this.stepIndex);
+
+        // For testability
+        if (layoutChildren) {
+            app.getOptionalDotGrid().layoutChildren();
+        }
+    }
+
+    public void clearStepsGreaterThanPresentStepPlusLimit(Diagram diagram) {
+        List<Step> stepsToKeep = new ArrayList<>(diagram.getAllSteps().stream()
+                .filter(step1 -> ((
+                        step1.getStepIndex() <= diagram.getCurrentStepIndex()) &&
+                        step1.getStepIndex() > diagram.getCurrentStepIndex() - MAX_NUMBER_OF_STEPS_IN_LACE_FILE)
+                )
+                .toList());
+        diagram.getAllSteps().clear();
+        diagram.setAllSteps(stepsToKeep);
+
+        for (int index = 1;
+             index <= Math.min(MAX_NUMBER_OF_STEPS_IN_LACE_FILE, stepsToKeep.size());
+             index++
+        ) {
+            diagram.getAllSteps().get(index - 1).setStepIndex(index);
+        }
+    }
+
+    private void clearStepsGreaterThanPresentStep(Diagram diagram) {
+        List<Step> stepsToRemove = new ArrayList<>(diagram.getAllSteps().stream()
+                .filter(step1 -> (step1.getStepIndex() > diagram
+                        .getCurrentStepIndex()))
+                .toList());
+        diagram.getAllSteps().removeAll(stepsToRemove);
+    }
+
+    private void limitToMaxNumberOfSteps(Diagram diagram) {
+        diagram.setAllSteps(
+                diagram.getAllSteps().subList(
+                        Math.max(
+                                0,
+                                diagram.getCurrentStepIndex() - MAX_NUMBER_OF_STEPS
+                        ),
+                        diagram.getAllSteps().size()
+                )
+        );
+
+        for (int i = 0; i < diagram.getAllSteps().size(); i++) {
+            diagram.getAllSteps().get(i).setStepIndex(i + 1);
+        }
+    }
+
+    public List<Knot> getDisplayedKnots() {
+        return displayedKnots;
+    }
+
+    public void setDisplayedKnots(List<Knot> displayedKnots) {
+        this.displayedKnots = displayedKnots;
+    }
+
+    public List<Knot> getSelectedKnots() {
+        return selectedKnots;
+    }
+
+    public void setSelectedKnots(List<Knot> selectedKnots) {
+        this.selectedKnots = selectedKnots;
+    }
+
+    public List<Knot> getAllVisibleKnots() {
+        List<Knot> all = new ArrayList<>(selectedKnots);
+        all.addAll(displayedKnots);
+
+        return all;
+    }
+
+    public Integer getStepIndex() {
+        return stepIndex;
+    }
+
+    public void setStepIndex(Integer stepIndex) {
+        this.stepIndex = stepIndex;
+    }
+
+    @Override
+    public int compareTo(Step o) {
+        return this.stepIndex.compareTo(o.stepIndex);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Step step = (Step) o;
+        return stepIndex.equals(step.stepIndex);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stepIndex);
+    }
+}

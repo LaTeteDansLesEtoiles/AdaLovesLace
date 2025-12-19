@@ -36,7 +36,7 @@ public class ExportPdfButton extends ImageButton {
   }
 
   public static void onExportAction(App app) {
-    logger.debug("Exporting image file");
+    logger.info("Exporting image file");
 
     FileChooser export = new FileChooserUtil().getFileChooser(EXPORT_PDF_DIALOG_TITLE, SAVED_LACE_FILE, LACE_FILE_FOLDER_SAVE_PATH, EXPORTED_FILES, EXPORT_PDF_FILE_FILTER);
     File file = export.showSaveDialog(app.getScene().getWindow());
@@ -48,7 +48,7 @@ public class ExportPdfButton extends ImageButton {
 
       String imageFilename = System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator + OUTPUT_TEMPORARY_IMAGE;
 
-      new ImageUtil(app).buildWritableImageWithoutTechnicalElements(imageFilename);
+      new ImageUtil(app).buildFileImageWithoutTechnicalElements(imageFilename);
       new FileUtil().generatePdf(pdfFilename, PATH_NAME.getAbsolutePath());
     }
   }

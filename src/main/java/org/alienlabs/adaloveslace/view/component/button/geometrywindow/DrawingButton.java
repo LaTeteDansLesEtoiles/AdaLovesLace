@@ -4,9 +4,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
-import org.alienlabs.adaloveslace.view.window.GeometryWindow;
+import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class DrawingButton extends ToggleButton {
 
@@ -23,9 +22,9 @@ public class DrawingButton extends ToggleButton {
 
   private static final Logger logger                = LoggerFactory.getLogger(DrawingButton.class);
 
-  public DrawingButton(App app, GeometryWindow window, String buttonLabel) {
+  public DrawingButton(App app, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onSetDrawModeAction(app, window));
+    this.setOnMouseClicked(event -> onSetDrawModeAction(app));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
 
     final Tooltip tooltip = new Tooltip();
@@ -34,8 +33,8 @@ public class DrawingButton extends ToggleButton {
     this.setTooltip(tooltip);
   }
 
-  public static void onSetDrawModeAction(App app, GeometryWindow window) {
-    logger.debug("Setting draw mode");
+  public static void onSetDrawModeAction(App app) {
+    logger.info("Setting draw mode");
 
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
     GridEvents.removeEventsFromGrid(app);
@@ -54,10 +53,10 @@ public class DrawingButton extends ToggleButton {
     );
     app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
 
-    window.getDrawingButton()     .setSelected(true);
-    window.getSelectionButton()   .setSelected(false);
-    window.getDeletionButton()    .setSelected(false);
-    window.getDuplicationButton() .setSelected(false);
+    app.getToolboxWindow().getDrawingButton()     .setSelected(true);
+    app.getToolboxWindow().getSelectionButton()   .setSelected(false);
+    app.getToolboxWindow().getDeletionButton()    .setSelected(false);
+    app.getToolboxWindow().getDuplicationButton() .setSelected(false);
   }
 
 }

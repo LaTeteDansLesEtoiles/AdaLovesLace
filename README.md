@@ -73,6 +73,7 @@ then:
     ./mvnw clean integration-test                                    # launch all tests 
     ./mvnw clean test             -DskipFTs=true                     # launch unit tests
     ./mvnw clean integration-test -DskipUTs=true                     # launch functional tests 
+    gradle publishToMavenLocal --info
 
 or:
 

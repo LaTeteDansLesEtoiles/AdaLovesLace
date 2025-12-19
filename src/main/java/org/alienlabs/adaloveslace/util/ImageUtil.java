@@ -1,5 +1,6 @@
 package org.alienlabs.adaloveslace.util;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
@@ -11,11 +12,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.dto.DiagramDTO;
-import org.alienlabs.adaloveslace.business.model.enumeration.GridType;
-import org.alienlabs.adaloveslace.business.model.enumeration.Language;
-import org.alienlabs.adaloveslace.business.model.enumeration.SubTechnique;
-import org.alienlabs.adaloveslace.business.model.enumeration.Technique;
+import org.alienlabs.adaloveslace.domain.Picture;
+import org.alienlabs.adaloveslace.domain.dto.DiagramDTO;
+import org.alienlabs.adaloveslace.domain.enumeration.GridType;
+import org.alienlabs.adaloveslace.domain.enumeration.Language;
+import org.alienlabs.adaloveslace.domain.enumeration.SubTechnique;
+import org.alienlabs.adaloveslace.domain.enumeration.Technique;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.alienlabs.adaloveslace.view.window.CreatePatternWindow;
 import org.slf4j.Logger;
@@ -23,11 +25,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Base64;
+import java.util.List;
 import java.util.UUID;
 
 import static org.alienlabs.adaloveslace.App.*;
@@ -48,55 +52,76 @@ public class ImageUtil {
         this.app = app;
     }
 
-    public File buildWritableImageWithoutTechnicalElements(String pathname) {
+    public File buildFileImageWithoutTechnicalElements(String pathname) {
         boolean isGridDisplayed = app.getOptionalDotGrid().isShowHideGrid();
         this.hideTechnicalElementsFromRootGroup(false);
 
         File image = buildImage(pathname);
 
         this.showTechnicalElementsFromRootGroup(isGridDisplayed);
-        logger.debug("Snapshot done!");
+        logger.info("Snapshot done!");
 
         return image;
     }
 
+    public WritableImage buildWritableImageWithoutTechnicalElements(String pathname) {
+        boolean isGridDisplayed = app.getOptionalDotGrid().isShowHideGrid();
+        this.hideTechnicalElementsFromRootGroup(false);
+
+        WritableImage snapshot = buildWritableImage(pathname);
+        logger.info("Snapshot done!");
+
+        this.showTechnicalElementsFromRootGroup(isGridDisplayed);
+        return snapshot;
+    }
+
     public WritableImage buildWritableImageWithTechnicalElements(String pathname) {
         WritableImage snapshot = buildWritableImage(pathname);
-        logger.debug("Snapshot done!");
+        logger.info("Snapshot done!");
 
         return snapshot;
     }
 
-    public DiagramDTO getDiagram(String diagramFilename, String username, String clientId, String clientSecret) throws IOException {
+    public DiagramDTO getDiagram(String diagramFilename,
+                                 String username,
+                                 String clientId,
+                                 String clientSecret,
+                                 String initialImage,
+                                 List<Picture> imageList) throws IOException {
         UUID uuid         = UUID.randomUUID();
         new ImageUtil(app).
-                buildWritableImageWithoutTechnicalElements(
+                buildFileImageWithoutTechnicalElements(
                         APP_FOLDER_IN_USER_HOME + uuid + EXPORT_IMAGE_FILE_TYPE
                 );
         File laceFilePath = new File(APP_FOLDER_IN_USER_HOME + diagramFilename + LACE_FILE_EXTENSION);
 
-        File previewFile  = ImageUtil.PATH_NAME;
         return new DiagramDTO().
                 uuid(uuid).
                 name(diagramFilename).
-                preview(Files.readAllBytes(previewFile.toPath())).previewContentType(EXPORT_IMAGE_CONTENT_TYPE).
+                showcase(imageList.getFirst().getShowcase()).previewContentType(EXPORT_IMAGE_CONTENT_TYPE).
                 technique(Technique.LACE).
                 subTechnique(SubTechnique.TATTING_LACE).
                 language(Language.FRENCH).
-                diagram(Files.readAllBytes(
+                diagram(Base64.getEncoder().encodeToString(Files.readAllBytes(
                         new FileUtil(app).saveFile(
                                         laceFilePath,
-                                        app.getOptionalDotGrid().getDiagram()
+                                        app.getOptionalDotGrid().getDiagram(),
+                                        true
                                 )
                                 .toPath()
+                        )
                 )).
                 diagramContentType(LACE_FILE_MIME_TYPE).
                 username(username).
                 clientId(UUID.fromString(clientId)).
-                clientSecret(UUID.fromString(clientSecret));
+                clientSecret(UUID.fromString(clientSecret)).
+                diagramPreview(initialImage).
+                previews(imageList.stream()
+                        .filter(picture -> picture.getShowcase() == null || picture.getShowcase().isEmpty())
+                        .map(Picture::getPicture).toList());
     }
 
-    private WritableImage buildWritableImage(String pathname) {
+    public WritableImage buildWritableImage(String pathname) {
         WritableImage wi = new WritableImage((int)app.getMovablePane().getWidth(),
                 (int)app.getMovablePane().getHeight());
         WritableImage snapshot = app.getMovablePane().snapshot(newSnapshotParameters(), wi);
@@ -151,7 +176,7 @@ public class ImageUtil {
 
     private void createPattern(double xMin, double yMin, double wLog, double hLog) {
         Platform.runLater(() -> {
-            logger.debug(
+            logger.info(
                     "Create Pattern => ImageView: X= {}, Y= {}, width= {}, height= {}",
                     xMin,
                     yMin,
@@ -240,21 +265,71 @@ public class ImageUtil {
     }
 
     public void getImageView(String pathname, ButtonBase button, boolean isSelected) {
+        Image buttonImage = new Image(getClass()
+                        .getResource(ASSETS_DIRECTORY + pathname).toExternalForm());
+
+        ImageView buttonImageView  = new ImageView(buttonImage);
+        buttonImageView.setFitHeight(ICON_SIZE);
+        buttonImageView.setPreserveRatio(true);
+        button.setGraphic(buttonImageView);
+
+        if (isSelected) {
+            ((ToggleButton)button).setSelected(true);
+        }
+    }
+
+    public void backupKnots() {
+        Path root = Paths.get(APP_FOLDER_IN_USER_HOME);
+        Path knotsDirectory = root.resolve(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME );
+        Path backupDirectory = root.resolve(APP_FOLDER_IN_USER_HOME + BACKUP_DIRECTORY_NAME );
+
         try {
-            Image buttonImage = new Image(ClassLoader.getSystemResource(ASSETS_DIRECTORY + pathname) != null ?
-                    ClassLoader.getSystemResource(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm() :
-                    new File(ASSETS_DIRECTORY + pathname).toURI().toURL().toExternalForm());
+            createBackupDirectory(backupDirectory);
 
-            ImageView buttonImageView  = new ImageView(buttonImage);
-            buttonImageView.setFitHeight(ICON_SIZE);
-            buttonImageView.setPreserveRatio(true);
-            button.setGraphic(buttonImageView);
+            // Parcourt l'arborescence du dossier source
+            Files.walkFileTree(knotsDirectory, new SimpleFileVisitor<>() {
 
-            if (isSelected) {
-                ((ToggleButton)button).setSelected(true);
-            }
-        } catch (MalformedURLException | URISyntaxException e) {
-            logger.error("Error loading button image!", e);
+                @Override
+                @NonNull
+                public FileVisitResult visitFile(@NonNull Path file, @NonNull BasicFileAttributes attrs) throws IOException {
+                    String filename = file.getFileName().toString().toLowerCase();
+                    moveKnot(file, filename, backupDirectory, knotsDirectory);
+
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            logger.error("Error during file backup!", e);
+        }
+    }
+
+    private void moveKnot(Path file, String filename, Path backupDirectory, Path knotsDirectory) throws IOException {
+        if (isCorrectFileType(filename)) {
+            Path destination = backupDirectory.resolve(knotsDirectory.relativize(file));
+            Files.createDirectories(destination.getParent());
+            Files.move(file, destination, StandardCopyOption.REPLACE_EXISTING);
+
+            logger.info("Copied: {} -> {}", file, destination);
+        }
+    }
+
+    private boolean isCorrectFileType(String filename) {
+        return filename.endsWith(".jpg") || filename.endsWith(".jpeg") || filename.endsWith(".png");
+    }
+
+    private void createBackupDirectory(Path targetDir) throws IOException {
+        if (Files.notExists(targetDir)) {
+            Files.createDirectories(targetDir);
+        }
+    }
+
+    public String imageToPngString(Image fxImage) throws IOException {
+        BufferedImage bImage = SwingFXUtils.fromFXImage(fxImage, null);
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ImageIO.write(bImage, "png", baos);
+            byte[] imageBytes = baos.toByteArray();
+
+            return Base64.getEncoder().encodeToString(imageBytes);
         }
     }
 

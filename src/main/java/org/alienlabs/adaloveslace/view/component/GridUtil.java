@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
-import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,6 +138,12 @@ public class GridUtil {
     // @see https://stackoverflow.com/questions/41898990/find-corners-of-a-rotated-rectangle-given-its-center-point-and-rotation
     // And invert "TOP LEFT VERTEX:" & "BOTTOM LEFT VERTEX:" (small error from the author)
     public Circle newHandleForText(Knot knot, Rectangle rec) {
+        // Safety check to avoid NullPointerException
+        if (rec == null) {
+            logger.warn("Rectangle is null in newHandleForText, cannot create handle");
+            return null;
+        }
+        
         Circle circle = new Circle(
                 knot.getImageView().getBoundsInParent().getCenterX() -
                         (knot.getImageView().getImage().getWidth() / 2 * rec.getScaleX()) *
@@ -160,21 +166,25 @@ public class GridUtil {
 
         if (knot.getText().isPresent() && (knot.getPattern().isEmpty())) {
             rec = new Rectangle(
-                    knot.getX(),
-                    knot.getY(),
+                    0, // x
+                    0, // y
                     knot.getImageView().getImage().getWidth(),
                     knot.getImageView().getImage().getHeight()
             );
             setRectangleProperties(knot, color, rec);
+            rec.setLayoutX(knot.getX());
+            rec.setLayoutY(knot.getY());
             return rec;
         } else if (knot.getPattern().isPresent()) {
             rec = new Rectangle(
-                    knot.getX(),
-                    knot.getY(),
+                    0, // x
+                    0, // y
                     knot.getPattern().get().getWidth(),
                     knot.getPattern().get().getHeight()
             );
             setRectangleProperties(knot, color, rec);
+            rec.setLayoutX(knot.getX());
+            rec.setLayoutY(knot.getY());
             return rec;
         }
 

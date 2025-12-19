@@ -9,6 +9,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -18,15 +19,14 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import org.alienlabs.adaloveslace.business.model.Diagram;
-import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.util.*;
 import org.alienlabs.adaloveslace.view.component.AdaLovesLaceMenuBar;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
-import org.alienlabs.adaloveslace.view.window.GeometryWindow;
+import org.alienlabs.adaloveslace.view.splash.SplashScreen;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
-import org.alienlabs.adaloveslace.view.window.StateWindow;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.alienlabs.adaloveslace.view.window.event.WindowRepositionEvents;
 import org.alienlabs.adaloveslace.view.window.event.WindowResizeEvents;
@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import static org.alienlabs.adaloveslace.util.FileUtil.CLASSPATH_RESOURCES_PATH;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GAP_BETWEEN_BUTTONS;
+import static org.alienlabs.adaloveslace.view.window.MainWindow.QUIT_APP;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.BUTTON_SELECTED;
 import static org.alienlabs.adaloveslace.view.window.event.GridEvents.getMouseDoubleRightClickOnGridEventHendler;
 
@@ -51,7 +51,7 @@ public class App extends Application {
 
   public static final String TOOLBOX_BUTTON           = "toolbox-btn-";
   public static final String ADA_LOVES_LACE           = "AdaLovesLace";
-  public static final String MAIN_WINDOW_TITLE        = ADA_LOVES_LACE;
+  public static final String MAIN_WINDOW_TITLE        = "AdaLovesLace";
   public static final String PROJECT_NAME             = "adaloveslace";
   public static final String USER_HOME                = "user.home";
   public static final String TOOLBOX_TITLE            = "Toolbox";
@@ -67,16 +67,22 @@ public class App extends Application {
   public static final String EXPORT_IMAGE_FILE_TYPE   = ".png";
   public static final String EXPORT_PDF_FILE_TYPE     = ".pdf";
   public static final String PATTERNS_DIRECTORY_NAME  = "knots";
-  public static final String ERROR                    = "Error!";
-  public static final String ASSETS_DIRECTORY         = "assets/";
+  public static final String BACKUP_DIRECTORY_NAME    = "backups";
+  public static final String ASSETS_DIRECTORY         = "/assets/";
+  public static final String DIAGRAMS_DIRECTORY       = "/diagrams/";
   public static final String GET_PRINTERS_BUTTON_NAME = "GetPrinters";
   public static final String PRINT_BUTTON_NAME        = "PrintDiagram";
   public static final String TEXT_BUTTON_NAME         = "TextButton";
+  public static final String ADD_KNOT_BUTTON_NAME     = "AddKnotButton";
+  public static final String RESET_ALL_BUTTON_NAME    = "ResetAllButton";
+  public static final String ADD_KNOT_WITH_SIZE_DIALOG_TITLE = "AddKnotWithSize";
   public static final String COLOR_BUTTON_NAME        = "ColorButton";
+  public static final String LoadingLaceInProgress    = "LoadingLaceInProgress";
+  public static final String SavingLaceInProgress     = "SavingLaceInProgress";
 
   public static final double DEFAULT_MAIN_WINDOW_X    = 75d;
   public static final double DEFAULT_MAIN_WINDOW_Y    = 5d;
-  public static final double DEFAULT_MAIN_WINDOW_WIDTH = 525d;
+  public static final double DEFAULT_MAIN_WINDOW_WIDTH = 650d;
   public static final double DEFAULT_MAIN_WINDOW_HEIGHT = 780d;
   public static final double DEFAULT_GRID_WIDTH       = 650d;
   public static final double DEFAULT_GRID_HEIGHT      = 550d;
@@ -106,10 +112,6 @@ public class App extends Application {
   private static MainWindow mainWindow;
   private Slider slider;
   private Scene scene;
-  private Stage geometryStage;
-  private GeometryWindow geometryWindow;
-  private Stage stateStage;
-  private StateWindow stateWindow;
   private static ToolboxWindow toolboxWindow;
 
   private Pane movablePane;
@@ -120,15 +122,15 @@ public class App extends Application {
   private static final Logger logger = LoggerFactory.getLogger(App.class);
   private WindowResizeEvents resizes;
   private WindowRepositionEvents windowRepositionEvents;
+  private String filePath = "";
 
   @Override
   public void start(Stage primaryStage) {
     Application.Parameters params = getParameters();
-    String filePath = "";
 
     if (params.getRaw() != null && !params.getRaw().isEmpty()) {
       filePath = String.join(" ", params.getRaw());
-      logger.debug(filePath);
+      logger.info(filePath);
     }
 
     Font.loadFont(getClass().getResource("/fonts/PatrickHand-Regular.ttf").toExternalForm(), 12);
@@ -140,7 +142,31 @@ public class App extends Application {
       this.diagram = new Diagram(this);
     }
 
-    logger.debug("Starting app: opening main window");
+    // Afficher le splash screen d'abord
+    showSplashScreen(primaryStage, filePath);
+  }
+
+  private void showSplashScreen(Stage primaryStage, String filePath) {
+    // Stocker le filePath pour plus tard
+    this.filePath = filePath;
+    
+    // Créer et afficher le splash screen
+    SplashScreen splashScreen = new SplashScreen();
+    splashScreen.show(this);
+  }
+
+  public void showMainApplication() {
+    startMainApplication(this.primaryStage, this.filePath);
+  }
+
+  private void startMainApplication(Stage primaryStage, String filePath) {
+    logger.info("Starting app: opening main window");
+    
+    // S'assurer que le diagramme est initialisé
+    if (this.diagram == null) {
+      this.diagram = new Diagram(this);
+    }
+    
     this.resizes = new WindowResizeEvents(this);
     this.windowRepositionEvents = new WindowRepositionEvents(this);
 
@@ -150,33 +176,40 @@ public class App extends Application {
             this.resizes.getGridWidth(),
             this.resizes.getGridHeight(),
             primaryStage,
-            diagram
+            this.diagram
     );
 
-    logger.debug("Opening toolbox window");
+    logger.info("Opening toolbox window");
     showToolboxWindow(this, this, CLASSPATH_RESOURCES_PATH);
-
-    logger.debug("Opening geometry window");
-    showGeometryWindow(this);
-
-    logger.debug("Opening state window");
-    showStateWindow(this);
-
-    if (!filePath.isEmpty()) {
-      new FileUtil().buildUiFromLaceFile(this, new File(filePath));
-      new NodeUtil().clearTechnicalElements(this);
-    }
 
     this.resizes.onWindowsResize();
     this.windowRepositionEvents.onWindowsReposition();
     this.getPrimaryStage().requestFocus();
+    
+    // Retarder le chargement du fichier pour éviter les conflits avec les animations
+    if (!filePath.isEmpty()) {
+      Platform.runLater(() -> {
+        try {
+          new FileUtil().buildUiFromLaceFile(this, new File(filePath));
+          new NodeUtil().clearTechnicalElements(this);
+        } catch (Exception e) {
+          logger.error("Error loading lace file: " + filePath, e);
+        }
+      });
+    }
   }
 
   public void showMainWindow(double windowWidth, double windowHeight, double gridWidth, double gridHeight,
                              Stage primaryStage, Diagram diagram) {
     BorderPane root;
     App.mainWindow = new MainWindow();
-    this.diagram = diagram;
+    
+    // S'assurer que le diagramme n'est pas null
+    if (diagram != null) {
+      this.diagram = diagram;
+    } else if (this.diagram == null) {
+      this.diagram = new Diagram(this);
+    }
 
     var javafxVersion = SystemInfo.javafxVersion();
     var javaVersion   = SystemInfo.javaVersion();
@@ -191,7 +224,7 @@ public class App extends Application {
     movablePane.getChildren().add(grid);
     root.setCenter(movablePane);
 
-    App.mainWindow.onMainWindowClicked(this, movablePane);
+    App.mainWindow.addGridEvents(this, movablePane);
 
     scene = new Scene(root, windowWidth, windowHeight);
     scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
@@ -218,16 +251,17 @@ public class App extends Application {
     primaryStage.show();
   }
 
-  private static void onCloseApplication(Stage primaryStage) {
-    primaryStage.setOnCloseRequest(windowEvent -> {
-      logger.debug("You shall close the app by closing this window!");
-      Platform.exit();
+  private void onCloseApplication(Stage primaryStage) {
+    primaryStage.setOnCloseRequest(event -> {
+      logger.info("You shall close the app by closing this window!");
+      new QuitButton(this, resourceBundle.getString(QUIT_APP)).onQuitAction(event);
     });
   }
 
   private void onSceneKeyPressed() {
     // For multi-selection with "Control" key
-    scene.setOnKeyPressed(event -> {
+    // Utiliser addEventHandler au lieu de setOnKeyPressed pour ne pas remplacer les handlers existants
+    scene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
       KeyCode codeString = event.getCode();
       if (!currentlyActiveKeys.containsKey(codeString)) {
         currentlyActiveKeys.put(codeString, true);
@@ -236,7 +270,8 @@ public class App extends Application {
   }
 
   private void onSceneKeyReleased() {
-    scene.setOnKeyReleased(event ->
+    // Utiliser addEventHandler au lieu de setOnKeyReleased pour ne pas remplacer les handlers existants
+    scene.addEventHandler(KeyEvent.KEY_RELEASED, event ->
       currentlyActiveKeys.remove(event.getCode())
     );
   }
@@ -277,48 +312,28 @@ public class App extends Application {
     scrollPane.setFitToHeight(true);
 
     toolboxWindow         = new ToolboxWindow();
-
     MenuBar menuBar       = new AdaLovesLaceMenuBar().createMenuBar(this);
-    parent.add(menuBar, 0, 0);
+    // La barre de menu sera ajoutée dans createToolboxStage, pas ici
 
     this.diagram          = toolboxWindow.createToolboxPane(parent, classpathBase, resourcesPath, app, this.diagram);
-    int posY              = this.diagram.getPatterns().size() / 2 + 5;
-    toolboxWindow.createToolboxButtons(parent, app, posY);
-    toolboxWindow.createToolboxStage(this.toolboxStage, parent, app, posY);
+    toolboxWindow.createToolboxButtons(parent, app);
+    toolboxWindow.createToolboxStage(this.toolboxStage, menuBar, parent, app, this.diagram);
+    
+    // Initialiser les raccourcis clavier
+    new KeyboardUtil().initializeKeyboardShorcuts(this);
+    
     return toolboxWindow;
   }
 
-  public GeometryWindow showGeometryWindow(App app) {
-    geometryStage   = new Stage(StageStyle.DECORATED);
-    GridPane parent = newGridPane();
-    geometryWindow  = new GeometryWindow();
-    geometryWindow.createGeometryButtons(app, parent);
-    geometryWindow.createMoveKnotButtons(app, parent);
 
-    geometryWindow.createGeometryStage(app, geometryStage, parent);
-
-    new KeyboardUtil().initializeKeyboardShorcuts(this);
-    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
-    return geometryWindow;
-  }
-
-  public StateWindow showStateWindow(App app) {
-    stateStage   = new Stage(StageStyle.DECORATED);
-    GridPane parent = newGridPane();
-    stateWindow  = new StateWindow();
-    stateWindow.createStateButtons(app, parent);
-    stateWindow.createStateStage(app, stateStage, parent);
-
-    return stateWindow;
-  }
   public GridPane newGridPane() {
     GridPane parent = new GridPane();
     parent.setAlignment(Pos.TOP_CENTER);
     //Setting the padding
     parent.setPadding(new Insets(10, 10, 10, 10));
     //Setting the vertical and horizontal gaps between the columns
-    parent.setVgap(GAP_BETWEEN_BUTTONS);
-    parent.setHgap(GAP_BETWEEN_BUTTONS);
+    parent.setVgap(5);
+    parent.setHgap(5);
     return parent;
   }
 
@@ -361,9 +376,6 @@ public class App extends Application {
     return toolboxWindow;
   }
 
-  public Stage getGeometryStage() {
-    return geometryStage;
-  }
 
   public void setDiagram(Diagram diagram) {
     this.diagram = diagram;
@@ -385,13 +397,6 @@ public class App extends Application {
     App.mainWindow = mainWindow;
   }
 
-  public GeometryWindow getGeometryWindow() {
-    return geometryWindow;
-  }
-
-  public StateWindow getStateWindow() {
-    return this.stateWindow;
-  }
 
   public Pane getMovablePane() {
     return movablePane;
@@ -417,9 +422,6 @@ public class App extends Application {
     this.primaryStage = primaryStage;
   }
 
-  public Stage getStateStage() {
-    return this.stateStage;
-  }
 
   public double getGridWidth() {
     return this.gridWidth;
@@ -457,8 +459,16 @@ public class App extends Application {
     return this.resizes;
   }
 
+  public void setResizes(WindowResizeEvents resizes) {
+    this.resizes = resizes;
+  }
+
   public WindowRepositionEvents getWindowRepositionEvents() {
     return this.windowRepositionEvents;
+  }
+
+  public void setWindowRepositionEvents(WindowRepositionEvents windowRepositionEvents) {
+    this.windowRepositionEvents = windowRepositionEvents;
   }
 
 }

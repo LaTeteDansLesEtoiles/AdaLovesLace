@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.testfx.api.FxAssert.verifyThat;
 
 class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
 
@@ -16,6 +16,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    * Init method called before each test.
    * @param primaryStage The injected window (stage)
    */
+  @Override
   @Start
   public void start(Stage primaryStage) {
     super.start(primaryStage);
@@ -31,7 +32,15 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     initDrawAndSelectSnowFlake(robot);
 
     // Then
-    this.sleepMainThread();
+    // Wait for the zoom factor to be properly initialized
+    assertCondition(() -> {
+      try {
+        double zoomFactor = getSnowFlakeZoomFactor();
+        return Math.abs(zoomFactor - 1.0) < 0.001; // Allow for small floating point differences
+      } catch (Exception e) {
+        return false;
+      }
+    }, "Zoom factor to be properly initialized to 1.0");
     assertZoomFactorEquals(1d); // Spinner contains 0
   }
 
@@ -43,10 +52,11 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.9", "-2, 0.8", "-3, 0.7", "0, 1"})
   void should_react_to_first_zoom_value(int spinnerValue, double expectedZoomFactor) {
     // Given
-    initDrawAndSelectSnowFlake(new FxRobot());
+      FxRobot robot = new FxRobot();
+      initDrawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner1(), spinnerValue));
+    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner1(), spinnerValue);
 
     // Then
     assertZoomFactorEquals(expectedZoomFactor);
@@ -61,10 +71,11 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.9", "-2, 0.8", "-3, 0.7", "0, 1"})
   void should_react_to_second_zoom_value(int spinnerValue, double expectedZoomFactor) {
     // Given
-    initDrawAndSelectSnowFlake(new FxRobot());
+      FxRobot robot = new FxRobot();
+      initDrawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner2(), spinnerValue));
+    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner2(), spinnerValue);
 
     // Then
     assertZoomFactorEquals(expectedZoomFactor);
@@ -78,10 +89,11 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.9", "-2, 0.8", "-3, 0.7", "0, 1"})
   void should_react_to_third_zoom_value(int spinnerValue, double expectedZoomFactor) {
     // Given
-    initDrawAndSelectSnowFlake(new FxRobot());
+      FxRobot robot = new FxRobot();
+      initDrawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner3(), spinnerValue));
+    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner3(), spinnerValue);
 
     // Then
     assertZoomFactorEquals(expectedZoomFactor);
@@ -97,14 +109,15 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @CsvSource({"1", "2", "5", "10", "20", "-1", "-2", "-5", "-10", "-20", "0"})
   void any_zoom_spinner_should_react_to_the_first_zoom_value_change(int spinnerValue) {
     // Given
-    initDrawAndSelectSnowFlake(new FxRobot());
+      FxRobot robot = new FxRobot();
+      initDrawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner1(), spinnerValue));
+    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner1(), spinnerValue);
 
     // Then
-    assertEquals(spinnerValue, this.geometryWindow.getZoomSpinner2().getValueFactory().getValue());
-    assertEquals(spinnerValue, this.geometryWindow.getZoomSpinner3().getValueFactory().getValue());
+    verifyThat(this.toolboxWindow.getZoomSpinner2().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+    verifyThat(this.toolboxWindow.getZoomSpinner3().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
   }
 
   /**
@@ -117,14 +130,15 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @CsvSource({"1", "2", "5", "10", "20", "-1", "-2", "-5", "-10", "-20", "0"})
   void any_zoom_spinner_should_react_to_the_second_zoom_value_change(int spinnerValue) {
     // Given
-    initDrawAndSelectSnowFlake(new FxRobot());
+      FxRobot robot = new FxRobot();
+      initDrawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner2(), spinnerValue));
+    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner2(), spinnerValue);
 
     // Then
-    assertEquals(spinnerValue, this.geometryWindow.getZoomSpinner1().getValueFactory().getValue());
-    assertEquals(spinnerValue, this.geometryWindow.getZoomSpinner3().getValueFactory().getValue());
+    verifyThat(this.toolboxWindow.getZoomSpinner1().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+    verifyThat(this.toolboxWindow.getZoomSpinner3().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
   }
 
 
@@ -138,18 +152,123 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   @CsvSource({"1", "2", "5", "10", "20", "-1", "-2", "-5", "-10", "-20", "0"})
   void any_zoom_spinner_should_react_to_third_zoom_value_change(int spinnerValue) {
     // Given
-    initDrawAndSelectSnowFlake(new FxRobot());
+      FxRobot robot = new FxRobot();
+      initDrawAndSelectSnowFlake(robot);
 
     // When
-    synchronizeTask(() -> setSpinnerValue(this.geometryWindow.getZoomSpinner3(), spinnerValue));
+    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner3(), spinnerValue);
 
     // Then
-    assertEquals(spinnerValue, this.geometryWindow.getZoomSpinner1().getValueFactory().getValue());
-    assertEquals(spinnerValue, this.geometryWindow.getZoomSpinner2().getValueFactory().getValue());
+    verifyThat(this.toolboxWindow.getZoomSpinner1().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+    verifyThat(this.toolboxWindow.getZoomSpinner2().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+  }
+
+  /**
+   * Checks if the second and third zoom spinners in the toolbox
+   * contain the right value when raising the value in the first one
+   *
+   */
+  @Test
+  void should_contain_zoom_new_first_value_up(FxRobot robot) {
+    // Given
+    initDrawAndSelectSnowFlake(robot);
+
+    // When
+    incrementSpinner(robot, this.toolboxWindow.getZoomSpinner1());
+
+    // Then
+    assertZoomFactorEquals(1.1d);
+  }
+
+  /**
+   * Checks if the second and third zoom spinners in the toolbox
+   * contain the right value when lowering the value in the first one
+   *
+   */
+  @Test
+  void should_contain_zoom_new_first_value_down(FxRobot robot) {
+    // Given
+    initDrawAndSelectSnowFlake(robot);
+
+    // When
+    decrementSpinner(robot, this.toolboxWindow.getZoomSpinner1());
+
+    // Then
+    assertZoomFactorEquals(0.9d);
+  }
+
+  /**
+   * Checks if the first and third zoom spinners in the toolbox
+   * contain the right value when raising the value in the second one
+   *
+   */
+  @Test
+  void should_contain_zoom_new_second_value_up(FxRobot robot) {
+    // Given
+    initDrawAndSelectSnowFlake(robot);
+
+    // When
+    incrementSpinner(robot, this.toolboxWindow.getZoomSpinner2());
+
+    // Then
+    assertZoomFactorEquals(1.2d);
+  }
+
+  /**
+   * Checks if the first and third zoom spinners in the toolbox
+   * contain the right value when lowering the value in the second one
+   *
+   */
+  @Test
+  void should_contain_zoom_new_second_value_down(FxRobot robot) {
+    // Given
+    initDrawAndSelectSnowFlake(robot);
+
+    // When
+    decrementSpinner(robot, this.toolboxWindow.getZoomSpinner2());
+
+    // Then
+    assertZoomFactorEquals(0.8d);
+  }
+
+  /**
+   * Checks if the first and second zoom spinners in the toolbox
+   * contain the right value when raising the value in the third one
+   *
+   */
+  @Test
+  void should_contain_zoom_new_third_value_up(FxRobot robot) {
+    // Given
+    initDrawAndSelectSnowFlake(robot);
+
+    // When
+    incrementSpinner(robot, this.toolboxWindow.getZoomSpinner3());
+
+    // Then
+    assertZoomFactorEquals(1.3d);
+  }
+
+  /**
+   * Checks if the first and second zoom spinners in the toolbox
+   * contain the right value when lowering the value in the third one
+   *
+   */
+  @Test
+  void should_contain_zoom_new_third_value_down(FxRobot robot) {
+    // Given
+    initDrawAndSelectSnowFlake(robot);
+
+    // When
+    decrementSpinner(robot, this.toolboxWindow.getZoomSpinner3());
+
+    // Then
+    assertZoomFactorEquals(0.7d);
   }
 
   private void assertZoomFactorEquals(double expectedZoom) {
-    assertEquals(expectedZoom, getSnowFlakeZoomFactor());
+    // For zoom factor assertions, we need to use a custom matcher since it's not a UI element
+    // We'll keep the JUnit assertion for this specific case as it's testing business logic
+    org.junit.jupiter.api.Assertions.assertEquals(expectedZoom, getSnowFlakeZoomFactor());
   }
 
 }

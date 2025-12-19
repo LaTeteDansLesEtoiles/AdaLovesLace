@@ -3,15 +3,18 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid;
 import javafx.animation.PauseTransition;
 import javafx.event.EventHandler;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.enumeration.PatternOrTextMode;
+import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.domain.enumeration.PatternOrTextMode;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 
 import static org.alienlabs.adaloveslace.App.TEXT_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.*;
+import static org.alienlabs.adaloveslace.view.window.event.GridEvents.keyHandler;
 
 public class TextButton extends ToggleButton {
 
@@ -30,9 +33,13 @@ public class TextButton extends ToggleButton {
 
   private final EventHandler<MouseEvent> onTextButtonClicked = event -> {
     app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().set(PatternOrTextMode.TEXT);
+    app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
     app.unselectPatternsAndTextButtons();
     app.getMovablePane().setOnKeyPressed(null);
+    app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
     app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
+    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
+    app.getMovablePane().setOnMouseExited(GridEvents.getGridHoverExitEventHandler(app));
     this.setSelected(true);
     this.getStyleClass().add(BUTTON_WAITING_SELECTION);
 

@@ -16,11 +16,12 @@ public class RedoKnotButton extends ImageButton {
     RedoKnotButton.app = app;
     this.setOnMouseClicked(_ -> redoKnot());
     buildButtonImage("redo.png");
+    setId("redoButton");
   }
 
   public static void redoKnot() {
     app.getOptionalDotGrid().getDiagram().redoLastStep(app, true);
-    logger.debug("Redo knot event");
+    logger.info("Redo knot event");
   }
 
 }

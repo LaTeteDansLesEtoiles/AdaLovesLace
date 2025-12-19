@@ -16,11 +16,12 @@ public class UndoKnotButton extends ImageButton {
       UndoKnotButton.app = app;
         this.setOnMouseClicked(_ -> undoKnot());
     buildButtonImage("undo.png");
+    setId("undoButton");
   }
 
   public static void undoKnot() {
     app.getOptionalDotGrid().getDiagram().undoLastStep(app, true);
-    logger.debug("Undo knot event");
+    logger.info("Undo knot event");
   }
 
 }

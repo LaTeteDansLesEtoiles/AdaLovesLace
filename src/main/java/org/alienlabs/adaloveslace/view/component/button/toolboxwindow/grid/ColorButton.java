@@ -67,9 +67,20 @@ public class ColorButton extends ToggleButton {
 
       Platform.runLater(() -> {
         Optional<Color> result = dialog.showAndWait();
-        result.ifPresent(color -> logger.debug("Chosen color: {}", color));
+        result.ifPresent(color -> logger.info("Chosen color: {}", color));
         app.getOptionalDotGrid().getDiagram().setCurrentColor(result.orElse(null));
         GridEvents.setCurrentImageView(null);
+        
+        // Synchroniser l'?tat du bouton "Back to Black" avec la couleur
+        if (result.isPresent()) {
+          // Une couleur a ?t? choisie : d?s?lectionner "Back to Black"
+          app.getToolboxWindow().getBackInBlackButton().setSelected(false);
+          app.getToolboxWindow().getBackInBlackButton().getStyleClass().remove(BUTTON_SELECTED);
+        } else {
+          // Aucune couleur (annulation) : s?lectionner "Back to Black"
+          app.getToolboxWindow().getBackInBlackButton().setSelected(true);
+          app.getToolboxWindow().getBackInBlackButton().getStyleClass().add(BUTTON_SELECTED);
+        }
       });
     });
 
