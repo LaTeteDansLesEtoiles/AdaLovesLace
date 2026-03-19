@@ -1,0 +1,37 @@
+# Rules Enforcement Rules
+
+## Rule 6 (v050): Rules Enforcement and Compliance
+
+To ensure rules are respected even when starting a new session, the following mechanisms must be in place:
+
+### For AI Assistant Sessions:
+- **At the start of each session**, the AI assistant must read all files in the `rules/` folder to understand all current rules
+- The AI assistant must reference and apply these rules throughout the session
+- If uncertain about a rule, the AI assistant must consult the relevant rules file before proceeding
+
+### For Automated Enforcement:
+- **PMD** (`maven-pmd-plugin`): Configured to enforce:
+  - Rule 1 (v000): Package limit (10 classes/interfaces), method length limit (50 lines), file size limit (500 lines)
+  - Code quality, best practices, security, and performance rules
+  - Custom ruleset: `pmd-rules.xml`
+- **SpotBugs** (`spotbugs-maven-plugin`): Configured to detect:
+  - Bugs, security vulnerabilities, performance issues
+  - Configuration files: `spotbugs-include.xml`, `spotbugs-exclude.xml`
+- **JaCoCo** (`jacoco-maven-plugin`): Configured to enforce:
+  - Rule 5 (v040): Minimum 60% code coverage for packages and classes
+  - Test coverage reports generated during build
+- **OWASP Dependency-Check** (`dependency-check-maven`): Configured to:
+  - Scan dependencies for known security vulnerabilities
+  - Fail build on CVSS score >= 7
+- **SonarLint**: IDE plugin configuration in `.sonarlint.json`:
+  - Package limit (10 classes/interfaces) - Rule 1 (v000)
+  - Method length limit (50 lines) - Rule 1 (v000)
+  - File size limit (500 lines) - Rule 1 (v000)
+  - Code quality rules
+- **CI/CD pipeline** (Jenkins): Runs all checks automatically on every commit
+
+### For Manual Review:
+- Code reviews must verify compliance with all rules
+- The README.md references serve as a reminder to check rules during development
+
+This multi-layered approach ensures rules are consistently applied regardless of who or what is working on the codebase.

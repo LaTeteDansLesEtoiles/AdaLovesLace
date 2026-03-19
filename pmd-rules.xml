@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="AdaLovesLace Custom Rules"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset/2.0.0.0.xsd">
+  <description>Custom PMD rules for AdaLovesLace project - Enforces Rule 000 (size limits) and other quality rules</description>
+
+  <!-- Rule 000: ExcessiveMethodLength - Method length limit (50 lines) -->
+  <rule ref="category/java/codestyle.xml/ExcessiveMethodLength">
+    <properties>
+      <property name="minimum" value="50.0"/>
+    </properties>
+  </rule>
+
+  <!-- Rule 000: ExcessiveClassLength - Class size limit (500 lines) -->
+  <rule ref="category/java/codestyle.xml/ExcessiveClassLength">
+    <properties>
+      <property name="minimum" value="500.0"/>
+    </properties>
+  </rule>
+
+  <!-- Best practices -->
+  <rule ref="category/java/bestpractices.xml"/>
+
+  <!-- Code style -->
+  <rule ref="category/java/codestyle.xml"/>
+
+  <!-- Design -->
+  <rule ref="category/java/design.xml"/>
+
+  <!-- Error prone -->
+  <rule ref="category/java/errorprone.xml"/>
+
+  <!-- Performance -->
+  <rule ref="category/java/performance.xml"/>
+
+  <!-- Security -->
+  <rule ref="category/java/security.xml"/>
+</ruleset>

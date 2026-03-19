@@ -1,6 +1,6 @@
 # Rules Organization Rules
 
-## Rule 2 (v010): Rules Files Organization
+## Rule 3 (v020): Rules Files Organization
 
 - All development rules must be placed in the `rules/` folder
 - Each rules file must be referenced in the `README.md` at a strategically chosen location
