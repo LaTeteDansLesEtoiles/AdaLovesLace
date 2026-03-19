@@ -15,6 +15,8 @@
     <testfx.version>4.0.17</testfx.version>
     <junit.version>5.10.1</junit.version>
     <logback.version>1.5.18</logback.version>
+    <protobuf.version>3.25.3</protobuf.version>
+    <protobuf.maven.plugin.version>0.6.1</protobuf.maven.plugin.version>
     <dependency-check-maven.version>12.1.1</dependency-check-maven.version>
   </properties>
 
@@ -105,6 +107,17 @@
     </dependency>
 
     <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>${protobuf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java-util</artifactId>
+      <version>${protobuf.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
@@ -155,6 +168,19 @@
           <source>24</source>
           <target>24</target>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>kr.motd.maven</groupId>
+        <artifactId>os-maven-plugin</artifactId>
+        <version>1.7.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>detect</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
@@ -313,7 +339,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.12</version>
+        <version>0.8.14</version>
         <configuration>
           <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
           <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
@@ -359,6 +385,22 @@
             <phase>verify</phase>
             <goals>
               <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.xolstice.maven.plugins</groupId>
+        <artifactId>protobuf-maven-plugin</artifactId>
+        <version>${protobuf.maven.plugin.version}</version>
+        <configuration>
+          <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
             </goals>
           </execution>
         </executions>

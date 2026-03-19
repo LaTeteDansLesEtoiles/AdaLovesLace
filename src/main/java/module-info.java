@@ -14,6 +14,8 @@ module org.alienlabs.adaloveslace {
   requires static com.github.spotbugs.annotations;
   requires static javafx.controls;
   requires static layout;
+  requires protobuf.java;
+  requires protobuf.java.util;
 
   opens org.alienlabs.adaloveslace          to javafx.controls, javafx.graphics, layout;
   opens org.alienlabs.adaloveslace.domain   to com.google.gson, jakarta.xml.bind;
@@ -33,11 +35,13 @@ module org.alienlabs.adaloveslace {
   opens org.alienlabs.adaloveslace.domain.xmladapter  to com.google.gson, jakarta.xml.bind;
   exports org.alienlabs.adaloveslace.domain.dto;
   opens org.alienlabs.adaloveslace.domain.dto         to com.google.gson, jakarta.xml.bind;
+  opens org.alienlabs.adaloveslace.persistence.protobuf to protobuf.java;
   exports org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file;
   exports org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid;
   exports org.alienlabs.adaloveslace.view.component.grid;
   exports org.alienlabs.adaloveslace.view.component.grid.gridstrategy;
   exports org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegridstrategy;
   exports org.alienlabs.adaloveslace.view.window.event;
+  exports org.alienlabs.adaloveslace.persistence;
   opens org.alienlabs.adaloveslace.view.window.event;
 }

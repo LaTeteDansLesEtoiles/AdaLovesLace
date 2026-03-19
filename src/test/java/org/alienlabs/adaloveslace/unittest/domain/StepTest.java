@@ -27,6 +27,7 @@ class StepTest {
     void beforeEach() {
         app = new App();
         app.setMainWindow(new MainWindow());
+        app.setMovablePane(new Pane());
         this.diagram = new Diagram(app);
         app.setOptionalDotGrid(new OptionalDotGrid(app, this.diagram, new Pane()));
         app.setDiagram(this.diagram);

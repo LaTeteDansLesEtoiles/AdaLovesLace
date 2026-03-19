@@ -12,6 +12,7 @@ module org.alienlabs.adaloveslace.test {
   opens org.alienlabs.adaloveslace.unittest.domain;
   opens org.alienlabs.adaloveslace.unittest.util;
   opens org.alienlabs.adaloveslace.unittest.view.component                              to org.junit.platform.commons, org.junit.jupiter.params, testfx.junit5;
+  opens org.alienlabs.adaloveslace.unittest.persistence                                 to org.junit.platform.commons, org.junit.jupiter.params, testfx.junit5;
 
   requires javafx.controls;
   requires javafx.graphics;

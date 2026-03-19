@@ -1,6 +1,4 @@
 package org.alienlabs.adaloveslace.unittest.util;
-
-import jakarta.xml.bind.JAXBException;
 import javafx.scene.layout.Pane;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
@@ -26,7 +24,6 @@ import java.util.zip.ZipFile;
 import static org.alienlabs.adaloveslace.App.*;
 import static org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent.SNOWFLAKE_IMAGE;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
-import static org.alienlabs.adaloveslace.util.FileUtil.XML_FILE_TO_SAVE_IN_LACE_FILE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -47,6 +44,7 @@ class FileUtilTest {
     void beforeEach() {
         app = new App();
         app.setMainWindow(new MainWindow());
+        app.setMovablePane(new Pane());
         diagramToSave = new Diagram();
         app.setOptionalDotGrid(new OptionalDotGrid(app, diagramToSave, new Pane()));
         this.app.setDiagram(diagramToSave);
@@ -82,7 +80,7 @@ class FileUtilTest {
     }
 
     @Test
-    void saved_dot_lace_file_should_contain_a_pattern_file() {
+    void saved_dot_lace_file_should_contain_a_pattern_file_and_descriptor_pb() {
         // When
         File fileToCheck = fileUtil.saveFile(
                 new File(APP_FOLDER_IN_USER_HOME, "1.lace"),
@@ -94,75 +92,18 @@ class FileUtilTest {
         try (ZipFile zf = new ZipFile(fileToCheck)){
             final Enumeration<? extends ZipEntry> e = zf.entries();
 
-            assertEquals(2, zf.size());
-            assertEquals(SNOWFLAKE_IMAGE, e.nextElement().getName());
+            assertEquals(3, zf.size()); // meta.properties, descriptor.pb, pattern
+            ZipEntry first = e.nextElement();
+            ZipEntry second = e.nextElement();
+            ZipEntry third = e.nextElement();
+            // Order is not guaranteed, so just assert presence
+            java.util.Set<String> names = java.util.Set.of(first.getName(), second.getName(), third.getName());
+            org.junit.jupiter.api.Assertions.assertTrue(names.contains(SNOWFLAKE_IMAGE));
+            org.junit.jupiter.api.Assertions.assertTrue(names.contains(org.alienlabs.adaloveslace.persistence.LaceArchiveLoader.DESCRIPTOR_PB_ENTRY));
         } catch(final IOException e) {
-            logger.error("Error reading .jar file!", e);
+            logger.error("Error reading .lace file!", e);
             fail();
         }
-    }
-
-    @Test
-    void saved_dot_lace_file_should_contain_an_xml_file() {
-        // When
-        app.setOptionalDotGrid(null);
-        File fileToCheck = fileUtil.saveFile(dotLaceFile, diagramToSave, false);
-
-        // Then
-        try (ZipFile zf  = new ZipFile(fileToCheck)) {
-
-        assertEquals(2, zf.size());
-        Iterator<? extends ZipEntry> iterator = zf.entries().asIterator();
-        iterator.next();
-        ZipEntry file = iterator.next();
-
-        assertEquals(XML_FILE_TO_SAVE_IN_LACE_FILE, file.getName());
-        } catch(final IOException e) {
-            logger.error("Error reading .jar file!", e);
-            fail();
-        }
-
-    }
-
-    @Test
-    void saved_xml_file_should_contain_a_pattern_and_a_current_index() {
-        // When
-        List<Step> allSteps = new ArrayList<>(diagramToSave.getAllSteps());
-        List<Knot> displayedKnots = diagramToSave.getCurrentStep().getDisplayedKnots();
-        List<Knot> selectedKnots = diagramToSave.getCurrentStep().getSelectedKnots();
-        allSteps.add(new Step(app, diagramToSave, displayedKnots, selectedKnots, false));
-        allSteps.add(new Step(app, diagramToSave, displayedKnots, selectedKnots, false));
-        allSteps.add(new Step(app, diagramToSave, displayedKnots, selectedKnots, false));
-        diagramToSave.setAllSteps(allSteps);
-
-        File fileToCheck = fileUtil.saveFile(dotLaceFile, diagramToSave, false);
-
-        // Then
-        ZipFile zf = null;
-
-        try {
-            zf = new ZipFile(fileToCheck);
-        } catch(final IOException e) {
-            logger.error("Error reading .jar file!", e);
-            fail();
-        }
-        final Enumeration<? extends ZipEntry> e = zf.entries();
-
-        assertEquals(2, zf.size());
-        e.nextElement();
-        ZipEntry xmlFile = e.nextElement();
-
-        Diagram diagramToCheck = null;
-
-        try {
-            diagramToCheck = fileUtil.unmarshallXmlFile(zf, xmlFile);
-        } catch (JAXBException | IOException ex) {
-            logger.error("Error unmarshalling .jar file!", ex);
-        }
-
-        assertEquals(5, diagramToCheck.getCurrentStepIndex());
-        assertEquals(1, diagramToCheck.getPatterns().size());
-        assertEquals(SNOWFLAKE_IMAGE, diagramToCheck.getPatterns().stream().findFirst().get().getFilename());
     }
 
     @Test
