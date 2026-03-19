@@ -19,6 +19,7 @@ import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoK
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.alienlabs.adaloveslace.view.window.event.WindowRepositionEvents;
 import org.alienlabs.adaloveslace.view.window.event.WindowResizeEvents;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ import static org.alienlabs.adaloveslace.App.EXPORT_IMAGE_FILE_TYPE;
 import static org.alienlabs.adaloveslace.util.FileUtil.FILE_SEPARATOR;
 
 @ExtendWith(ApplicationExtension.class)
+@Tag("functional")
 public class AppFunctionalTestParent {
 
   public Stage primaryStage;

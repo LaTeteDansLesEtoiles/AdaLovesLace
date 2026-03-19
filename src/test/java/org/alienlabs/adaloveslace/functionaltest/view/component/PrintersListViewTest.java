@@ -8,6 +8,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.view.component.PrintersListView;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -17,6 +18,7 @@ import org.testfx.framework.junit5.Start;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(ApplicationExtension.class)
+@Tag("functional")
 class PrintersListViewTest {
 
     private PrintersListView listView;

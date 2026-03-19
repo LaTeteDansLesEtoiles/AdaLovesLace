@@ -41,6 +41,7 @@ public final class LaceArchiveLoader {
         try (ZipFile zipFile = new ZipFile(file)) {
             long tOpen = System.nanoTime();
             logger.debug("Opened lace archive {} in {} ms", file.getAbsolutePath(), elapsedMs(t0, tOpen));
+            ensureNoDuplicateEntries(zipFile);
 
             ZipEntry pbEntry = zipFile.getEntry(DESCRIPTOR_PB_ENTRY);
             ZipEntry xmlEntry = zipFile.getEntry(LEGACY_XML_ENTRY);
@@ -129,15 +130,31 @@ public final class LaceArchiveLoader {
         Properties props = new Properties();
         try (InputStream in = zipFile.getInputStream(metaEntry)) {
             props.load(in);
+        } catch (IllegalArgumentException e) {
+            throw new LaceArchiveException("Malformed meta.properties in lace archive", e);
         } catch (IOException e) {
             throw new LaceArchiveException("Failed to read meta.properties from lace archive", e);
         }
-        String versionStr = props.getProperty("archive.version", "0").trim();
+        String versionRaw = props.getProperty("archive.version");
+        if (versionRaw == null || versionRaw.isBlank()) {
+            throw new LaceArchiveException("Missing archive.version in meta.properties");
+        }
+        String versionStr = versionRaw.trim();
         try {
             return Integer.parseInt(versionStr);
         } catch (NumberFormatException e) {
             throw new LaceArchiveException("Invalid archive.version in meta.properties: " + versionStr, e);
         }
+    }
+
+    private static void ensureNoDuplicateEntries(ZipFile zipFile) {
+        Set<String> seen = new HashSet<>();
+        zipFile.stream().forEach(entry -> {
+            String name = entry.getName();
+            if (!seen.add(name)) {
+                throw new LaceFormatException("Duplicate archive entry: " + name);
+            }
+        });
     }
 
     /**

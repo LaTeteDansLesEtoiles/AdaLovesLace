@@ -4,6 +4,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tag("functional")
 class DuplicationButtonFunctionalTest extends AppFunctionalTestParent {
 
   /**

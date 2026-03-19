@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ShowHideGridButton;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import static org.alienlabs.adaloveslace.functionaltest.view.window.MainWindowFu
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Tag("functional")
 class ToolboxWindowFunctionalTest extends AppFunctionalTestParent {
 
   private static final Logger logger = LoggerFactory.getLogger(MainWindowFunctionalTest.class);

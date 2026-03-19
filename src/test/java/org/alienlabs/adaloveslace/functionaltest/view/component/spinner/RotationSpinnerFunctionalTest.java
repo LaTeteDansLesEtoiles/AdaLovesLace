@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.functionaltest.view.component.spinner;
 
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -12,6 +13,7 @@ import static org.alienlabs.adaloveslace.domain.Knot.DEFAULT_ROTATION;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tag("functional")
 class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
 
   /**

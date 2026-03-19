@@ -81,6 +81,13 @@ then:
     ./mvnw clean install -P linux         -DskipUTs=true -DskipFTs=true      # generate a package skipping all tests
     ./mvnw clean install -P linux                                            # generate a package launching all tests
 
+      • Unit only:
+        • mvn -Punit-tests test
+      • Integration only:
+        • mvn -Pintegration-tests test
+      • Functional only:
+        • mvn -Pfunctional-tests test
+
     ./mvnw clean integration-test                                    # launch all tests 
     ./mvnw clean test             -DskipFTs=true                     # launch unit tests
     ./mvnw clean integration-test -DskipUTs=true                     # launch functional tests 

@@ -7,6 +7,7 @@ import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.RedoKnotButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ResetDiagramButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoKnotButton;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -15,6 +16,7 @@ import org.testfx.matcher.base.ColorMatchers;
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
 import static org.testfx.api.FxAssert.verifyThat;
 
+@Tag("functional")
 class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
   public static final double  WHITE_PIXEL_X               = 86d;

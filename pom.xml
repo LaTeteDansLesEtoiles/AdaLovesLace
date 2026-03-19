@@ -18,6 +18,11 @@
     <protobuf.version>3.25.3</protobuf.version>
     <protobuf.maven.plugin.version>0.6.1</protobuf.maven.plugin.version>
     <dependency-check-maven.version>12.1.1</dependency-check-maven.version>
+    <skipUTs>false</skipUTs>
+    <skipITs>false</skipITs>
+    <skipFTs>false</skipFTs>
+    <surefire.groups></surefire.groups>
+    <failsafe.groups></failsafe.groups>
   </properties>
 
   <dependencies>
@@ -218,6 +223,7 @@
         <version>${test-plugins.version}</version>
         <configuration>
           <skipTests>${skipUTs}</skipTests>
+          <groups>${surefire.groups}</groups>
           <includes>
             <include>**/unittest/**</include>
           </includes>
@@ -232,23 +238,48 @@
         <version>${test-plugins.version}</version>
         <executions>
           <execution>
+            <id>integration-tests</id>
             <phase>test</phase>
             <goals>
               <goal>integration-test</goal>
+              <goal>verify</goal>
             </goals>
+            <configuration>
+              <skipITs>${skipITs}</skipITs>
+              <groups>${failsafe.groups}</groups>
+              <includes>
+                <include>**/integrationtest/**</include>
+              </includes>
+              <excludes>
+                <exclude>**/unittest/**</exclude>
+                <exclude>**/functionaltest/**</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>functional-tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <groups>${failsafe.groups}</groups>
+              <includes>
+                <include>**/functionaltest/**</include>
+              </includes>
+              <excludes>
+                <exclude>**/unittest/**</exclude>
+                <exclude>**/integrationtest/**</exclude>
+              </excludes>
+              <skipITs>${skipFTs}</skipITs>
+            </configuration>
           </execution>
         </executions>
         <configuration>
           <forkCount>1</forkCount>
           <useSystemClassLoader>true</useSystemClassLoader>
-          <includes>
-            <include>**/functionaltest/**</include>
-          </includes>
-          <excludes>
-            <exclude>**/unittest/**</exclude>
-          </excludes>
           <argLine>@{argLine} --add-opens javafx.graphics/com.sun.javafx.application=testfx.core</argLine>
-          <skipITs>${skipFTs}</skipITs>
         </configuration>
       </plugin>
       <plugin>
@@ -434,6 +465,33 @@
   </reporting>
 
   <profiles>
+    <profile>
+      <id>unit-tests</id>
+      <properties>
+        <skipUTs>false</skipUTs>
+        <skipITs>true</skipITs>
+        <skipFTs>true</skipFTs>
+        <surefire.groups>unit</surefire.groups>
+      </properties>
+    </profile>
+    <profile>
+      <id>integration-tests</id>
+      <properties>
+        <skipUTs>true</skipUTs>
+        <skipITs>false</skipITs>
+        <skipFTs>true</skipFTs>
+        <failsafe.groups>integration</failsafe.groups>
+      </properties>
+    </profile>
+    <profile>
+      <id>functional-tests</id>
+      <properties>
+        <skipUTs>true</skipUTs>
+        <skipITs>true</skipITs>
+        <skipFTs>false</skipFTs>
+        <failsafe.groups>functional</failsafe.groups>
+      </properties>
+    </profile>
     <profile>
       <id>linux</id>
       <build>

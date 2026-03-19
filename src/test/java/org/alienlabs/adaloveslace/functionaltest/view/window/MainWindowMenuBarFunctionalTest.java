@@ -4,6 +4,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.Start;
 
@@ -12,6 +13,7 @@ import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.gri
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tag("functional")
 class MainWindowMenuBarFunctionalTest extends AppFunctionalTestParent {
 
   public static final int FILE_MENU_ENTRY_INDEX           = 0;

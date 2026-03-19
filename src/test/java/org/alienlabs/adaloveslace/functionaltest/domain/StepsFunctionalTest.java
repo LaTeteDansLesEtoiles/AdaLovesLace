@@ -4,6 +4,7 @@ import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.RedoKnotButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoKnotButton;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -12,6 +13,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.testfx.api.FxAssert.verifyThat;
 
+@Tag("functional")
 class StepsFunctionalTest extends AppFunctionalTestParent {
 
     /**

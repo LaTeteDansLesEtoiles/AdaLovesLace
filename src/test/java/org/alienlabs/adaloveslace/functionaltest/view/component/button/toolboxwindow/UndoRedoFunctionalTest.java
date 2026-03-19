@@ -8,6 +8,7 @@ import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.RedoKnotButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoKnotButton;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -17,6 +18,7 @@ import java.util.Comparator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("functional")
 class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
     /**
@@ -90,18 +92,10 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
             selectTwoSnowflakes(robot); // The first 2 snowflakes shall be selected, ready to be copied
         });
 
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        Platform.runLater(() -> {
-            // When
-            // Les boutons sont maintenant dans ToolboxWindow
-            //clickOnButton(robot, app.getGeometryWindow().getDuplicationButton()); // Copy the first 2 snowflakes
-            // clickOnButton(robot, app.getToolboxWindow().getUndoKnotButton());
-        });
+        assertCondition(
+                () -> this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size() == 2,
+                "Two knots should be selected before undo assertion"
+        );
 
         // Then
         // First copied knots

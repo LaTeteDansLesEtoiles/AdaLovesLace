@@ -11,6 +11,7 @@ import org.alienlabs.adaloveslace.persistence.LaceArchiveLoader;
 import org.alienlabs.adaloveslace.persistence.LaceArchiveSaver;
 import org.alienlabs.adaloveslace.persistence.LaceArchiveSaver.SaveOptions;
 import org.alienlabs.adaloveslace.util.FileUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -26,6 +27,7 @@ import java.util.zip.ZipFile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("unit")
 class LegacyXmlFallbackTest {
 
     private static final String LEGACY_TEST_LACE_RESOURCE =

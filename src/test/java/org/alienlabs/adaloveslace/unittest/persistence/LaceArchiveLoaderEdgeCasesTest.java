@@ -5,6 +5,7 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.persistence.LaceArchiveException;
 import org.alienlabs.adaloveslace.persistence.LaceArchiveLoader;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -19,6 +20,7 @@ import java.util.zip.ZipOutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("unit")
 class LaceArchiveLoaderEdgeCasesTest {
 
     @TempDir
