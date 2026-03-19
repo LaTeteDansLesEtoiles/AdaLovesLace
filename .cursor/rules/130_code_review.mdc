@@ -1,0 +1,426 @@
+---
+description: Enforce brutally honest code review standards for a JavaFX desktop application using .lace archives, protobuf persistence, legacy XML compatibility, and TestFX on Linux headless CI
+globs:
+  - "src/main/**/*.java"
+  - "src/test/unittest/**/*.java"
+  - "src/test/integrationtest/**/*.java"
+  - "src/test/functionaltest/**/*.java"
+  - "pom.xml"
+alwaysApply: true
+---
+
+# Brutal code review rule
+
+When writing or modifying code, review the result with brutal honesty before considering it acceptable.
+
+Do not optimize for convenience, speed of generation, or minimal code churn.
+Optimize for:
+- correctness
+- maintainability
+- architectural integrity
+- testability
+- performance awareness
+- long-term readability
+
+If the existing code is weak, do not imitate its weakness.
+Improve the touched area toward a higher standard.
+
+## 1. General review mindset
+
+Before finalizing any change, explicitly check:
+
+- Is this code correct?
+- Is it placed in the right layer?
+- Is it unnecessarily complicated?
+- Is it hiding a design problem instead of solving it?
+- Is it adding technical debt?
+- Is it testable at the right level?
+- Is it likely to become painful in 6 months?
+- Is it likely to be flaky, slow, leaky, or fragile?
+
+If the answer is yes to any of those risks, improve the code before stopping.
+
+Do not be polite toward bad code.
+Do not preserve a weak design just because it already exists.
+
+## 2. No lipstick on architectural pigs
+
+Do not cosmetically improve bad architecture while keeping the same underlying mess.
+
+Examples of unacceptable behavior:
+- extracting a few private methods from a fat controller while leaving all persistence logic inside it
+- wrapping bad logic in a helper with a vague name such as `Utils`
+- introducing interfaces only to disguise confused responsibilities
+- adding tests around structurally bad code without fixing the boundary problem
+- keeping protobuf leakage into domain code and merely renaming classes
+
+If the architecture is wrong, fix the architecture in the touched area.
+Do not merely reorganize the mess.
+
+## 3. Layer placement must be challenged every time
+
+For every new or modified class/method, ask:
+- Does this belong in JavaFX UI code?
+- Does this belong in the application/use-case layer?
+- Does this belong in domain?
+- Does this belong in persistence?
+- Does this belong in serialization?
+- Does this belong in test helpers rather than production code?
+
+If the answer is unclear, the boundary is probably weak.
+Strengthen it.
+
+Never casually place heavy logic in the nearest convenient class.
+
+## 4. JavaFX controllers must remain thin
+
+Treat fat JavaFX controllers as a design failure.
+
+Controllers must not become dumping grounds for:
+- file open/save orchestration
+- ZIP handling
+- protobuf parsing
+- legacy XML loading
+- domain mapping
+- business invariants
+- complicated error recovery
+- performance instrumentation
+- resource management
+
+Controllers may coordinate user interactions and delegate.
+They must not become mini-architectures.
+
+If a controller is growing large, extract use-case/application services or dedicated collaborators.
+
+## 5. Domain must stay clean or it is not domain
+
+Reject any change that makes the domain depend on:
+- JavaFX
+- protobuf-generated classes
+- JAXB
+- ZIP/archive concerns
+- file chooser services
+- dialog services
+- view state
+- persistence metadata
+
+If technical concerns leak into domain classes, that is a bug in the design, not a harmless shortcut.
+
+Do not tolerate domain pollution.
+
+## 6. Protobuf leakage is a design smell, not a convenience
+
+Generated protobuf classes must not leak into:
+- domain APIs
+- controller logic
+- broad application-layer contracts
+- random service interfaces
+
+If protobuf messages are visible far outside serialization/persistence code, the boundary is weak.
+Fix it.
+
+Do not normalize serialization-layer leakage.
+
+## 7. Legacy XML compatibility must stay isolated
+
+Legacy `save.xml` support exists only for input compatibility.
+
+Treat any of the following as design regressions:
+- JAXB used in the default save path
+- new code treating XML as co-equal with protobuf
+- legacy compatibility code mixed into ordinary save logic
+- controllers or domain services knowing JAXB details
+
+Legacy compatibility is not a first-class primary architecture path.
+Keep it isolated and clearly named.
+
+## 8. No vague names for real responsibilities
+
+Reject vague class names when the responsibility is specific.
+
+Bad names:
+- `Utils`
+- `Helper`
+- `Manager`
+- `Processor`
+- `Handler`
+- `Service` when it hides multiple unrelated roles
+- `Parser` when it also maps, validates, and persists
+
+Prefer names that reveal purpose, such as:
+- `LaceArchiveReader`
+- `DiagramDescriptorProtobufCodec`
+- `LegacySaveXmlDiagramLoader`
+- `DiagramOpenUseCase`
+- `DiagramSemanticAssertions`
+
+Naming must expose responsibility.
+If the name is vague, the design is often vague too.
+
+## 9. Utility classes are not a garbage dump
+
+Do not create or extend generic utility classes to avoid proper design.
+
+If logic needs context, collaboration, state, or domain meaning, it probably belongs in a focused class, not a static utility.
+
+Every time you are tempted to create:
+- `FileUtils`
+- `DiagramUtils`
+- `ArchiveHelper`
+- `CommonUtils`
+
+stop and reconsider the architecture.
+
+## 10. No silent fallback behavior
+
+Silent fallback is forbidden for format, version, and corruption errors.
+
+Examples of unacceptable behavior:
+- corrupted `descriptor.pb` silently falls back to `save.xml`
+- unsupported descriptor version is ignored
+- missing resources are skipped without explicit contract support
+- malformed archive structure is tolerated without clear behavior
+- exceptions are swallowed and replaced with vague success states
+
+Failure must be explicit, testable, and intentional.
+
+## 11. Test the right thing at the right level
+
+Do not push everything into UI tests.
+Do not under-test the persistence layer.
+Do not over-test trivial getters.
+Do not skip failure-path testing.
+
+Always ask:
+- Should this be a unit test?
+- Should this be a persistence/integration test?
+- Should this be a JavaFX/TestFX functional test?
+- Should this be tested at multiple levels, but with different purposes?
+
+If a behavior can be tested cheaply outside JavaFX, do it there first.
+
+UI tests must cover UI-visible behavior.
+Persistence tests must cover format correctness.
+Domain tests must cover invariants.
+Do not mix all concerns everywhere.
+
+## 12. Thread.sleep in tests is a failure
+
+Any use of `Thread.sleep(...)` in JavaFX/TestFX tests is a red flag and should be removed.
+
+Replace it with:
+- explicit waits
+- `WaitForAsyncUtils`
+- bounded polling helpers
+- proper synchronization
+
+Do not defend sleeps as “good enough”.
+They are not.
+
+## 13. Weak assertions are nearly useless
+
+Reject tests that mainly assert:
+- not null
+- file exists
+- size > 0
+- no exception was thrown
+
+These are often fake confidence.
+
+Prefer assertions on:
+- semantic equivalence
+- explicit archive entries
+- visible UI outcomes
+- explicit failures
+- meaningful persisted state
+- proper precedence behavior
+- version and corruption handling
+
+If a stronger assertion is possible, use it.
+
+## 14. Happy path only is not real testing
+
+If a change touches file persistence, serialization, loading, saving, or archive structure, review whether failure paths are covered.
+
+At minimum, consider:
+- missing descriptor
+- corrupted protobuf descriptor
+- unsupported version
+- missing resource
+- invalid archive
+- legacy compatibility path
+- precedence when both formats exist
+- cancel/failure behavior in UI workflows where relevant
+
+A code change with only happy-path tests is usually incomplete.
+
+## 15. Round-trip tests must verify meaning, not just survival
+
+For persistence features, do not stop at:
+- save succeeded
+- file reopened
+- object is non-null
+
+That proves almost nothing.
+
+Prefer:
+- semantic equivalence assertions
+- comparison helpers for meaningful diagram content
+- legacy-load -> new-save -> reopen scenarios
+- verification that default save uses protobuf, not XML
+
+Round-trip tests must check meaning, not mere survivability.
+
+## 16. Performance-sensitive code must be reviewed like hot code
+
+For `.lace` loading/saving and descriptor mapping, always ask:
+- Are we copying large data unnecessarily?
+- Are we parsing into one graph and rebuilding another identical graph?
+- Are we scanning the same archive entries repeatedly?
+- Are we building huge strings for logging?
+- Are we keeping large temporary data alive too long?
+- Are we doing work on the UI thread that should not be there?
+
+Do not excuse obvious waste in hot paths.
+
+## 17. Maven changes must stay clean and explainable
+
+When modifying `pom.xml`:
+- do not add unnecessary plugins
+- do not duplicate plugin responsibilities
+- do not use inconsistent dependency versions casually
+- do not leave half-removed migration leftovers
+- do not make the build harder to understand than needed
+
+Any Maven change should be explainable in one or two sentences.
+If it feels messy, simplify it.
+
+## 18. Do not hide complexity behind abstraction theater
+
+Bad abstraction is worse than straightforward code.
+
+Reject abstractions that:
+- add interfaces with only one implementation and no real boundary benefit
+- split one coherent responsibility into meaningless tiny classes
+- hide control flow so much that debugging becomes harder
+- wrap everything in factories/builders just to look “architected”
+
+Use abstraction to clarify responsibility, not to cosplay architecture.
+
+## 19. If duplication exists, judge it honestly
+
+Not all duplication is equally bad.
+
+Before deduplicating, ask:
+- Is this real duplication or just similar-looking code in different layers?
+- Would extracting it make the code clearer or vaguer?
+- Would a shared helper strengthen or weaken boundaries?
+
+Do not create cross-layer coupling just to remove a few repeated lines.
+
+But also do not tolerate copy-paste persistence or UI workflow logic across multiple classes when a focused shared abstraction would help.
+
+## 20. If a class is hard to test, that is feedback
+
+Treat hard-to-test code as a design signal.
+
+If a class requires:
+- heavy mocking
+- JavaFX runtime just to test core logic
+- protobuf-generated types everywhere
+- file I/O for domain invariants
+- giant fixture setup for small behavior
+
+then its responsibilities are probably mixed.
+
+Improve the design instead of merely tolerating painful tests.
+
+## 21. Comments must not excuse bad code
+
+Do not add comments whose real purpose is to apologize for weak design.
+
+Examples of bad comment-driven design:
+- “This is a bit hacky but…”
+- “Needed for now”
+- “Legacy compatibility magic”
+- “Temporary workaround” with no clear boundary
+
+Prefer code that does not need apology comments.
+If a workaround is truly necessary, isolate it and name it honestly.
+
+## 22. Touched code must leave the area better
+
+When modifying an existing weak area:
+- strengthen boundaries
+- improve naming
+- remove sleeps
+- strengthen assertions
+- isolate legacy compatibility
+- reduce controller weight
+- reduce serialization leakage
+- clean up dead code
+
+Do not leave the touched area equally bad if improvement is reasonably possible.
+
+## 23. Be suspicious of “works” without clarity
+
+Code that “works” but is confusing is not done.
+
+Ask:
+- Would another developer understand this in one reading?
+- Is the control flow obvious?
+- Is the failure behavior obvious?
+- Is the layer responsibility obvious?
+- Is the test intent obvious?
+
+If not, improve the clarity.
+
+## 24. Required review pass before finalizing any change
+
+Before finalizing any generated or modified code, perform this explicit review:
+
+### Architecture
+- Is each responsibility in the right layer?
+- Is UI thin enough?
+- Is domain still clean?
+- Is protobuf isolated?
+- Is legacy XML isolated?
+
+### Correctness
+- Are precedence rules explicit?
+- Are version errors explicit?
+- Are corruption cases handled?
+- Are resources validated coherently?
+
+### Testing
+- Are the right tests present?
+- Are assertions strong enough?
+- Are failure paths covered?
+- Are UI tests free from sleep and flakiness?
+
+### Performance
+- Any obvious copies or duplicate graph creation?
+- Any repeated scans/searches?
+- Any heavy work on the wrong thread?
+
+### Cleanliness
+- Any vague names?
+- Any dead code?
+- Any leftover migration hacks?
+- Any utility-class abuse?
+- Any unreadable control flow?
+
+If any answer is unsatisfactory, improve the code before stopping.
+
+## 25. Output expectations
+
+Generated or modified code must be:
+- brutally honest in its design quality
+- explicit in behavior
+- strict in boundaries
+- strong in tests
+- cautious about performance
+- maintainable by humans, not just executable by machines
+
+If the existing repository contains weaker patterns, do not imitate them blindly.
+Improve the touched area toward this standard.

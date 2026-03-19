@@ -1,0 +1,392 @@
+---
+description: Enforce robust integration testing practices for a JavaFX desktop application handling .lace archives, protobuf persistence, legacy XML compatibility, and local file infrastructure
+globs:
+  - "src/test/integrationtest/**/*.java"
+alwaysApply: true
+---
+
+# Integration testing rule
+
+When writing or modifying integration tests, always treat integration tests as a distinct testing layer with a specific purpose.
+
+Integration tests are not:
+- oversized unit tests
+- JavaFX functional tests
+- end-to-end GUI tests
+- mock-heavy pseudo-tests
+
+Integration tests must verify that multiple real components work together correctly across architectural boundaries.
+
+## 1. Main objective
+
+Integration tests must validate the collaboration between real application components such as:
+- application/use-case layer
+- persistence layer
+- archive handling
+- protobuf serialization/deserialization
+- legacy XML compatibility loading
+- local filesystem interactions
+- resource/image persistence
+- configuration and wiring involved in non-UI workflows
+
+The goal is to verify real integration behavior with minimal and justified test doubles.
+
+## 2. What integration tests should cover in this project
+
+For this JavaFX desktop application, integration tests should focus primarily on:
+- opening `.lace` archives through the real non-UI application path
+- saving `.lace` archives through the real non-UI application path
+- compatibility loading of legacy archives containing `save.xml`
+- protobuf-based save and load round-trips
+- descriptor precedence when both `descriptor.pb` and `save.xml` are present
+- archive/resource coherence
+- versioning and corruption handling at the application/persistence boundary
+- interactions between use cases/services and actual archive persistence
+- behavior of non-UI workflows with real temporary files
+
+These tests should verify that the application layer and persistence/serialization layer actually work together.
+
+## 3. What integration tests should not become
+
+Do not turn integration tests into:
+- GUI automation tests
+- full JavaFX/TestFX tests
+- pure unit tests with every dependency mocked
+- giant end-to-end scenarios covering many unrelated behaviors
+- slow and brittle tests that rely on native desktop behavior
+
+If a test needs JavaFX scene interaction, it is probably a functional/UI test, not an integration test.
+
+If a test mocks almost everything, it is probably not an integration test.
+
+## 4. Test level boundaries are mandatory
+
+Choose the correct level deliberately.
+
+### Unit tests
+Use unit tests for:
+- pure business logic
+- isolated mappers
+- validators
+- small format helpers
+- version parsing helpers
+- pure domain operations
+
+### Integration tests
+Use integration tests for:
+- real collaboration of multiple layers
+- use-case + persistence + archive behavior
+- real file read/write on temp files
+- real protobuf read/write
+- real legacy XML compatibility loading through the real integration path
+- archive structure and persistence outcomes as seen by the application layer
+
+### Functional/UI tests
+Use functional tests for:
+- JavaFX interactions
+- menu/button/dialog workflows
+- visible validation and feedback
+- user-driven UI scenarios
+
+Do not collapse these levels into one muddy test suite.
+
+## 5. Prefer real collaborators over mocks
+
+Integration tests must prefer real collaborators whenever practical.
+
+Use real:
+- application services/use cases
+- archive readers/writers
+- protobuf codecs
+- compatibility loaders
+- temp files/directories
+- file-based `.lace` archives
+
+Mock or fake only external dependencies that are not the focus of the integration under test and that would make the test:
+- flaky
+- too slow
+- dependent on external systems
+- nondeterministic
+
+If you use mocks heavily, reconsider whether the test is actually an integration test.
+
+## 6. Temporary filesystem usage is preferred
+
+Integration tests for `.lace` workflows should use real temporary files/directories.
+
+Requirements:
+- create temp directories/files within the test scope
+- avoid developer-local absolute paths
+- avoid relying on existing user files
+- clean up resources properly
+- make test fixtures explicit
+
+Use real `.lace` files whenever the workflow naturally involves real archives.
+
+A `.lace` file must be treated as:
+- a ZIP archive with renamed extension
+- containing descriptor and optional resource/image entries
+
+## 7. Required integration scenarios for this project
+
+When relevant to the touched code, ensure strong coverage for these scenarios.
+
+### Open/load integration
+- load a valid `.lace` archive containing `descriptor.pb`
+- load a valid legacy `.lace` archive containing `save.xml`
+- load an archive containing both descriptors and verify binary precedence
+- fail explicitly when the archive contains no descriptor entry
+- fail explicitly when the protobuf descriptor is corrupted
+- fail explicitly when the descriptor version is unsupported
+- fail explicitly when required referenced resources are missing
+
+### Save integration
+- save a diagram through the real application/persistence path
+- verify the resulting `.lace` archive contains `descriptor.pb`
+- verify the resulting `.lace` archive does not contain `save.xml` by default
+- verify required resource/image entries are written when relevant
+- verify saved output can be loaded again successfully
+
+### Compatibility/migration integration
+- load a legacy `.lace` archive through the real compatibility path
+- save that loaded diagram again through the normal save path
+- verify the re-saved archive now uses protobuf as the default descriptor format
+- verify semantic equivalence after reopen
+
+### Round-trip integration
+- open or construct a representative diagram
+- save it to `.lace`
+- reopen it through the real load path
+- verify semantic equivalence of meaningful diagram content
+
+## 8. Semantic assertions are mandatory
+
+Integration tests must verify meaning, not just survival.
+
+Weak assertions are not enough:
+- file exists
+- archive is non-empty
+- object is non-null
+- no exception was thrown
+
+Prefer strong assertions such as:
+- `descriptor.pb` exists in the archive
+- `save.xml` is absent by default after save
+- expected diagram content is preserved after reopen
+- descriptor precedence is respected
+- corruption/version failures are explicit
+- resource references remain coherent
+- legacy input is successfully migrated to new default output on save
+
+Where semantic equivalence matters, use or create a dedicated helper such as:
+- `DiagramSemanticAssertions`
+- `DiagramPersistenceAssertions`
+
+## 9. Integration tests must exercise real boundaries
+
+Each integration test should cross at least one real architectural boundary.
+
+Good examples:
+- use case -> persistence -> archive -> protobuf -> domain
+- use case -> persistence -> legacy XML compatibility loader -> domain
+- save use case -> archive writer -> filesystem -> archive reader -> load use case
+
+Weak examples:
+- calling one small class in isolation with mocks everywhere
+- testing a mapper alone and calling it integration
+- testing only one pure helper method
+
+If no real boundary is crossed, it is probably not an integration test.
+
+## 10. Avoid heavy JavaFX dependency in integration tests
+
+Integration tests in this project should generally avoid requiring JavaFX runtime startup.
+
+Prefer testing the non-UI application path directly.
+
+Do not use TestFX or JavaFX scene setup unless the integration being tested truly requires it.
+Most `.lace` integration scenarios should not require JavaFX controls or stages.
+
+If a non-UI path is missing and everything is trapped inside controllers, that is a design smell.
+Improve the architecture instead of forcing JavaFX into integration tests.
+
+## 11. Keep integration tests deterministic
+
+Integration tests must be stable and CI-friendly.
+
+Avoid:
+- native file chooser interaction
+- dependency on desktop session
+- OS-specific windowing behavior
+- sleeps
+- race conditions
+- timing-based assumptions
+- real network calls
+- real user home directory state
+
+Use:
+- temp files
+- deterministic fixtures
+- bounded assertions
+- real local integration only where appropriate
+
+## 12. No Thread.sleep in integration tests unless there is a truly exceptional reason
+
+Do not use `Thread.sleep(...)` in integration tests for file persistence, application services, protobuf loading, or archive workflows.
+
+If waiting is needed, use:
+- explicit synchronization
+- bounded polling helpers
+- futures/latches where appropriate
+- deterministic completion mechanisms
+
+In most integration tests in this project, sleeps should be unnecessary.
+
+## 13. Fixture strategy must stay readable
+
+Fixtures for integration tests must be explicit and maintainable.
+
+Prefer:
+- dedicated builders for diagrams and archives
+- small helper methods with obvious intent
+- temp archive builders for scenarios such as:
+  - valid protobuf archive
+  - valid legacy XML archive
+  - both descriptors present
+  - missing resource
+  - corrupted descriptor
+  - unsupported version
+
+Avoid:
+- giant opaque binary fixtures with unclear meaning
+- hidden shared mutable state
+- unreadable setup blocks
+- helpers that obscure the actual archive shape
+
+## 14. Integration tests should use realistic but focused data
+
+Use data realistic enough to catch integration problems, but not bloated without purpose.
+
+Prefer:
+- representative small/medium diagrams
+- one or two larger representative fixtures where justified
+- archives with actual descriptor/resource relationships
+
+Avoid:
+- trivial empty-object cases only
+- huge fixtures everywhere
+- unrealistic data that cannot reveal integration issues
+
+## 15. Error handling must be tested through the real integration path
+
+When testing failure scenarios, exercise the real path as far as practical.
+
+Examples:
+- corrupted `descriptor.pb` should fail through the actual archive load path
+- unsupported descriptor version should fail through the actual decode/load path
+- missing required resource should fail through the actual load path
+- invalid archive should fail through the actual open path
+
+Do not test only low-level helper exceptions if the application layer is expected to translate or wrap them meaningfully.
+
+## 16. Archive content assertions should be explicit
+
+When a save integration test writes a `.lace` file, inspect the resulting archive explicitly when relevant.
+
+Assert meaningful archive properties such as:
+- `descriptor.pb` exists
+- `save.xml` does not exist by default
+- expected resource/image entries exist
+- metadata/version entry exists if part of the format contract
+
+Do not stop at checking that the output file exists.
+
+## 17. Integration tests must protect architectural intent
+
+Use integration tests to reinforce the intended architecture:
+- protobuf is the primary persisted format
+- legacy XML is input-only compatibility
+- non-UI application services can drive file workflows
+- persistence works through stable boundaries
+- domain semantics survive round-trip
+
+Do not write integration tests that normalize architectural regressions.
+
+Examples of bad normalization:
+- calling JAXB directly from new save tests
+- treating XML save output as normal
+- going through JavaFX controller code when a use-case path should exist
+
+## 18. Naming conventions
+
+Integration test names must describe behavior clearly and honestly.
+
+Prefer:
+- `shouldLoadLegacyLaceArchiveThroughCompatibilityPath`
+- `shouldSaveDiagramAsLaceArchiveUsingDescriptorPb`
+- `shouldPreferBinaryDescriptorWhenArchiveContainsBothFormats`
+- `shouldFailToLoadArchiveWhenDescriptorVersionIsUnsupported`
+- `shouldPreserveDiagramSemanticsAcrossSaveAndReload`
+
+Avoid vague names such as:
+- `testIntegration`
+- `testPersistence`
+- `testArchive`
+- `shouldWork`
+
+## 19. Package and structure conventions
+
+If the repository distinguishes integration tests structurally, follow that convention consistently.
+
+Possible acceptable patterns include:
+- `src/integrationTest/...`
+- `src/test/...` with clear naming and tagging
+- `src/it/...`
+
+Reuse the repository’s existing conventions.
+If no convention exists, introduce one clearly and consistently.
+
+Integration test helpers should be clearly named and separated from production code.
+
+## 20. Keep integration tests focused
+
+Each integration test should verify one coherent integration behavior.
+
+Do not create giant tests that:
+- load
+- modify
+- save
+- reopen
+- validate many unrelated things
+- and also test corruption and migration in the same method
+
+Split behaviors into focused tests.
+Use helper methods/builders where needed.
+
+## 21. Mandatory review when writing integration tests
+
+Before finalizing an integration test, explicitly ask:
+- Does this cross a real boundary?
+- Are the main collaborators real?
+- Is this actually integration, not unit or UI?
+- Are the assertions strong enough?
+- Is the fixture understandable?
+- Is the filesystem usage safe and temporary?
+- Does the test validate semantics, not just file existence?
+- Would this catch a real regression?
+
+If the answer is no, improve the test.
+
+## 22. Output expectations
+
+Generated or modified integration tests must:
+- test real collaboration between layers
+- avoid JavaFX/UI dependence unless truly necessary
+- use real temp files for `.lace` workflows
+- verify protobuf as default output
+- preserve legacy `save.xml` input compatibility coverage
+- verify failure behavior through real paths
+- assert semantic outcomes, not just superficial ones
+- remain readable, stable, and CI-friendly
+
+If the existing repository contains weaker patterns, improve the touched area toward this standard instead of copying those weaknesses.

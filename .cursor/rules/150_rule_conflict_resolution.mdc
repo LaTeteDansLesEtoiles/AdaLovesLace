@@ -1,0 +1,318 @@
+---
+description: Resolve conflicts between Cursor rules in a deterministic and brutally honest way for a JavaFX desktop application
+globs:
+  - "src/main/**/*.java"
+  - "src/test/**/*.java"
+  - "pom.xml"
+alwaysApply: true
+---
+
+# Rule conflict resolution
+
+When multiple rules apply at the same time, resolve conflicts explicitly and consistently.
+Do not merge contradictory guidance into a vague compromise.
+Do not satisfy all rules partially if that produces weak code or confused tests.
+
+If two rules appear to conflict, use the following priority order and arbitration principles.
+
+## 1. Core principle
+
+When rules conflict:
+- prefer correctness over convenience
+- prefer explicit boundaries over accidental coupling
+- prefer maintainability over short-term speed of generation
+- prefer the right test level over broader but muddier coverage
+- prefer strong and honest code over superficially compliant code
+
+Do not produce compromise code that satisfies every rule badly.
+
+## 2. Priority order between rule categories
+
+Apply the following priority order from highest to lowest.
+
+### Priority 1: Safety, correctness, and explicit behavior
+Rules that protect:
+- correctness
+- explicit failure behavior
+- absence of silent fallback
+- deterministic and testable behavior
+- preservation of real format contracts
+
+These always win over convenience, brevity, or local style preferences.
+
+Examples:
+- explicit failure on unsupported descriptor version
+- no silent fallback from corrupted `descriptor.pb` to `save.xml`
+- no swallowing of archive corruption errors
+
+### Priority 2: Architectural boundaries
+Rules that protect:
+- domain purity
+- separation between UI, application, persistence, and serialization
+- isolation of legacy XML compatibility
+- isolation of protobuf from domain and UI
+
+These win over local simplifications, minor deduplication, or convenience abstractions.
+
+Examples:
+- no protobuf-generated classes in domain APIs
+- no persistence logic in JavaFX controllers
+- no JAXB in the normal save path
+
+### Priority 3: Correct test classification and scope
+Rules that determine whether something belongs in:
+- unit tests
+- integration tests
+- functional tests
+
+These win over convenience and over attempts to put too much verification in one test.
+
+Examples:
+- non-UI persistence collaboration belongs in integration tests
+- user-visible JavaFX behavior belongs in functional tests
+- isolated mappers belong in unit tests
+
+### Priority 4: Test quality within the chosen level
+Rules about:
+- strong assertions
+- realistic fixtures
+- no `Thread.sleep`
+- semantic verification
+- corruption/version/resource failure coverage
+- CI/headless stability
+
+These win over speed of writing tests or shallow assertions.
+
+### Priority 5: Performance-aware design in hot paths
+Rules that reduce:
+- obvious large copies
+- duplicate graph construction
+- repeated archive scans
+- unnecessary logging overhead
+- UI-thread misuse in heavy workflows
+
+These win over cosmetic simplicity when the touched code is in a real hot path.
+
+### Priority 6: Naming, style, and local code organization
+Rules about:
+- naming clarity
+- package clarity
+- helper extraction
+- local readability
+- documentation alignment
+
+These matter, but they must not override correctness, boundaries, test classification, or explicit failure behavior.
+
+## 3. Specific-over-general rule
+
+When a specific rule and a general rule both apply, the more specific rule wins.
+
+Examples:
+- a general JavaFX test rule says tests should be stable
+- a specific `.lace` persistence rule says archive save tests must verify `descriptor.pb` and absence of `save.xml`
+
+In that case, the specific `.lace` persistence rule wins for that scenario.
+
+Do not flatten specific requirements into generic advice.
+
+## 4. Brutal honesty rule
+
+If two rules cannot both be satisfied cleanly, do not fake compliance.
+Choose the stronger and more structurally important rule, then explain the decision in code structure and tests.
+
+Do not produce:
+- hybrid tests that are half integration and half functional
+- domain classes polluted by protobuf just to reduce mapper code
+- controllers that absorb persistence logic just to avoid introducing a use-case class
+- weak assertions just to keep test code shorter
+
+When forced to choose, choose the design that will hurt less in six months.
+
+## 5. No compromise on test level boundaries
+
+If a rule encouraging broad coverage appears to conflict with test-layer separation, test-layer separation wins.
+
+Examples:
+- do not put persistence round-trip, archive corruption checks, and JavaFX button clicking in one giant functional test
+- do not put UI visibility assertions in integration tests
+- do not call a heavily mocked isolated test an integration test
+
+If the same feature deserves multiple test levels, split the coverage:
+- unit for isolated logic
+- integration for real collaboration
+- functional for UI-visible behavior
+
+Do not collapse them into one confused test.
+
+## 6. No compromise on domain boundaries
+
+If a rule encouraging convenience, fewer classes, or less boilerplate appears to conflict with domain purity, domain purity wins.
+
+Examples:
+- do not return protobuf messages from domain code to avoid writing mappers
+- do not annotate domain classes for legacy JAXB convenience if compatibility types can be isolated
+- do not put archive entry names into domain objects
+
+A slightly larger codebase with clean boundaries is better than a smaller polluted one.
+
+## 7. No compromise on explicit failure behavior
+
+If a rule encouraging compatibility or resilience appears to conflict with explicit failure on invalid format data, explicit failure wins unless the product contract explicitly supports degraded behavior.
+
+Examples:
+- corrupted `descriptor.pb` must not silently fall back to `save.xml`
+- missing required resource must not be silently ignored unless that degraded mode is explicitly designed
+- unsupported version must not be interpreted optimistically
+
+Compatibility must be deliberate, not magical.
+
+## 8. No compromise on headless CI safety for functional tests
+
+If a rule encouraging realistic UI interaction conflicts with Linux headless CI stability, CI stability wins.
+
+Examples:
+- do not automate native file chooser windows in headless CI if an application-level abstraction exists
+- do not rely on pixel-precise window positions
+- do not use focus assumptions that are known to be fragile
+
+Prefer stable, CI-safe workflows over locally impressive UI realism.
+
+## 9. No compromise on real integration behavior for integration tests
+
+If a rule encouraging fast tests appears to conflict with the need for real integration across persistence/serialization/archive boundaries, real integration behavior wins, but only within the integration layer.
+
+Examples:
+- integration tests should use real temp files and real archive readers/writers when archive behavior matters
+- do not mock away protobuf and ZIP handling and still call the result an integration test
+
+However, do not bloat integration tests with UI concerns.
+
+## 10. Split instead of blend
+
+When a scenario seems to require contradictory testing guidance, split the scenario into multiple tests at different levels rather than blending incompatible rules.
+
+Examples:
+- one unit test for version parsing
+- one integration test for unsupported descriptor version through archive load
+- one functional test for visible user error message
+
+Splitting is preferred over muddy all-in-one tests.
+
+## 11. Refactor instead of rationalize
+
+When two rules conflict because the current design is weak, do not rationalize the weak design.
+Refactor the touched area.
+
+Examples:
+- if integration tests need JavaFX startup because the use case is trapped inside a controller, extract a non-UI application service
+- if domain tests require protobuf fixtures, improve the mapping boundary
+- if functional tests must inspect ZIP internals to verify save correctness, move deeper verification into integration tests
+
+The right answer to rule conflict is often better architecture.
+
+## 12. Performance conflict resolution
+
+When performance guidance conflicts with readability:
+- reject unreadable micro-optimizations unless the gain is clear and the path is truly hot
+- reject obviously wasteful readable code in proven hot paths
+- prefer clear, explicit, efficient code
+
+Examples:
+- avoid giant unnecessary byte-array copies in `.lace` loading
+- do not replace a clean mapper with unreadable trick code for hypothetical gains
+- do instrument meaningful hot phases when useful
+
+## 13. Maven conflict resolution
+
+When Maven configuration goals conflict:
+- correctness and clarity of test execution separation win
+- avoid overlapping include/exclude rules
+- avoid configuration magic that hides which tests run
+- keep unit/integration/functional distinction explicit
+
+A slightly more verbose `pom.xml` is better than a clever opaque one.
+
+## 14. Rule-strength interpretation
+
+Interpret rule wording with the following strength:
+
+Highest strength:
+- must
+- must not
+- forbidden
+- mandatory
+- always
+- never
+- required
+
+Medium strength:
+- prefer
+- should
+- encouraged
+
+Lower strength:
+- consider
+- may
+- if useful
+
+When two rules conflict, the stronger wording wins unless a more specific rule overrides a more general one.
+
+## 15. When multiple specific rules apply
+
+If multiple specific rules apply to the same code, resolve them in this order:
+1. correctness and explicit failure
+2. architectural boundaries
+3. correct test-layer placement
+4. test robustness and assertion quality
+5. performance
+6. naming and local cleanup
+
+Do not reverse this order casually.
+
+## 16. Mandatory self-check before finalizing code
+
+Before finalizing any generated or modified code, explicitly ask:
+
+### Correctness
+- Is format/version/corruption behavior explicit and honest?
+
+### Boundaries
+- Is protobuf isolated?
+- Is legacy XML isolated?
+- Is domain still clean?
+- Is UI still thin enough?
+
+### Test placement
+- Is this test really unit, integration, or functional?
+- Is it in the correct directory?
+
+### Test quality
+- Are assertions strong enough?
+- Are failure paths covered?
+- Is there any `Thread.sleep` or flaky waiting?
+
+### Performance
+- Any obvious waste in a hot path?
+- Any unnecessary duplicate graph construction or archive scans?
+
+### Clarity
+- Is naming honest?
+- Is abstraction justified?
+- Is this easier or harder to maintain?
+
+If there is tension between answers, resolve it using this rule.
+Do not finalize confused code.
+
+## 17. Output expectations
+
+Generated or modified code must show clear arbitration when multiple rules apply.
+
+That means:
+- no mushy compromise code
+- no hybrid test categories
+- no architectural leakage justified by convenience
+- no silent fallback justified by compatibility hand-waving
+- no flaky UI realism justified by local success
+- no fake integration tests built mostly from mocks
+
+If the existing codebase contains weaker or contradictory patterns, improve the touched area toward this conflict-resolution standard instead of copying the confusion.
