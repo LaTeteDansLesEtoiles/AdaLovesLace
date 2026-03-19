@@ -288,7 +288,7 @@ public class SplashScreen {
         try {
             copyrightLabel.setText(resourceBundle.getString("Copyright"));
         } catch (Exception e) {
-            copyrightLabel.setText("© 2023 - 2025 AlienLabs");
+            copyrightLabel.setText("© 2023 - 2026 AlienLabs");
         }
         
         copyrightLabel.setTextFill(Color.rgb(255, 255, 255, 0.7));

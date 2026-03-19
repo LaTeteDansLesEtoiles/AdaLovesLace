@@ -4,7 +4,7 @@ AdaLovesLace: A thread-based techniques diagrams creation software
 
 This is Free Software, under [Affero GPL V3 license](license.md)
 
-© 2023-2025 Zala GOUPIL
+© 2023-2026 Zala GOUPIL
 
 This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by applicable law.
 
