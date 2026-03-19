@@ -11,14 +11,14 @@ This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by app
 
 --------------------------------------------------------------------------------------------
 
-**Development Rules**: See the files in the [rules/](rules/) folder for the rules and conventions to follow during development:
+**Development Rules**: See the files in the [rules/](.cursor/rules/) folder for the rules and conventions to follow during development:
 
-- [Code Style Rules](rules/000_code_style.md) - Size limits for packages, methods, and files
-- [Honesty Rules](rules/010_honesty.md) - Brutal honesty requirement in all communications
-- [Rules Organization Rules](rules/020_rules.md) - Organization and structure of rules files
-- [Language Rules](rules/030_language.md) - English language requirement for all program content
-- [Test-Driven Development Rules](rules/040_tdd.md) - TDD with unit, integration, and Selenide tests
-- [Rules Enforcement Rules](rules/050_enforcement.md) - Mechanisms to ensure rules compliance
+- [Code Style Rules](.cursor/rules/000_code_style.md) - Size limits for packages, methods, and files
+- [Honesty Rules](.cursor/rules/010_honesty.md) - Brutal honesty requirement in all communications
+- [Rules Organization Rules](.cursor/rules/020_rules.md) - Organization and structure of rules files
+- [Language Rules](.cursor/rules/030_language.md) - English language requirement for all program content
+- [Test-Driven Development Rules](.cursor/rules/040_tdd.md) - TDD with unit, integration, and Selenide tests
+- [Rules Enforcement Rules](.cursor/rules/050_enforcement.md) - Mechanisms to ensure rules compliance
 
 --------------------------------------------------------------------------------------------
 
