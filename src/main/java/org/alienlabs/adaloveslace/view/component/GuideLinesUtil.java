@@ -12,7 +12,7 @@ public class GuideLinesUtil {
   public static final double PADDING_HEIGHT             = 60d;
   public static final double PADDING_WIDTH              = 60d;
   public static final double MAX_NUMBER_OF_GUIDELINES   = 10000;
-  public static double CURRENT_NUMBER_OF_GUIDELINES     = 0d;
+  public static int CURRENT_NUMBER_OF_GUIDELINES        = 0;
 
   public GuideLinesUtil(Knot knot, Knot otherKnot, Pane root) {
       if (CURRENT_NUMBER_OF_GUIDELINES <= MAX_NUMBER_OF_GUIDELINES) {
@@ -194,8 +194,8 @@ public class GuideLinesUtil {
                         otherKnot.getX() - PADDING_WIDTH, knot.getY() + knot.getImageView().getImage().getHeight());
                 CURRENT_NUMBER_OF_GUIDELINES++;
             } else {
-                line = new Line(knot.getX() - knot.getImageView().getImage().getWidth() - PADDING_WIDTH, knot.getY() + knot.getImageView().getImage().getHeight(),
-                        otherKnot.getX() + otherKnot.getImageView().getImage().getWidth() + PADDING_WIDTH, knot.getY() + knot.getImageView().getImage().getHeight());
+                line = new Line(otherKnot.getX() + otherKnot.getImageView().getImage().getWidth() + PADDING_WIDTH, knot.getY() + knot.getImageView().getImage().getHeight(),
+                        knot.getX() - PADDING_WIDTH, knot.getY() + knot.getImageView().getImage().getHeight());
                 CURRENT_NUMBER_OF_GUIDELINES++;
             }
             line.setStroke(Color.BLACK);
