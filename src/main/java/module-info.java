@@ -14,8 +14,8 @@ module org.alienlabs.adaloveslace {
   requires static com.github.spotbugs.annotations;
   requires static javafx.controls;
   requires static layout;
-  requires protobuf.java;
-  requires protobuf.java.util;
+  requires com.google.protobuf;
+  requires com.google.protobuf.util;
 
   opens org.alienlabs.adaloveslace          to javafx.controls, javafx.graphics, layout;
   opens org.alienlabs.adaloveslace.domain   to com.google.gson, jakarta.xml.bind;

@@ -28,6 +28,6 @@ module org.alienlabs.adaloveslace.test {
   requires transitive org.junit.jupiter.api;
   requires transitive org.junit.jupiter.engine;
   requires org.junit.jupiter.params;
-  requires testfx.core;
-  requires testfx.junit5;
+  requires org.testfx;
+  requires org.testfx.junit5;
 }
