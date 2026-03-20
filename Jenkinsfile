@@ -1,13 +1,25 @@
 #!/usr/bin/env groovy
 
 node {
+    environment {
+        JAVA_HOME = '/usr/lib/jvm/temurin-24-jdk-amd64'
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+    }
     stage('checkout') {
         checkout scm
     }
 
     stage('check java') {
-        env.PATH="/usr/lib/jvm/temurin-24-jdk-amd64/bin:${env.PATH}"
-        sh "java -version"
+        steps {
+            sh '''
+              set -eux
+              echo "JAVA_HOME=$JAVA_HOME"
+              which java
+              which javac
+              java -version
+              javac -version
+            '''
+        }
     }
 
     stage('clean') {
@@ -17,11 +29,6 @@ node {
 
     stage('unit tests') {
         try {
-            sh 'echo "JAVA_HOME=$JAVA_HOME"'
-            sh "which java || true"
-            sh "which javac || true"
-            sh "java -version"
-            sh "javac -version"
             sh "./mvnw clean test -P unit-tests"
         } catch(err) {
             throw err
