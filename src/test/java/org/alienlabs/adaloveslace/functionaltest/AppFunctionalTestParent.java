@@ -92,6 +92,11 @@ public class AppFunctionalTestParent {
    * @param primaryStage The injected window (stage)
    */
   public void start(Stage primaryStage) {
+    // Functional tests may run multiple invocations within the same JVM.
+    // Reset spinner internal static state to keep the spinner update logic deterministic.
+    org.alienlabs.adaloveslace.view.component.spinner.RotationSpinner.resetNumberOfUpdates();
+    org.alienlabs.adaloveslace.view.component.spinner.ZoomSpinner.resetNumberOfUpdates();
+
     this.app = new App();
     this.app.setPrimaryStage(primaryStage);
 
