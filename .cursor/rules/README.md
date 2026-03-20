@@ -25,25 +25,26 @@ These rules exist to:
 
 Rules are numbered and versioned (v000, v010, v020, etc.) to ensure proper ordering and versioning:
 
-- [000_constitution.mdc](000_constitution.mdc)      (v000)  - Core constitution for rule arbitration and code quality in a JavaFX desktop application using .lace archives and protobuf
-- [005_code_style.mdc](005_code_style.mdc)          (v005)  - Size limits for packages, methods, and files
-- [010_honesty.mdc](010_honesty.mdc)                (v010)  - Brutal honesty requirement in all communications
-- [020_rules.mdc](020_rules.mdc)                    (v020)  - Organization and structure of rules files
-- [030_language.mdc](030_language.mdc)              (v030)  - English language requirement for all program content
-- [040_tdd.mdc](040_tdd.mdc)                        (v040)  - TDD with unit, integration, and functional tests
-- [050_test_javafx.mdc](050_test_javafx.mdc)        (v050)  - General best practices for JavaFX functional tests
-- [060_lace_file_workflows_testfx.mdc](060_lace_file_workflows_testfx.mdc)   (v060)  - Rules for UI workflows involving `.lace` files
+- [000_constitution.mdc](000_constitution.mdc) (v000)  - Core constitution for rule arbitration and code quality in a JavaFX desktop application using .lace archives and protobuf
+- [005_code_style.mdc](005_code_style.mdc) (v005)  - Size limits for packages, methods, and files
+- [010_honesty.mdc](010_honesty.mdc) (v010)  - Brutal honesty requirement in all communications
+- [020_rules.mdc](020_rules.mdc) (v020)  - Organization and structure of rules files
+- [030_language.mdc](030_language.mdc) (v030)  - English language requirement for all program content
+- [040_tdd.mdc](040_tdd.mdc) (v040)  - TDD with unit, integration, and functional tests
+- [050_test_javafx.mdc](050_test_javafx.mdc) (v050)  - General best practices for JavaFX functional tests
+- [060_lace_file_workflows_testfx.mdc](060_lace_file_workflows_testfx.mdc) (v060)  - Rules for UI workflows involving `.lace` files
 - [070_lace_persistence_unit_tests.mdc](070_lace_persistence_unit_tests.mdc) (v070)  - Rules for non-UI persistence tests (critical layer)
-- [080_javafx_architecture.mdc](080_javafx_architecture.mdc)                 (v080)  - Defines the layered architecture
-- [090_lace_serialization.mdc](090_lace_serialization.mdc)                   (v090)  - Defines `.lace` format and serialization rules
-- [100_lace_performance.mdc](100_lace_performance.mdc)                       (v100)  - Protects performance on large files (100–300 MB)
-- [110_domain_boundaries.mdc](110_domain_boundaries.mdc)                     (v110)  - Protects the domain model
-- [120_integration_tests.mdc](120_integration_tests.mdc)                     (v120)  - Enforce robust integration testing practices for a JavaFX desktop application handling .lace archives, protobuf persistence, legacy XML compatibility, and local file infrastructure 
-- [130_code_review.mdc](130_code_review.mdc)        (v130)  - Enforce brutally honest code review standards for a JavaFX desktop application using .lace archives, protobuf persistence, legacy XML compatibility, and TestFX on Linux headless CI
-- [140_test_structure_and_scope.mdc](140_test_structure_and_scope.mdc)       (v140)  - Enforce strict separation of unit, integration, and functional tests in a JavaFX desktop application using Maven and JUnit 5
-- [150_rule_conflict_resolution.mdc](150_rule_conflict_resolution.mdc)       (v150)  - Resolve conflicts between Cursor rules in a deterministic and brutally honest way for a JavaFX desktop application 
-- [160_auto_refactor_trigger.mdc](160_auto_refactor_trigger.mdc)             (v160)  - Force refactoring before feature work when structural debt, boundary violations, flaky tests, or hot-path waste would make new code harmful
-- [170_enforcement.mdc](170_enforcement.mdc)        (v170)  - Mechanisms to ensure rules compliance
+- [080_javafx_architecture.mdc](080_javafx_architecture.mdc) (v080)  - Defines the layered architecture
+- [090_lace_serialization.mdc](090_lace_serialization.mdc) (v090)  - Defines `.lace` format and serialization rules
+- [100_lace_performance.mdc](100_lace_performance.mdc) (v100)  - Protects performance on large files (100–300 MB)
+- [110_domain_boundaries.mdc](110_domain_boundaries.mdc) (v110)  - Protects the domain model
+- [120_integration_tests.mdc](120_integration_tests.mdc) (v120)  - Enforce robust integration testing practices for a JavaFX desktop application handling .lace archives, protobuf persistence, legacy XML compatibility, and local file infrastructure 
+- [130_code_review.mdc](130_code_review.mdc) (v130)  - Enforce brutally honest code review standards for a JavaFX desktop application using .lace archives, protobuf persistence, legacy XML compatibility, and TestFX on Linux headless CI
+- [140_test_structure_and_scope.mdc](140_test_structure_and_scope.mdc) (v140)  - Enforce strict separation of unit, integration, and functional tests in a JavaFX desktop application using Maven and JUnit 5
+- [150_rule_conflict_resolution.mdc](150_rule_conflict_resolution.mdc) (v150)  - Resolve conflicts between Cursor rules in a deterministic and brutally honest way for a JavaFX desktop application 
+- [160_auto_refactor_trigger.mdc](160_auto_refactor_trigger.mdc) (v160)  - Force refactoring before feature work when structural debt, boundary violations, flaky tests, or hot-path waste would make new code harmful
+- [170_law_of_demeter.mdc](170_law_of_demeter.mdc) (v170)  - Ensure that code follows the Law of Demeter (principle of least knowledge) in a meaningful and non-dogmatic way
+- [180_enforcement.mdc](170_enforcement.mdc) (v180)  - Mechanisms to ensure rules compliance
 
 ## Automated Enforcement
 
