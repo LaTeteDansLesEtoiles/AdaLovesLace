@@ -30,6 +30,7 @@ public class ResetDiagramButton extends ImageButton {
       ResetDiagramButton.app = app;
         this.setOnMouseClicked(_ -> resetDiagram());
     buildButtonImage("reset_diagram.png");
+    setId("resetDiagramButton");
   }
 
   public static void resetDiagram() {

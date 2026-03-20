@@ -17,7 +17,6 @@ import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class RotationSpinner {
-
   private static int numberOfUpdates = 0;
 
   public void buildRotationSpinner(App app, Spinner<Integer> spinner,

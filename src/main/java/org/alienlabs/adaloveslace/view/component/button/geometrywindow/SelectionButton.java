@@ -24,7 +24,10 @@ public class SelectionButton extends ToggleButton {
   public SelectionButton(App app, String buttonLabel) {
     super(buttonLabel);
     this.setOnMouseClicked(_ -> onSetSelectionModeAction(app));
+    // Ensure TestFX robot clicks trigger the same behavior.
+    this.setOnAction(_ -> onSetSelectionModeAction(app));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
+    this.setId("selectionButton");
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(resourceBundle.getString("SELECTION_BUTTON_TOOLTIP"));

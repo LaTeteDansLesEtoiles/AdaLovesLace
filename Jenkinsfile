@@ -17,7 +17,17 @@ node {
 
     stage('unit tests') {
         try {
-            sh "./mvnw clean test -DskipFTs=true"
+            sh "./mvnw clean test -P unit-tests"
+        } catch(err) {
+            throw err
+        } finally {
+            junit '**/target/surefire-reports/*.xml'
+        }
+    }
+
+    stage('integration tests') {
+        try {
+            sh "./mvnw test -P integration-tests"
         } catch(err) {
             throw err
         } finally {
@@ -29,7 +39,7 @@ node {
 
         stage('functional tests') {
           try {
-            sh "./mvnw clean integration-test -P linux -DskipUTs=true -Dtestfx.launch.timeout=5000 -Dtestfx.setup.timeout=5000 -DSLEEP_TIME=1000 -DWAIT_TIME=5000"
+            sh "./mvnw -P functional-tests test -P linux -Dtestfx.launch.timeout=5000 -Dtestfx.setup.timeout=5000 -DSLEEP_TIME=1000 -DWAIT_TIME=5000"
             } catch(err) {
             throw err
           } finally {

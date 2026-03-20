@@ -35,15 +35,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
 
     // Then
     // Wait for the zoom factor to be properly initialized
-    assertCondition(() -> {
-      try {
-        double zoomFactor = getSnowFlakeZoomFactor();
-        return Math.abs(zoomFactor - 1.0) < 0.001; // Allow for small floating point differences
-      } catch (Exception e) {
-        return false;
-      }
-    }, "Zoom factor to be properly initialized to 1.0");
-    assertZoomFactorEquals(1d); // Spinner contains 0
+    assertZoomFactorNear(1d, "Zoom factor to be properly initialized to 1.0");
   }
 
   /**
@@ -52,16 +44,15 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    */
   @ParameterizedTest(name = "Check changing first zoom value #{index}")
   @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.9", "-2, 0.8", "-3, 0.7", "0, 1"})
-  void should_react_to_first_zoom_value(int spinnerValue, double expectedZoomFactor) {
+  void should_react_to_first_zoom_value(int spinnerValue, double expectedZoomFactor, FxRobot robot) {
     // Given
-      FxRobot robot = new FxRobot();
       initDrawAndSelectSnowFlake(robot);
 
     // When
     setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner1(), spinnerValue);
 
     // Then
-    assertZoomFactorEquals(expectedZoomFactor);
+    assertZoomFactorNear(expectedZoomFactor, "Zoom factor should match spinner " + spinnerValue);
   }
 
 
@@ -71,16 +62,15 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    */
   @ParameterizedTest(name = "Check changing second zoom value #{index}")
   @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.9", "-2, 0.8", "-3, 0.7", "0, 1"})
-  void should_react_to_second_zoom_value(int spinnerValue, double expectedZoomFactor) {
+  void should_react_to_second_zoom_value(int spinnerValue, double expectedZoomFactor, FxRobot robot) {
     // Given
-      FxRobot robot = new FxRobot();
       initDrawAndSelectSnowFlake(robot);
 
     // When
     setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner2(), spinnerValue);
 
     // Then
-    assertZoomFactorEquals(expectedZoomFactor);
+    assertZoomFactorNear(expectedZoomFactor, "Zoom factor should match spinner " + spinnerValue);
   }
 
   /**
@@ -89,16 +79,15 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    */
   @ParameterizedTest(name = "Check changing third zoom value #{index}")
   @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.9", "-2, 0.8", "-3, 0.7", "0, 1"})
-  void should_react_to_third_zoom_value(int spinnerValue, double expectedZoomFactor) {
+  void should_react_to_third_zoom_value(int spinnerValue, double expectedZoomFactor, FxRobot robot) {
     // Given
-      FxRobot robot = new FxRobot();
       initDrawAndSelectSnowFlake(robot);
 
     // When
     setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner3(), spinnerValue);
 
     // Then
-    assertZoomFactorEquals(expectedZoomFactor);
+    assertZoomFactorNear(expectedZoomFactor, "Zoom factor should match spinner " + spinnerValue);
   }
 
   /**
@@ -109,9 +98,8 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    */
   @ParameterizedTest(name = "Check changing first zoom value #{index}")
   @CsvSource({"1", "2", "5", "10", "20", "-1", "-2", "-5", "-10", "-20", "0"})
-  void any_zoom_spinner_should_react_to_the_first_zoom_value_change(int spinnerValue) {
+  void any_zoom_spinner_should_react_to_the_first_zoom_value_change(int spinnerValue, FxRobot robot) {
     // Given
-      FxRobot robot = new FxRobot();
       initDrawAndSelectSnowFlake(robot);
 
     // When
@@ -130,9 +118,8 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    */
   @ParameterizedTest(name = "Check changing second zoom value #{index}")
   @CsvSource({"1", "2", "5", "10", "20", "-1", "-2", "-5", "-10", "-20", "0"})
-  void any_zoom_spinner_should_react_to_the_second_zoom_value_change(int spinnerValue) {
+  void any_zoom_spinner_should_react_to_the_second_zoom_value_change(int spinnerValue, FxRobot robot) {
     // Given
-      FxRobot robot = new FxRobot();
       initDrawAndSelectSnowFlake(robot);
 
     // When
@@ -152,9 +139,8 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    */
   @ParameterizedTest(name = "Check changing third zoom value #{index}")
   @CsvSource({"1", "2", "5", "10", "20", "-1", "-2", "-5", "-10", "-20", "0"})
-  void any_zoom_spinner_should_react_to_third_zoom_value_change(int spinnerValue) {
+  void any_zoom_spinner_should_react_to_third_zoom_value_change(int spinnerValue, FxRobot robot) {
     // Given
-      FxRobot robot = new FxRobot();
       initDrawAndSelectSnowFlake(robot);
 
     // When
@@ -179,7 +165,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     incrementSpinner(robot, this.toolboxWindow.getZoomSpinner1());
 
     // Then
-    assertZoomFactorEquals(1.1d);
+    assertZoomFactorNear(1.1d, "Zoom after first spinner increment");
   }
 
   /**
@@ -196,7 +182,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     decrementSpinner(robot, this.toolboxWindow.getZoomSpinner1());
 
     // Then
-    assertZoomFactorEquals(0.9d);
+    assertZoomFactorNear(0.9d, "Zoom after first spinner decrement");
   }
 
   /**
@@ -213,7 +199,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     incrementSpinner(robot, this.toolboxWindow.getZoomSpinner2());
 
     // Then
-    assertZoomFactorEquals(1.2d);
+    assertZoomFactorNear(1.2d, "Zoom after second spinner increment");
   }
 
   /**
@@ -230,7 +216,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     decrementSpinner(robot, this.toolboxWindow.getZoomSpinner2());
 
     // Then
-    assertZoomFactorEquals(0.8d);
+    assertZoomFactorNear(0.8d, "Zoom after second spinner decrement");
   }
 
   /**
@@ -247,7 +233,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     incrementSpinner(robot, this.toolboxWindow.getZoomSpinner3());
 
     // Then
-    assertZoomFactorEquals(1.3d);
+    assertZoomFactorNear(1.3d, "Zoom after third spinner increment");
   }
 
   /**
@@ -264,13 +250,7 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
     decrementSpinner(robot, this.toolboxWindow.getZoomSpinner3());
 
     // Then
-    assertZoomFactorEquals(0.7d);
-  }
-
-  private void assertZoomFactorEquals(double expectedZoom) {
-    // For zoom factor assertions, we need to use a custom matcher since it's not a UI element
-    // We'll keep the JUnit assertion for this specific case as it's testing business logic
-    org.junit.jupiter.api.Assertions.assertEquals(expectedZoom, getSnowFlakeZoomFactor());
+    assertZoomFactorNear(0.7d, "Zoom after third spinner decrement");
   }
 
 }

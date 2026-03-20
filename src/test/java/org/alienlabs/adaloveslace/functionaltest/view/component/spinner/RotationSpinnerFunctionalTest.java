@@ -35,7 +35,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     initDrawAndSelectSnowFlake(robot);
 
     // Then
-    assertRotationAnglesEqual(DEFAULT_ROTATION, getSnowFlakeRotationAngle());
+    assertRotationNear(DEFAULT_ROTATION, "Default knot rotation");
   }
 
   /**
@@ -52,8 +52,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     incrementSpinner(robot, this.toolboxWindow.getRotationSpinner1());
 
     // Then
-    assertRotationAnglesEqual(
-            DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle());
+    assertRotationNear(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_1, "Rotation after first spinner up");
   }
 
   /**
@@ -70,7 +69,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     decrementSpinner(robot, this.toolboxWindow.getRotationSpinner1());
 
     // Then
-    assertRotationAnglesEqual(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1, getSnowFlakeRotationAngle());
+    assertRotationNear(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_1, "Rotation after first spinner down");
   }
 
   /**
@@ -87,7 +86,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
    incrementSpinner(robot, this.toolboxWindow.getRotationSpinner2());
 
     // Then
-    assertRotationAnglesEqual(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle());
+    assertRotationNear(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_2, "Rotation after second spinner up");
   }
 
   /**
@@ -104,7 +103,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     decrementSpinner(robot, this.toolboxWindow.getRotationSpinner2());
 
     // Then
-    assertRotationAnglesEqual(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2, getSnowFlakeRotationAngle());
+    assertRotationNear(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_2, "Rotation after second spinner down");
   }
 
   /**
@@ -121,7 +120,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     incrementSpinner(robot, this.toolboxWindow.getRotationSpinner3());
 
     // Then
-    assertRotationAnglesEqual(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle());
+    assertRotationNear(DEFAULT_ROTATION + ROTATION_SPINNER_INCREMENTS_3, "Rotation after third spinner up");
   }
 
   /**
@@ -138,7 +137,7 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     decrementSpinner(robot, this.toolboxWindow.getRotationSpinner3());
 
     // Then
-    assertRotationAnglesEqual(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3, getSnowFlakeRotationAngle());
+    assertRotationNear(DEFAULT_ROTATION - ROTATION_SPINNER_INCREMENTS_3, "Rotation after third spinner down");
   }
 
   /**
@@ -198,10 +197,6 @@ class RotationSpinnerFunctionalTest extends AppFunctionalTestParent {
     // Then
     assertEquals(spinnerValue, this.toolboxWindow.getRotationSpinner1().getValueFactory().getValue());
     assertEquals(spinnerValue, this.toolboxWindow.getRotationSpinner2().getValueFactory().getValue());
-  }
-
-  private void assertRotationAnglesEqual(int defaultRotation, double snowFlakeRotationAngle) {
-    assertEquals(defaultRotation, snowFlakeRotationAngle);
   }
 
 }

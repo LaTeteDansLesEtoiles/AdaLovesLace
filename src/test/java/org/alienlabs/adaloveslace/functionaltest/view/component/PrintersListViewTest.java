@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
+import org.testfx.util.WaitForAsyncUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -71,6 +72,7 @@ class PrintersListViewTest {
     @Test
     void shouldScrollToLastItemAndSelect(FxRobot robot) {
         robot.scroll(20, VerticalDirection.DOWN); // force scroll down
+        WaitForAsyncUtils.waitForFxEvents();
         robot.clickOn("Line 30");
 
         assertEquals("Line 30", listView.getSelectionModel().getSelectedItem());

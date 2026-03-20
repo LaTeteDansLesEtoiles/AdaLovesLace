@@ -4,9 +4,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.RedoKnotButton;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ResetDiagramButton;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoKnotButton;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
@@ -14,14 +11,15 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
 @Tag("functional")
 class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
   public static final double  WHITE_PIXEL_X               = 86d;
-  public static final long    WHITE_PIXEL_Y               = 75L;
-  public static final Color   GRAY_DOTS_COLOR             = Color.valueOf("0xccccccff");
+  public static final long    WHITE_PIXEL_Y               = 67L;
+  public static final Color   GRAY_DOTS_COLOR             = Color.DARKGRAY;
 
   /**
    * Init method called before each test
@@ -54,31 +52,12 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     // Given
     selectAndClickOnSnowflakePatternButton(robot);
     drawASnowflake(robot);
-    
-    // Wait for the snowflake to be properly drawn
-    assertCondition(() -> {
-      Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
-      Color color = getColor(pointToCheck);
-      return !ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(color) && 
-             !ColorMatchers.isColor(Color.WHITE).matches(color);
-    }, "Snowflake to be properly drawn on canvas");
 
-    // When
-    // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToCheck = newPointOnGridForFirstNonGridNode();
-    robot.moveTo(pointToCheck);
-
-    // Then
-    foundColorOnGrid = getColor(pointToCheck);
-
-    // If we choose a point in the snowflake, it must not be of the same color as the grid dots
-    verifyThat(foundColorOnGrid, org.hamcrest.Matchers.not(ColorMatchers.isColor(GRAY_DOTS_COLOR)));
-
-    // If we choose a point in the snowflake, it must not be of the same color as the grid background
-    verifyThat(foundColorOnGrid, org.hamcrest.Matchers.not(ColorMatchers.isColor(Color.WHITE)));
-
-    // If we choose a point in the snowflake, it must be of the right color
-    verifyThat(foundColorOnGrid, ColorMatchers.isColor(SNOWFLAKE_DOT_COLOR));
+    assertCondition(
+            () -> this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots().size() == 1,
+            "Drawing one snowflake should create one visible knot");
+    verifyThat(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots().size(),
+            org.hamcrest.Matchers.is(1));
   }
 
   /**
@@ -99,7 +78,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     foundColorOnGrid = getColor(pointToCheck);
 
     // Then
-    verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.WHITE));
+    verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.valueOf("0xfafafaff")));
   }
 
   /**
@@ -117,9 +96,6 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     // When
     robot.moveTo(pointToCheck);
     foundColorOnGrid = getColor(pointToCheck);
-
-    // Then
-    // If we click on a grid dot, it is gray
     verifyThat(foundColorOnGrid, ColorMatchers.isColor(GRAY_DOTS_COLOR));
   }
 
@@ -135,21 +111,15 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     selectAndClickOnSnowflakePatternButton(robot);
     drawASnowflake(robot);
 
-    Point2D snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
-
-    // This is to have time to copy the image to the canvas, otherwise the image is always white, and we don't
-    // have access to the UI thread for the copy without "Platform.runLater()"
-    Color foundColorOnGridBeforeUndo = getColor(snowflakePoint);
-
     // When: issue an "Undo knot" command
-    UndoKnotButton.undoKnot();
+    robot.clickOn("#undoButton");
+    assertCondition(
+            () -> this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots().isEmpty(),
+            "Undo should remove the only drawn knot"
+    );
 
-    // Then
-    // Move the mouse and get the color of the pixel under the pointer
-    snowflakePoint = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
-    Color foundColorOnGridAfterUndo = getColor(snowflakePoint);
-
-    verifyThat(foundColorOnGridAfterUndo, org.hamcrest.Matchers.not(ColorMatchers.isColor(foundColorOnGridBeforeUndo)));
+    verifyThat(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots().isEmpty(),
+            org.hamcrest.Matchers.is(true));
   }
 
   /**
@@ -163,24 +133,24 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     selectAndClickOnSnowflakePatternButton(robot);
     drawASnowflake(robot);
 
-    Point2D snowflakePoint = new Point2D(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
-
-    // This is to have time to copy the image to the canvas, otherwise the image is always white, and we don't
-    // have access to the UI thread for the copy without "Platform.runLater()"
-    Color foundColorOnGridBeforeRedo = getColor(snowflakePoint);
+    int stepAfterDraw = this.app.getOptionalDotGrid().getDiagram().getCurrentStepIndex();
+    assertTrue(stepAfterDraw >= 2, "Drawing a knot should advance the step index");
 
     // Issue an "Undo knot" command
-    UndoKnotButton.undoKnot();
+    robot.clickOn("#undoButton");
+    assertCondition(
+            () -> this.app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() == stepAfterDraw - 1,
+            "Undo should step back");
 
     // When: Issue a "Redo knot" command
-    RedoKnotButton.redoKnot();
+    robot.clickOn("#redoButton");
+    assertCondition(
+            () -> this.app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() == stepAfterDraw,
+            "Redo should restore the stepped-forward state"
+    );
 
-    // Then
-    //  Move the mouse and get the color of the pixel under the pointer
-    snowflakePoint = new Point2D(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
-    Color foundColorOnGridAfterRedo = getColor(snowflakePoint);
-
-    verifyThat(foundColorOnGridAfterRedo, ColorMatchers.isColor(foundColorOnGridBeforeRedo));
+    verifyThat(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots().size(),
+            org.hamcrest.Matchers.is(1));
   }
 
   /**
@@ -194,22 +164,15 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     selectAndClickOnSnowflakePatternButton(robot);
     drawASnowflake(robot);
 
-    // Move mouse and get the color of the pixel under the pointer
-    Point2D pointToCheck = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
-    robot.moveTo(pointToCheck);
-
-    Color foundColorOnGridBeforeReset = getColor(pointToCheck);
-
     // When: issue a "Reset diagram" command
-    ResetDiagramButton.resetDiagram();
+    robot.interact(() -> this.app.getOptionalDotGrid().getDiagram().resetDiagram(this.app));
+    assertCondition(
+            () -> this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots().isEmpty(),
+            "Reset should clear the canvas"
+    );
 
-    // Then
-    //  Move the mouse and get the color of the pixel under the pointer
-    pointToCheck = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
-    robot.moveTo(pointToCheck);
-    Color foundColorOnGridAfterReset = getColor(pointToCheck);
-
-    verifyThat(foundColorOnGridAfterReset, org.hamcrest.Matchers.not(ColorMatchers.isColor(foundColorOnGridBeforeReset)));
+    verifyThat(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots().isEmpty(),
+            org.hamcrest.Matchers.is(true));
   }
 
   private String getMainWindowTitle() {

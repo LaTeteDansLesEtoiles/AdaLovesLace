@@ -132,7 +132,12 @@ public class MainWindow {
     while (it.hasNext()) {
       Knot knot = it.next();
 
-      hasClickedOnAGivenKnot = nodeUtil.isMouseOverKnot(knot);
+      // Headless TestFX doesn't always update the `isHover()` state before the click.
+      // Use the click position against the knot image view bounds instead of hover-only detection.
+      javafx.geometry.Point2D clickLocal =
+          knot.getImageView().sceneToLocal(event.getSceneX(), event.getSceneY());
+      boolean clickedByBounds = knot.getImageView().getBoundsInLocal().contains(clickLocal);
+      hasClickedOnAGivenKnot = clickedByBounds || nodeUtil.isMouseOverKnot(knot);
       
       // Check if the knot is already selected by testing membership in selectedKnots
       boolean isAlreadySelected = selectedKnots.stream()

@@ -22,7 +22,10 @@ public class DeletionButton extends ToggleButton {
   public DeletionButton(App app, String buttonLabel) {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onSetDeletionModeAction(app));
+    // Ensure TestFX robot clicks trigger the same behavior.
+    this.setOnAction(_ -> onSetDeletionModeAction(app));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
+    this.setId("deletionButton");
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(resourceBundle.getString("DELETION_BUTTON_TOOLTIP"));

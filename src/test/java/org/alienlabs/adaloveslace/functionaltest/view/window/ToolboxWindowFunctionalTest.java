@@ -1,33 +1,26 @@
 package org.alienlabs.adaloveslace.functionaltest.view.window;
 
 import javafx.geometry.Point2D;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.alienlabs.adaloveslace.domain.enumeration.GridType;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
-import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ShowHideGridButton;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
 
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.functionaltest.view.window.MainWindowFunctionalTest.GRAY_DOTS_COLOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("functional")
 class ToolboxWindowFunctionalTest extends AppFunctionalTestParent {
 
-  private static final Logger logger = LoggerFactory.getLogger(MainWindowFunctionalTest.class);
-
-  /**
-   * Init method called before each test
-   *
-   * @param primaryStage The injected window (stage)
-   */
   @Override
   @Start
   public void start(Stage primaryStage) {
@@ -44,66 +37,53 @@ class ToolboxWindowFunctionalTest extends AppFunctionalTestParent {
     assertEquals(TOOLBOX_TITLE, this.app.getToolboxStage().getTitle());
   }
 
-  /**
-   * Checks if we are able to hide the dot grid: a canvas pixel should be white, then.
-   *
-   * @param robot The injected FxRobot
-   */
   @Test
-  void testHideGrid(FxRobot robot) {
-    // Given
-    Point2D pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
-    robot.moveTo(pointToCheck);
-    foundColorOnGrid = getColor(pointToCheck);
-    assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
-
-    // When
-    ShowHideGridButton.showHideGrid();
-
-    // Move mouse and get the color of the pixel under the pointer
-    pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
-    robot.moveTo(pointToCheck);
-    foundColorOnGrid = getColor(pointToCheck);
-
-    // All we can say is that if we click on the empty canvas, then the pixel is white
-    assertTrue(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
+  void testShowHideGridButton_changes_grid_type(FxRobot robot) {
+    GridType before = this.app.getOptionalDotGrid().getDiagram().getCurrentGridType();
+    robot.clickOn(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME));
+    assertCondition(
+            () -> !this.app.getOptionalDotGrid().getDiagram().getCurrentGridType().equals(before),
+            "Show/hide grid control should advance the diagram grid type");
   }
 
-  /**
-   * Checks if we are able to hide the dot grid (a canvas pixel should be white, then)
-   * and to display it again (a canvas pixel should not be white, then).
-   *
-   * @param robot The injected FxRobot
-   */
   @Test
-  void testHideAndShowAgainGrid(FxRobot robot) {
-    // Given
-    Point2D pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
-    robot.moveTo(pointToCheck);
-    foundColorOnGrid = getColor(pointToCheck);
-    assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
+  void testHiddenGrid_shows_white_canvas_sample(FxRobot robot) {
+    while (this.app.getOptionalDotGrid().getDiagram().getCurrentGridType() != GridType.HIDDEN) {
+      robot.clickOn(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME));
+    }
+    Point2D sample = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
+    robot.moveTo(sample);
+    assertCondition(
+            () -> ColorMatchers.isColor(Color.WHITE).matches(getColor(sample)),
+            "Hidden grid type should render white background at sample point");
+  }
 
-    // When
-    ShowHideGridButton.showHideGrid();
+  @Test
+  void test_cycle_from_hidden_restores_criss_cross_dots(FxRobot robot) {
+    while (this.app.getOptionalDotGrid().getDiagram().getCurrentGridType() != GridType.HIDDEN) {
+      robot.clickOn(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME));
+    }
+    robot.clickOn(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME));
+    assertEquals(GridType.CRISS_CROSS, this.app.getOptionalDotGrid().getDiagram().getCurrentGridType());
+    Point2D sample = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
+    robot.moveTo(sample);
+    assertCondition(
+            () -> ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(getColor(sample)),
+            "After cycling from hidden, default grid dots should be visible again at sample point");
+  }
 
-    // Move mouse and get the color of the pixel under the pointer
-    pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
-    robot.moveTo(pointToCheck);
-    foundColorOnGrid = getColor(pointToCheck);
+  @Test
+  void testShowHideGridUpdatesVisibleGridLabel(FxRobot robot) {
+    Label gridLabel = this.app.getToolboxWindow().getGridNameLabel();
+    String initial = gridLabel.getText();
 
-    // All we can say is that if we click on the empty canvas, then the pixel is white
-    assertTrue(ColorMatchers.isColor(Color.WHITE).matches(foundColorOnGrid));
+    robot.clickOn(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME));
+    assertCondition(() -> !gridLabel.getText().equals(initial), "Grid label should change after grid switch");
+    String afterFirstToggle = gridLabel.getText();
 
-    // When
-    // Show the dot grid again
-    ShowHideGridButton.showHideGrid();
-
-    pointToCheck = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
-    robot.moveTo(pointToCheck);
-    foundColorOnGrid = getColor(pointToCheck);
-
-    // All we can say is that if we click on the grid, then the pixel is gray
-    assertTrue(ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid));
+    robot.clickOn(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME));
+    assertCondition(() -> !gridLabel.getText().equals(afterFirstToggle), "Grid label should change on second grid switch");
+    assertNotEquals(initial, afterFirstToggle, "Grid name should reflect a different visible grid mode");
   }
 
 }

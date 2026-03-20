@@ -17,7 +17,6 @@ import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class ZoomSpinner {
-
   private static int numberOfUpdates = 0;
 
   public void buildZoomSpinner(App app, Spinner<Integer> spinner,
