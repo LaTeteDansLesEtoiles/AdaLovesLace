@@ -287,7 +287,7 @@
             <junit.jupiter.execution.parallel.mode.methods.default>same_thread</junit.jupiter.execution.parallel.mode.methods.default>
           </systemPropertyVariables>
           <useSystemClassLoader>true</useSystemClassLoader>
-          <argLine>@{argLine} --add-opens javafx.graphics/com.sun.javafx.application=testfx.core</argLine>
+          <argLine>@{argLine} --enable-native-access=javafx.graphics --add-opens javafx.graphics/com.sun.javafx.application=org.testfx</argLine>
         </configuration>
       </plugin>
       <plugin>
