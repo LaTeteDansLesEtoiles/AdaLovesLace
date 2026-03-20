@@ -37,7 +37,7 @@ of the branch "23-frenchuserguide".
     mvn archetype:generate -DarchetypeGroupId=org.openjfx -DarchetypeArtifactId=javafx-archetype-simple -DarchetypeVersion=0.0.3 -DgroupId=org.alienlabs.adaloveslace -DartifactId=adaloveslace -Dversion=0.0.1 -Djavafx-version=11
 
 
-- for mvnw (see below) to run OK, you need to set JAVA_HOME to a JDK 21 modified according to:
+- for mvnw (see below) to run OK, you need to set JAVA_HOME to a JDK 24 modified according to:
 
 
     https://github.com/jgneff/javafx-graphics
@@ -46,7 +46,7 @@ of the branch "23-frenchuserguide".
 - Maven wrapper generated with:
 
 
-    mvn -N io.takari:maven:wrapper -Dmaven=3.9.3
+    mvn -N io.takari:maven:wrapper -Dmaven=3.9.14
 
 Feel free to run the Maven wrapper generation command again if Java version used changes
 
