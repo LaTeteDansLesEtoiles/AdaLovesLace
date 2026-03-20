@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<ScrollPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.alienlabs.adaloveslace.view.window.ToolboxWindowController" fitToHeight="true" fitToWidth="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED" pannable="true">
+   <stylesheets>
+      <URL value="@/css/styles.css" />
+   </stylesheets>
+   <content>
+      <VBox fx:id="rootContainer" styleClass="toolbox" minWidth="1080.0">
+         <children>
+            <!-- Menu Bar -->
+            <MenuBar fx:id="menuBar" styleClass="main-menu">
+               <menus>
+                  <Menu text="%File">
+                     <items>
+                        <MenuItem text="%Save" onAction="#onSaveAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem text="%SaveAs" onAction="#onSaveAsAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="T" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem text="%Load" onAction="#onLoadAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="L" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem text="%ExportAnImage" onAction="#onExportImageAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="E" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem text="%Quit" onAction="#onQuitAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="Q" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                     </items>
+                  </Menu>
+                  <Menu text="%Edit">
+                     <items>
+                        <MenuItem text="%UndoKnot" onAction="#onUndoAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="Z" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem text="%RedoKnot" onAction="#onRedoAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="Y" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem text="%SelectAll" onAction="#onSelectAllAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="A" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem text="%ResetDiagram" onAction="#onResetDiagramAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="R" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                     </items>
+                  </Menu>
+                  <Menu text="%Tool">
+                     <items>
+                        <MenuItem text="%ShowHideGrid" onAction="#onShowHideGridAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="G" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem text="%GetPrinters" onAction="#onGetPrintersAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem text="%PrintDiagram" onAction="#onPrintAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="P" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                     </items>
+                  </Menu>
+                  <Menu text="%QuickStart">
+                     <items>
+                        <Menu text="%Crochet">
+                           <items>
+                              <MenuItem text="%CornerToCorner" onAction="#onCornerToCornerAction" />
+                              <MenuItem text="%Crochet" onAction="#onCrochetAction" />
+                              <MenuItem text="%MosaicCrochet" onAction="#onMosaicCrochetAction" />
+                              <MenuItem text="%Tapestry" onAction="#onTapestryAction" />
+                           </items>
+                        </Menu>
+                        <Menu text="%Knitting">
+                           <items>
+                              <MenuItem text="%KnittingKnitting" onAction="#onKnittingAction" />
+                           </items>
+                        </Menu>
+                        <Menu text="%Embroidery">
+                           <items>
+                              <MenuItem text="%CrossStitch" onAction="#onCrossStitchAction" />
+                           </items>
+                        </Menu>
+                        <Menu text="%Miscellaneous">
+                           <items>
+                              <MenuItem text="%DiamondPainting" onAction="#onDiamondPaintingAction" />
+                              <MenuItem text="%PixelArt" onAction="#onPixelArtAction" />
+                              <MenuItem text="%PeyoteWeaving" onAction="#onPeyoteWeavingAction" />
+                           </items>
+                        </Menu>
+                     </items>
+                  </Menu>
+                  <Menu text="%Language">
+                     <items>
+                        <MenuItem text="Français" onAction="#onFrenchAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="DOWN" code="F" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem text="English" onAction="#onEnglishAction">
+                           <accelerator>
+                              <KeyCodeCombination alt="DOWN" code="E" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                     </items>
+                  </Menu>
+               </menus>
+            </MenuBar>
+            
+            <!-- Main Container -->
+            <HBox fx:id="mainContainer" alignment="TOP_LEFT" spacing="0.0">
+               <children>
+                  <!-- Left Column: Patterns and Basic Buttons -->
+                  <VBox fx:id="leftColumn" minWidth="700.0" prefWidth="700.0" maxWidth="800.0" spacing="15.0">
+                     <padding>
+                        <Insets right="5.0" />
+                     </padding>
+                     <children>
+                        <!-- Top Row: Patterns and Geometry Controls -->
+                        <HBox fx:id="topRow" spacing="10.0">
+                           <children>
+                              <!-- Patterns ScrollPane -->
+                              <ScrollPane fx:id="patternsScrollPane" fitToWidth="true" minWidth="450.0" prefWidth="450.0" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                                 <content>
+                                    <GridPane fx:id="patternsGrid" hgap="5.0" vgap="5.0">
+                                       <padding>
+                                          <Insets top="5.0" right="5.0" bottom="5.0" left="5.0" />
+                                       </padding>
+                                       <children>
+                                          <!-- Patterns will be added dynamically -->
+                                       </children>
+                                    </GridPane>
+                                 </content>
+                              </ScrollPane>
+                              
+                              <!-- Geometry Controls -->
+                              <GridPane fx:id="geometryGrid" hgap="5.0" vgap="5.0" alignment="TOP_CENTER">
+                                 <padding>
+                                    <Insets top="10.0" right="5.0" bottom="5.0" left="5.0" />
+                                 </padding>
+                                 <children>
+                                    <!-- Rotation Spinners -->
+                                    <Spinner fx:id="rotationSpinner1" editable="true" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0">
+                                       <valueFactory>
+                                          <SpinnerValueFactory.IntegerSpinnerValueFactory min="-360" max="360" initialValue="0" amountToStepBy="1" />
+                                       </valueFactory>
+                                    </Spinner>
+                                    <Spinner fx:id="zoomSpinner1" editable="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0">
+                                       <valueFactory>
+                                          <SpinnerValueFactory.IntegerSpinnerValueFactory min="-20" max="20" initialValue="0" amountToStepBy="1" />
+                                       </valueFactory>
+                                    </Spinner>
+                                    
+                                    <Spinner fx:id="rotationSpinner2" editable="true" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                                       <valueFactory>
+                                          <SpinnerValueFactory.IntegerSpinnerValueFactory min="-360" max="360" initialValue="0" amountToStepBy="10" />
+                                       </valueFactory>
+                                    </Spinner>
+                                    <Spinner fx:id="zoomSpinner2" editable="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                                       <valueFactory>
+                                          <SpinnerValueFactory.IntegerSpinnerValueFactory min="-20" max="20" initialValue="0" amountToStepBy="2" />
+                                       </valueFactory>
+                                    </Spinner>
+                                    
+                                    <Spinner fx:id="rotationSpinner3" editable="true" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                                       <valueFactory>
+                                          <SpinnerValueFactory.IntegerSpinnerValueFactory min="-360" max="360" initialValue="0" amountToStepBy="30" />
+                                       </valueFactory>
+                                    </Spinner>
+                                    <Spinner fx:id="zoomSpinner3" editable="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                                       <valueFactory>
+                                          <SpinnerValueFactory.IntegerSpinnerValueFactory min="-20" max="20" initialValue="0" amountToStepBy="3" />
+                                       </valueFactory>
+                                    </Spinner>
+                                    
+                                    <!-- Rotation and Zoom Buttons -->
+                                    <Button fx:id="rotationButton" text="%Rotation" onAction="#onRotationAction" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                                    <Button fx:id="zoomButton" text="%Zoom" onAction="#onZoomAction" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                                    
+                                    <!-- Geometry Buttons -->
+                                    <Button fx:id="drawingButton" text="%Drawing" onAction="#onDrawingAction" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+                                    <Button fx:id="selectionButton" text="%Selection" onAction="#onSelectionAction" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+                                    <Button fx:id="deletionButton" text="%Deletion" onAction="#onDeletionAction" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
+                                    <Button fx:id="duplicationButton" text="%Duplication" onAction="#onDuplicationAction" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
+                                    
+                                    <!-- Flipping Buttons -->
+                                    <Button fx:id="verticalFlippingButton" text="%VerticalFlipping" onAction="#onVerticalFlippingAction" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
+                                    <Button fx:id="horizontalFlippingButton" text="%HorizontalFlipping" onAction="#onHorizontalFlippingAction" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </HBox>
+                        
+                        <!-- Basic Buttons Grid -->
+                        <GridPane fx:id="buttonsGrid" hgap="10.0" vgap="10.0">
+                           <padding>
+                              <Insets top="20.0" right="0.0" bottom="10.0" left="10.0" />
+                           </padding>
+                           <children>
+                              <!-- Text Button -->
+                              <Button fx:id="textButton" text="%TextButton" onAction="#onTextAction" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                              
+                              <!-- Add Knot and Reset All Buttons -->
+                              <Button fx:id="addKnotButton" text="%AddKnotButton" onAction="#onAddKnotAction" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                              <Button fx:id="resetAllButton" text="%ResetAllButton" onAction="#onResetAllAction" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              
+                              <!-- Color and Back in Black Buttons -->
+                              <Button fx:id="colorButton" text="%ColorButton" onAction="#onColorAction" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                              <Button fx:id="backInBlackButton" text="%BackInBlackButton" onAction="#onBackInBlackAction" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              
+                              <!-- File Buttons -->
+                              <Button fx:id="saveButton" text="%Save" onAction="#onSaveAction" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                              <Button fx:id="saveAsButton" text="%SaveAs" onAction="#onSaveAsAction" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.columnSpan="2" />
+                              <Button fx:id="loadButton" text="%Load" onAction="#onLoadAction" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                              <Button fx:id="shareButton" text="%Share" onAction="#onShareAction" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Button fx:id="exportImageButton" text="%ExportAnImage" onAction="#onExportImageAction" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                              <Button fx:id="exportPdfButton" text="%ExportPdf" onAction="#onExportPdfAction" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              
+                              <!-- Print Buttons -->
+                              <Button fx:id="getPrintersButton" text="%GetPrinters" onAction="#onGetPrintersAction" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                              <Button fx:id="printButton" text="%PrintDiagram" onAction="#onPrintAction" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <ListView fx:id="printersListView" prefHeight="100.0" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+                           </children>
+                        </GridPane>
+                     </children>
+                  </VBox>
+                  
+                  <!-- Spacer -->
+                  <Region fx:id="spacer1" minWidth="20.0" maxWidth="50.0" HBox.hgrow="NEVER" />
+                  
+                  <!-- Right Column: Arrows and State Buttons -->
+                  <VBox fx:id="rightColumn" alignment="TOP_CENTER" spacing="10.0">
+                     <children>
+                        <!-- Spacer for alignment -->
+                        <Region />
+                        
+                        <!-- Arrows Grid -->
+                        <GridPane fx:id="arrowsGrid" hgap="5.0" vgap="5.0" alignment="CENTER">
+                           <padding>
+                              <Insets top="5.0" right="5.0" bottom="5.0" left="5.0" />
+                           </padding>
+                           <children>
+                              <!-- Top row -->
+                              <Button fx:id="upLeftButton" onAction="#onUpLeftAction" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                              <Button fx:id="upButton" onAction="#onUpAction" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                              <Button fx:id="upRightButton" onAction="#onUpRightAction" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                              
+                              <!-- Middle row -->
+                              <Button fx:id="leftButton" onAction="#onLeftAction" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                              <Button fx:id="fastMoveButton" onAction="#onFastMoveAction" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Button fx:id="rightButton" onAction="#onRightAction" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                              
+                              <!-- Bottom row -->
+                              <Button fx:id="downLeftButton" onAction="#onDownLeftAction" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                              <Button fx:id="downButton" onAction="#onDownAction" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Button fx:id="downRightButton" onAction="#onDownRightAction" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                           </children>
+                        </GridPane>
+                        
+                        <!-- Spacer -->
+                        <Region />
+                        
+                        <!-- Grid Control -->
+                        <Button fx:id="changeGridButton" text="%ShowHideGrid" onAction="#onShowHideGridAction" />
+                        <Label fx:id="gridNameLabel" text="%GridName" />
+                        
+                        <!-- Spacers -->
+                        <Region />
+                        <Region />
+                        
+                        <!-- Quit Button -->
+                        <Button fx:id="quitButton" text="%Quit" onAction="#onQuitAction" />
+                        
+                        <!-- Spacers -->
+                        <Region />
+                        <Region />
+                        
+                        <!-- Edit Buttons -->
+                        <Button fx:id="undoKnotButton" text="%UndoKnot" onAction="#onUndoAction" />
+                        <Button fx:id="redoKnotButton" text="%RedoKnot" onAction="#onRedoAction" />
+                        <Button fx:id="createPatternButton" text="%CreatePattern" onAction="#onCreatePatternAction" />
+                        <Button fx:id="resetDiagramButton" text="%ResetDiagram" onAction="#onResetDiagramAction" />
+                        
+                        <!-- Spacers -->
+                        <Region />
+                        <Region />
+                        <Region />
+                        
+                        <!-- State Buttons -->
+                        <Button fx:id="unselectableButton" text="%Unselectable" onAction="#onUnselectableAction" />
+                        <Button fx:id="selectableButton" text="%Selectable" onAction="#onSelectableAction" />
+                        <Button fx:id="invisibleButton" text="%Invisible" onAction="#onInvisibleAction" />
+                        <Button fx:id="visibleButton" text="%Visible" onAction="#onVisibleAction" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </content>
+</ScrollPane>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.TilePane?>
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.alienlabs.adaloveslace.view.window.MainWindowController">
+   <stylesheets>
+      <URL value="@/css/styles.css" />
+   </stylesheets>
+   <center>
+      <Pane fx:id="movablePane" styleClass="grid">
+         <children>
+            <StackPane fx:id="gridPane" alignment="TOP_LEFT" styleClass="grid">
+               <children>
+                  <!-- OptionalDotGrid will be added dynamically -->
+               </children>
+            </StackPane>
+         </children>
+      </Pane>
+   </center>
+   <bottom>
+      <TilePane fx:id="footer" orientation="VERTICAL" prefHeight="100.0" prefWidth="200.0" styleClass="footer">
+         <children>
+            <Label text="%Pitch" />
+            <Label text="%Copyright" />
+            <Label text="%License" />
+            <Label fx:id="versionLabel" text="JavaFX %javafxVersion %RunningWith %javaVersion" />
+         </children>
+      </TilePane>
+   </bottom>
+</BorderPane>
