@@ -17,7 +17,7 @@ node {
 
     stage('unit tests') {
         try {
-            sh 'echo "JAVA_HOME=$JAVA_HOME-'
+            sh 'echo "JAVA_HOME=$JAVA_HOME"'
             sh "which java || true"
             sh "which javac || true"
             sh "java -version"
