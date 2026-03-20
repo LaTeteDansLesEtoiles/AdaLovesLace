@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
+import org.testfx.util.WaitForAsyncUtils;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,8 +34,11 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
 
         // Use the same grid-relative coordinates as the stable snowflake helpers (small Y values hit window chrome).
         drawSnowFlake(robot, FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
+        WaitForAsyncUtils.waitForFxEvents();
         drawSnowFlake(robot, SECOND_SNOWFLAKE_PIXEL_X, SECOND_SNOWFLAKE_PIXEL_Y);
+        WaitForAsyncUtils.waitForFxEvents();
         drawSnowFlake(robot, SECOND_SNOWFLAKE_PIXEL_X + 95d, SECOND_SNOWFLAKE_PIXEL_Y + 95d);
+        WaitForAsyncUtils.waitForFxEvents();
 
         assertCondition(
                 () -> app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots().size() == 3,
@@ -47,8 +51,11 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
         robot.clickOn("#drawingButton");
         robot.clickOn(toolboxWindow.getSnowflakeButton());
         drawSnowFlake(robot, FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
+        WaitForAsyncUtils.waitForFxEvents();
         drawSnowFlake(robot, SECOND_SNOWFLAKE_PIXEL_X, SECOND_SNOWFLAKE_PIXEL_Y);
+        WaitForAsyncUtils.waitForFxEvents();
         drawSnowFlake(robot, SECOND_SNOWFLAKE_PIXEL_X + 95d, SECOND_SNOWFLAKE_PIXEL_Y + 95d);
+        WaitForAsyncUtils.waitForFxEvents();
 
         robot.interact(UndoKnotButton::undoKnot);
         assertCondition(

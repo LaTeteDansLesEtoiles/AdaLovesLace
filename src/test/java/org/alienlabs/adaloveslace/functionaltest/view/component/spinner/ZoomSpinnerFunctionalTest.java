@@ -4,8 +4,6 @@ import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 
@@ -25,34 +23,22 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
   }
 
   /**
-   * Checks if the three zoom spinners in the toolbox contain the right default value
+   * Checks if the drawn Pattern has the right zoom factor values when providing values in the first zoom spinner.
+   * Also covers default zoom (was a separate test) to avoid an extra JavaFX lifecycle after long loop tests.
    *
    */
   @Test
-  void should_contain_zoom_default_value(FxRobot robot) {
-    // Given
+  void should_react_to_first_zoom_values(FxRobot robot) {
     initDrawAndSelectSnowFlake(robot);
-
-    // Then
-    // Wait for the zoom factor to be properly initialized
     assertZoomFactorNear(1d, "Zoom factor to be properly initialized to 1.0");
-  }
 
-  /**
-   * Checks if the drawn Pattern has the right zoom factor values when providing values in the first zoom spinner.
-   *
-   */
-  @ParameterizedTest(name = "Check changing first zoom value #{index}")
-  @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.9", "-2, 0.8", "-3, 0.7", "0, 1"})
-  void should_react_to_first_zoom_value(int spinnerValue, double expectedZoomFactor, FxRobot robot) {
-    // Given
+    final int[] values = {1, 3, -1, -2, -3, 0};
+    final double[] expected = {1.1d, 1.3d, 0.9d, 0.8d, 0.7d, 1d};
+    for (int i = 0; i < values.length; i++) {
       initDrawAndSelectSnowFlake(robot);
-
-    // When
-    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner1(), spinnerValue);
-
-    // Then
-    assertZoomFactorNear(expectedZoomFactor, "Zoom factor should match spinner " + spinnerValue);
+      setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner1(), values[i]);
+      assertZoomFactorNear(expected[i], "Zoom factor should match spinner " + values[i]);
+    }
   }
 
 
@@ -60,34 +46,30 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    * Checks if the drawn Pattern has the right zoom factor values when providing values in the second zoom spinner.
    *
    */
-  @ParameterizedTest(name = "Check changing second zoom value #{index}")
-  @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.9", "-2, 0.8", "-3, 0.7", "0, 1"})
-  void should_react_to_second_zoom_value(int spinnerValue, double expectedZoomFactor, FxRobot robot) {
-    // Given
+  @Test
+  void should_react_to_second_zoom_values(FxRobot robot) {
+    final int[] values = {1, 3, -1, -2, -3, 0};
+    final double[] expected = {1.1d, 1.3d, 0.9d, 0.8d, 0.7d, 1d};
+    for (int i = 0; i < values.length; i++) {
       initDrawAndSelectSnowFlake(robot);
-
-    // When
-    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner2(), spinnerValue);
-
-    // Then
-    assertZoomFactorNear(expectedZoomFactor, "Zoom factor should match spinner " + spinnerValue);
+      setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner2(), values[i]);
+      assertZoomFactorNear(expected[i], "Zoom factor should match spinner " + values[i]);
+    }
   }
 
   /**
    * Checks if the drawn Pattern has the right zoom factor values when providing values in the third zoom spinner.
    *
    */
-  @ParameterizedTest(name = "Check changing third zoom value #{index}")
-  @CsvSource({"1, 1.1", "3, 1.3", "-1, 0.9", "-2, 0.8", "-3, 0.7", "0, 1"})
-  void should_react_to_third_zoom_value(int spinnerValue, double expectedZoomFactor, FxRobot robot) {
-    // Given
+  @Test
+  void should_react_to_third_zoom_values(FxRobot robot) {
+    final int[] values = {1, 3, -1, -2, -3, 0};
+    final double[] expected = {1.1d, 1.3d, 0.9d, 0.8d, 0.7d, 1d};
+    for (int i = 0; i < values.length; i++) {
       initDrawAndSelectSnowFlake(robot);
-
-    // When
-    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner3(), spinnerValue);
-
-    // Then
-    assertZoomFactorNear(expectedZoomFactor, "Zoom factor should match spinner " + spinnerValue);
+      setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner3(), values[i]);
+      assertZoomFactorNear(expected[i], "Zoom factor should match spinner " + values[i]);
+    }
   }
 
   /**
@@ -96,18 +78,15 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    * contain the right value when choosing a value in the first one
    *
    */
-  @ParameterizedTest(name = "Check changing first zoom value #{index}")
-  @CsvSource({"1", "2", "5", "10", "20", "-1", "-2", "-5", "-10", "-20", "0"})
-  void any_zoom_spinner_should_react_to_the_first_zoom_value_change(int spinnerValue, FxRobot robot) {
-    // Given
+  @Test
+  void any_zoom_spinner_should_react_to_first_zoom_values(FxRobot robot) {
+    final int[] values = {1, 2, 5, 10, 20, -1, -2, -5, -10, -20, 0};
+    for (int spinnerValue : values) {
       initDrawAndSelectSnowFlake(robot);
-
-    // When
-    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner1(), spinnerValue);
-
-    // Then
-    verifyThat(this.toolboxWindow.getZoomSpinner2().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
-    verifyThat(this.toolboxWindow.getZoomSpinner3().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+      setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner1(), spinnerValue);
+      verifyThat(this.toolboxWindow.getZoomSpinner2().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+      verifyThat(this.toolboxWindow.getZoomSpinner3().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+    }
   }
 
   /**
@@ -116,18 +95,15 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    * contain the right value when choosing a value in the second one
    *
    */
-  @ParameterizedTest(name = "Check changing second zoom value #{index}")
-  @CsvSource({"1", "2", "5", "10", "20", "-1", "-2", "-5", "-10", "-20", "0"})
-  void any_zoom_spinner_should_react_to_the_second_zoom_value_change(int spinnerValue, FxRobot robot) {
-    // Given
+  @Test
+  void any_zoom_spinner_should_react_to_second_zoom_values(FxRobot robot) {
+    final int[] values = {1, 2, 5, 10, 20, -1, -2, -5, -10, -20, 0};
+    for (int spinnerValue : values) {
       initDrawAndSelectSnowFlake(robot);
-
-    // When
-    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner2(), spinnerValue);
-
-    // Then
-    verifyThat(this.toolboxWindow.getZoomSpinner1().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
-    verifyThat(this.toolboxWindow.getZoomSpinner3().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+      setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner2(), spinnerValue);
+      verifyThat(this.toolboxWindow.getZoomSpinner1().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+      verifyThat(this.toolboxWindow.getZoomSpinner3().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+    }
   }
 
 
@@ -137,18 +113,15 @@ class ZoomSpinnerFunctionalTest extends AppFunctionalTestParent {
    * contain the right value when choosing a value in the third one
    *
    */
-  @ParameterizedTest(name = "Check changing third zoom value #{index}")
-  @CsvSource({"1", "2", "5", "10", "20", "-1", "-2", "-5", "-10", "-20", "0"})
-  void any_zoom_spinner_should_react_to_third_zoom_value_change(int spinnerValue, FxRobot robot) {
-    // Given
+  @Test
+  void any_zoom_spinner_should_react_to_third_zoom_values(FxRobot robot) {
+    final int[] values = {1, 2, 5, 10, 20, -1, -2, -5, -10, -20, 0};
+    for (int spinnerValue : values) {
       initDrawAndSelectSnowFlake(robot);
-
-    // When
-    setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner3(), spinnerValue);
-
-    // Then
-    verifyThat(this.toolboxWindow.getZoomSpinner1().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
-    verifyThat(this.toolboxWindow.getZoomSpinner2().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+      setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner3(), spinnerValue);
+      verifyThat(this.toolboxWindow.getZoomSpinner1().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+      verifyThat(this.toolboxWindow.getZoomSpinner2().getValueFactory().getValue(), org.hamcrest.Matchers.is(spinnerValue));
+    }
   }
 
   /**

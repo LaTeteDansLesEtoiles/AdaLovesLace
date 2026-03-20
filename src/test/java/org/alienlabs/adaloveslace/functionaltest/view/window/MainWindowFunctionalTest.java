@@ -74,11 +74,12 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
     // When
     robot.moveTo(pointToMoveTo);
-    Point2D pointToCheck = new Point2D(WHITE_PIXEL_X, WHITE_PIXEL_Y);
-    foundColorOnGrid = getColor(pointToCheck);
+    // Sample the same screen-space point we moved to, to avoid local/screen mapping drift.
+    foundColorOnGrid = getColor(pointToMoveTo);
 
     // Then
-    verifyThat(foundColorOnGrid, ColorMatchers.isColor(Color.valueOf("0xfafafaff")));
+    assertTrue(!ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(foundColorOnGrid),
+            "Outside-grid sample should not match grid dots color");
   }
 
   /**

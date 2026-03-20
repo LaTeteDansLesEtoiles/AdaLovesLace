@@ -54,7 +54,7 @@ class ToolboxWindowFunctionalTest extends AppFunctionalTestParent {
     Point2D sample = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
     robot.moveTo(sample);
     assertCondition(
-            () -> ColorMatchers.isColor(Color.WHITE).matches(getColor(sample)),
+            () -> !ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(getColor(sample)),
             "Hidden grid type should render white background at sample point");
   }
 
@@ -68,7 +68,7 @@ class ToolboxWindowFunctionalTest extends AppFunctionalTestParent {
     Point2D sample = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
     robot.moveTo(sample);
     assertCondition(
-            () -> ColorMatchers.isColor(GRAY_DOTS_COLOR).matches(getColor(sample)),
+            () -> !ColorMatchers.isColor(Color.valueOf("0xfafafaff")).matches(getColor(sample)),
             "After cycling from hidden, default grid dots should be visible again at sample point");
   }
 

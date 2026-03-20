@@ -4,11 +4,11 @@ module org.alienlabs.adaloveslace.test {
   opens org.alienlabs.adaloveslace.functionaltest                                       to org.junit.platform.commons, org.junit.jupiter.params, javafx.graphics;
   opens org.alienlabs.adaloveslace.functionaltest.domain                                to org.junit.platform.commons, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.util                                  to org.junit.platform.commons, org.junit.jupiter.params;
-  opens org.alienlabs.adaloveslace.functionaltest.view.component.button.geometrywindow  to org.junit.platform.commons, org.junit.jupiter.params;
-  opens org.alienlabs.adaloveslace.functionaltest.view.component.button.toolboxwindow   to org.junit.platform.commons, org.junit.jupiter.params;
-  opens org.alienlabs.adaloveslace.functionaltest.view.component.spinner                to org.junit.platform.commons, org.junit.jupiter.params;
-  opens org.alienlabs.adaloveslace.functionaltest.view.component                        to org.junit.platform.commons;
-  opens org.alienlabs.adaloveslace.functionaltest.view.window                           to org.junit.platform.commons, org.junit.jupiter.params;
+  opens org.alienlabs.adaloveslace.functionaltest.view.component.button.geometrywindow  to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.functionaltest.view.component.button.toolboxwindow   to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.functionaltest.view.component.spinner                to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.functionaltest.view.component                        to org.junit.platform.commons, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.functionaltest.view.window                           to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.unittest.domain;
   opens org.alienlabs.adaloveslace.unittest.util;
   opens org.alienlabs.adaloveslace.unittest.view.component                              to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;

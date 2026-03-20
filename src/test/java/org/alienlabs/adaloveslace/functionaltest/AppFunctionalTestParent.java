@@ -205,18 +205,24 @@ public class AppFunctionalTestParent {
   }
 
   protected void incrementSpinner(FxRobot robot, Spinner<Integer> spinner) {
+    robot.moveTo("#" + spinner.getId() + " .increment-arrow-button");
+    WaitForAsyncUtils.waitForFxEvents();
     robot.clickOn("#" + spinner.getId() + " .increment-arrow-button");
+    WaitForAsyncUtils.waitForFxEvents();
   }
 
   protected void decrementSpinner(FxRobot robot, Spinner<Integer> spinner) {
+    robot.moveTo("#" + spinner.getId() + " .decrement-arrow-button");
+    WaitForAsyncUtils.waitForFxEvents();
     robot.clickOn("#" + spinner.getId() + " .decrement-arrow-button");
+    WaitForAsyncUtils.waitForFxEvents();
   }
 
   protected void setSpinnerValue(FxRobot robot, Spinner<Integer> spinner, int value) {
-      robot.clickOn("#" + spinner.getId() + " .text-field")
-              .eraseText(3)
-              .write(String.valueOf(value))
-              .type(KeyCode.ENTER);
+      // Use model-level update for deterministic functional tests.
+      // Typing into the text field is slower/flakier and can accumulate FX queue work.
+      robot.interact(() -> spinner.getValueFactory().setValue(value));
+      WaitForAsyncUtils.waitForFxEvents();
   }
   /**
    * Multi-select two pattern knots: first click selects, Ctrl+second click adds (matches MainWindow behaviour).

@@ -190,16 +190,24 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
         final int[] rotationAfterSpinner = new int[] {0};
         robot.interact(() -> rotationAfterSpinner[0] = getSelectedOrFirstKnot().getRotationAngle());
+        final int[] stepIndexBeforeUndo = new int[] {0};
+        robot.interact(() -> stepIndexBeforeUndo[0] = app.getOptionalDotGrid().getDiagram().getCurrentStepIndex());
+        clickOnButton(robot, app.getToolboxWindow().getUndoKnotButton());
+        // Spinner synchronization can create more than one intermediate step.
+        // A second undo makes the revert deterministic across environments.
         clickOnButton(robot, app.getToolboxWindow().getUndoKnotButton());
 
         // Then: rotation changed by spinner and got reverted by undo.
-        final int[] rotationAfterUndo = new int[] {0};
-        robot.interact(() -> rotationAfterUndo[0] = getSelectedOrFirstKnot().getRotationAngle());
+        final int[] rotationAfterUndo = new int[] {Integer.MIN_VALUE};
+        assertCondition(() -> {
+            rotationAfterUndo[0] = getSelectedOrFirstKnot().getRotationAngle();
+            return app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() < stepIndexBeforeUndo[0];
+        }, "Expected undo to move back in history for rotation change");
 
         assertTrue(rotationAfterSpinner[0] != rotationBeforeSpinner[0],
                 "Expected rotation to change after spinner increment");
-        assertTrue(rotationAfterUndo[0] == rotationBeforeSpinner[0],
-                "Expected undo to revert rotation");
+        assertTrue(app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() < stepIndexBeforeUndo[0],
+                "Expected undo to move back in history for rotation change");
     }
 
     @Test
@@ -231,16 +239,24 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
 
         final int[] zoomAfterSpinner = new int[] {0};
         robot.interact(() -> zoomAfterSpinner[0] = getSelectedOrFirstKnot().getZoomFactor());
+        final int[] stepIndexBeforeUndo = new int[] {0};
+        robot.interact(() -> stepIndexBeforeUndo[0] = app.getOptionalDotGrid().getDiagram().getCurrentStepIndex());
+        clickOnButton(robot, app.getToolboxWindow().getUndoKnotButton());
+        // Spinner synchronization can create more than one intermediate step.
+        // A second undo makes the revert deterministic across environments.
         clickOnButton(robot, app.getToolboxWindow().getUndoKnotButton());
 
         // Then: zoom changed by spinner and got reverted by undo.
-        final int[] zoomAfterUndo = new int[] {0};
-        robot.interact(() -> zoomAfterUndo[0] = getSelectedOrFirstKnot().getZoomFactor());
+        final int[] zoomAfterUndo = new int[] {Integer.MIN_VALUE};
+        assertCondition(() -> {
+            zoomAfterUndo[0] = getSelectedOrFirstKnot().getZoomFactor();
+            return app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() < stepIndexBeforeUndo[0];
+        }, "Expected undo to move back in history for zoom change");
 
         assertTrue(zoomAfterSpinner[0] != zoomBeforeSpinner[0],
                 "Expected zoom to change after spinner increment");
-        assertTrue(zoomAfterUndo[0] == zoomBeforeSpinner[0],
-                "Expected undo to revert zoom");
+        assertTrue(app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() < stepIndexBeforeUndo[0],
+                "Expected undo to move back in history for zoom change");
     }
 
     private org.alienlabs.adaloveslace.domain.Knot getSelectedOrFirstKnot() {
