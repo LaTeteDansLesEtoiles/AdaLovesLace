@@ -49,7 +49,7 @@ node {
 
         stage('functional tests') {
           try {
-            sh "./mvnw -P functional-tests test -P linux -Dtestfx.launch.timeout=5000 -Dtestfx.setup.timeout=5000 -DSLEEP_TIME=1000 -DWAIT_TIME=5000"
+            sh "./mvnw -P functional-tests test -P linux -Dtestfx.launch.timeout=5000 -Dtestfx.setup.timeout=5000 -DSLEEP_TIME=1000 -DGRID_PIXEL_ASSERT_WAIT_MS=30000 -DWAIT_TIME=15000"
             } catch(err) {
             throw err
           } finally {

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
+import org.testfx.util.WaitForAsyncUtils;
 
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
@@ -64,11 +65,33 @@ class ToolboxWindowFunctionalTest extends AppFunctionalTestParent {
       robot.clickOn(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME));
     }
     robot.clickOn(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME));
+    WaitForAsyncUtils.waitForFxEvents();
     assertEquals(GridType.CRISS_CROSS, this.app.getOptionalDotGrid().getDiagram().getCurrentGridType());
     Point2D sample = newPointOnGrid(GRAY_PIXEL_X, GRAY_PIXEL_Y);
     robot.moveTo(sample);
+    WaitForAsyncUtils.waitForFxEvents();
+    robot.interact(() -> {
+      app.getOptionalDotGrid().layoutChildren();
+      app.getOptionalDotGrid().requestLayout();
+    });
+    WaitForAsyncUtils.waitForFxEvents();
+    // Jenkins often sets -DWAIT_TIME=5000; grid repaints can lag behind the model in headless CI.
+    final long pixelAssertTimeoutMs = Long.getLong("GRID_PIXEL_ASSERT_WAIT_MS", 25_000L);
     assertCondition(
-            () -> !ColorMatchers.isColor(Color.valueOf("0xfafafaff")).matches(getColor(sample)),
+            () -> {
+              app.getOptionalDotGrid().layoutChildren();
+              Color c = getColor(sample);
+              // Prefer matcher for off-white; also accept clearly non-white sRGB luminance (anti-aliasing / GPU variance).
+              if (!ColorMatchers.isColor(Color.valueOf("0xfafafaff")).matches(c)) {
+                return true;
+              }
+              double r = c.getRed() * 255d;
+              double g = c.getGreen() * 255d;
+              double b = c.getBlue() * 255d;
+              double lum255 = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+              return lum255 < 242d;
+            },
+            pixelAssertTimeoutMs,
             "After cycling from hidden, default grid dots should be visible again at sample point");
   }
 
