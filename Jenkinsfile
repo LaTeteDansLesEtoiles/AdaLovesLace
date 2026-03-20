@@ -17,6 +17,11 @@ node {
 
     stage('unit tests') {
         try {
+            sh 'echo "JAVA_HOME=$JAVA_HOME-'
+            sh "which java || true"
+            sh "which javac || true"
+            sh "java -version"
+            sh "javac -version"
             sh "./mvnw clean test -P unit-tests"
         } catch(err) {
             throw err
