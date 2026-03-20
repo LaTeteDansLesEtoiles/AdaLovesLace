@@ -10,16 +10,14 @@ node {
     }
 
     stage('check java') {
-        steps {
-            sh '''
-              set -eux
-              echo "JAVA_HOME=$JAVA_HOME"
-              which java
-              which javac
-              java -version
-              javac -version
-            '''
-        }
+        sh '''
+          set -eux
+          echo "JAVA_HOME=$JAVA_HOME"
+          which java
+          which javac
+          java -version
+          javac -version
+        '''
     }
 
     stage('clean') {
