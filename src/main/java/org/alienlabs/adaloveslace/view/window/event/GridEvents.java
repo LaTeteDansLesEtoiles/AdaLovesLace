@@ -34,7 +34,7 @@ import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
 import static org.alienlabs.adaloveslace.domain.Knot.NEW_TEXT;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.MOUSE_CLICKED;
 
-public class GridEvents {
+public final class GridEvents {
 
   public static App app;
 
