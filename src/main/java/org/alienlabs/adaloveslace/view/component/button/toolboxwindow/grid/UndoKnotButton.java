@@ -14,7 +14,9 @@ public class UndoKnotButton extends ImageButton {
     public UndoKnotButton(String buttonLabel, App app) {
     super(buttonLabel);
       UndoKnotButton.app = app;
-        this.setOnMouseClicked(_ -> undoKnot());
+        // Use only onAction: JavaFX Button click triggers both mouse and action handlers,
+        // which would make undo execute twice for a single click.
+        this.setOnAction(_ -> undoKnot());
     buildButtonImage("undo.png");
     setId("undoButton");
   }

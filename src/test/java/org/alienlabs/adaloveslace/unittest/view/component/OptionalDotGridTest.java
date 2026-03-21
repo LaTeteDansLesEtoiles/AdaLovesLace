@@ -8,6 +8,7 @@ import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.domain.Pattern;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.view.component.GridUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 import static org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tag("unit")
 class OptionalDotGridTest {
 
   private ImageView imageView;

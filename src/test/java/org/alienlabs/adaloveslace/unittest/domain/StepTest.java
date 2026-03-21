@@ -9,6 +9,7 @@ import org.alienlabs.adaloveslace.domain.Pattern;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Tag("unit")
 class StepTest {
 
     private Diagram diagram;
@@ -27,6 +29,7 @@ class StepTest {
     void beforeEach() {
         app = new App();
         app.setMainWindow(new MainWindow());
+        app.setMovablePane(new Pane());
         this.diagram = new Diagram(app);
         app.setOptionalDotGrid(new OptionalDotGrid(app, this.diagram, new Pane()));
         app.setDiagram(this.diagram);

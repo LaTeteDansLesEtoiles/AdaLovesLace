@@ -8,15 +8,18 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.view.component.PrintersListView;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
+import org.testfx.util.WaitForAsyncUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(ApplicationExtension.class)
+@Tag("functional")
 class PrintersListViewTest {
 
     private PrintersListView listView;
@@ -69,6 +72,7 @@ class PrintersListViewTest {
     @Test
     void shouldScrollToLastItemAndSelect(FxRobot robot) {
         robot.scroll(20, VerticalDirection.DOWN); // force scroll down
+        WaitForAsyncUtils.waitForFxEvents();
         robot.clickOn("Line 30");
 
         assertEquals("Line 30", listView.getSelectionModel().getSelectedItem());

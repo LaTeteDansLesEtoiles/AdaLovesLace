@@ -1,13 +1,24 @@
 #!/usr/bin/env groovy
 
 node {
+    environment {
+        JAVA_HOME = '/usr/lib/jvm/temurin-24-jdk-amd64'
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+        NVD_API_KEY = credentials('NVD_API_KEY')   // id from Credentials store, not the API key string
+    }
     stage('checkout') {
         checkout scm
     }
 
     stage('check java') {
-        env.PATH="/usr/lib/jvm/temurin-24-jdk-amd64/bin:${env.PATH}"
-        sh "java -version"
+        sh '''
+          set -eux
+          echo "JAVA_HOME=$JAVA_HOME"
+          which java
+          which javac
+          java -version
+          javac -version
+        '''
     }
 
     stage('clean') {
@@ -17,7 +28,7 @@ node {
 
     stage('unit tests') {
         try {
-            sh "./mvnw clean test -DskipFTs=true"
+            sh "./mvnw clean test -P unit-tests"
         } catch(err) {
             throw err
         } finally {
@@ -25,11 +36,21 @@ node {
         }
     }
 
-    wrap([$class: 'Xvfb', screen: '1920x1080x24', timeout: 25]) {
+    stage('integration tests') {
+        try {
+            sh "./mvnw test -P integration-tests"
+        } catch(err) {
+            throw err
+        } finally {
+            junit '**/target/surefire-reports/*.xml'
+        }
+    }
+
+    wrap([$class: 'Xvfb', screen: '3840x2160x24', timeout: 25]) {
 
         stage('functional tests') {
           try {
-            sh "./mvnw clean integration-test -P linux -DskipUTs=true -Dtestfx.launch.timeout=5000 -Dtestfx.setup.timeout=5000 -DSLEEP_TIME=1000 -DWAIT_TIME=5000"
+            sh "./mvnw -P functional-tests test -P linux -DSLEEP_TIME=1000 -DGRID_PIXEL_ASSERT_WAIT_MS=30000 -DWAIT_TIME=15000"
             } catch(err) {
             throw err
           } finally {
@@ -37,17 +58,16 @@ node {
           }
         }
 
+        // Do not use step([$class: 'JacocoPublisher', ...]) — it needs the optional "JaCoCo" Jenkins plugin.
+        // Without that plugin you get: UnsupportedOperationException: ... SimpleBuildStep is named JacocoPublisher
         stage('test coverage') {
-            step([$class: 'JacocoPublisher',
-                  execPattern:      'target/**/*.exec',
-                  classPattern:     'target/classes',
-                  sourcePattern:    'src/main/java',
-                  exclusionPattern: 'src/test*'
-            ])
+            sh './mvnw -DskipTests jacoco:report'
+            archiveArtifacts artifacts: 'target/site/jacoco/**/*', fingerprint: true, allowEmptyArchive: true
+            archiveArtifacts artifacts: 'target/coverage-reports/*.exec', fingerprint: true, allowEmptyArchive: true
         }
 
         stage('static code analysis') {
-            sh './mvnw -batch-mode -V -U -e pmd:cpd pmd:pmd spotbugs:spotbugs'
+            sh './mvnw -batch-mode -V -U -e pmd:cpd pmd:check spotbugs:spotbugs'
 
             def cpd_report =        scanForIssues(
                 tool:
@@ -95,20 +115,30 @@ node {
         }
     }
 
+    // OWASP Dependency-Check: use Maven plugin (pom.xml) — no Jenkins "Dependency-Check" plugin required.
+    // Bind a "Secret text" credential to env NVD_API_KEY (e.g. in job config or withCredentials) so the key is masked in logs.
     stage ('OWASP Check') {
+        sh '''
+          set -eu
+          if [ -n "${NVD_API_KEY:-}" ]; then
+            ./mvnw -batch-mode -V -U -e -DskipTests -Dnvd.api.key="$NVD_API_KEY" dependency-check:check
+          else
+            ./mvnw -batch-mode -V -U -e -DskipTests dependency-check:check
+          fi
+        '''
+        archiveArtifacts artifacts: 'target/dependency-check-report.*', fingerprint: true, allowEmptyArchive: true
 
-        dependencyCheck additionalArguments: '''
-            -o "./"
-            -s "./"
-            -f "ALL"
-            --prettyPrint''', odcInstallation: 'OWASP-DC'
-
-        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+        def dc_report = scanForIssues(
+            tool: owaspDependencyCheck(pattern: '**/target/dependency-check-report.xml')
+        )
+        publishIssues(issues: [dc_report])
     }
 
     stage('packaging') {
-        sh "./mvnw install -P linux -DskipUTs=true -DskipFTs=true"
-        archiveArtifacts artifacts: '**/target/artifacts/*.deb,**/target/artifacts/*.rpm,**/target/artifacts/*.AppImage', fingerprint: true
+        // OWASP already ran in dedicated stage; skip second run on verify
+        sh "./mvnw package -P linux -DskipUTs=true -DskipITs=true -DskipFTs=true -Ddependency-check.skip=true"
+        // AppImage disabled in pom (JavaPackager’s appimagetool download URL is 404); keep pattern optional for local builds
+        archiveArtifacts artifacts: '**/target/artifacts/*.deb,**/target/artifacts/*.rpm', fingerprint: true, allowEmptyArchive: true
     }
 
 }

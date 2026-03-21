@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="AdaLovesLace Custom Rules"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset/2.0.0.0.xsd">
+  <description>
+    PMD 7 rules for AdaLovesLace. Uses the official quickstart set (practical for JavaFX/UI code)
+    plus NcssCount for Rule 000 size limits. Full category/*.xml sets are far stricter and were
+    never meaningfully applied while PMD 6 failed to parse Java 24 sources.
+  </description>
+
+  <rule ref="rulesets/java/quickstart.xml">
+    <!-- Java 21+ allows unnamed lambda parameters (__); rule expects [a-z]... -->
+    <exclude name="FormalParameterNamingConventions"/>
+  </rule>
+
+  <!-- Rule 000: method / class size (replaces removed ExcessiveMethodLength / ExcessiveClassLength) -->
+  <rule ref="category/java/design.xml/NcssCount">
+    <properties>
+      <property name="methodReportLevel" value="50"/>
+      <property name="classReportLevel" value="500"/>
+    </properties>
+  </rule>
+</ruleset>

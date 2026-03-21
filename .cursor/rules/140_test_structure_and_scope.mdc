@@ -1,0 +1,396 @@
+---
+description: Enforce strict separation of unit, integration, and functional tests in a JavaFX desktop application using Maven and JUnit 5
+globs:
+  - "src/test/java/**/*.java"
+  - "pom.xml"
+alwaysApply: true
+---
+
+# Test structure and scope rule
+
+When writing, modifying, moving, or reviewing tests, always enforce a strict separation between:
+- unit tests
+- integration tests
+- functional tests
+
+This separation is mandatory.
+Do not blur test levels.
+Do not place a test in the wrong package just because it is convenient.
+
+## 1. Mandatory directory structure
+
+The project uses these mandatory test locations:
+
+- unit tests:
+  `src/test/java/**/unittest/**/*.java`
+
+- integration tests:
+  `src/test/java/**/integrationtest/**/*.java`
+
+- functional tests:
+  `src/test/java/**/functionaltest/**/*.java`
+
+These locations are not suggestions.
+They are part of the project contract.
+
+Any new test must be placed in the correct directory based on its real purpose.
+
+Do not:
+- place integration tests under `unittest`
+- place functional tests under `integrationtest`
+- place unit tests in generic test folders when a specific folder exists
+- leave tests in ambiguous packages
+
+If an existing test is in the wrong location and you touch it, move it if reasonably possible.
+
+## 2. Strict meaning of each test category
+
+### Unit tests
+Unit tests verify isolated logic in a narrow scope.
+
+Unit tests are for:
+- pure domain logic
+- small validators
+- mappers in isolation
+- format/version helpers in isolation
+- simple application logic in isolation
+- individual classes with limited collaborators
+- edge cases of small components
+
+Unit tests should usually:
+- test one class or one narrow behavior
+- use mocks/fakes only when useful
+- avoid real filesystem I/O unless trivial and unavoidable
+- avoid real archive persistence flows
+- avoid JavaFX runtime startup
+- avoid UI interaction
+
+If the test mostly targets one class in isolation, it probably belongs in `unittest`.
+
+### Integration tests
+Integration tests verify collaboration between multiple real components across real boundaries.
+
+Integration tests are for:
+- application/use-case layer working with persistence
+- real `.lace` archive reading/writing through real code paths
+- protobuf serialization/deserialization through actual integration paths
+- legacy `save.xml` compatibility loading through real integration paths
+- archive/resource coherence
+- save/load round-trips through non-UI workflows
+- filesystem-based persistence with temp files
+- real interaction between multiple layers below the UI
+
+Integration tests should usually:
+- use real collaborators
+- use temp files/directories where appropriate
+- avoid JavaFX scene interaction unless truly unavoidable
+- avoid TestFX unless the test has clearly become functional
+- avoid excessive mocking
+
+If the test crosses a real architectural boundary and verifies collaboration of multiple real components, it belongs in `integrationtest`.
+
+### Functional tests
+Functional tests verify user-visible behavior through the UI.
+
+Functional tests are for:
+- JavaFX/TestFX scenarios
+- stage/scene/dialog behavior
+- button/menu workflows
+- visible validation messages
+- file-open/file-save behavior from the user perspective
+- user-facing feedback and UI interaction sequences
+
+Functional tests should usually:
+- use JavaFX/TestFX
+- interact with the UI as a user would
+- verify visible behavior
+- remain headless-CI friendly
+- avoid taking over responsibilities that belong to lower-level tests
+
+If the test starts JavaFX UI machinery or validates user-visible UI behavior, it belongs in `functionaltest`.
+
+## 3. Classification rule is mandatory
+
+Before creating or modifying a test, explicitly classify it:
+
+- Does it verify isolated logic? -> `unittest`
+- Does it verify real collaboration between non-UI components? -> `integrationtest`
+- Does it verify user-visible UI behavior? -> `functionaltest`
+
+Do not guess.
+Do not use vague labels.
+Do not call a test “integration” because it sounds more important.
+
+If the test does not clearly fit one category, the design or the test intent is probably unclear.
+Clarify it before proceeding.
+
+## 4. Hard rules for unit tests
+
+Tests under:
+`src/test/java/**/unittest/**/*.java`
+
+must not:
+- start JavaFX runtime unless there is a truly exceptional reason
+- use TestFX
+- test real UI workflows
+- test full `.lace` save/load collaboration through multiple layers
+- rely on broad filesystem integration
+- verify ZIP archive structure end-to-end unless the tested class is specifically an isolated archive helper
+- become disguised integration tests
+
+A unit test that exercises many real collaborators is misplaced.
+
+## 5. Hard rules for integration tests
+
+Tests under:
+`src/test/java/**/integrationtest/**/*.java`
+
+must:
+- cross at least one real architectural boundary
+- verify collaboration between multiple real components
+- use real persistence/serialization/archive logic where appropriate
+- prefer real temp files for `.lace` workflows when filesystem behavior is relevant
+
+Tests under `integrationtest` must not:
+- become JavaFX/TestFX UI tests
+- rely on stage/scene/dialog interaction unless the architecture truly forces it and the test is still non-UI at heart
+- use heavy mocking that turns them into unit tests
+- only test one tiny helper in isolation
+- be named integration tests while not integrating anything real
+
+If an integration test mocks nearly everything, it is probably not an integration test.
+
+## 6. Hard rules for functional tests
+
+Tests under:
+`src/test/java/**/functionaltest/**/*.java`
+
+must:
+- verify UI-visible behavior
+- use JavaFX/TestFX or other established UI test mechanisms when appropriate
+- remain focused on user-observable outcomes
+
+Functional tests must not:
+- absorb low-level persistence verification that belongs in integration tests
+- become the only place where archive correctness is tested
+- carry the full burden of protobuf/versioning/corruption checks if those can be verified more directly below the UI layer
+
+If a test mainly verifies persistence correctness without needing the UI, it does not belong in `functionaltest`.
+
+## 7. Package placement must follow real intent, not production package mirroring alone
+
+It is acceptable to mirror production packages inside:
+- `unittest`
+- `integrationtest`
+- `functionaltest`
+
+But the test type folder is mandatory and must remain explicit.
+
+Good examples:
+- `src/test/java/com/example/diagram/unittest/...`
+- `src/test/java/com/example/diagram/integrationtest/...`
+- `src/test/java/com/example/diagram/functionaltest/...`
+
+Do not bury test type under vague package names.
+The test type must stay obvious from the path.
+
+## 8. Naming conventions
+
+Test names must remain honest and aligned with the test type.
+
+### Unit test class names
+Prefer names such as:
+- `DiagramVersionParserTest`
+- `DiagramDescriptorMapperTest`
+- `LaceMetadataValidatorTest`
+
+### Integration test class names
+Prefer names such as:
+- `DiagramArchivePersistenceIT`
+- `LegacySaveXmlCompatibilityIT`
+- `LaceRoundTripPersistenceIT`
+
+### Functional test class names
+Prefer names such as:
+- `OpenDiagramWorkflowFT`
+- `SaveDiagramWorkflowFT`
+- `DiagramEditorValidationFT`
+
+If the repository already uses another suffix convention, keep it consistent.
+But the package placement remains mandatory even if suffixes are absent.
+
+Avoid vague names such as:
+- `Test1`
+- `IntegrationTest`
+- `FunctionalTest`
+- `ShouldWorkTest`
+
+## 9. Tagging is strongly encouraged
+
+Use JUnit 5 tags consistently if tagging exists or can be introduced cleanly.
+
+Preferred tags:
+- `@Tag("unit")`
+- `@Tag("integration")`
+- `@Tag("functional")`
+
+Recommended mapping:
+- tests in `unittest` -> `@Tag("unit")`
+- tests in `integrationtest` -> `@Tag("integration")`
+- tests in `functionaltest` -> `@Tag("functional")`
+
+If tags are introduced or used, they must match the directory placement.
+Do not tag a unit test as integration or the reverse.
+
+## 10. Maven test execution must respect the separation
+
+When touching `pom.xml`, preserve or improve a clean Maven strategy that respects the test split.
+
+Requirements:
+- unit, integration, and functional tests must be distinguishable by directory/package pattern and optionally by tags
+- Maven configuration must remain understandable
+- do not create overlapping or ambiguous test selection rules
+- do not make the build silently skip a whole category by mistake
+- do not let one plugin accidentally run all categories together unless that is a deliberate and documented project choice
+
+If Maven filtering by includes/excludes is used, it must align with:
+- `**/unittest/**/*.java`
+- `**/integrationtest/**/*.java`
+- `**/functionaltest/**/*.java`
+
+If tag-based execution is used, it must also align with the same separation.
+
+## 11. No ambiguous tests in generic locations
+
+Do not create tests in generic locations such as:
+- `src/test/java/.../test/...`
+- `src/test/java/.../tests/...`
+- `src/test/java/.../misc/...`
+
+when the real type is known.
+
+This project has an explicit structure.
+Use it.
+
+If an existing ambiguous test is modified and its real role is clear, move it into:
+- `unittest`
+- `integrationtest`
+- or `functionaltest`
+
+when reasonably possible.
+
+## 12. One test should not try to be all three levels
+
+Do not write hybrid tests that try to act as:
+- a unit test
+- an integration test
+- and a functional test
+at the same time.
+
+Examples of bad hybrids:
+- starting JavaFX UI while also asserting low-level protobuf archive structure
+- using temp files and real persistence and then mocking core collaborators anyway
+- doing UI clicks and then deeply validating ZIP entries and mapper internals in the same test
+
+Split such tests.
+Each layer has its job.
+
+## 13. What Cursor must do when asked to write tests
+
+When asked to create tests, always decide first:
+- which test level is appropriate
+- which directory is correct
+- whether an existing test should be moved
+- whether the scenario needs unit, integration, or functional coverage
+
+Do not default to `src/test/java/...` without the explicit subpackage.
+Do not place all tests under the same category for convenience.
+
+## 14. What Cursor must do when modifying existing tests
+
+When touching an existing test:
+- verify that its current package matches its real purpose
+- if it does not, move it when reasonably possible
+- improve the test toward the standards of its category
+- remove cross-category confusion
+- strengthen assertions appropriate to that level
+
+Do not leave a misclassified test in place just because moving it takes effort.
+
+## 15. Assertions must fit the test level
+
+### Unit tests
+Prefer precise, narrow assertions on isolated behavior.
+
+### Integration tests
+Prefer assertions on:
+- real collaboration outcomes
+- archive contents when relevant
+- semantic round-trip behavior
+- explicit failures through real integration paths
+
+### Functional tests
+Prefer assertions on:
+- visible text
+- button/menu state
+- dialogs
+- scene changes
+- user-observable validation and workflow outcomes
+
+Do not use UI assertions in unit tests.
+Do not rely only on file existence in integration tests.
+Do not assert mapper internals in functional tests.
+
+## 16. Fixture strategy must fit the test level
+
+### Unit tests
+Use minimal fixtures and focused mocks/fakes when needed.
+
+### Integration tests
+Use real temp files, real archive fixtures, and real collaborators where appropriate.
+
+### Functional tests
+Use UI-safe fixtures and stable user-facing setup, avoiding low-level persistence obsession in the test body.
+
+Do not use the same fixture style blindly across all test categories.
+
+## 17. Separation must remain visible to humans
+
+A developer should be able to understand from the path alone whether a test is:
+- unit
+- integration
+- or functional
+
+This is one of the reasons the directory structure exists.
+
+Do not weaken that visibility.
+
+## 18. Mandatory review before finalizing any new test
+
+Before finalizing any generated or modified test, explicitly check:
+
+- Is this really the correct test level?
+- Is the file in the correct directory?
+- Is the test using the right tools for its level?
+- Are the assertions appropriate for its level?
+- Is the fixture strategy appropriate for its level?
+- Is this test overlapping too much with another category?
+- Would another developer agree with the classification immediately?
+
+If not, reclassify or split the test.
+
+## 19. Output expectations
+
+Generated or modified tests must:
+- respect the exact directory split:
+  - `unittest`
+  - `integrationtest`
+  - `functionaltest`
+- keep unit tests narrow
+- keep integration tests real and non-UI by default
+- keep functional tests UI-focused
+- avoid category confusion
+- keep Maven execution coherent
+- improve existing misclassified tests when touched
+
+If the existing repository contains weaker or inconsistent patterns, improve the touched area toward this standard instead of copying the inconsistency.

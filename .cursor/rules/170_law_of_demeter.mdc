@@ -1,0 +1,127 @@
+# Law of Demeter — Strict Enforcement Rule
+
+## Purpose
+
+Ensure that code follows the Law of Demeter (principle of least knowledge) in a meaningful and non-dogmatic way.
+
+The goal is to reduce structural coupling, not to blindly eliminate method chains.
+
+---
+
+## Core Rule
+
+A method should only interact with:
+- its own fields
+- its own methods
+- its direct parameters
+- objects it creates
+
+It must not depend on deep internal structure of distant collaborators.
+
+---
+
+## Violations to Detect
+
+Flag patterns such as:
+
+- `a.getB().getC().getD()`
+- `controller.getService().getRepository().getX()`
+- repeated deep navigation across layers
+- APIs exposing nested internal structures
+- domain objects exposing technical sub-objects
+- application code traversing persistence or serialization graphs
+- tests navigating deep object graphs to assert behavior
+
+---
+
+## What to Do When Violations Are Found
+
+1. Identify the real owner of the behavior
+2. Move behavior to that owner when it makes sense
+3. Replace structure-oriented APIs with behavior-oriented APIs
+4. Reduce exposure of internal object graphs
+
+---
+
+## Important Constraints
+
+### DO NOT:
+
+- blindly replace chains with forwarding methods
+- create pass-through methods with no semantic value
+- inflate classes with dozens of trivial wrappers
+- introduce abstraction layers without clear ownership gain
+- move technical concerns into domain
+- break architectural boundaries
+- degrade performance in critical paths
+
+### DO:
+
+- refactor repeated or systemic violations first
+- keep local, harmless value-object access when appropriate
+- prefer intention-revealing methods
+- improve ownership clarity
+- reduce cross-layer knowledge
+
+---
+
+## Special Layer Rules
+
+### UI (JavaFX controllers)
+- must not navigate deep application or persistence graphs
+- should delegate to application/use-case layer
+
+### Application layer
+- should not traverse protobuf, ZIP, or XML internals
+- should orchestrate, not drill into structures
+
+### Domain
+- must not depend on UI, protobuf, XML, or archive structure
+- must not expose technical internals
+
+### Persistence / Serialization
+- can traverse structures it owns
+- must encapsulate that traversal
+- must not leak internal structure to other layers
+
+### Tests
+- must not normalize deep graph traversal
+- should use builders, helpers, and semantic assertions
+- should not require internal navigation to assert behavior
+
+---
+
+## Refactoring Guidelines
+
+When improving code:
+
+- prefer moving behavior over adding getters
+- prefer reducing knowledge over hiding it
+- prefer clarity over strict rule enforcement
+- avoid introducing unnecessary indirection
+- maintain performance in hot paths
+
+---
+
+## Heuristics
+
+Good signs:
+- fewer deep chains
+- clearer ownership of behavior
+- thinner controllers
+- domain free of technical concerns
+
+Bad signs:
+- more methods but same coupling
+- wrapper explosion
+- unclear responsibilities
+- increased indirection
+- harder-to-read code
+
+---
+
+## Enforcement Level
+
+Strict but pragmatic.
+
+The rule must improve the codebase, not make it worse.

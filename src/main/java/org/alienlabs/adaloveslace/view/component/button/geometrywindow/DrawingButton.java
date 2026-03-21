@@ -1,5 +1,6 @@
 package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 
+import javafx.event.EventHandler;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
@@ -25,7 +26,11 @@ public class DrawingButton extends ToggleButton {
   public DrawingButton(App app, String buttonLabel) {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onSetDrawModeAction(app));
+    // TestFX may trigger ActionEvent instead of a raw mouse click on some controls.
+    // Support both so robot clicks reliably switch modes.
+    this.setOnAction(_ -> onSetDrawModeAction(app));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
+    this.setId("drawingButton");
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(resourceBundle.getString("DRAWING_BUTTON_TOOLTIP"));
@@ -38,9 +43,16 @@ public class DrawingButton extends ToggleButton {
 
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
     GridEvents.removeEventsFromGrid(app);
-    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
-    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
-    app.getMovablePane().setOnMouseExited(GridEvents.getGridHoverExitEventHandler(app));
+    // Idempotent: tests and users may choose drawing mode more than once; remove before add so handlers
+    // are not stacked (each duplicate would fire draw logic again for one physical click).
+    EventHandler<MouseEvent> click = GridEvents.getMouseClickEventHandler(app);
+    EventHandler<MouseEvent> hover = GridEvents.getGridHoverEventHandler(app);
+    EventHandler<MouseEvent> exit = GridEvents.getGridHoverExitEventHandler(app);
+    app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, click);
+    app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_MOVED, hover);
+    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, click);
+    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, hover);
+    app.getMovablePane().setOnMouseExited(exit);
     app.getOptionalDotGrid().clearHandles();
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {

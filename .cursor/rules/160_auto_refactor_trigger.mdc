@@ -1,0 +1,320 @@
+---
+description: Force refactoring before feature work when structural debt, boundary violations, flaky tests, or hot-path waste would make new code harmful
+globs:
+  - "src/**/*.java"
+  - "pom.xml"
+alwaysApply: true
+---
+
+# Auto-refactor trigger
+
+When asked to add, modify, or extend behavior, first evaluate whether the touched area is structurally sound enough to receive new code.
+
+If the touched area is not sound enough, refactor first.
+Do not stack new code on top of structural debt when that debt directly affects the requested change.
+
+This rule has higher priority than feature convenience.
+Do not add code quickly if doing so would deepen architectural mess, testing confusion, or hot-path waste.
+
+## 1. Core principle
+
+Before implementing a feature or modification, ask:
+
+- Is the touched area in the right architectural layer?
+- Are responsibilities already mixed?
+- Are tests for this area weak, misclassified, or missing?
+- Is the code hard to extend without copy-paste?
+- Is the current design leaking UI, persistence, protobuf, JAXB, or archive details across boundaries?
+- Is the code already flaky, confusing, or performance-wasteful in a hot path?
+
+If the answer is yes to any of these in a way that materially affects the requested change:
+- refactor first
+- then implement the feature
+- then add or improve tests
+
+Do not rationalize bad foundations.
+Do not say “good enough for now” when the debt is directly in the path of the requested change.
+
+## 2. When refactoring is mandatory
+
+Refactoring is mandatory before adding new code when one or more of the following are true in the touched area.
+
+### 2.1 Boundary violations
+- JavaFX controller contains application, persistence, serialization, or archive logic
+- domain code depends on JavaFX, protobuf, JAXB, ZIP, or file workflow concerns
+- protobuf-generated classes leak into domain or broad application APIs
+- legacy XML compatibility logic is mixed into normal save/load code
+- persistence logic is scattered across unrelated classes
+
+### 2.2 Test-structure violations
+- a test is in the wrong category (`unittest`, `integrationtest`, `functionaltest`)
+- an “integration test” is mostly mocks
+- a “functional test” is carrying low-level persistence assertions
+- a “unit test” crosses real persistence boundaries
+- a touched area has no meaningful tests at the right level
+
+### 2.3 Design rigidity
+- feature extension would require copy-paste into multiple places
+- class or method is already too large or too mixed in responsibility
+- adding the feature would require threading more technical types through unrelated layers
+- naming is so vague that responsibility is unclear
+- the only way to add the feature is to deepen a god class
+
+### 2.4 Failure-behavior weakness
+- corrupted/invalid/unsupported data handling is implicit, vague, or swallowed
+- adding the feature would require extending silent fallback behavior
+- error translation between layers is incoherent
+- tests do not cover key failure behavior in the touched flow
+
+### 2.5 Hot-path performance waste
+- the touched area is on a real `.lace` hot path
+- current code performs obvious large unnecessary copies
+- current code constructs duplicate graphs unnecessarily
+- current code repeatedly scans archives/resources wastefully
+- current code performs heavy work on or too close to UI logic
+- current logging is too expensive for the hot path
+
+If the new change touches such an area, refactor first.
+
+## 3. When refactoring is strongly encouraged
+
+Refactoring is strongly encouraged, even if not strictly mandatory, when:
+- the touched method is hard to read in one pass
+- names hide actual responsibilities
+- similar logic is duplicated inside the same layer
+- tests exist but are weak and easy to strengthen while touching the area
+- a small extraction would sharply clarify boundaries
+
+Do not over-engineer minor cleanup.
+But do not ignore easy structural wins when already touching the area.
+
+## 4. When not to over-refactor
+
+Do not turn every small change into a giant rewrite.
+
+Do not refactor unrelated areas just because they are imperfect.
+
+Refactor only:
+- the touched area
+- the boundary immediately around it
+- the test structure needed to support the change safely
+
+Keep refactoring proportionate and relevant.
+
+Bad behavior:
+- broad architecture rewrite unrelated to the request
+- moving dozens of unrelated classes for style reasons
+- replacing simple code with abstraction theater
+- changing everything because “the whole project could be cleaner”
+
+Good behavior:
+- extracting a use-case from a fat controller before adding save/open logic
+- isolating protobuf mapping before extending descriptor fields
+- moving a misclassified test into `integrationtest` before expanding archive round-trip coverage
+- introducing a focused archive collaborator before adding more `.lace` entry logic
+
+## 5. Mandatory refactor triggers by area
+
+### 5.1 UI / JavaFX
+Refactor before adding new UI behavior if:
+- the controller directly opens files, scans ZIP entries, parses protobuf, or invokes JAXB
+- UI code contains business rules that belong in domain or application layer
+- long-running file logic is too entangled with UI state
+- functional tests must inspect low-level archive details because boundaries are missing
+
+Preferred action:
+- extract application/use-case services
+- move persistence and serialization concerns out of controllers
+- keep UI focused on interaction and feedback
+
+### 5.2 Application / use-case layer
+Refactor before adding new behavior if:
+- one class orchestrates unrelated workflows
+- application code exposes protobuf/JAXB/archive internals to callers
+- error handling is inconsistent and impossible to reason about
+- file workflows are duplicated across multiple entry points
+
+Preferred action:
+- split use cases by intention
+- stabilize operation boundaries
+- centralize workflow orchestration where it belongs
+
+### 5.3 Domain
+Refactor before adding new domain behavior if:
+- domain objects carry framework or persistence concerns
+- invariants are buried in controllers or mappers
+- technical convenience has replaced domain meaning
+- changes in protobuf/archive shape force broad domain churn
+
+Preferred action:
+- restore domain purity
+- move technical details outward
+- make invariants explicit in domain/domain services
+
+### 5.4 Persistence / serialization
+Refactor before adding new format behavior if:
+- protobuf and legacy XML responsibilities are mixed
+- archive entry precedence is implicit or duplicated
+- save and load paths are inconsistent
+- mapping logic is scattered
+- resource-reference validation is unclear
+- versioning logic is fragile or duplicated
+
+Preferred action:
+- isolate codecs, mappers, validators, archive readers/writers
+- make precedence and version handling explicit
+- keep legacy XML input-only and isolated
+
+### 5.5 Tests
+Refactor before adding new tests if:
+- the test is about to be placed in the wrong category
+- a helper is causing multiple tests to become unreadable
+- UI tests are being used to compensate for missing integration tests
+- assertions are too weak to justify the new feature
+- `Thread.sleep` exists in the touched JavaFX/TestFX area
+
+Preferred action:
+- move the test to the correct package
+- split mixed-purpose tests
+- create focused helpers/builders/assertion utilities
+- strengthen assertions before expanding coverage
+
+## 6. Refactor-before-feature workflow
+
+When a trigger is detected, proceed in this order:
+
+1. identify the structural problem in the touched area
+2. perform the minimal meaningful refactor needed
+3. add or improve tests for the refactored boundary
+4. implement the requested feature/change
+5. add or update tests for the new behavior
+6. clean up any temporary duplication introduced during the transition
+
+Do not:
+- add the feature first and promise to clean up later
+- leave both old and new weak paths in place
+- accumulate “temporary” compatibility code without an exit
+
+## 7. Test-guided refactoring is preferred
+
+When possible:
+- write or improve the right tests first
+- refactor behind those tests
+- then add the new behavior
+
+Preferred test order:
+- unit tests for isolated logic
+- integration tests for real collaboration
+- functional tests only for UI-visible behavior
+
+Use the project’s mandatory package split:
+- `src/test/java/**/unittest/**/*.java`
+- `src/test/java/**/integrationtest/**/*.java`
+- `src/test/java/**/functionaltest/**/*.java`
+
+Do not deepen test confusion while refactoring.
+
+## 8. Explicit triggers that must never be ignored
+
+The following must always trigger refactoring before adding more code in the touched area:
+
+- protobuf types escaping into domain APIs
+- JAXB used in the normal save path
+- persistence logic inside JavaFX controllers
+- silent fallback from invalid `descriptor.pb` to `save.xml`
+- new archive logic copied into multiple places
+- integration tests built mostly from mocks
+- functional tests depending on `Thread.sleep`
+- low-level archive assertions living only in functional tests
+- hot-path code performing obvious giant unnecessary copies
+
+These are not harmless shortcuts.
+Treat them as structural defects.
+
+## 9. Acceptable temporary duplication during refactoring
+
+Some short-lived duplication is acceptable during refactoring if it helps create a clean boundary.
+But it must be:
+- localized
+- intentional
+- followed by cleanup in the same change when possible
+
+Do not leave behind:
+- parallel save paths of unclear authority
+- duplicate archive selection logic
+- duplicate version checks
+- duplicate test helpers doing the same thing in different packages
+
+Temporary duplication is only acceptable as a bridge, not as an endpoint.
+
+## 10. Refactor size control
+
+Refactoring must be big enough to matter, but small enough to remain reviewable.
+
+Prefer:
+- focused extraction
+- boundary cleanup
+- moving logic to the right layer
+- introducing one clear collaborator instead of many fake abstractions
+
+Avoid:
+- giant speculative rewrites
+- interface explosions
+- abstract factories with one implementation
+- package churn without behavior gain
+
+Refactor for clarity and extension, not for architecture cosplay.
+
+## 11. Honest decision rule
+
+If you are tempted to skip refactoring, ask:
+
+- Am I avoiding the refactor because it is unnecessary, or because it is inconvenient?
+- Will this new code make the touched area harder to understand?
+- Am I about to put logic in the wrong layer because it is faster?
+- Am I expanding weak tests instead of fixing their level?
+- Am I normalizing a bad boundary?
+
+If the reason is convenience:
+- refactor first
+
+Do not optimize for immediate code generation speed.
+Optimize for not regretting the change later.
+
+## 12. Final self-check before completing a change
+
+Before finalizing any feature or modification, explicitly verify:
+
+### Structure
+- Did I add code on a clean enough boundary?
+- If not, did I refactor first?
+
+### Tests
+- Are the right tests present at the right level?
+- Did I move or split misclassified tests if needed?
+
+### Boundaries
+- Is UI still thin?
+- Is domain still pure?
+- Is protobuf isolated?
+- Is legacy XML isolated?
+
+### Correctness
+- Are failure and precedence behaviors explicit?
+
+### Performance
+- Did I avoid deepening obvious waste in hot paths?
+
+If any answer is no, improve the touched area before stopping.
+
+## 13. Output expectations
+
+Generated or modified code must show this behavior:
+- detect structural debt in the path of a requested change
+- refactor first when that debt matters
+- then implement the change cleanly
+- then verify it with the right tests
+
+Do not add features on top of broken boundaries.
+Do not preserve painful design in the exact area being extended.
+If the existing codebase is weak, improve the touched area before building on it.

@@ -179,26 +179,22 @@ public class Diagram {
         logger.info("Undo step, current step={}, total steps={}", 
                 this.getCurrentStepIndex(), 
                 this.getAllSteps().size());
-        
+
+        List<Node> nodeListToRemove = new ArrayList<>();
+
+        if ((!this.getAllSteps().isEmpty() ) && (this.getCurrentStepIndex() > 0)) {
+            for (Knot k : this.getAllSteps().get(this.getCurrentStepIndex() - 1).getAllVisibleKnots()) {
+                nodeListToRemove.add(k.getImageView());
+                removeKnotDecorations(nodeListToRemove, k);
+            }
+        }
+
         int previousStepIndex = this.getCurrentStepIndex();
         if (this.getCurrentStepIndex() > 1) {
             this.setCurrentStepIndex(this.getCurrentStepIndex() - 1);
             logger.info("Undo: Decremented stepIndex from {} to {}", previousStepIndex, this.getCurrentStepIndex());
         } else {
             logger.info("Undo: Cannot go below step 1, staying at step {}", this.getCurrentStepIndex());
-        }
-
-        List<Node> nodeListToRemove = new ArrayList<>();
-
-        if (!this.getAllSteps().isEmpty()) {
-            for (Step s : this.getAllSteps().subList(
-                    this.getCurrentStepIndex(),
-                    this.getAllSteps().size())) {
-                for (Knot k : s.getAllVisibleKnots()) {
-                    nodeListToRemove.add(k.getImageView());
-                    removeKnotDecorations(nodeListToRemove, k);
-                }
-            }
         }
 
         Step currentStep = this.getCurrentStep();
@@ -313,23 +309,18 @@ public class Diagram {
     public void redoLastStep(App app, boolean layoutChildren) {
         logger.info("Redo 0 step, current step={}", this.getCurrentStepIndex());
 
+        List<Node> nodeListToRemove = new ArrayList<>();
+
+        if ((!this.getAllSteps().isEmpty()) && (this.getCurrentStepIndex() > 0)) {
+            for (Knot k : this.getAllSteps().get(this.getCurrentStepIndex() - 1).getAllVisibleKnots()) {
+                nodeListToRemove.add(k.getImageView());
+                removeKnotDecorations(nodeListToRemove, k);
+            }
+        }
+
         if (this.getCurrentStepIndex() <
                 this.getAllSteps().size()) {
             this.setCurrentStepIndex(this.getCurrentStepIndex() + 1);
-        }
-
-        List<Node> nodeListToRemove = new ArrayList<>();
-
-        if (!this.getAllSteps().isEmpty()) {
-            for (Step s : this.getAllSteps().subList(
-                    0,
-                    this.getCurrentStepIndex())
-            ) {
-                for (Knot k : s.getAllVisibleKnots()) {
-                    nodeListToRemove.add(k.getImageView());
-                    removeKnotDecorations(nodeListToRemove, k);
-                }
-            }
         }
 
         List<Knot> displayedCopy = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
@@ -348,11 +339,9 @@ public class Diagram {
                 if (app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot)) {
                     displayedCopy.remove(knot);
                     displayedCopy.add(knotCopy);
-                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setDisplayedKnots(displayedCopy);
                 } else {
                     selectedCopy.remove(knot);
                     selectedCopy.add(knotCopy);
-                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedCopy);
                 }
             } else {
                 Knot knotCopy = this.nodeUtil.copyKnot(knot);
@@ -367,11 +356,9 @@ public class Diagram {
                 if (this.getCurrentStep().getDisplayedKnots().contains(knot)) {
                     displayedCopy.remove(knot);
                     displayedCopy.add(knotCopy);
-                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setDisplayedKnots(displayedCopy);
                 } else {
                     selectedCopy.remove(knot);
                     selectedCopy.add(knotCopy);
-                    app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedCopy);
                 }
             }
 
@@ -380,6 +367,8 @@ public class Diagram {
         }
 
         if (layoutChildren) {
+            app.getOptionalDotGrid().getDiagram().getCurrentStep().setDisplayedKnots(displayedCopy);
+            app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedCopy);
             app.getMovablePane().getChildren().removeAll(nodeListToRemove);
             app.getOptionalDotGrid().layoutChildren(); // Display nodes from new state
         }

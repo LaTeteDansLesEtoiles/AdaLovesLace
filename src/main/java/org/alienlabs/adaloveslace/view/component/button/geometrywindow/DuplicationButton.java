@@ -28,6 +28,8 @@ public class DuplicationButton extends ToggleButton {
   public DuplicationButton(App app, String buttonLabel) {
     super(buttonLabel);
     this.setOnMouseClicked(event -> onSetDuplicationModeAction(app));
+    // Ensure TestFX robot clicks trigger the same behavior.
+    this.setOnAction(_ -> onSetDuplicationModeAction(app));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
     this.setId("duplicationButton");
 

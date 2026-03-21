@@ -1,0 +1,199 @@
+---
+description: Protect domain boundaries in a JavaFX desktop application handling .lace archives, protobuf serialization, and legacy XML compatibility
+globs:
+  - "src/main/**/*.java"
+alwaysApply: true
+---
+
+# Domain boundaries rule
+
+When writing or modifying production code, always protect the domain model from UI, persistence, and serialization leakage.
+
+## 1. Main objective
+
+The domain model must represent the business meaning of the application, not the technical shape of:
+- JavaFX controls
+- protobuf messages
+- JAXB/XML classes
+- ZIP archive entries
+- file chooser concerns
+- desktop UI state
+
+Do not let technical infrastructure become the domain model.
+
+## 2. Domain purity
+
+Domain classes must stay free from dependencies on:
+- JavaFX UI classes
+- TestFX
+- protobuf-generated classes
+- JAXB annotations and JAXB runtime types for current persistence logic
+- ZIP/archive-specific APIs as part of the domain model
+- application dialog services
+- file chooser abstractions
+
+The domain layer may use standard Java types and carefully chosen shared abstractions, but it must not be shaped around framework details.
+
+## 3. No protobuf leakage into domain
+
+Generated protobuf classes are serialization-layer artifacts.
+
+Do not:
+- store protobuf messages inside domain objects
+- expose protobuf message types in domain APIs
+- return protobuf-generated types from domain methods
+- pass protobuf message builders through the application/domain layers
+
+Instead:
+- map protobuf messages to domain objects explicitly
+- keep protobuf confined to serialization/persistence code
+
+## 4. No JAXB leakage into domain
+
+Legacy XML compatibility exists only for reading old archives.
+
+Do not:
+- annotate domain classes for legacy JAXB persistence unless the codebase has an unavoidable transition state
+- treat JAXB-bound classes as the domain model
+- allow new domain APIs to depend on legacy XML concerns
+
+If legacy XML compatibility needs dedicated classes, isolate them clearly.
+
+## 5. No JavaFX leakage into domain
+
+Do not let domain objects depend on:
+- `Node`
+- `Stage`
+- `Scene`
+- `ObservableList`
+- JavaFX properties as the default domain representation
+- UI selection or focus state
+- control-specific formatting state
+
+If the UI needs observable wrappers or presentation-specific state, place that in a view model or presentation model layer.
+
+## 6. Domain invariants belong in domain code
+
+Business rules and domain invariants should live in domain or dedicated domain services, not in:
+- controllers
+- protobuf mappers
+- archive readers
+- XML compatibility loaders
+- random utility classes
+
+Do not bury business meaning inside technical conversion code.
+
+## 7. Mapping boundaries must be explicit
+
+Any crossing between:
+- domain <-> protobuf
+- domain <-> legacy XML compatibility model
+- domain <-> UI form/presentation model
+- domain <-> persistence DTO
+
+must be explicit and testable.
+
+Do not silently merge layers by sharing the same mutable structure everywhere.
+
+## 8. Persistence model is not domain model
+
+A persisted descriptor structure may resemble the domain, but it is not automatically the same thing.
+
+Treat persisted structures as:
+- serialization schema objects
+- persistence DTOs
+- compatibility DTOs
+
+Map them explicitly into domain objects that express business meaning.
+
+## 9. UI state is not domain state
+
+Do not mix into domain classes:
+- currently selected node
+- expanded/collapsed tree state
+- panel visibility
+- unsaved-changes badges
+- drag preview coordinates
+- temporary input validation markers
+
+Those belong to UI/presentation logic, not to the core diagram model unless truly part of the business meaning.
+
+## 10. Archive concerns are not domain concerns
+
+Do not embed archive entry names, ZIP handling rules, descriptor precedence rules, or format metadata logic directly into domain classes.
+
+The domain should not know whether it came from:
+- `descriptor.pb`
+- `save.xml`
+- a ZIP archive
+- a future descriptor format
+
+Those are persistence concerns.
+
+## 11. Avoid anemic but also avoid technical pollution
+
+The domain should not be a dumb bag of getters/setters if meaningful invariants and operations exist.
+At the same time, do not compensate by filling domain classes with technical persistence/UI concerns.
+
+Prefer:
+- meaningful domain behavior
+- explicit invariants
+- clean domain-oriented methods
+
+Avoid:
+- technical helper clutter in domain objects
+- serialization-specific convenience methods in domain classes
+- UI formatting logic in domain methods
+
+## 12. Naming must reflect domain meaning
+
+Use names that express domain concepts, not infrastructure leakage.
+
+Prefer:
+- `Diagram`
+- `PatternElement`
+- `ThreadPath`
+- `DiagramMetadata`
+
+Avoid names in domain code such as:
+- `ProtoDiagram`
+- `XmlDiagram`
+- `ZipDiagram`
+unless they explicitly belong to non-domain layers.
+
+## 13. Changes in technical format must not force domain churn
+
+A change in persistence format, versioning, archive structure, or UI technology should not require broad invasive changes in the domain model.
+
+If changing protobuf schema or archive structure requires changing many domain classes, the boundary is probably weak and should be improved.
+
+## 14. Tests should reinforce boundaries
+
+When touching domain-related code, prefer tests that:
+- verify domain invariants and behavior directly
+- verify mapper correctness separately
+- avoid forcing domain tests to go through JavaFX or archive infrastructure unnecessarily
+
+Do not normalize bad boundaries by only testing everything end-to-end.
+
+## 15. Mandatory cleanup when touching weak boundaries
+
+When modifying an area where:
+- protobuf types leak into application/domain code
+- JAXB compatibility code leaks into normal domain flow
+- JavaFX properties leak into domain
+- archive entry logic leaks into domain classes
+
+improve the boundary if reasonably possible.
+
+Do not add new code that deepens the leakage.
+
+## 16. Output expectations
+
+Generated or modified code must:
+- keep the domain model technically clean
+- keep protobuf/JAXB/JavaFX/archive concerns outside the domain
+- preserve explicit mapping boundaries
+- improve long-term maintainability
+
+If the existing codebase contains weaker patterns, improve the touched area toward this standard instead of copying them.

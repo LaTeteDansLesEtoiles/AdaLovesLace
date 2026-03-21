@@ -1,0 +1,243 @@
+---
+description: Enforce clean .lace serialization architecture with protobuf as primary format and legacy save.xml as input-only compatibility path
+globs:
+  - "src/main/**/*.java"
+alwaysApply: true
+---
+
+# .lace serialization rule
+
+When writing or modifying `.lace` serialization code, always follow these rules.
+
+## 1. Core format policy
+
+The `.lace` descriptor policy is:
+
+- primary persisted descriptor format: protobuf binary
+- primary descriptor entry name: `descriptor.pb`
+- legacy compatibility input entry name: `save.xml`
+- human-readable descriptor form: optional and debug-only
+- XML/JAXB is not the default runtime save format
+
+Do not reintroduce XML as the normal output format.
+
+## 2. Archive contract awareness
+
+A `.lace` file is a ZIP archive with a renamed extension.
+
+Serialization code must respect the archive contract explicitly:
+- detect descriptor entries
+- enforce precedence
+- handle metadata/versioning
+- coordinate resource/image entries coherently
+
+Do not hide core archive rules in scattered ad hoc code.
+
+## 3. Descriptor loading precedence
+
+Loading must follow this precedence:
+- load `descriptor.pb` if present
+- otherwise load `save.xml` through the legacy compatibility path
+- otherwise fail explicitly
+
+If both are present:
+- `descriptor.pb` wins
+- this behavior must stay stable
+- this behavior must remain testable
+- do not silently switch precedence
+
+## 4. Legacy XML is compatibility input only
+
+Legacy XML/JAXB support exists only to keep old `.lace` archives readable.
+
+Therefore:
+- keep legacy XML logic isolated in a dedicated compatibility package
+- do not use JAXB in the normal save path
+- do not let new protobuf code depend on JAXB
+- do not let application services treat XML and protobuf as equal primary formats
+
+Legacy XML is an input compatibility path, not a co-equal primary format.
+
+## 5. Protobuf must not become the domain model
+
+Generated protobuf classes must remain serialization-layer types.
+
+Do not:
+- expose protobuf messages as the main domain objects
+- pass protobuf-generated types through large parts of the application
+- couple controllers or domain services directly to protobuf messages
+
+Instead:
+- keep protobuf messages in serialization code
+- map explicitly to domain or persistence DTOs
+- keep the rest of the application insulated from protobuf details
+
+## 6. Explicit mapping boundary
+
+All mapping between:
+- protobuf messages
+- legacy XML compatibility model
+- domain model
+
+must be explicit, centralized, and testable.
+
+Avoid:
+- scattered field conversion logic
+- direct construction of domain objects across many unrelated classes
+- silent defaulting that hides data loss
+
+If mapping is non-trivial, give it a dedicated mapper class with focused responsibility.
+
+## 7. Versioning must be explicit
+
+Serialization/version checks must be explicit and intentional.
+
+Support:
+- current known descriptor version
+- explicit failure on unsupported future versions
+- clear behavior when metadata/version information is missing or inconsistent, according to the project’s format contract
+
+Do not silently ignore version mismatches.
+
+Do not attempt hidden compatibility hacks unless deliberately designed and documented.
+
+## 8. Error handling must be precise
+
+Serialization failures should be precise and testable.
+
+Examples:
+- malformed protobuf payload
+- truncated descriptor
+- unsupported descriptor version
+- invalid archive structure
+- missing required resource references
+- missing descriptor entry
+
+Do not swallow these failures.
+Do not replace all low-level failures with vague generic exceptions.
+Wrap errors only when doing so improves clarity at the application boundary.
+
+## 9. Human-readable format is secondary
+
+A human-readable descriptor representation may exist for debug/development, for example JSON export or dump.
+
+If implemented:
+- it must be clearly marked as debug/development-oriented
+- it must be optional
+- it must not become the normal save format
+- it must not affect normal load/save behavior by default
+
+Do not blur the line between production persistence and debug tooling.
+
+## 10. Resource references must remain coherent
+
+Serialization code must preserve coherent references between descriptor data and embedded resources/images.
+
+When saving:
+- required resources must be written when contractually needed
+- resource references in the descriptor must match archive contents
+
+When loading:
+- missing required resources must fail explicitly
+- do not silently ignore broken references unless the product explicitly supports degraded loading
+
+## 11. Keep deterministic behavior where practical
+
+Where reasonably achievable, keep serialization behavior deterministic:
+- stable entry names
+- stable required metadata structure
+- stable precedence behavior
+- stable semantic round-trip
+
+Do not over-engineer byte-perfect determinism if the format contract does not require it, but avoid unnecessary nondeterminism.
+
+## 12. Avoid unnecessary copies and intermediate representations
+
+Serialization code is performance-sensitive.
+
+For large descriptors:
+- avoid unnecessary buffering and copying
+- avoid decoding into multiple large intermediate structures if avoidable
+- avoid building duplicate object graphs
+- keep read/write paths efficient and direct
+
+Do not sacrifice architecture for premature micro-optimization, but do eliminate obvious waste.
+
+## 13. Keep save/load responsibilities explicit
+
+Prefer focused classes such as:
+- archive reader/writer
+- descriptor serializer/deserializer
+- version validator
+- mapper(s)
+- compatibility loader
+
+Avoid god classes that:
+- inspect ZIP entries
+- decode protobuf
+- decode XML
+- validate versions
+- map to domain
+- handle resources
+- perform logging
+- expose UI-friendly messages
+all in one place
+
+## 14. Logging must be low-noise and useful
+
+Logging in serialization/persistence code should help developers diagnose:
+- descriptor selection
+- version issues
+- corrupted descriptor failures
+- missing resources
+- performance-sensitive phases
+
+Keep logs:
+- concise
+- debug-oriented for noisy steps
+- free of redundant chatter
+
+Do not log gigantic descriptor contents.
+
+## 15. Tests must drive serialization correctness
+
+Whenever touching serialization code, improve or preserve tests for:
+- protobuf load/save
+- legacy XML loading
+- precedence when both formats exist
+- missing descriptor
+- corrupted descriptor
+- version mismatch
+- semantic equivalence
+- resource coherence
+- legacy load then new save behavior
+
+Do not modify serialization code without strengthening confidence through tests.
+
+## 16. Naming must reflect intent
+
+Prefer names such as:
+- `LaceArchiveReader`
+- `LaceArchiveWriter`
+- `DiagramDescriptorProtobufCodec`
+- `LegacySaveXmlDiagramLoader`
+- `DiagramDescriptorVersionValidator`
+- `DiagramDescriptorMapper`
+
+Avoid vague names such as:
+- `Parser`
+- `Manager`
+- `Util`
+- `Helper`
+when responsibility is actually specific.
+
+## 17. Output expectations
+
+Generated or modified serialization code must:
+- keep protobuf as the primary persisted format
+- keep legacy `save.xml` as input-only compatibility
+- preserve clear mapping boundaries
+- preserve explicit version/error behavior
+- remain performant and maintainable
+
+If the existing codebase contains weaker patterns, improve the touched area toward this standard instead of copying them.

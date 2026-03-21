@@ -4,10 +4,21 @@ AdaLovesLace: A thread-based techniques diagrams creation software
 
 This is Free Software, under [Affero GPL V3 license](license.md)
 
-© 2023-2025 Zala GOUPIL
+© 2023-2026 Zala GOUPIL
 
 This software comes with ABSOLUTELY NO GUARANTEE, to the extent permitted by applicable law.
 
+
+--------------------------------------------------------------------------------------------
+
+**Development Rules**: See the files in the [rules/](.cursor/rules/) folder for the rules and conventions to follow during development:
+
+- [Code Style Rules](.cursor/rules/000_code_style.md) - Size limits for packages, methods, and files
+- [Honesty Rules](.cursor/rules/010_honesty.md) - Brutal honesty requirement in all communications
+- [Rules Organization Rules](.cursor/rules/020_rules.md) - Organization and structure of rules files
+- [Language Rules](.cursor/rules/030_language.md) - English language requirement for all program content
+- [Test-Driven Development Rules](.cursor/rules/040_tdd.md) - TDD with unit, integration, and Selenide tests
+- [Rules Enforcement Rules](.cursor/rules/050_enforcement.md) - Mechanisms to ensure rules compliance
 
 --------------------------------------------------------------------------------------------
 
@@ -26,7 +37,7 @@ of the branch "23-frenchuserguide".
     mvn archetype:generate -DarchetypeGroupId=org.openjfx -DarchetypeArtifactId=javafx-archetype-simple -DarchetypeVersion=0.0.3 -DgroupId=org.alienlabs.adaloveslace -DartifactId=adaloveslace -Dversion=0.0.1 -Djavafx-version=11
 
 
-- for mvnw (see below) to run OK, you need to set JAVA_HOME to a JDK 21 modified according to:
+- for mvnw (see below) to run OK, you need to set JAVA_HOME to a JDK 24 modified according to:
 
 
     https://github.com/jgneff/javafx-graphics
@@ -35,7 +46,7 @@ of the branch "23-frenchuserguide".
 - Maven wrapper generated with:
 
 
-    mvn -N io.takari:maven:wrapper -Dmaven=3.9.3
+    mvn -N io.takari:maven:wrapper -Dmaven=3.9.14
 
 Feel free to run the Maven wrapper generation command again if Java version used changes
 
@@ -70,6 +81,15 @@ then:
     ./mvnw clean install -P linux         -DskipUTs=true -DskipFTs=true      # generate a package skipping all tests
     ./mvnw clean install -P linux                                            # generate a package launching all tests
 
+  Linux packages: **`.deb`** and **`.rpm`** are produced under `target/artifacts/`. **AppImage** generation is **disabled** in `pom.xml` because JavaPackager 1.7.6 downloads `appimagetool` from a GitHub URL that no longer exists (404). To build an AppImage yourself, install [`appimagetool`](https://github.com/AppImage/appimagetool/releases) and use the `AppDir` layout from `target/artifacts/assets/` after a successful package, or set `<generateAppImage>true</generateAppImage>` once a fixed JavaPackager version exists.
+
+      • Unit only:
+        • mvn -Punit-tests test
+      • Integration only:
+        • mvn -Pintegration-tests test
+      • Functional only:
+        • mvn -Pfunctional-tests test
+
     ./mvnw clean integration-test                                    # launch all tests 
     ./mvnw clean test             -DskipFTs=true                     # launch unit tests
     ./mvnw clean integration-test -DskipUTs=true                     # launch functional tests 
@@ -81,6 +101,14 @@ or:
 
 from the project root directory
 
+- OWASP Dependency-Check (NVD): request an API key at https://nvd.nist.gov/developers/request-an-api-key then run, for example:
+
+      ./mvnw -Dnvd.api.key=YOUR_KEY dependency-check:check
+
+  Without a key, the build still runs but NVD rate limits are strict. **Do not** put a fake placeholder key in `pom.xml` (it causes NVD client errors). Jenkins: bind the key to env `NVD_API_KEY` (secret text credential).
+
+  **Sonatype OSS Index** is disabled in `pom.xml` (Sonatype returns 401 without an account/token). To re-enable, set `<ossindexAnalyzerEnabled>true</ossindexAnalyzerEnabled>` and add credentials per [dependency-check OSS Index](https://dependency-check.github.io/DependencyCheck/analyzers/oss-index-analyzer.html) (`ossIndexServerId` in `settings.xml` or `ossIndexUsername` / `ossIndexPassword`).
+
 
 - To know your outdated dependencies:
 
@@ -88,6 +116,11 @@ from the project root directory
     ./mvnw versions:display-dependency-updates
 
 from the project root directory
+
+
+- Fail the build on bugs: 
+
+    use `spotbugs:check`, understanding it will fail when SpotBugs finds issues.
 
 
 - You may use this when generating an executable / installer on Winows: https://github.com/fvarrui/JavaPackager/issues/129

@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package org.alienlabs.adaloveslace.persistence.protobuf;
+
+option java_multiple_files = true;
+option java_package = "org.alienlabs.adaloveslace.persistence.protobuf";
+option java_outer_classname = "DiagramDescriptorProto";
+
+// Top-level diagram descriptor persisted inside descriptor.pb
+message DiagramDescriptor {
+  // Schema version for forward/backward compatibility of the descriptor structure.
+  uint32 schema_version = 1;
+
+  // Logical name of the diagram (may be empty).
+  string name = 2;
+
+  // Grid configuration.
+  GridType grid_type = 3;
+
+  // Current step index (1-based like the domain model).
+  int32 current_step_index = 4;
+
+  // All steps in chronological order.
+  repeated StepDescriptor steps = 5;
+
+  // Distinct patterns used in the diagram.
+  repeated PatternDescriptor patterns = 6;
+}
+
+// Representation of one reusable pattern image.
+message PatternDescriptor {
+  string filename = 1;
+  double center_x = 2;
+  double center_y = 3;
+  double width = 4;
+  double height = 5;
+}
+
+// One undo/redo step.
+message StepDescriptor {
+  int32 step_index = 1;
+
+  // Knots that are displayed (non-selected) at this step.
+  repeated KnotDescriptor displayed_knots = 2;
+
+  // Knots that are selected at this step.
+  repeated KnotDescriptor selected_knots = 3;
+}
+
+// A single knot on the canvas.
+message KnotDescriptor {
+  // Stable identifier for the knot.
+  string uuid = 1;
+
+  double x = 2;
+  double y = 3;
+
+  int32 rotation_angle = 4;
+  int32 zoom_factor = 5;
+
+  // Optional reference to a pattern by filename.
+  string pattern_filename = 6;
+
+  // Optional user-visible text.
+  string text = 7;
+
+  // Optional ARGB color encoded as 0xAARRGGBB.
+  fixed32 argb_color = 8;
+  bool has_color = 9;
+
+  bool visible = 10;
+  bool selectable = 11;
+  bool flipped_vertically = 12;
+  bool flipped_horizontally = 13;
+
+  // Identifier linking text knots across steps.
+  string text_id = 14;
+
+  // Snapshot of typed text content when saved.
+  string typed_text = 15;
+}
+
+// Grid configuration from the domain model.
+enum GridType {
+  GRID_TYPE_UNSPECIFIED = 0;
+  STAGGERED = 1;
+  LATTICE = 2;
+  POLAR = 3;
+  CRISS_CROSS = 4;
+  HIDDEN = 5;
+}
+

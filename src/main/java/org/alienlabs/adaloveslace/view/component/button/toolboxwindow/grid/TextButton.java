@@ -37,9 +37,14 @@ public class TextButton extends ToggleButton {
     app.unselectPatternsAndTextButtons();
     app.getMovablePane().setOnKeyPressed(null);
     app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
-    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
-    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
-    app.getMovablePane().setOnMouseExited(GridEvents.getGridHoverExitEventHandler(app));
+    EventHandler<MouseEvent> hover = GridEvents.getGridHoverEventHandler(app);
+    EventHandler<MouseEvent> click = GridEvents.getMouseClickEventHandler(app);
+    EventHandler<MouseEvent> exit = GridEvents.getGridHoverExitEventHandler(app);
+    app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_MOVED, hover);
+    app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, click);
+    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, hover);
+    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, click);
+    app.getMovablePane().setOnMouseExited(exit);
     this.setSelected(true);
     this.getStyleClass().add(BUTTON_WAITING_SELECTION);
 

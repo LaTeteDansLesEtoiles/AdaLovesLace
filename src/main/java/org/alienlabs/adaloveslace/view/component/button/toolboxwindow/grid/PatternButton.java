@@ -50,19 +50,24 @@ public class PatternButton extends ToggleButton {
     this.setSelected(false);
     app.getScene().removeEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
 
-    this.setOnMouseClicked(event -> {
-      app.unselectPatternsAndTextButtons();
+    // Action: reliable under TestFX. Mouse: reliable for real clicks. Synchronized so both paths in one user
+    // interaction serialize and do not recurse.
+    this.setOnAction(event -> applyPatternSelection(app, imageView));
+    this.setOnMouseClicked(event -> applyPatternSelection(app, imageView));
+  }
 
-      this.setSelected(true);
-      this.getStyleClass().add(BUTTON_SELECTED);
+  private synchronized void applyPatternSelection(App app, ImageView imageView) {
+    app.unselectPatternsAndTextButtons();
 
-      Pattern newCurrentPattern = ((PatternButton) event.getSource()).getPattern();
-      logger.info("Event type -> {}, new current Pattern -> {}", event.getEventType(), newCurrentPattern);
+    this.setSelected(true);
+    this.getStyleClass().add(BUTTON_SELECTED);
 
-      app.getOptionalDotGrid().getCurrentPatternProperty().set(newCurrentPattern);
-      GridEvents.setCurrentImageView(imageView);
-      app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().set(PatternOrTextMode.PATTERN);
-    });
+    Pattern newCurrentPattern = this.getPattern();
+    logger.info("Pattern selected -> {}", newCurrentPattern);
+
+    app.getOptionalDotGrid().getCurrentPatternProperty().set(newCurrentPattern);
+    GridEvents.setCurrentImageView(imageView);
+    app.getOptionalDotGrid().getCurrentPatternOrTextModeProperty().set(PatternOrTextMode.PATTERN);
   }
 
   private static String cleanButtonLabel(String buttonLabel) {

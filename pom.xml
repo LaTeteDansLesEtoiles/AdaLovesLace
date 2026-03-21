@@ -11,11 +11,23 @@
     <java.version>24</java.version>
     <javafx.version>24.0.1</javafx.version>
     <test-plugins.version>3.3.0</test-plugins.version>
-    <itext.version>9.2.0</itext.version>
-    <testfx.version>4.0.17</testfx.version>
+    <itext.version>9.5.0</itext.version>
+    <testfx.version>4.0.18</testfx.version>
     <junit.version>5.10.1</junit.version>
-    <logback.version>1.5.18</logback.version>
-    <dependency-check-maven.version>12.1.1</dependency-check-maven.version>
+    <logback.version>1.5.32</logback.version>
+    <protobuf.version>4.34.1</protobuf.version>
+    <protobuf.maven.plugin.version>0.6.1</protobuf.maven.plugin.version>
+    <dependency-check-maven.version>12.1.3</dependency-check-maven.version>
+    <!-- NVD API key: request at https://nvd.nist.gov/developers/request-an-api-key — pass -Dnvd.api.key=... or set env NVD_API_KEY (Jenkins) -->
+    <nvd.api.key></nvd.api.key>
+    <!-- 3.28+ bundles PMD 7 with Java 24 source parsing; 3.21.x/PMD 6 cannot parse Java 24 syntax -->
+    <maven.pmd.version>3.28.0</maven.pmd.version>
+    <spotbugs.maven.plugin.version>4.9.8.2</spotbugs.maven.plugin.version>
+    <skipUTs>false</skipUTs>
+    <skipITs>false</skipITs>
+    <skipFTs>false</skipFTs>
+    <surefire.groups></surefire.groups>
+    <failsafe.groups></failsafe.groups>
   </properties>
 
   <dependencies>
@@ -67,18 +79,18 @@
     <dependency>
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>4.0.1</version>
+      <version>4.0.5</version>
     </dependency>
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.7</version>
     </dependency>
 
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.10.1</version>
+      <version>2.13.2</version>
     </dependency>
 
     <dependency>
@@ -94,14 +106,25 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>2.0.9</version>
+      <version>2.0.17</version>
     </dependency>
 
     <dependency>
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
-      <version>4.8.1</version>
+      <version>4.9.8</version>
       <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>${protobuf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java-util</artifactId>
+      <version>${protobuf.version}</version>
     </dependency>
 
     <dependency>
@@ -132,13 +155,13 @@
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-core</artifactId>
-      <version>2.2</version>
+      <version>3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.7.0</version>
+      <version>5.23.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -150,11 +173,24 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.14.0</version>
+        <version>3.15.0</version>
         <configuration>
           <source>24</source>
           <target>24</target>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>kr.motd.maven</groupId>
+        <artifactId>os-maven-plugin</artifactId>
+        <version>1.7.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>detect</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
@@ -192,6 +228,7 @@
         <version>${test-plugins.version}</version>
         <configuration>
           <skipTests>${skipUTs}</skipTests>
+          <groups>${surefire.groups}</groups>
           <includes>
             <include>**/unittest/**</include>
           </includes>
@@ -206,23 +243,56 @@
         <version>${test-plugins.version}</version>
         <executions>
           <execution>
+            <id>integration-tests</id>
             <phase>test</phase>
             <goals>
               <goal>integration-test</goal>
+              <goal>verify</goal>
             </goals>
+            <configuration>
+              <skipITs>${skipITs}</skipITs>
+              <groups>${failsafe.groups}</groups>
+              <includes>
+                <include>**/integrationtest/**</include>
+              </includes>
+              <excludes>
+                <exclude>**/unittest/**</exclude>
+                <exclude>**/functionaltest/**</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>functional-tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <groups>${failsafe.groups}</groups>
+              <includes>
+                <include>**/functionaltest/**</include>
+              </includes>
+              <excludes>
+                <exclude>**/unittest/**</exclude>
+                <exclude>**/integrationtest/**</exclude>
+              </excludes>
+              <skipITs>${skipFTs}</skipITs>
+            </configuration>
           </execution>
         </executions>
         <configuration>
           <forkCount>1</forkCount>
+          <!-- TestFX/JavaFX only supports a single Application.launch per JVM.
+               Some CI environments enable JUnit parallelism; disable it explicitly for functional tests. -->
+          <systemPropertyVariables>
+            <junit.jupiter.execution.parallel.enabled>false</junit.jupiter.execution.parallel.enabled>
+            <junit.jupiter.execution.parallel.mode.default>same_thread</junit.jupiter.execution.parallel.mode.default>
+            <junit.jupiter.execution.parallel.mode.classes.default>same_thread</junit.jupiter.execution.parallel.mode.classes.default>
+            <junit.jupiter.execution.parallel.mode.methods.default>same_thread</junit.jupiter.execution.parallel.mode.methods.default>
+          </systemPropertyVariables>
           <useSystemClassLoader>true</useSystemClassLoader>
-          <includes>
-            <include>**/functionaltest/**</include>
-          </includes>
-          <excludes>
-            <exclude>**/unittest/**</exclude>
-          </excludes>
-          <argLine>@{argLine} --add-opens javafx.graphics/com.sun.javafx.application=testfx.core</argLine>
-          <skipITs>${skipFTs}</skipITs>
+          <argLine>@{argLine} --enable-native-access=javafx.graphics --add-opens javafx.graphics/com.sun.javafx.application=org.testfx</argLine>
         </configuration>
       </plugin>
       <plugin>
@@ -237,24 +307,104 @@
           </execution>
         </executions>
         <configuration>
-          <nvdApiKey>PUT_YOUR_KEY_HERE</nvdApiKey>
-          <nvdApiDelay>3000</nvdApiDelay>
+          <!-- Empty = unauthenticated NVD (stricter rate limits). Invalid/garbage keys cause empty HTTP bodies and NPE in the client. -->
+          <nvdApiKey>${nvd.api.key}</nvdApiKey>
+          <nvdApiDelay>6000</nvdApiDelay>
           <failBuildOnCVSS>7</failBuildOnCVSS>
+          <!-- OSS Index requires Sonatype credentials (401 without them). NVD/CISA/RetireJS etc. still run. -->
+          <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
         </configuration>
       </plugin>
 
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.8.1.0</version>
+        <version>${spotbugs.maven.plugin.version}</version>
+        <configuration>
+          <effort>Max</effort>
+          <threshold>Low</threshold>
+          <xmlOutput>true</xmlOutput>
+          <failOnError>true</failOnError>
+          <includeFilterFile>${basedir}/spotbugs-include.xml</includeFilterFile>
+          <excludeFilterFile>${basedir}/spotbugs-exclude.xml</excludeFilterFile>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${maven.pmd.version}</version>
+        <configuration>
+          <rulesets>
+            <ruleset>${basedir}/pmd-rules.xml</ruleset>
+          </rulesets>
+          <targetJdk>${java.version}</targetJdk>
+          <failOnViolation>true</failOnViolation>
+          <!-- Only priority 1 (highest); lower severities are warnings until backlog is cleared -->
+          <failurePriority>1</failurePriority>
+          <printFailingErrors>true</printFailingErrors>
+          <skip>false</skip>
+          <minimumTokens>50</minimumTokens>
+          <excludeRoots>
+            <excludeRoot>target/generated-sources</excludeRoot>
+          </excludeRoots>
+          <excludes>
+            <exclude>**/generated/**</exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <id>pmd-check</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>cpd-check</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>cpd-check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.12</version>
+        <version>0.8.14</version>
         <configuration>
           <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
           <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+          <rules>
+            <rule>
+              <element>PACKAGE</element>
+              <limits>
+                <limit>
+                  <counter>LINE</counter>
+                  <value>COVEREDRATIO</value>
+                  <minimum>0.60</minimum>
+                </limit>
+              </limits>
+            </rule>
+            <rule>
+              <element>CLASS</element>
+              <limits>
+                <limit>
+                  <counter>LINE</counter>
+                  <value>COVEREDRATIO</value>
+                  <minimum>0.60</minimum>
+                </limit>
+              </limits>
+            </rule>
+          </rules>
         </configuration>
         <executions>
           <execution>
@@ -270,6 +420,29 @@
               <goal>report</goal>
             </goals>
           </execution>
+          <execution>
+            <id>jacoco-check</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.xolstice.maven.plugins</groupId>
+        <artifactId>protobuf-maven-plugin</artifactId>
+        <version>${protobuf.maven.plugin.version}</version>
+        <configuration>
+          <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
     </plugins>
@@ -279,7 +452,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pmd-plugin</artifactId>
-          <version>3.21.2</version>
+          <version>${maven.pmd.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -295,12 +468,45 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.20.0</version>
+        <version>${maven.pmd.version}</version>
+        <configuration>
+          <targetJdk>${java.version}</targetJdk>
+          <rulesets>
+            <ruleset>${basedir}/pmd-rules.xml</ruleset>
+          </rulesets>
+        </configuration>
       </plugin>
     </plugins>
   </reporting>
 
   <profiles>
+    <profile>
+      <id>unit-tests</id>
+      <properties>
+        <skipUTs>false</skipUTs>
+        <skipITs>true</skipITs>
+        <skipFTs>true</skipFTs>
+        <surefire.groups>unit</surefire.groups>
+      </properties>
+    </profile>
+    <profile>
+      <id>integration-tests</id>
+      <properties>
+        <skipUTs>true</skipUTs>
+        <skipITs>false</skipITs>
+        <skipFTs>true</skipFTs>
+        <failsafe.groups>integration</failsafe.groups>
+      </properties>
+    </profile>
+    <profile>
+      <id>functional-tests</id>
+      <properties>
+        <skipUTs>true</skipUTs>
+        <skipITs>true</skipITs>
+        <skipFTs>false</skipFTs>
+        <failsafe.groups>functional</failsafe.groups>
+      </properties>
+    </profile>
     <profile>
       <id>linux</id>
       <build>
@@ -337,6 +543,13 @@
                   </fileAssociations>
                   <additionalResources>
                   </additionalResources>
+                  <!-- AppImage: JavaPackager 1.7.6 downloads appimagetool from a GitHub URL that now 404s
+                       (AppImageKit r13 renamed assets to obsolete-appimagetool-*.AppImage). Re-enable when
+                       the plugin updates, or build AppImage manually with appimagetool from
+                       https://github.com/AppImage/appimagetool/releases -->
+                  <linuxConfig>
+                    <generateAppImage>false</generateAppImage>
+                  </linuxConfig>
                 </configuration>
               </execution>
             </executions>

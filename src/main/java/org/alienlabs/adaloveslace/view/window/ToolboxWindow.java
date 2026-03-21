@@ -289,6 +289,7 @@ public class ToolboxWindow {
             Diagram diagram
     ) {
         this.toolboxStage = toolboxStage;
+        this.menuBar = menuBar;
 
         // Create a separate GridPane for patterns with scrolling
         GridPane patternsPane = new GridPane();

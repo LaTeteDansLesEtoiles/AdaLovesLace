@@ -14,7 +14,9 @@ public class RedoKnotButton extends ImageButton {
   public RedoKnotButton(String buttonLabel, App app) {
     super(buttonLabel);
     RedoKnotButton.app = app;
-    this.setOnMouseClicked(_ -> redoKnot());
+    // Use only onAction: JavaFX Button click triggers both mouse and action handlers,
+    // which would make redo execute twice for a single click.
+    this.setOnAction(_ -> redoKnot());
     buildButtonImage("redo.png");
     setId("redoButton");
   }

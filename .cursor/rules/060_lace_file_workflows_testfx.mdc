@@ -1,0 +1,346 @@
+---
+description: Enforce robust JavaFX/TestFX/JUnit 5 testing practices for .lace file open/save/import/export workflows on Linux headless CI
+globs:
+  - "src/test/**/functionaltest/**/*.java"
+alwaysApply: true
+---
+
+# .lace file workflow testing rule for JavaFX + TestFX + JUnit 5 + Linux headless CI
+
+When writing or modifying tests related to `.lace` files, always follow these rules.
+
+## 1. Scope
+
+This rule applies to tests covering workflows such as:
+- open `.lace` file
+- save `.lace` file
+- save as `.lace`
+- import/export related to diagram archives
+- reopen saved `.lace` file
+- round-trip persistence checks through UI workflows
+- validation and failure cases tied to archive content
+- interactions between UI and file persistence for diagram archives
+
+A `.lace` file must always be treated as:
+- a ZIP archive with renamed extension
+- containing a descriptor entry and optional resource/image entries
+
+Tests must reflect this contract accurately.
+
+## 2. Main objective
+
+Tests for `.lace` workflows must be:
+- deterministic
+- CI-friendly
+- Linux headless compatible
+- explicit about file contents and expectations
+- isolated from developer-machine state
+- focused on real user-visible behavior
+- strong on persistence correctness
+
+Do not write flaky file workflow tests that rely on local machine quirks, native dialog behavior, or incidental ZIP details.
+
+## 3. Testing level boundaries
+
+For `.lace` workflows, choose the cheapest reliable test level.
+
+Use JavaFX/TestFX functional tests for:
+- user-triggered open/save flows
+- menu/button/action integration
+- visible validation or error dialogs
+- confirmation prompts
+- post-load/post-save visible UI state
+- reopen-after-save workflows with user value
+
+Do not push low-level persistence verification entirely into UI tests.
+
+Use non-UI tests for:
+- ZIP entry structure validation
+- protobuf/XML compatibility parsing behavior
+- descriptor mapping correctness
+- explicit corruption/version handling
+- archive entry precedence rules
+- binary round-trip fidelity
+
+If a persistence concern can be verified more cheaply outside the UI, do that there and keep the UI test focused on the UI-visible contract.
+
+## 4. File chooser and native dialog strategy
+
+Do not rely on real native file chooser behavior in Linux headless CI unless the project already has a proven stable strategy.
+
+Prefer one of these approaches:
+1. use an existing abstraction around file selection
+2. inject or stub a file dialog service at the appropriate boundary
+3. test the action with a controlled file path provider already present in the codebase
+
+Avoid brittle attempts to automate platform-native file chooser windows in headless CI.
+
+If the repository lacks a stable abstraction for file selection and save target selection, introduce one if needed in a minimal and maintainable way.
+
+## 5. Temporary files and directories are mandatory
+
+Tests involving `.lace` files must use temporary files/directories created within test scope.
+
+Requirements:
+- use test-scoped temporary directories/files
+- never rely on absolute developer-local paths
+- never rely on a pre-existing Downloads/Desktop/Documents path
+- clean up temporary resources properly
+- make file setup explicit and readable
+
+When a test writes a `.lace` file:
+- assert the file is created when expected
+- assert that it is not created when the workflow is cancelled or fails before persistence
+- assert overwrite behavior only if overwrite behavior is part of the expected contract
+
+## 6. Fixture quality for .lace archives
+
+Fixtures for `.lace` files must be explicit and minimal.
+
+Prefer:
+- focused fixture builders/helpers
+- helper methods that create specific archive shapes
+- test names that describe the archive scenario clearly
+
+Examples of archive scenarios worth modeling explicitly:
+- valid `.lace` with only `descriptor.pb`
+- valid legacy `.lace` with only `save.xml`
+- `.lace` with both `descriptor.pb` and `save.xml`
+- `.lace` with missing descriptor entry
+- `.lace` with corrupted `descriptor.pb`
+- `.lace` with unsupported descriptor version
+- `.lace` with missing referenced image/resource
+- `.lace` with malformed ZIP structure if relevant
+
+Avoid opaque binary fixtures with unclear intent when a programmatic fixture builder would be clearer.
+
+## 7. ZIP archive assertions must be meaningful
+
+When validating saved `.lace` files, do not stop at checking that a file exists.
+
+Where relevant, assert meaningful archive structure:
+- required descriptor entry exists
+- legacy `save.xml` is absent by default for newly saved files
+- expected resources/images are present when relevant
+- optional debug-readable entries are present only when explicitly enabled
+- archive metadata/version entry exists if part of the format contract
+
+Avoid over-asserting incidental implementation details unless they are part of the documented format contract.
+
+Do not make tests brittle by depending on irrelevant ZIP entry ordering.
+
+## 8. Required behavioral coverage for .lace workflows
+
+When relevant to the touched code, ensure coverage exists for these scenarios.
+
+### Open workflows
+- should open a valid new-format `.lace` file
+- should open a valid legacy `.lace` file containing `save.xml`
+- should prefer `descriptor.pb` when both descriptor formats exist
+- should fail clearly when no descriptor entry exists
+- should fail clearly when descriptor content is corrupted
+- should fail clearly when referenced resources are missing
+- should preserve expected visible state after successful load
+
+### Save workflows
+- should save using the new primary format
+- should not write legacy `save.xml` by default
+- should write expected archive entries for a valid diagram
+- should preserve diagram semantics after save and reopen
+- should fail clearly when save target is invalid or not writable, if such scenario is part of the workflow
+
+### Save As / overwrite / cancel workflows
+- should not write output when the action is cancelled
+- should handle overwrite confirmation according to the application contract
+- should keep current UI state coherent after cancellation or failure
+
+### Round-trip workflows
+- should allow open -> save -> reopen with equivalent resulting diagram
+- should allow legacy open -> save -> reopen in the new format
+- should preserve meaningful diagram content across round-trip
+
+## 9. Semantic round-trip matters more than superficial round-trip
+
+For `.lace` workflows, prioritize semantic verification over superficial checks.
+
+Prefer:
+- reopening the saved file and verifying meaningful diagram state
+- comparing semantic diagram content through stable helpers
+- asserting visible UI state after reopening
+
+Do not rely only on:
+- file existence
+- non-empty file size
+- raw byte equality
+- incidental archive layout
+
+A persistence workflow test is weak if it only checks that “something was written”.
+
+## 10. JavaFX/TestFX rules still apply fully
+
+For `.lace` workflow tests:
+- never use `Thread.sleep(...)`
+- use explicit bounded waits
+- wait for meaningful UI states
+- use stable node lookup
+- keep tests headless-safe
+- clean up stages/dialogs/files/resources after each test
+
+This rule does not replace the general JavaFX/TestFX rule.
+It adds file-workflow-specific constraints on top of it.
+
+## 11. Error dialogs and user feedback
+
+When a `.lace` workflow is expected to fail visibly:
+- assert the user-visible error behavior
+- verify dialog/banner/message presence in a stable way
+- do not only assert that an exception was thrown internally if the UI contract includes visible feedback
+- verify that partial failure does not leave the UI in an incoherent state
+
+Examples:
+- invalid archive
+- missing descriptor
+- unreadable file
+- corrupted descriptor
+- missing required resource
+- unsupported descriptor version
+
+If the application uses a dialog service abstraction, test through that stable contract where appropriate.
+
+## 12. Legacy compatibility behavior must remain visible in tests
+
+Because `.lace` supports legacy input archives with `save.xml`, tests must preserve that contract.
+
+At minimum, there must be meaningful coverage for:
+- successful loading of a legacy archive
+- resaving a legacy-loaded diagram into the new format
+- precedence of binary descriptor when both legacy and new descriptors are present
+
+Do not let future changes silently break legacy input support.
+
+## 13. Descriptor format assertions
+
+When touching file persistence tests, reflect the intended descriptor policy:
+- machine-optimized binary descriptor is the primary persisted format
+- human-readable form is optional and debug-only
+- XML is compatibility input only
+
+Therefore:
+- tests for default save behavior must expect binary descriptor output
+- tests must not assume XML is written during normal saves
+- tests for debug-readable export must be explicitly opt-in and clearly separate from normal save behavior
+
+## 14. Resource/image persistence tests
+
+When the `.lace` archive contains images or resources:
+- verify that required resources are included when saving, if that is part of the contract
+- verify that missing required resources during load fail clearly
+- verify that resource paths/references remain coherent after save and reopen
+- avoid over-testing incidental storage details unless contractually relevant
+
+If resources can be embedded or referenced in multiple modes, tests must clearly state which mode is being exercised.
+
+## 15. Avoid brittle native integration patterns
+
+Do not create tests that depend on:
+- real desktop file manager state
+- actual user home directory content
+- native file chooser automation in headless mode
+- OS theme differences
+- exact stage coordinates
+- platform-specific focus quirks without stabilization
+
+Prefer application-level abstractions and stable temporary fixtures.
+
+## 16. Builders and helpers are encouraged
+
+If `.lace` archive setup becomes repetitive, create reusable helpers such as:
+- `LaceArchiveBuilder`
+- `LegacyLaceArchiveBuilder`
+- `DiagramFixtureFactory`
+- `ArchiveAssertions`
+- `DiagramSemanticAssertions`
+
+Helpers must:
+- improve readability
+- keep test intent obvious
+- avoid hiding too much behavior
+- not swallow important setup details
+
+Do not create giant helper abstractions that make tests unreadable.
+
+## 17. Assertions must be strong
+
+Prefer strong assertions such as:
+- expected descriptor entry exists
+- expected legacy entry does not exist by default
+- expected visible diagram title/content appears after load
+- expected number of nodes/items/elements is present
+- expected validation message is shown
+- reopened diagram matches semantic expectations
+
+Avoid weak assertions such as:
+- file is not null
+- archive is not empty
+- some node exists somewhere
+- no exception was thrown
+
+If stronger assertions are possible, use them.
+
+## 18. Corruption and unsupported format scenarios matter
+
+When touching the persistence area, do not ignore failure-path coverage.
+
+Important scenarios include:
+- invalid ZIP content with `.lace` extension
+- truncated `descriptor.pb`
+- unsupported descriptor version
+- descriptor/resource mismatch
+- empty descriptor entry
+- no descriptor entry
+- both descriptors present with precedence behavior
+
+These should usually be covered at non-UI level first.
+UI tests should cover the visible failure contract where relevant.
+
+## 19. Test naming for .lace workflows
+
+Use names that reflect real user-relevant behavior and file format expectations.
+
+Prefer:
+- `shouldOpenLegacyLaceArchiveContainingSaveXml`
+- `shouldPreferBinaryDescriptorWhenArchiveContainsBothFormats`
+- `shouldSaveLaceArchiveWithDescriptorPbByDefault`
+- `shouldShowErrorWhenLaceArchiveHasNoDescriptorEntry`
+- `shouldReopenSavedLaceArchiveWithEquivalentDiagram`
+
+Avoid:
+- `testOpenFile`
+- `testZip`
+- `testSave`
+- `shouldWork`
+
+## 20. Mandatory improvements when touching existing .lace tests
+
+Whenever you modify an existing `.lace` workflow test:
+- remove `Thread.sleep(...)`
+- replace brittle selectors
+- remove dependence on real native dialogs in CI if possible
+- strengthen archive content assertions
+- add round-trip assertions when persistence is involved
+- improve fixture clarity
+- strengthen visible error assertions where applicable
+- clean up temp files, windows, and resources properly
+
+## 21. Expected output quality
+
+Generated or modified `.lace` workflow tests must:
+- be compatible with TestFX + JUnit 5 + Linux headless CI
+- reflect the `.lace` archive contract accurately
+- distinguish normal save behavior from debug-only readable export
+- keep legacy XML support covered on input
+- verify meaningful persistence outcomes, not just superficial file creation
+- remain readable and maintainable
+- follow repository conventions and reuse existing test infrastructure where appropriate
+
+If the current repository contains weaker patterns, improve the touched area toward this standard instead of copying those weaknesses.

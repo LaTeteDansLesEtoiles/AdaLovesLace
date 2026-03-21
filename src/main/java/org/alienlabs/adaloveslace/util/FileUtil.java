@@ -6,10 +6,6 @@ import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.control.ButtonType;
@@ -28,7 +24,10 @@ import org.alienlabs.adaloveslace.domain.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
@@ -106,46 +105,24 @@ public class FileUtil {
 
     public Diagram loadFromLaceFile(App app, File file) {
         new ImageUtil(app).backupKnots();
-        return readZip(app, file);
-    }
+        Diagram emptyTemplate = new Diagram(app);
+        Diagram diagram = org.alienlabs.adaloveslace.persistence.LaceArchiveLoader.load(file, emptyTemplate);
 
-    private Diagram readZip(App app, File file) {
-        Diagram diagram = null;
-
-        try (ZipFile zipFile = new ZipFile(file)) {
-            // 1) Read only the XML to display quickly
-            ZipEntry xmlEntry = zipFile.getEntry(XML_FILE_TO_SAVE_IN_LACE_FILE);
-            if (xmlEntry != null) {
-                diagram = buildDiagram(zipFile, xmlEntry);
-            }
-
-            if (diagram == null) {
-                logger.warn("Built diagram is null, creating new one");
-                diagram = new Diagram(app);
-            }
-
-            // Initialize typedText (OK in background)
-            initializeTypedTextFromLoadedText(diagram);
-
-            // 2) Extract with priority the patterns visible in the viewport (blocking but limited)
-            Set<String> needed = getNeededPatternFilenamesInViewport(app, diagram);
-            copyOnlyPatterns(zipFile, needed);
-
-            // 3) Let the UI update immediately, then extract the rest in the background
-            // (done after return, in setOnSucceeded)
-            app.getOptionalDotGrid().setDiagram(diagram);
-        } catch (JAXBException | IOException e) {
-            logger.error("Error loading lace file: {}", file.getAbsolutePath(), e);
-            // Return an empty diagram instead of null to avoid errors
-            diagram = new Diagram(app);
-        }
-        
-        // Ensure a valid diagram is always returned
         if (diagram == null) {
             logger.warn("Diagram is null after loading, creating new one");
             diagram = new Diagram(app);
         }
-        
+
+        initializeTypedTextFromLoadedText(diagram);
+        // Extract initial patterns needed for the viewport
+        try (ZipFile zipFile = new ZipFile(file)) {
+            Set<String> needed = getNeededPatternFilenamesInViewport(app, diagram);
+            copyOnlyPatterns(zipFile, needed);
+        } catch (IOException e) {
+            logger.error("Error copying patterns from lace file: {}", file.getAbsolutePath(), e);
+        }
+
+        app.getOptionalDotGrid().setDiagram(diagram);
         return diagram;
     }
 
@@ -165,8 +142,16 @@ public class FileUtil {
     private Set<String> getNeededPatternFilenamesInViewport(App app, Diagram diagram) {
         Set<String> needed = new HashSet<>();
         if (diagram == null || diagram.getCurrentStep() == null) return needed;
-        double vw = app.getResizes().getGridWidth();
-        double vh = app.getResizes().getGridHeight();
+        double vw;
+        double vh;
+        if (app.getResizes() != null) {
+            vw = app.getResizes().getGridWidth();
+            vh = app.getResizes().getGridHeight();
+        } else {
+            // Tests and some headless contexts don't initialize WindowResizeEvents.
+            vw = DEFAULT_GRID_WIDTH;
+            vh = DEFAULT_GRID_HEIGHT;
+        }
         for (Knot k : diagram.getCurrentStep().getAllVisibleKnots()) {
             if (k.getPattern().isPresent()) {
                 double w = k.getPattern().get().getWidth();
@@ -333,15 +318,6 @@ public class FileUtil {
         knot.setImageView(iv);
     }
 
-    private void deleteXmlFile() throws IOException {
-        File xmlFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
-            XML_FILE_TO_SAVE_IN_LACE_FILE);
-
-        if (xmlFile.exists() && xmlFile.canWrite()) {
-            Files.delete(xmlFile.toPath());
-        }
-    }
-
     private void copyPattern(File file, ZipFile zipFile, ZipEntry entry) {
         try (InputStream initialStream = zipFile.getInputStream(entry)) {
             copyTargetFile(entry, initialStream);
@@ -366,85 +342,61 @@ public class FileUtil {
         }
     }
 
-    private Diagram buildDiagram(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
-        Diagram diagram = unmarshallXmlFile(zipFile, entry);
-        buildAbsoluteFilenamesForPatternsAndKnots(diagram);
-        diagram.setCurrentPattern(diagram.getPatterns().stream().findFirst().orElse(null));
-        return diagram;
-    }
-
-    public Diagram unmarshallXmlFile(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
-        JAXBContext context = JAXBContext.newInstance(Diagram.class);
-        Unmarshaller jaxbUnmarshaller = context.createUnmarshaller();
-        return (Diagram) jaxbUnmarshaller.unmarshal(zipFile.getInputStream(entry));
-    }
-
-    private void buildAbsoluteFilenamesForPatternsAndKnots(Diagram diagram) {
-        for (org.alienlabs.adaloveslace.domain.Pattern p : diagram.getPatterns()) {
-            p.setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
-        }
-
-        for (Step s : diagram.getAllSteps()) {
-            loadPatterns(s.getDisplayedKnots());
-            loadPatterns(s.getSelectedKnots());
-        }
-    }
-
-    private static void loadPatterns(List<Knot> s) {
-        for (Knot k : s) {
-            if (k.getPattern().isPresent()) {
-                k.getPattern().get().setAbsoluteFilename(
-                        APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
-                                k.getPattern().get().getFilename()
-                );
-            }
-        }
-    }
+    // Legacy JAXB-based `save.xml` handling is isolated in the persistence compatibility loader.
 
     public File saveFile(final File file, Diagram diagram, boolean layoutChildren) {
         if (this.app != null && app.getMainWindow() != null && this.app.getOptionalDotGrid() != null && layoutChildren) {
             this.app.getOptionalDotGrid().layoutChildren();
         }
 
-        Dialog<Diagram> dialog = getDialog(app, SavingLaceInProgress);
+        Dialog<Diagram> dialog = null;
+        try {
+            dialog = getDialog(app, SavingLaceInProgress);
+        } catch (IllegalStateException | NullPointerException | ExceptionInInitializerError e) {
+            // Headless/unit tests may not initialize the JavaFX toolkit / stage.
+            logger.debug("Skipping save progress dialog (toolkit/stage not initialized).", e);
+        }
         AtomicReference<File> output = new AtomicReference<>();
 
+        Runnable saveLogic = () -> {
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+            try {
+                diagram.getCurrentStep().getDisplayedKnots().addAll(new ArrayList<>(diagram.getCurrentStep().getSelectedKnots()));
+                diagram.getCurrentStep().getSelectedKnots().clear();
+                diagram.getCurrentStep().clearStepsGreaterThanPresentStepPlusLimit(diagram);
+                saveLaceFileProtobuf(file, diagram, diagram.getAllSteps().size());
+            } catch (CompletionException e) {
+                logger.error("Error uploading file: {}", file.getAbsolutePath(), e);
+            } catch (IOException e) {
+                logger.error("Error deleting file to upload", e);
+            }
+            output.set(file);
+        };
+
+        if (dialog == null) {
+            saveLogic.run();
+            return output.get();
+        }
+
+        final Dialog<Diagram> dialogToUse = dialog;
         Task<File> saveTask = new Task<>() {
             @Override
             protected File call() {
-                Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-                try {
-                    diagram.getCurrentStep().getDisplayedKnots().addAll(new ArrayList<>(diagram.getCurrentStep().getSelectedKnots()));
-                    diagram.getCurrentStep().getSelectedKnots().clear();
-                    diagram.getCurrentStep().clearStepsGreaterThanPresentStepPlusLimit(diagram);
-                    marshallLaceFile(
-                            file,
-                            diagram,
-                            diagram.getAllSteps().size()
-                    );
-                } catch (JAXBException e) {
-                    logger.error("Error marshalling save file: {}", file.getAbsolutePath(), e);
-                } catch (CompletionException e) {
-                    logger.error("Error uploading file: {}", file.getAbsolutePath(), e);
-                } catch (IOException e) {
-                    logger.error("Error deleting file to upload", e);
-                }
-
+                saveLogic.run();
                 return file;
             }
         };
 
         saveTask.setOnSucceeded(_ -> {
             output.set(saveTask.getValue());
-            dialog.close();
-
+            dialogToUse.close();
         });
         saveTask.setOnFailed(_ -> {
-            dialog.close();
+            dialogToUse.close();
             Throwable err = saveTask.getException();
             logger.error("Error loading diagram!", err);
         });
-        saveTask.setOnCancelled(_ -> dialog.close());
+        saveTask.setOnCancelled(_ -> dialogToUse.close());
 
         Thread saveThread = new Thread(saveTask, "AdaLovesLace-saver-Thread");
         saveThread.setDaemon(true);
@@ -474,71 +426,24 @@ public class FileUtil {
         return dialog;
     }
 
-    private void marshallLaceFile(File file, Diagram diagram, Integer currentStepIndex) throws JAXBException, IOException {
-        JAXBContext context = JAXBContext.newInstance(Diagram.class);
-        Marshaller jaxbMarshaller = context.createMarshaller();
-        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
-        writeLaceFile(file, jaxbMarshaller, diagram, currentStepIndex);
-        deleteXmlFile();
+    private void saveLaceFileProtobuf(File file, Diagram diagram, Integer currentStepIndex) throws IOException {
+        writeLaceFile(file, diagram, currentStepIndex);
     }
 
-    private void writeLaceFile(File file, Marshaller jaxbMarshaller, Diagram toSave, Integer currentStepIndex) throws JAXBException {
-        try (FileOutputStream fos = new FileOutputStream(file);
-                ZipOutputStream zipOut = new ZipOutputStream(fos)) {
-            writePatternsToLaceFile(toSave, zipOut);
-            writeDiagramToLaceFile(jaxbMarshaller, toSave, zipOut, currentStepIndex);
-            zipOut.closeEntry();
-        } catch (IOException e) {
-            logger.error("Error saving .lace file!", e);
-        }
-    }
-
-    private void writeDiagramToLaceFile(Marshaller jaxbMarshaller, Diagram toSave, ZipOutputStream zipOut, Integer currentStepIndex) throws JAXBException, IOException {
-        toSave.setCurrentStepIndex(currentStepIndex); // Not -1 because of the empty step at the beginning
-        File xmlFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
-                XML_FILE_TO_SAVE_IN_LACE_FILE);
-        // Ensure the text field contains the displayed content before saving
-        normalizeTextBeforeSave(toSave);
-        removeEmptyTexts(toSave);
-        jaxbMarshaller.marshal(toSave, xmlFile);
-
-        zipOut.putNextEntry(new ZipEntry(XML_FILE_TO_SAVE_IN_LACE_FILE));
-        Files.copy(xmlFile.toPath(), zipOut);
+    private void writeLaceFile(File file, Diagram toSave, Integer currentStepIndex) {
+        // Preserve legacy semantics: callers compute the persisted current step index.
+        toSave.setCurrentStepIndex(currentStepIndex);
+        // Primary persistence: protobuf descriptor stored as `descriptor.pb`.
+        org.alienlabs.adaloveslace.persistence.LaceArchiveSaver.save(
+                file,
+                toSave,
+                org.alienlabs.adaloveslace.persistence.LaceArchiveSaver.SaveOptions.defaultOptions());
     }
 
     /**
      * For each text node, synchronize the persisted text field with the transient typedText
      * so the content is correctly saved into the .lace file.
      */
-    private static void normalizeTextBeforeSave(Diagram diagram) {
-        if (diagram == null || diagram.getAllSteps() == null) {
-            return;
-        }
-        for (Step step : diagram.getAllSteps()) {
-            for (Knot knot : step.getAllVisibleKnots()) {
-                if (knot.getPattern().isEmpty()) {
-                    String typed = knot.getTypedText() != null ? knot.getTypedText().toString() : knot.getText().orElse("");
-                    if (typed.trim().isEmpty()) {
-                        knot.setText(Optional.of(""));
-                    } else {
-                        knot.setText(Optional.of(typed));
-                    }
-                }
-            }
-        }
-    }
-
-    private static void removeEmptyTexts(Diagram toSave) {
-        for (Step s : toSave.getAllSteps()) {
-            s.getDisplayedKnots().removeAll(s.getDisplayedKnots().stream().filter(knot ->
-                    (knot.getText().isPresent()) && (knot.getText().get().isEmpty())).toList());
-
-            s.getSelectedKnots().removeAll(s.getSelectedKnots().stream().filter(knot ->
-                    (knot.getText().isPresent()) && (knot.getText().get().isEmpty())).toList());
-        }
-    }
-
     private void writePatternsToLaceFile(Diagram toSave, ZipOutputStream zipOut) throws IOException {
         for (org.alienlabs.adaloveslace.domain.Pattern pattern : new HashSet<>(toSave.getPatterns())) {
             File fileToZip = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator

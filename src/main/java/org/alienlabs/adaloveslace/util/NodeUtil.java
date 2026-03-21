@@ -116,7 +116,14 @@ public class NodeUtil {
 
         ImageView iv = null;
 
-        try (FileInputStream fis = new FileInputStream(new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, currentPattern.getFilename()))) {
+        File imageFile = resolvePatternImageFile(currentPattern);
+        if (imageFile == null || !imageFile.isFile()) {
+            logger.error("Pattern image not found for {} (resolved from absolute path or user knots folder)",
+                    currentPattern.getFilename());
+            return null;
+        }
+
+        try (FileInputStream fis = new FileInputStream(imageFile)) {
             Image image = replaceColoredPixels(new Image(fis), app.getOptionalDotGrid().getDiagram().getCurrentColor());
             iv = new ImageView(image);
 
@@ -130,6 +137,20 @@ public class NodeUtil {
         }
 
         return iv;
+    }
+
+    /**
+     * Patterns created from the toolbox carry a classpath or test absolute path; runtime historically loaded only from
+     * {@code ~/project/knots/filename}. Prefer the known absolute path when the file exists so tests and portable runs work.
+     */
+    private static File resolvePatternImageFile(Pattern currentPattern) {
+        if (currentPattern.getAbsoluteFilename() != null) {
+            File fromPattern = new File(currentPattern.getAbsoluteFilename());
+            if (fromPattern.isFile()) {
+                return fromPattern;
+            }
+        }
+        return new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME, currentPattern.getFilename());
     }
 
     public Image replaceColoredPixels(Image image, Color replacementColor, Color... backgroundColor) {
