@@ -20,11 +20,13 @@ import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoK
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.alienlabs.adaloveslace.view.window.event.WindowRepositionEvents;
 import org.alienlabs.adaloveslace.view.window.event.WindowResizeEvents;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
+import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.util.WaitForAsyncUtils;
 
@@ -85,6 +87,19 @@ public class AppFunctionalTestParent {
   public Color foundColorOnGrid;
 
   private static final Logger logger = LoggerFactory.getLogger(AppFunctionalTestParent.class);
+
+  /**
+   * Jenkins agents are often slow; TestFX defaults to ~60s for setup and can time out between tests
+   * after long runs. Override with {@code -Dtestfx.setup.timeout.ms} / {@code -Dtestfx.launch.timeout.ms}.
+   */
+  @BeforeAll
+  static void configureTestFxTimeoutsForCi() {
+    long setupMs = Long.getLong("testfx.setup.timeout.ms", 120_000L);
+    long launchMs = Long.getLong("testfx.launch.timeout.ms", 120_000L);
+    FxToolkit.toolkitContext().setSetupTimeoutInMillis(setupMs);
+    FxToolkit.toolkitContext().setLaunchTimeoutInMillis(launchMs);
+    logger.info("TestFX timeouts: setup={}ms launch={}ms", setupMs, launchMs);
+  }
 
   /**
    * Init method called before each test

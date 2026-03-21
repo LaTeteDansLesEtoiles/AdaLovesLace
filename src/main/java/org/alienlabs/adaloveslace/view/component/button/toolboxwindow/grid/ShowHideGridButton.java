@@ -19,7 +19,8 @@ public class ShowHideGridButton extends ImageButton {
   public ShowHideGridButton(String buttonLabel, App app) {
     super(buttonLabel);
     ShowHideGridButton.app = app;
-    this.setOnMouseClicked(_ -> showHideGrid());
+    // Use onAction only: Button fires both mouse + action for one click; two handlers would double-switch.
+    this.setOnAction(_ -> showHideGrid());
     buildButtonImage("show_hide_grid.png");
   }
 
