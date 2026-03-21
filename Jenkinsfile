@@ -49,7 +49,7 @@ node {
 
         stage('functional tests') {
           try {
-            sh "./mvnw -P functional-tests test -P linux -Dtestfx.launch.timeout=5000 -Dtestfx.setup.timeout=5000 -DSLEEP_TIME=1000 -DGRID_PIXEL_ASSERT_WAIT_MS=30000 -DWAIT_TIME=15000"
+            sh "./mvnw -P functional-tests test -P linux -DSLEEP_TIME=1000 -DGRID_PIXEL_ASSERT_WAIT_MS=30000 -DWAIT_TIME=15000"
             } catch(err) {
             throw err
           } finally {
@@ -127,7 +127,7 @@ node {
     }
 
     stage('packaging') {
-        sh "./mvnw install -P linux -DskipUTs=true -DskipFTs=true"
+        sh "./mvnw install -P linux -DskipUTs=true -DskipITs=true -DskipFTs=true"
         archiveArtifacts artifacts: '**/target/artifacts/*.deb,**/target/artifacts/*.rpm,**/target/artifacts/*.AppImage', fingerprint: true
     }
 
