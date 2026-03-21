@@ -35,7 +35,7 @@ public class FastMoveModeButton extends ToggleButton {
   public static void onSwitchFastModeAction() {
     isFastMode.set(!isFastMode.get());
     instance.setSelected(isFastMode.get());
-    logger.debug("Setting fast move mode: {}", isFastMode.get());
+    logger.info("Setting fast move mode: {}", isFastMode.get());
   }
 
   public static double getMoveSpeed() {

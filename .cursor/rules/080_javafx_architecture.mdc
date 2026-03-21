@@ -1,0 +1,246 @@
+---
+description: Enforce clean desktop JavaFX architecture with clear separation between UI, application logic, domain, persistence, and serialization
+globs:
+  - "src/main/**/*.java"
+alwaysApply: true
+---
+
+# JavaFX desktop architecture rule
+
+When writing or modifying production code in this JavaFX desktop application, always preserve a clean layered architecture.
+
+## 1. Main objective
+
+This is a desktop JavaFX client application, not a web backend.
+
+Code must be organized with explicit boundaries between:
+- JavaFX UI
+- application/use-case layer
+- domain model
+- persistence layer
+- serialization/format layer
+- infrastructure helpers
+
+Do not collapse these responsibilities into controllers or view classes.
+
+## 2. Layer responsibilities
+
+### JavaFX UI layer
+The JavaFX UI layer is responsible for:
+- views
+- controllers
+- presentation state
+- user interaction wiring
+- displaying feedback to the user
+- delegating actions to application services/use cases
+
+The UI layer must not:
+- implement persistence details
+- parse or write `.lace` archives directly
+- manipulate protobuf-generated classes directly
+- implement legacy JAXB/XML compatibility logic
+- contain significant business rules
+
+### Application/use-case layer
+The application layer is responsible for:
+- orchestrating user-triggered operations
+- coordinating persistence and domain operations
+- exposing intention-revealing methods such as open, save, save as, import, export, validate, transform
+- translating lower-level failures into application-level outcomes when useful
+
+The application layer may depend on:
+- domain
+- persistence abstractions
+- infrastructure services
+
+The application layer must not depend on:
+- JavaFX control classes
+- scene graph details
+- protobuf-generated classes as public application contract types
+- JAXB classes as normal business dependencies
+
+### Domain layer
+The domain layer is responsible for:
+- core diagram concepts
+- domain invariants
+- domain operations
+- data structures that represent the business meaning of the diagram
+
+The domain layer must not depend on:
+- JavaFX
+- ZIP APIs as part of its model
+- protobuf-generated classes
+- JAXB
+- file chooser abstractions
+- UI services
+
+### Persistence layer
+The persistence layer is responsible for:
+- reading/writing `.lace` archives
+- archive entry conventions
+- descriptor selection precedence
+- resource/image persistence
+- archive metadata/version handling
+
+The persistence layer must operate on domain objects or dedicated persistence DTOs through explicit mapping.
+
+### Serialization layer
+The serialization layer is responsible for:
+- protobuf encoding/decoding
+- legacy XML compatibility decoding
+- serialization version checks
+- mapping between serialization model and domain/persistence model
+
+The serialization layer must be isolated from the UI.
+
+## 3. Controllers must stay thin
+
+JavaFX controllers must be thin.
+
+Controllers may:
+- collect user input
+- trigger application actions
+- update view state
+- bind UI components
+- display success/error feedback
+
+Controllers must not:
+- open ZIP streams directly
+- inspect `.lace` archive entries directly
+- call protobuf APIs directly
+- run JAXB unmarshalling directly
+- contain file format versioning logic
+- contain large mapping code blocks
+- perform complex business validation that belongs elsewhere
+
+If a controller becomes too large, extract logic into application services or dedicated helpers.
+
+## 4. Prohibit UI-to-persistence shortcuts
+
+Do not let JavaFX code directly depend on concrete persistence/serialization implementation details when a stable application/service boundary is more appropriate.
+
+The UI should not know:
+- whether the descriptor came from protobuf or legacy XML
+- ZIP entry precedence rules
+- archive metadata structure
+- descriptor versioning details beyond user-visible messages if relevant
+
+Those concerns belong below the UI layer.
+
+## 5. Keep file workflow orchestration explicit
+
+Open/save/save-as/import/export flows must be represented by clear application services or use-case classes.
+
+Prefer intention-revealing APIs such as:
+- `openDiagram(...)`
+- `saveDiagram(...)`
+- `saveDiagramAs(...)`
+- `exportReadableDescriptor(...)`
+- `loadFromLaceArchive(...)`
+
+Avoid vague god-services with mixed responsibilities.
+
+## 6. Dependency direction
+
+Prefer this dependency direction:
+
+- UI -> application
+- application -> domain + persistence abstractions/infrastructure
+- persistence -> serialization + archive infrastructure
+- serialization -> generated classes / compatibility code
+- domain -> no dependency on UI/persistence/serialization frameworks
+
+Do not invert these dependencies casually.
+
+## 7. Domain model must remain framework-clean
+
+Domain classes must not:
+- extend JavaFX classes
+- embed JavaFX properties unless the codebase already has a very deliberate pattern and strong reason
+- depend on protobuf-generated types
+- depend on JAXB annotations for current persistence
+- expose archive/ZIP implementation details
+
+If UI-specific observable state is needed, keep it in view models/presentation models, not in core domain objects.
+
+## 8. Mapping must be explicit
+
+Whenever data crosses architectural boundaries, mapping must be explicit and localized.
+
+Important mappings include:
+- protobuf message <-> domain object
+- legacy XML compatibility model <-> domain object
+- UI form state <-> application input model
+
+Do not spread field-by-field conversion logic across controllers, random helpers, and persistence classes.
+
+## 9. Avoid god classes
+
+Do not create or preserve classes that simultaneously:
+- manipulate JavaFX controls
+- open files
+- read ZIP entries
+- decode protobuf
+- handle errors
+- update domain model
+- display dialogs
+
+Split such code into focused responsibilities.
+
+## 10. Error handling boundaries
+
+Each layer should handle errors at the appropriate level.
+
+- serialization layer: detect malformed format/version issues precisely
+- persistence layer: detect archive structure/resource issues
+- application layer: translate lower-level issues into meaningful operation failures
+- UI layer: display user-facing feedback
+
+Do not surface low-level parsing details directly in the UI unless explicitly useful.
+
+## 11. Package naming should reflect architecture
+
+Package names should reflect stable responsibilities, for example:
+- `ui`
+- `application`
+- `domain`
+- `persistence`
+- `persistence.archive`
+- `persistence.serialization`
+- `persistence.serialization.protobuf`
+- `persistence.serialization.legacyxml`
+
+Avoid vague package names such as:
+- `utils`
+- `helpers`
+- `misc`
+- `common` for domain-specific responsibilities
+
+## 12. Reuse existing architecture conventions
+
+Before adding new structure, inspect the repository and reuse consistent patterns that already exist, provided they are sound.
+
+Improve weak architecture in touched areas instead of copying weak patterns.
+
+## 13. Mandatory refactoring when touching weak areas
+
+When modifying code in an area that violates these rules:
+- improve the boundary if reasonably possible
+- extract controller logic that does not belong in the controller
+- isolate persistence concerns from UI code
+- isolate serialization concerns from domain code
+- improve naming and responsibility clarity
+
+Do not add new code that deepens existing architectural debt.
+
+## 14. Output expectations
+
+Generated or modified code must:
+- respect desktop JavaFX layering
+- keep controllers thin
+- keep domain model framework-clean
+- isolate `.lace` persistence concerns
+- isolate protobuf and legacy XML concerns
+- improve maintainability, not just functionality
+
+If the existing codebase contains weaker patterns, improve the touched area toward this standard instead of reproducing them.

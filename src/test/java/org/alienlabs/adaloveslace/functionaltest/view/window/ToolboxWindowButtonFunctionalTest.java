@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.functionaltest.view.window;
 
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.Start;
@@ -11,6 +12,7 @@ import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ShowHideGridButton.SHOW_HIDE_GRID_BUTTON_NAME;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.*;
 
+@Tag("functional")
 class ToolboxWindowButtonFunctionalTest extends AppFunctionalTestParent {
 
   /**
@@ -33,7 +35,7 @@ class ToolboxWindowButtonFunctionalTest extends AppFunctionalTestParent {
   }
 
   /**
-   * Checks if 2nd pattern toolbox button contains image "snowflake_small.jpg"
+   * Checks if 2nd pattern toolbox button contains image "snowflake_small.png"
    *
    */
   @Test

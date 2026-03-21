@@ -1,0 +1,228 @@
+---
+description: Core constitution for rule arbitration and code quality in a JavaFX desktop application using .lace archives and protobuf
+globs:
+  - "src/**/*.java"
+  - "pom.xml"
+alwaysApply: true
+---
+
+# CONSTITUTION — NON NEGOTIABLE RULES
+
+This file defines the highest-priority principles.
+When any conflict arises between rules, this constitution overrides all weaker guidance.
+
+Do not ignore or dilute these rules.
+Do not compromise them for convenience.
+
+---
+
+## 1. No compromise on correctness
+
+- No silent fallback
+- No swallowed exceptions
+- No implicit behavior for corrupted or invalid data
+- No guessing formats or versions
+
+If data is invalid:
+→ fail explicitly and clearly
+
+Correctness and testing always win over convenience, compatibility, or brevity.
+
+---
+
+## 2. No compromise on architecture
+
+Strict separation is mandatory:
+
+- UI (JavaFX)
+- application/use cases
+- domain
+- persistence
+- serialization
+- as many tests as possible, covering nominal use cases, secondary use cases, edge-cases, boundary cases, expected exceptions and possible exceptions
+
+Forbidden:
+- persistence logic in controllers
+- protobuf in domain APIs
+- JAXB in normal save path
+- domain depending on UI, ZIP, protobuf, or XML
+
+If boundaries are unclear:
+→ fix the design, do not work around it, secure the fix with tests
+
+---
+
+## 3. No hybrid tests
+
+Each test must be exactly one of:
+
+- unit → isolated logic
+- integration → real collaboration (no UI)
+- functional → UI behavior (JavaFX/TestFX)
+
+Forbidden:
+- tests that mix UI + persistence + domain
+- “integration tests” full of mocks
+- functional tests validating low-level archive details
+
+If a scenario spans multiple levels:
+→ split into multiple tests
+
+---
+
+## 4. Integration tests must be real
+
+Integration tests MUST:
+- use real persistence logic
+- use real `.lace` archives (ZIP)
+- use real protobuf serialization
+- use temp files when needed
+
+Forbidden:
+- mocking core persistence
+- calling a unit test “integration”
+- testing only one class in isolation
+
+If no real boundary is crossed:
+→ it is not an integration test
+
+---
+
+## 5. Functional tests must be CI-safe
+
+Functional tests MUST:
+- work in Linux headless
+- avoid native dialogs
+- avoid `Thread.sleep`
+- use explicit waits
+
+Forbidden:
+- flaky timing
+- UI assumptions (focus, position, OS behavior)
+
+CI stability wins over UI realism.
+
+---
+
+## 6. Domain must remain pure
+
+Domain must not depend on:
+- JavaFX
+- protobuf
+- JAXB
+- ZIP/filesystem
+- UI concepts
+
+If domain knows technical details:
+→ architecture is broken
+
+---
+
+## 7. Protobuf is the truth
+
+- `descriptor.pb` is the default format
+- `save.xml` is input-only compatibility
+
+Forbidden:
+- writing XML in normal save path
+- treating XML as equal to protobuf
+- leaking protobuf types outside serialization/persistence
+
+---
+
+## 8. No weak tests
+
+Forbidden assertions:
+- not null
+- file exists
+- no exception
+
+Required:
+- semantic correctness
+- real behavior validation
+- explicit failure cases
+
+Tests must prove something meaningful.
+
+---
+
+## 9. No fake abstraction
+
+Forbidden:
+- Utils dumping ground
+- meaningless interfaces
+- hiding bad design behind layers
+
+If abstraction does not clarify responsibility:
+→ remove it
+
+---
+
+## 10. Split instead of compromise
+
+If two rules conflict:
+→ do NOT merge them badly
+
+Instead:
+- split code
+- split tests
+- refactor boundaries
+
+Never produce “middle-ground” code.
+
+---
+
+## 11. Fix, don’t imitate
+
+If existing code is weak:
+→ improve it when touched
+
+Forbidden:
+- copying bad patterns
+- preserving broken boundaries
+- extending technical debt
+
+---
+
+## 12. Performance awareness in hot paths
+
+For `.lace` loading/saving:
+
+Forbidden:
+- unnecessary large copies
+- duplicate object graphs
+- repeated archive scans
+
+Do not micro-optimize everything.
+But do not ignore obvious waste.
+
+---
+
+## 13. Final decision rule
+
+When in doubt, choose:
+
+1. correctness
+2. architecture
+3. proper test level
+4. test strength
+5. performance
+6. style
+
+Never reverse this order.
+
+---
+
+## 14. Brutal honesty requirement
+
+Before finalizing code, ask:
+
+- Would this be painful in 6 months?
+- Is this hiding a design problem?
+- Is this test actually proving something?
+- Is this in the right layer?
+
+If yes:
+→ fix it now
+
+Do not ship polite garbage.

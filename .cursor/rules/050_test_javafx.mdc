@@ -1,0 +1,372 @@
+---
+description: Enforce robust JavaFX functional testing best practices for TestFX + JUnit 5 + Linux headless CI
+globs:
+  - "src/test/**/functionaltest/**/*.java"
+alwaysApply: true
+---
+
+# JavaFX functional testing rule for TestFX + JUnit 5 + Linux headless CI
+
+When writing or modifying JavaFX functional tests using TestFX and JUnit 5, always follow these rules.
+
+## 1. Main goal
+
+Tests must be:
+- deterministic
+- CI-friendly
+- Linux headless compatible
+- resistant to timing issues
+- isolated
+- readable
+- maintainable
+
+The target environment is not the developer workstation.
+The target environment is a Linux CI pipeline running JavaFX tests in headless mode.
+
+Do not produce tests that only pass locally with a visible desktop session.
+
+## 2. Mandatory stack assumptions
+
+Assume the project uses:
+- JUnit 5
+- TestFX
+- JavaFX
+- Linux CI headless execution
+
+Before introducing a new pattern, inspect the repository and reuse the existing setup for:
+- base test classes
+- TestFX bootstrapping
+- Monocle or headless configuration
+- wait helpers
+- robot helpers
+- cleanup helpers
+- fixture builders
+
+Prefer consistency with the existing test infrastructure.
+
+## 3. Required test style
+
+Prefer:
+- focused user-centered scenarios
+- one behavior per test
+- explicit setup
+- explicit user action
+- explicit visible outcome
+- reusable helpers for repeated interactions
+
+Avoid:
+- giant scenario tests covering many unrelated behaviors
+- brittle tests coupled to layout internals
+- implementation-detail assertions
+- unnecessary mocking of UI behavior
+- duplicated robot code
+
+## 4. JUnit 5 conventions
+
+Use JUnit 5 idioms consistently.
+
+Prefer:
+- `@Test`
+- `@BeforeEach`
+- `@AfterEach`
+- `@Nested` when it improves clarity
+- parameterized tests when they improve coverage without harming readability
+
+Avoid:
+- JUnit 4 leftovers
+- mixed lifecycle patterns unless already established in the repo
+- unclear lifecycle management across tests
+
+Test names must clearly express behavior.
+
+Prefer names such as:
+- `shouldOpenDiagramWhenValidLaceFileIsSelected`
+- `shouldShowValidationErrorWhenDescriptorIsInvalid`
+- `shouldDisableSaveButtonWhenNoDiagramIsLoaded`
+
+Avoid vague names such as:
+- `testLoad`
+- `testUI`
+- `shouldWork`
+
+## 5. TestFX usage
+
+Use TestFX in a disciplined way.
+
+Prefer:
+- `FxRobot` interactions that reflect user behavior
+- stable lookup by `fx:id`
+- reusable interaction helpers for repeated workflows
+- explicit waits for meaningful UI states
+
+Avoid:
+- brittle CSS selector chains
+- deep scene graph traversal in tests
+- index-based lookup when the order is incidental
+- pixel-coordinate interaction unless absolutely necessary
+
+If a node is hard to target robustly, improve the production code with a stable `fx:id` or test-friendly structure rather than writing a brittle lookup.
+
+## 6. Stable node lookup rules
+
+Node lookup must be robust and CI-safe.
+
+Preferred order:
+1. `fx:id`
+2. stable semantic label text that is part of the intended UX contract
+3. reusable lookup helpers for repeated patterns
+
+Avoid:
+- selectors tied to styling/theme
+- selectors dependent on fragile nesting
+- incidental ordering assumptions
+- broad lookups that accidentally match multiple nodes
+
+If text lookup is used, ensure it is stable and not likely to vary with localization unless the test intentionally covers localization.
+
+## 7. JavaFX thread discipline
+
+Respect JavaFX threading rules strictly.
+
+- Never directly mutate JavaFX UI objects from the wrong thread
+- Any code that must run on the JavaFX Application Thread must do so explicitly
+- Use TestFX and project utilities correctly to ensure UI interactions occur on the right thread
+- Ensure assertions happen only after relevant UI events have been processed
+
+Do not write tests that accidentally work because of local timing.
+
+## 8. Absolute ban on Thread.sleep
+
+Never use `Thread.sleep(...)` in JavaFX/TestFX functional tests.
+
+This is mandatory.
+
+Do not use sleep for:
+- waiting for rendering
+- waiting for events
+- waiting for dialogs
+- waiting for background tasks
+- waiting for bindings/listeners
+- waiting for focus
+- waiting for window visibility
+
+Instead use:
+- TestFX wait utilities if already used in the project
+- `WaitForAsyncUtils`
+- explicit polling helpers with bounded timeout
+- latches/futures when appropriate
+- deterministic synchronization hooks
+
+If such helpers do not exist and are needed repeatedly, create reusable test utilities.
+
+## 9. Wait for meaningful states, not arbitrary time
+
+Wait only for meaningful and observable states.
+
+Examples:
+- a stage is showing
+- a node is visible
+- a button is enabled
+- a table contains expected rows
+- a label shows expected text
+- a background task has completed
+- a dialog has appeared
+
+Any wait must be:
+- bounded
+- intention-revealing
+- reusable if repeated
+- safe for slower CI machines
+
+Do not wait for vague conditions such as “probably finished rendering”.
+
+## 10. Linux headless CI compatibility
+
+All generated or modified tests must remain compatible with Linux headless execution.
+
+Do not rely on:
+- physical screen size assumptions
+- exact window positions
+- OS-specific focus quirks without stabilization
+- hover timing assumptions
+- drag/drop behavior that is known to be flaky in headless mode unless the project already has a proven helper for it
+- platform-specific keyboard shortcuts unless the test explicitly targets them and the repo already supports them reliably
+
+Prefer interactions and assertions that remain stable in Monocle/headless environments.
+
+If a workflow is known to be difficult in headless mode, use the most stable project-approved abstraction.
+
+## 11. Stage and window lifecycle
+
+Tests must manage windows cleanly.
+
+Verify and ensure:
+- the primary stage is initialized correctly
+- secondary stages and dialogs are closed after each test when relevant
+- no leaked windows remain across tests
+- tests do not depend on prior window state
+- focus assumptions are stabilized
+
+If the repo already has stage cleanup helpers, use them.
+If not, introduce a minimal reusable cleanup strategy.
+
+## 12. Dialogs, alerts, and popups
+
+When testing dialogs, alerts, popups, file choosers, or secondary windows:
+- assert that they are actually shown
+- interact through stable node lookup
+- close them cleanly
+- avoid leaking them to later tests
+- avoid brittle focus assumptions
+
+If native dialogs are hard to test in CI, prefer testing through an abstraction layer already present in the codebase, or introduce one where justified.
+
+## 13. Background tasks and asynchronous UI updates
+
+For JavaFX `Task`, `Service`, executor-based work, or async callbacks:
+- make completion deterministic in tests
+- explicitly wait for task completion or final visible state
+- assert intermediate states only when meaningful
+- avoid race conditions
+- avoid tests whose outcome depends on machine speed
+
+When possible, fake or stub external dependencies at the application boundary rather than letting UI functional tests hit the real filesystem/network/services unnecessarily.
+
+## 14. Filesystem and temp resources
+
+For tests involving `.lace` files, images, exports, temp files, or directories:
+- use temporary files/directories scoped to the test
+- clean them up reliably
+- avoid absolute developer-local paths
+- make fixture setup explicit
+- keep fixtures minimal and readable
+
+For file-based workflows:
+- assert resulting files exist when that is part of the expected behavior
+- assert meaningful output contents when feasible
+- avoid depending on incidental ZIP entry ordering unless that ordering is part of the contract
+
+## 15. Functional scope boundaries
+
+JavaFX functional tests should cover:
+- key user workflows
+- UI integration with application logic
+- validation and interaction behavior
+- file open/save workflows
+- major regressions with real user value
+
+Do not use JavaFX/TestFX tests for logic better covered by:
+- unit tests
+- mapper tests
+- serialization tests
+- repository tests
+- service tests
+
+Put logic at the cheapest reliable test level.
+
+If a scenario can be covered better and more cheaply without the UI, do not force it into a TestFX functional test.
+
+## 16. Assertions must target user-visible outcomes
+
+Prefer assertions on:
+- visible text
+- button/menu enabled state
+- selected values
+- table/list/tree contents as presented to the user
+- stage or dialog visibility
+- validation messages
+- scene transitions
+- preview state when visible
+- domain effects only when they are part of the user-observable contract
+
+Avoid assertions on:
+- private fields
+- controller internals
+- incidental layout structure
+- internal implementation details not visible to the user
+
+## 17. Page objects and robot helpers
+
+If the suite contains repeated workflows, use lightweight abstractions.
+
+Prefer:
+- screen/page object helpers for repeated UI flows
+- reusable robot methods for common actions
+- helper names expressed in business/user terms
+
+Avoid:
+- bloated page objects
+- helper classes that hide all assertions
+- indirection for trivial one-off steps
+
+Abstractions must reduce duplication and improve clarity.
+
+## 18. Flakiness reduction is mandatory
+
+Flaky tests are unacceptable.
+
+Whenever modifying existing tests:
+- remove `Thread.sleep(...)`
+- replace broad or brittle selectors
+- replace implicit timing assumptions
+- isolate external dependencies
+- strengthen cleanup
+- split oversized tests covering too many behaviors
+- strengthen weak assertions
+
+Do not preserve flaky patterns for convenience.
+
+## 19. Accessibility and keyboard behavior
+
+When relevant to the scenario, test:
+- default button behavior
+- cancel/escape behavior
+- disabled states
+- keyboard-triggered actions
+- focus transfer
+- visible validation feedback
+
+But keep those tests:
+- focused
+- deterministic
+- headless-safe
+
+Do not introduce focus-sensitive tests unless you can stabilize them.
+
+## 20. Deterministic fixture strategy
+
+Use fixtures that are:
+- minimal
+- explicit
+- representative
+- easy to understand
+
+Prefer:
+- builders
+- factories
+- clearly named fixture helpers
+
+Avoid:
+- giant unreadable setup blocks
+- hidden side effects in fixtures
+- using unrelated production data when a focused fixture is better
+
+## 21. When touching existing tests, improve them
+
+If you modify an existing JavaFX/TestFX/JUnit 5 test:
+- improve it toward these standards
+- do not copy bad local patterns
+- do not add more sleeps
+- do not add more brittle selectors
+- do not increase hidden coupling between tests
+
+## 22. CI-safe output expectation
+
+Generated or modified JavaFX functional tests must:
+- pass reliably on Linux headless CI
+- use stable synchronization
+- avoid platform-fragile assumptions
+- be understandable by another developer
+- fit the repository’s existing TestFX/JUnit 5 conventions
+
+If the existing codebase violates these rules, improve the touched area toward this standard instead of replicating weak patterns.

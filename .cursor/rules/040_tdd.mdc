@@ -1,0 +1,17 @@
+# Test-Driven Development Rules
+
+## Rule 5 (v040): Test-Driven Development with Comprehensive Test Coverage
+
+Development must be done using Test-Driven Development (TDD) with an important safety net of tests that should be passed progressively:
+
+- **Unit tests**: Test individual components and methods in isolation
+- **Integration tests**: Test the interaction between different components and systems
+- **Selenide tests**: Test the user interface and end-to-end user workflows
+
+The test suite should be implemented progressively, ensuring that:
+- Tests are written before or alongside the code they validate
+- All tests must pass before considering a feature complete
+- The test coverage should be comprehensive and meaningful
+- Tests should be maintained and updated as the codebase evolves
+
+This approach ensures code quality, prevents regressions, and provides confidence when refactoring or adding new features.

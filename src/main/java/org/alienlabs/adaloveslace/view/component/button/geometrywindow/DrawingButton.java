@@ -1,19 +1,21 @@
 package org.alienlabs.adaloveslace.view.component.button.geometrywindow;
 
+import javafx.event.EventHandler;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
-import org.alienlabs.adaloveslace.view.window.GeometryWindow;
+import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class DrawingButton extends ToggleButton {
 
@@ -21,10 +23,14 @@ public class DrawingButton extends ToggleButton {
 
   private static final Logger logger                = LoggerFactory.getLogger(DrawingButton.class);
 
-  public DrawingButton(App app, GeometryWindow window, String buttonLabel) {
+  public DrawingButton(App app, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onSetDrawModeAction(app, window));
+    this.setOnMouseClicked(event -> onSetDrawModeAction(app));
+    // TestFX may trigger ActionEvent instead of a raw mouse click on some controls.
+    // Support both so robot clicks reliably switch modes.
+    this.setOnAction(_ -> onSetDrawModeAction(app));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
+    this.setId("drawingButton");
 
     final Tooltip tooltip = new Tooltip();
     tooltip.setText(resourceBundle.getString("DRAWING_BUTTON_TOOLTIP"));
@@ -32,14 +38,21 @@ public class DrawingButton extends ToggleButton {
     this.setTooltip(tooltip);
   }
 
-  public static void onSetDrawModeAction(App app, GeometryWindow window) {
-    logger.debug("Setting draw mode");
+  public static void onSetDrawModeAction(App app) {
+    logger.info("Setting draw mode");
 
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAWING);
     GridEvents.removeEventsFromGrid(app);
-    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
-    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
-    app.getMovablePane().setOnMouseExited(GridEvents.getGridHoverExitEventHandler(app));
+    // Idempotent: tests and users may choose drawing mode more than once; remove before add so handlers
+    // are not stacked (each duplicate would fire draw logic again for one physical click).
+    EventHandler<MouseEvent> click = GridEvents.getMouseClickEventHandler(app);
+    EventHandler<MouseEvent> hover = GridEvents.getGridHoverEventHandler(app);
+    EventHandler<MouseEvent> exit = GridEvents.getGridHoverExitEventHandler(app);
+    app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, click);
+    app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_MOVED, hover);
+    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_CLICKED, click);
+    app.getMovablePane().addEventHandler(MouseEvent.MOUSE_MOVED, hover);
+    app.getMovablePane().setOnMouseExited(exit);
     app.getOptionalDotGrid().clearHandles();
 
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
@@ -47,10 +60,15 @@ public class DrawingButton extends ToggleButton {
       knot.getImageView().removeEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
     }
 
-    window.getDrawingButton()     .setSelected(true);
-    window.getSelectionButton()   .setSelected(false);
-    window.getDeletionButton()    .setSelected(false);
-    window.getDuplicationButton() .setSelected(false);
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().addAll(
+            new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots())
+    );
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().clear();
+
+    app.getToolboxWindow().getDrawingButton()     .setSelected(true);
+    app.getToolboxWindow().getSelectionButton()   .setSelected(false);
+    app.getToolboxWindow().getDeletionButton()    .setSelected(false);
+    app.getToolboxWindow().getDuplicationButton() .setSelected(false);
   }
 
 }

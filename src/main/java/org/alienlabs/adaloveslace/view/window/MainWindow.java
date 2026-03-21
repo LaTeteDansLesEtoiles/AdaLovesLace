@@ -11,8 +11,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
-import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.domain.Diagram;
+import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
@@ -25,18 +25,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.business.model.Knot.NEW_TEXT;
+import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
+import static org.alienlabs.adaloveslace.domain.Knot.NEW_TEXT;
 
 public class MainWindow {
 
-  public static final double NEW_KNOT_GAP  = 15d;
-  public static final String LANGUAGE = "Language";
-  public static final String TOOL = "Tool";
-  public static final String EDIT = "Edit";
-  public static final String FILE = "File";
+  public static final double NEW_KNOT_GAP  = 25d;
 
   private OptionalDotGrid optionalDotGrid;
+
   private TilePane footer;
 
   public static final String SAVE_FILE      = "Save";
@@ -57,11 +54,13 @@ public class MainWindow {
 
   public static final String REDO_KNOT      = "RedoKnot";
 
+  public static final String SELECT_ALL      = "SelectAll";
+
   public static final String RESET_DIAGRAM  = "ResetDiagram";
 
   public static final String MOUSE_CLICKED  = "MOUSE_CLICKED";
 
-  public static final KeyCodeCombination SAVE_AS_KEY_COMBINATION = new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN);
+  public static final KeyCodeCombination SAVE_AS_KEY_COMBINATION = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
 
   private StackPane grid;
 
@@ -106,37 +105,56 @@ public class MainWindow {
     return grid;
   }
 
-  public void onMainWindowClicked(final App app, final Pane movablePane) {
+  public void addGridEvents(final App app, final Pane movablePane) {
     movablePane.addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
     movablePane.addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
     movablePane.setOnMouseExited(GridEvents.getGridHoverExitEventHandler(app));
     movablePane.setOnMousePressed(GridEvents.getMouseRightClickEventHandler(app));
     movablePane.setOnMouseDragged(GridEvents.getGridDraggedEventHandler(app));
+    movablePane.setOnMouseReleased(GridEvents.getGridDragReleasedEventHandler(app));
   }
 
-  public void onClickWithSelectionMode(App app) {
+  public void onClickWithSelectionMode(App app, javafx.scene.input.MouseEvent event) {
     Iterator<Knot> it = optionalDotGrid.getDiagram().getCurrentStep().getAllVisibleKnots().iterator();
     boolean hasClickedOnAGivenKnot = false;
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+    NodeUtil nodeUtil = new NodeUtil();
+    
+    // Check if Control is pressed directly from the MouseEvent
+    boolean isControlDown = event.isControlDown();
+    
+    logger.info("Multi-selection check: isControlDown={}, currentlyActiveKeys contains CONTROL={}", 
+            isControlDown, app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL));
 
     // We iterate on the Knots as long as they are still Knots left to iterate
     // And we stop at the first clicked Knot
     while (it.hasNext()) {
       Knot knot = it.next();
 
-      hasClickedOnAGivenKnot = new NodeUtil().isMouseOverKnot(knot);
+      // Headless TestFX doesn't always update the `isHover()` state before the click.
+      // Use the click position against the knot image view bounds instead of hover-only detection.
+      javafx.geometry.Point2D clickLocal =
+          knot.getImageView().sceneToLocal(event.getSceneX(), event.getSceneY());
+      boolean clickedByBounds = knot.getImageView().getBoundsInLocal().contains(clickLocal);
+      hasClickedOnAGivenKnot = clickedByBounds || nodeUtil.isMouseOverKnot(knot);
+      
+      // Check if the knot is already selected by testing membership in selectedKnots
+      boolean isAlreadySelected = selectedKnots.stream()
+              .anyMatch(k -> k.getImageView() == knot.getImageView());
 
-      if (hasClickedOnAGivenKnot && (knot.getSelection() == null)) {
-        logger.debug("Clicked Knot {} in order to select it",
+      if (hasClickedOnAGivenKnot && !isAlreadySelected) {
+        logger.info("Clicked Knot {} in order to select it",
                 knot.getPattern().isPresent() ?
                         knot.getPattern().get().getFilename() :
                         knot.getText().get());
 
         // If the "Control" key is pressed, we are in multi-selection mode
-        if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
-          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+        if (!isControlDown) {
+          Knot copiedKnot = nodeUtil.copyKnot(knot);
+          nodeUtil.colorizeKnot(app, copiedKnot);
           removeNodeAndDecorationsForNowDisplayedKnots(app, selectedKnots);
+
           displayedKnots.addAll(new ArrayList<>(selectedKnots));
           displayedKnots.remove(knot);
           selectedKnots.clear();
@@ -152,30 +170,50 @@ public class MainWindow {
 
           newStep(displayedKnots, selectedKnots, true);
         } else {
-          Knot copiedKnot = new NodeUtil().copyKnot(knot);
-          selectedKnots.add(copiedKnot);
+          // Multi-selection mode: add the knot to the existing selection
+          logger.info("Multi-selection: adding knot to selection. Current selectedKnots size: {}", selectedKnots.size());
+          
+          // Copy all already selected knots to create a fresh list
+          List<Knot> newSelectedKnots = new ArrayList<>();
+          for (Knot alreadySelected : selectedKnots) {
+            Knot copiedSelected = nodeUtil.copyKnot(alreadySelected);
+            nodeUtil.colorizeKnot(app, copiedSelected);
+            newSelectedKnots.add(copiedSelected);
+            
+            // Remove already selected knots from displayedKnots if present
+            displayedKnots.remove(alreadySelected);
+          }
+          
+          // Copy and add the new knot to the selection
+          Knot copiedKnot = nodeUtil.copyKnot(knot);
+          nodeUtil.colorizeKnot(app, copiedKnot);
+          
+          // Remove the original knot from displayedKnots before adding the copy
           displayedKnots.remove(knot);
+          
+          // Add the copy of the new knot to selectedKnots
+          newSelectedKnots.add(copiedKnot);
+          logger.info("Multi-selection: after adding, newSelectedKnots size: {}", newSelectedKnots.size());
 
-          List<Knot> selectedKnotsOfStep = new ArrayList<>();
-          selectedKnotsOfStep.add(copiedKnot);
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
+          // Do not modify the current step; create a new step with all selected knots
           app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
           hideHandlesForNotSelectedKnots(app, displayedKnots);
-          newStep(displayedKnots, selectedKnots, true);
+          newStep(displayedKnots, newSelectedKnots, true);
         }
 
         break;
       } else if (hasClickedOnAGivenKnot) {
-        logger.debug("Clicked Knot displayed {}, pattern {} in order to unselect it",
+        logger.info("Clicked Knot displayed {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots().contains(knot),
                 knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : knot.getText().get());
-        logger.debug("Clicked Knot selected {}, pattern {} in order to unselect it",
+        logger.info("Clicked Knot selected {}, pattern {} in order to unselect it",
           app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().contains(knot),
                 knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : knot.getText().get());
 
         // If the "Control" key is pressed, we are in multi-selection mode
-        if (!app.getCurrentlyActiveKeys().containsKey(KeyCode.CONTROL)) {
-          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+        if (!isControlDown) {
+          Knot copiedKnot = nodeUtil.copyKnot(knot);
+          nodeUtil.colorizeKnot(app, copiedKnot);
           displayedKnots.addAll(new ArrayList<>(selectedKnots));
           selectedKnots.clear();
           selectedKnots.add(copiedKnot);
@@ -194,18 +232,39 @@ public class MainWindow {
 
           break;
         } else {
-          Knot copiedKnot = new NodeUtil().copyKnot(knot);
+          // Multi-selection mode: unselect this knot but keep the others selected
+          
+          // Copy all already selected knots to create a fresh list
+          List<Knot> newSelectedKnots = new ArrayList<>();
+          for (Knot alreadySelected : selectedKnots) {
+            // Do not copy the knot we want to unselect
+            if (alreadySelected.getImageView() == knot.getImageView()) {
+              continue; // Skip this knot; it will be unselected
+            }
+            Knot copiedSelected = nodeUtil.copyKnot(alreadySelected);
+            nodeUtil.colorizeKnot(app, copiedSelected);
+            newSelectedKnots.add(copiedSelected);
+            
+            // Remove selected knots from displayedKnots if present
+            displayedKnots.remove(alreadySelected);
+          }
+          
+          Knot copiedKnot = nodeUtil.copyKnot(knot);
+          nodeUtil.colorizeKnot(app, copiedKnot);
           copiedKnot.setSelection(null);
-          selectedKnots.remove(knot);
+          
           displayedKnots.remove(knot);
           displayedKnots.add(copiedKnot);
 
-          List<Knot> selectedKnotsOfStep = new ArrayList<>();
-          selectedKnotsOfStep.add(copiedKnot);
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
-          app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          // Use the newSelectedKnots list (with the knot removed)
+          // If other knots remain selected, keep the last one as currentKnot
+          if (!newSelectedKnots.isEmpty()) {
+            app.getOptionalDotGrid().getDiagram().setCurrentKnot(newSelectedKnots.get(newSelectedKnots.size() - 1));
+          } else {
+            app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
+          }
           hideHandlesForNotSelectedKnots(app, displayedKnots);
-          newStep(displayedKnots, selectedKnots, true);
+          newStep(displayedKnots, newSelectedKnots, true);
           break;
         }
       }
@@ -213,9 +272,10 @@ public class MainWindow {
 
     // If we have clicked elsewhere, we deselect all knots
     if (!hasClickedOnAGivenKnot) {
-      displayedKnots.addAll(selectedKnots.stream().map(knot -> new NodeUtil().copyKnot(knot)).toList());
+      displayedKnots.addAll(selectedKnots.stream().map(nodeUtil::copyKnot).toList());
       removeNodeAndDecorationsForNowDisplayedKnots(app, displayedKnots);
       selectedKnots.clear();
+      GridEvents.setCurrentImageView(null);
 
       newStep(displayedKnots, selectedKnots, true);
     }
@@ -269,7 +329,7 @@ public class MainWindow {
 
     newStep(displayedKnotsToFilterOut, selectedKnotsToFilterOut, true);
 
-    logger.debug("Removing Knot {}, current index = {}", knot, diagram.getCurrentStepIndex());
+    logger.info("Removing Knot {}, current index = {}", knot, diagram.getCurrentStepIndex());
   }
 
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(

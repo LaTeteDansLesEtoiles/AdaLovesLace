@@ -34,13 +34,13 @@ public class ExportImageButton extends ImageButton {
     }
 
     public static void onExportAction() {
-        logger.debug("Exporting image file");
+        logger.info("Exporting image file");
 
         FileChooser export = new FileChooserUtil().getFileChooser(EXPORT_IMAGE_DIALOG_TITLE, SAVED_LACE_FILE, LACE_FILE_FOLDER_SAVE_PATH, EXPORTED_FILES, EXPORT_FILE_FILTER);
         File file = export.showSaveDialog(app.getScene().getWindow());
 
         if (file != null) {
-            new ImageUtil(app).buildWritableImageWithoutTechnicalElements(
+            new ImageUtil(app).buildFileImageWithoutTechnicalElements(
                 file.getAbsolutePath().endsWith(EXPORT_IMAGE_FILE_TYPE) ?
                     file.getAbsolutePath() :
                     file.getAbsolutePath() + EXPORT_IMAGE_FILE_TYPE

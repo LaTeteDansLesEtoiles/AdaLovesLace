@@ -3,7 +3,7 @@ package org.alienlabs.adaloveslace.view.component.button.statewindow;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
@@ -15,8 +15,8 @@ import java.util.List;
 
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.view.window.StateWindow.STATE_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.STATE_BUTTONS_HEIGHT;
 
 public class SelectableButton extends ImageButton {
 
@@ -37,7 +37,7 @@ public class SelectableButton extends ImageButton {
   }
 
   public static void onSetSelectableModeAction(App app) {
-    logger.debug("Setting selectable");
+    logger.info("Setting selectable");
 
     List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
     List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());

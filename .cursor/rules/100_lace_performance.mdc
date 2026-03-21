@@ -1,0 +1,201 @@
+---
+description: Enforce performance-aware coding practices for large .lace archive loading and saving in a JavaFX desktop application
+globs:
+  - "src/main/**/*.java"
+alwaysApply: true
+---
+
+# .lace performance rule
+
+When writing or modifying code related to `.lace` loading, saving, serialization, mapping, or large diagram handling, always follow these rules.
+
+## 1. Main objective
+
+This application loads and saves potentially large `.lace` files with large descriptors and embedded resources.
+
+Performance-sensitive code must optimize for:
+- lower load time
+- lower save time where reasonable
+- lower peak memory usage
+- fewer unnecessary allocations
+- fewer unnecessary copies
+- predictable behavior on standard desktop hardware
+
+Do not write obviously wasteful code in hot paths.
+
+## 2. Performance-sensitive areas
+
+Treat the following as performance-sensitive by default:
+- `.lace` archive opening
+- ZIP entry scanning
+- descriptor decoding
+- protobuf parsing
+- legacy XML compatibility loading
+- mapping from persistence/serialization model to domain model
+- writing descriptor and resources
+- reloading after save
+- loading large collections/elements inside diagrams
+
+Be especially careful in these areas.
+
+## 3. Avoid unnecessary intermediate structures
+
+Do not create extra large intermediate representations unless clearly justified.
+
+Avoid patterns such as:
+- reading a large stream fully into a byte array when direct parsing is possible
+- converting large structures back and forth unnecessarily
+- building multiple equivalent object graphs
+- copying large collections only to immediately remap them again
+- constructing large strings for debug logging
+
+Prefer streaming/direct parsing when compatible with architecture and code clarity.
+
+## 4. Avoid duplicate graph construction
+
+When decoding a large descriptor:
+- avoid parsing into one large temporary model and then rebuilding an almost identical second model if a more direct mapping is possible
+- keep mapping boundaries explicit, but do not tolerate obviously redundant full-graph duplication
+
+If a duplication is required for architectural cleanliness, keep it justified and localized.
+
+## 5. Memory awareness matters
+
+Assume typical users may have limited RAM.
+
+Therefore:
+- avoid full in-memory duplication of large descriptor payloads
+- release references promptly by keeping scopes tight
+- prefer local variables with narrow lifetime
+- avoid caching large persistence payloads without a strong reason
+- be cautious with debug-only retained structures
+
+Do not keep large temporary data around longer than necessary.
+
+## 6. Logging must not hurt performance
+
+In performance-sensitive paths:
+- avoid expensive string concatenation for debug logging unless guarded appropriately
+- do not log full descriptor contents
+- keep logs concise
+- prefer structured, phase-level logs such as timing and format selection
+
+Logs should help diagnose hot paths without becoming a new cost center.
+
+## 7. No accidental quadratic behavior
+
+Be alert to accidental quadratic complexity in:
+- repeated list scanning
+- repeated map rebuilding
+- repeated resource lookup
+- repeated archive entry search
+- repeated conversion of the same data
+
+If the code repeatedly searches the same archive/resource/collection in a hot path, introduce a clearer and more efficient access strategy.
+
+## 8. Performance instrumentation is encouraged
+
+For hot paths, preserve or add lightweight timing instrumentation where appropriate, especially around:
+- archive open
+- entry discovery
+- descriptor parse/decode
+- mapping to domain
+- resource load
+- save completion
+
+Instrumentation must be:
+- low-noise
+- debug-oriented
+- cheap enough for normal development
+- easy to remove or keep behind existing logging conventions
+
+Do not add noisy ad hoc prints.
+
+## 9. Choose clarity first, but not waste
+
+Do not sacrifice maintainability for meaningless micro-optimization.
+However, do remove obvious waste.
+
+Good trade-off:
+- clear architecture
+- explicit mapping
+- no giant unnecessary copies
+- no obviously redundant full transformations
+
+Bad trade-off:
+- unreadable code for tiny gains
+- or clean-looking code that is wildly wasteful on 300 MB descriptors
+
+## 10. UI responsiveness matters
+
+In a desktop JavaFX application, heavy `.lace` operations must not accidentally degrade UI responsiveness.
+
+When touching code near heavy file operations:
+- be conscious of which layer triggers the work
+- keep long-running operations out of inappropriate UI-bound code paths
+- do not introduce extra UI-thread blocking work casually
+- preserve clear boundaries between UI orchestration and heavy persistence operations
+
+Do not move expensive persistence work into controllers or rendering code.
+
+## 11. Resource handling must be efficient
+
+For image/resource persistence:
+- avoid loading resources repeatedly when one controlled pass is enough
+- avoid repeated archive scans for the same resource
+- keep resource-reference lookup coherent and efficient
+- avoid unnecessary transcoding/conversion unless explicitly required
+
+## 12. Keep save behavior efficient too
+
+Do not focus only on loading.
+Saving can also become expensive.
+
+When saving:
+- avoid building redundant temporary archives in memory unless required
+- avoid serializing equivalent data multiple times
+- write only what is needed by the format contract
+- keep resource enumeration and descriptor generation coherent and efficient
+
+## 13. Benchmarks and measurement
+
+When touching major hot paths, prefer changes that can be validated by repeatable measurement.
+
+Useful measurement targets include:
+- descriptor decode time
+- full open time
+- full save time
+- save then reopen time
+- memory-sensitive scenarios for large descriptors
+
+Do not add brittle performance assertions to ordinary CI tests unless the repository already has a robust framework for that.
+
+## 14. Keep debug-only features out of the hot path
+
+Optional readable exports or debug dumps must not contaminate the normal load/save hot path.
+
+If a debug-readable descriptor exists:
+- it must be opt-in
+- it must not be generated by default during normal saves
+- it must not be parsed during normal loads unless explicitly requested
+
+## 15. Refactor hot paths when touching them
+
+When modifying a known hot path:
+- inspect whether the touched code introduces new copies, scans, or mappings
+- simplify the path if possible
+- prefer reusable focused helpers over repeated ad hoc logic
+- improve naming so hot-path responsibilities remain understandable
+
+Do not leave obvious performance debt untouched when the area is already being changed.
+
+## 16. Output expectations
+
+Generated or modified code in performance-sensitive areas must:
+- remain readable
+- remain testable
+- avoid obvious waste
+- respect large-file desktop constraints
+- preserve architecture while improving efficiency
+
+If the existing codebase contains weaker patterns, improve the touched area toward this standard instead of copying them.

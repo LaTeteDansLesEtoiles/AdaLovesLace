@@ -22,7 +22,7 @@ This is Free Software, under [Affero GPL V3 license](licence.md)
 
 
 
-© 2023-2025 Zala GOUPIL
+© 2023-2026 Zala GOUPIL
 
 
 

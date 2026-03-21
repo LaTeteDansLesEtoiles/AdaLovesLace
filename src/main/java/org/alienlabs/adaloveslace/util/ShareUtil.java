@@ -1,9 +1,11 @@
 package org.alienlabs.adaloveslace.util;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.application.Platform;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.dto.DiagramDTO;
+import org.alienlabs.adaloveslace.domain.Picture;
+import org.alienlabs.adaloveslace.domain.dto.DiagramDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +16,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -24,19 +27,26 @@ public class ShareUtil {
 
   private static final Logger logger = LoggerFactory.getLogger(ShareUtil.class);
 
-  public ShareUtil(App app, String diagramName, String username, String clientId, String clientSecret) {
-    logger.debug("Sharing in progress");
+  public ShareUtil(App app,
+                   String diagramName,
+                   String username,
+                   String clientId,
+                   String clientSecret,
+                   String initialImage,
+                   List<Picture> imageList) {
+    logger.info("Sharing in progress");
 
     Platform.runLater(() -> {
-      DiagramDTO diagram;
+        DiagramDTO diagram;
+        try {
+            diagram = new ImageUtil(app).getDiagram(diagramName, username, clientId, clientSecret, initialImage, imageList);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
 
-      try {
-        diagram = new ImageUtil(app).getDiagram(diagramName, username, clientId, clientSecret);
-      } catch (IOException e) {
-        throw new IllegalArgumentException(e);
-      }
-
-      Gson gson = new Gson();
+      Gson gson = new GsonBuilder()
+              .excludeFieldsWithoutExposeAnnotation()
+              .create();
       HttpClient client = HttpClient.newHttpClient();
       HttpRequest request = postRequest(diagram, gson);
 
@@ -49,8 +59,10 @@ public class ShareUtil {
         Files.delete(laceFilePath.toPath());
         Files.delete(previewFile.toPath());
       } catch (IOException e) {
-          throw new RuntimeException(e);
+          throw new IllegalArgumentException(e);
       }
+
+      logger.info("Sharing success");
     });
   }
 
@@ -62,7 +74,7 @@ public class ShareUtil {
     completableFuture.join();
 
     try {
-      logger.debug("Response status code: {}", completableFuture.get().statusCode());
+      logger.info("Response status code: {}", completableFuture.get().statusCode());
     } catch (InterruptedException | ExecutionException e) {
       throw new RuntimeException("Error getting response status code!", e);
     }

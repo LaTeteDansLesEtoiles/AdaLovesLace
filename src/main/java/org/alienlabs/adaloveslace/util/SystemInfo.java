@@ -1,6 +1,6 @@
 package org.alienlabs.adaloveslace.util;
 
-public class SystemInfo {
+public final class SystemInfo {
 
   public static final String JAVA_VERSION = "java.version";
   public static final String JAVAFX_VERSION = "javafx.version";

@@ -22,7 +22,7 @@ public class FileAlreadyExistsWindow {
   public static final String FILE_ALREADY_EXISTS_HEADER_TEXT      = "FILE_ALREADY_EXISTS_HEADER_TEXT";
   public static final String FILE_ALREADY_EXISTS_CONTENT_TEXT     = "FILE_ALREADY_EXISTS_CONTENT_TEXT";
   public static final String SAVE_BUTTON_TEXT                     = "SAVE_BUTTON_TEXT";
-  public static final String CANCEL_BUTTON_TEXT                   = "CANCEL_BUTTON_TEXT";
+  public static final String CANCEL_BUTTON_TEXT                   = "CancelButtonText";
 
   private static final Logger logger = LoggerFactory.getLogger(FileAlreadyExistsWindow.class);
   private final File fileToSave;
@@ -36,7 +36,7 @@ public class FileAlreadyExistsWindow {
     Optional<ButtonType> result = alert.showAndWait();
 
     if (result.isPresent() && result.get() == saveFileButton) {
-      logger.debug("Accepted file overwrite");
+      logger.info("Accepted file overwrite");
 
       try {
         Files.delete(fileToSave.toPath());
@@ -47,7 +47,7 @@ public class FileAlreadyExistsWindow {
       }
     } else {
       this.cancelled = true;
-      logger.debug("File overwrite cancelled");
+      logger.info("File overwrite cancelled");
     }
 
     alert.close();

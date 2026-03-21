@@ -5,7 +5,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.Tooltip;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Knot;
+import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.util.NodeUtil;
 
 import java.util.ArrayList;
@@ -13,12 +13,21 @@ import java.util.List;
 
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class ZoomSpinner {
+  // When spinners are linked (1/2/3) they update each other by setting values,
+  // which triggers multiple ChangeListeners. We only want to apply the expensive
+  // diagram step once per external/user update, not for internal synchronization.
+  private static boolean internalUpdateInProgress = false;
 
-  private static int numberOfUpdates = 0;
+  /**
+   * Reset internal static state between functional tests.
+   */
+  public static void resetNumberOfUpdates() {
+    internalUpdateInProgress = false;
+  }
 
   public void buildZoomSpinner(App app, Spinner<Integer> spinner,
                                SpinnerValueFactory<Integer> spinnerToReflect1,
@@ -30,7 +39,12 @@ public class ZoomSpinner {
       spinnerToReflect1.setValue(newValue);
       spinnerToReflect2.setValue(newValue);
 
-      if (++numberOfUpdates == 1) {
+      if (internalUpdateInProgress) {
+        return;
+      }
+
+      internalUpdateInProgress = true;
+      try {
         List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
         List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
         List<Knot> copiedKnots = new ArrayList<>();
@@ -41,12 +55,10 @@ public class ZoomSpinner {
           copiedKnots.add(copiedKnot);
         }
 
-        app.getOptionalDotGrid().getDiagram().setCurrentKnot(selectedKnots.getLast());
+        app.getOptionalDotGrid().getDiagram().setCurrentKnot(selectedKnots.isEmpty() ? null : selectedKnots.getLast());
         newStep(displayedKnots, copiedKnots, true);
-      }
-
-      if (numberOfUpdates > 2) {
-        numberOfUpdates = 0;
+      } finally {
+        internalUpdateInProgress = false;
       }
     };
 

@@ -1,0 +1,357 @@
+---
+description: Enforce robust non-UI persistence testing practices for .lace archives, protobuf descriptors, legacy save.xml compatibility, versioning, corruption handling, and semantic round-trip behavior
+globs:
+  - "src/test/**/unittest/**/*.java"
+alwaysApply: true
+---
+
+# .lace persistence testing rule (non-UI)
+
+When writing or modifying non-UI tests related to `.lace` persistence, always follow these rules.
+
+## 1. Scope
+
+This rule applies to non-UI tests covering:
+- `.lace` archive reading and writing
+- ZIP entry discovery and validation
+- protobuf descriptor serialization/deserialization
+- legacy `save.xml` compatibility loading
+- archive metadata/versioning
+- resource/image entry coherence
+- corruption handling
+- precedence rules between descriptor formats
+- semantic round-trip validation
+- migration behavior from legacy archive input to new binary archive output
+
+A `.lace` file must always be treated as:
+- a ZIP archive with a renamed extension
+- containing a descriptor entry and optional resource/image entries
+- versioned according to the project’s archive format contract
+
+These tests must not depend on JavaFX/TestFX unless there is a very strong reason.
+This layer should validate persistence behavior as cheaply and deterministically as possible.
+
+## 2. Main objective
+
+Persistence tests must be:
+- fast enough to run regularly
+- deterministic
+- isolated
+- expressive
+- robust against incidental implementation changes
+- strong on format correctness and backward compatibility
+
+Do not use UI tests to verify behavior that can be tested more directly and more cheaply at this layer.
+
+## 3. Testing level boundary
+
+Prefer non-UI persistence tests for:
+- ZIP entry presence/absence rules
+- `descriptor.pb` decoding/encoding
+- `save.xml` compatibility loading
+- precedence rules when both descriptor formats exist
+- version checks
+- corrupted/truncated descriptor behavior
+- missing descriptor detection
+- semantic equivalence between old and new descriptor sources
+- resource reference coherence
+- round-trip persistence fidelity
+
+Do not push these checks unnecessarily into JavaFX functional tests.
+
+UI tests may verify the visible contract of open/save workflows, but persistence correctness belongs primarily here.
+
+## 4. Required archive contract awareness
+
+Tests must reflect the archive contract explicitly.
+
+At minimum, where relevant, assert:
+- `.lace` is a ZIP archive with renamed extension
+- the primary persisted descriptor entry is `descriptor.pb`
+- legacy input descriptor entry is `save.xml`
+- default save behavior does not emit `save.xml`
+- optional readable debug export, if implemented, is opt-in and separate from the normal runtime contract
+- metadata/version entry exists if that is part of the contract
+
+Do not leave archive-structure expectations implicit.
+
+## 5. Mandatory behavioral coverage
+
+Ensure meaningful coverage exists for these scenarios when touching the persistence area:
+
+### Loading
+- archive with only `descriptor.pb`
+- archive with only `save.xml`
+- archive with both `descriptor.pb` and `save.xml`, verifying precedence
+- archive with neither descriptor entry
+- archive with malformed ZIP structure if relevant
+- archive with corrupted or truncated `descriptor.pb`
+- archive with unsupported descriptor version
+- archive with valid descriptor but missing referenced resource/image
+- archive with empty descriptor entry
+
+### Saving
+- save writes `descriptor.pb`
+- save does not write `save.xml` by default
+- save writes expected metadata/version information if applicable
+- save writes required resources/images if that is part of the contract
+- save output can be reloaded successfully
+
+### Migration/compatibility
+- legacy archive loads successfully
+- legacy-loaded diagram re-saves to new format by default
+- semantic equivalence between legacy-loaded and protobuf-loaded diagrams
+- precedence behavior remains stable and documented
+
+## 6. Semantic equivalence matters
+
+Prefer semantic round-trip and equivalence assertions over superficial assertions.
+
+Strong examples:
+- loading equivalent content from `save.xml` and `descriptor.pb` results in semantically equivalent `Diagram` instances
+- saving then reloading preserves the meaningful diagram state
+- legacy load then new-format save then reload preserves meaning
+
+Weak examples:
+- file exists
+- descriptor entry exists
+- file size is non-zero
+- no exception was thrown
+
+Persistence tests must verify meaningful content, not only superficial persistence events.
+
+## 7. Comparison strategy for diagrams
+
+If `Diagram` does not already support appropriate equality for persistence purposes, create and reuse a stable semantic comparison helper.
+
+The helper should compare meaningful persisted behavior, not incidental object identity.
+
+Compare relevant persisted aspects such as:
+- diagram metadata that is part of the format contract
+- nodes/elements/cells/links/pattern content as applicable
+- ordering only when ordering is semantically meaningful
+- references to resources/images
+- properties that must survive persistence
+
+Do not compare:
+- transient runtime state
+- cache fields
+- object identity
+- incidental implementation details
+
+Name such helpers clearly, for example:
+- `DiagramSemanticAssertions`
+- `DiagramPersistenceAssertions`
+- `DiagramEquivalenceAssert`
+
+## 8. ZIP inspection must be explicit but not brittle
+
+When validating `.lace` archives:
+- inspect ZIP entries explicitly
+- assert required entries are present
+- assert forbidden legacy entries are absent by default where relevant
+- assert resource entries are coherent where relevant
+
+Avoid brittle assertions on:
+- irrelevant ZIP entry ordering
+- compression ratios
+- incidental timestamps unless determinism is explicitly part of the contract
+- raw binary equivalence of whole archives unless the format explicitly guarantees it and there is a real reason to test it
+
+Test the contract, not accidental packaging details.
+
+## 9. Versioning and compatibility checks
+
+Version handling is critical and must be tested explicitly.
+
+Where versioning exists, add strong tests for:
+- supported current version
+- unsupported future version
+- missing version metadata if that should fail
+- inconsistent version metadata if applicable
+
+Failures must be explicit and intention-revealing.
+
+Do not silently fall back to legacy behavior because version checks failed.
+
+Do not silently ignore incompatible data.
+
+## 10. Corruption and failure-path testing is mandatory
+
+Persistence code is not production-grade if only the happy path is tested.
+
+Add or maintain coverage for:
+- invalid ZIP masquerading as `.lace`
+- empty archive
+- missing descriptor entry
+- truncated `descriptor.pb`
+- malformed protobuf payload
+- unsupported descriptor version
+- missing required resources
+- invalid descriptor/resource reference mismatch
+- both descriptor formats present
+- unreadable or partially corrupted metadata if applicable
+
+Use precise assertions on exceptions and failure messages where meaningful.
+
+## 11. Legacy compatibility isolation
+
+Tests must reinforce the intended architecture:
+- JAXB/XML is a legacy input compatibility path only
+- protobuf is the primary persisted descriptor format
+- new saves must not regress back to XML default output
+
+Where useful, add tests that make this explicit through outcomes:
+- loading legacy still works
+- default saving emits binary descriptor
+- legacy compatibility is input-only in normal behavior
+
+Do not design tests in a way that normalizes XML as the primary save path again.
+
+## 12. Temporary files and fixtures
+
+Use temporary files/directories or in-memory archive construction when practical.
+
+Prefer:
+- small focused archive builders/helpers
+- programmatic fixture generation
+- per-test temp directories
+- minimal fixture archives with clear scenario intent
+
+Avoid:
+- giant opaque binary fixtures with unclear meaning
+- dependency on developer-local paths
+- hidden shared mutable fixture state
+- overly magical helper code that obscures archive content
+
+If static fixture files are truly useful, name them clearly and keep them small and purposeful.
+
+## 13. Builder/helper guidance
+
+Encourage reusable helpers where setup becomes repetitive.
+
+Useful helper examples:
+- `LaceArchiveBuilder`
+- `LegacyLaceArchiveBuilder`
+- `DescriptorPbBuilder`
+- `ArchiveEntryAssertions`
+- `DiagramSemanticAssertions`
+- `PersistenceTestFixtures`
+
+Helpers must:
+- keep tests readable
+- expose scenario intent
+- avoid hiding critical archive structure
+- avoid swallowing exceptions that tests should observe
+
+Do not create giant god-builders that know every scenario.
+Prefer small composable helpers.
+
+## 14. Assertions must be strong and intention-revealing
+
+Prefer assertions such as:
+- archive contains `descriptor.pb`
+- archive does not contain `save.xml` by default after save
+- loading chooses `descriptor.pb` when both descriptors are present
+- unsupported version throws the expected application-level exception
+- missing resource reference causes explicit failure
+- reopened diagram is semantically equivalent to the original
+
+Avoid weak assertions such as:
+- archive is not null
+- entry count is greater than zero
+- some exception happened
+- result is non-null when stronger guarantees are possible
+
+Use precise exception assertions where appropriate.
+
+## 15. Do not over-couple tests to implementation details
+
+Persistence tests must validate the contract, not every internal step.
+
+Avoid tests that are tightly coupled to:
+- private helper methods
+- incidental mapper internals
+- exact protobuf-generated field layout beyond contract needs
+- internal logging messages unless those logs are part of an operational requirement
+- incidental collection implementations
+
+Prefer public or package-visible persistence APIs and stable, documented outcomes.
+
+## 16. Determinism and reproducibility
+
+If the persistence layer aims for deterministic output, test it thoughtfully.
+
+You may verify determinism for meaningful aspects such as:
+- stable required entry names
+- absence of legacy XML by default
+- stable metadata/version contract
+- stable semantic round-trip behavior
+
+Do not over-assert byte-perfect archive identity unless:
+- determinism is explicitly guaranteed
+- timestamps and non-deterministic ZIP metadata are controlled
+- there is a real product need for that guarantee
+
+## 17. Performance-sensitive persistence tests
+
+This layer may include lightweight performance-oriented checks, but do not turn ordinary tests into noisy benchmarks.
+
+Prefer:
+- dedicated benchmark/helper classes for performance comparison
+- repeatable integration-style measurements for XML vs protobuf decoding
+- performance assertions only when they are stable enough to be meaningful in the repository context
+
+Do not add flaky timing thresholds in standard CI tests unless the project already has a robust performance-testing setup.
+
+Performance helpers should measure meaningful things such as:
+- descriptor decode time
+- end-to-end archive read time
+- round-trip write/read cost where useful
+
+## 18. Naming conventions
+
+Test names must describe behavior clearly and precisely.
+
+Prefer names such as:
+- `shouldLoadArchiveContainingOnlyDescriptorPb`
+- `shouldLoadLegacyArchiveContainingSaveXml`
+- `shouldPreferDescriptorPbWhenBothDescriptorFormatsExist`
+- `shouldFailWhenArchiveContainsNoDescriptorEntry`
+- `shouldFailWhenDescriptorVersionIsUnsupported`
+- `shouldResaveLegacyArchiveUsingBinaryDescriptorFormat`
+- `shouldPreserveDiagramSemanticsAcrossSaveAndReload`
+
+Avoid vague names such as:
+- `testArchive`
+- `testPersistence`
+- `testProto`
+- `shouldWork`
+
+## 19. Mandatory improvements when touching existing persistence tests
+
+Whenever modifying existing `.lace` persistence tests:
+- strengthen weak assertions
+- add missing failure-path coverage where relevant
+- reduce fixture opacity
+- remove accidental UI dependencies
+- replace brittle raw-byte checks with semantic checks when more appropriate
+- isolate archive-building helpers if setup is duplicated
+- improve exception assertions
+- improve naming clarity
+
+Do not preserve weak persistence tests just because they already exist.
+
+## 20. Expected output quality
+
+Generated or modified persistence tests must:
+- validate the `.lace` archive contract accurately
+- reinforce protobuf as the default persisted descriptor format
+- preserve legacy `save.xml` input compatibility coverage
+- verify precedence and versioning explicitly
+- cover corruption and missing-resource paths where relevant
+- prefer semantic round-trip validation over superficial checks
+- remain readable, fast, and maintainable
+- follow repository conventions and reuse existing test infrastructure where appropriate
+
+If the current repository contains weaker patterns, improve the touched area toward this standard instead of copying those weaknesses.

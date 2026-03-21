@@ -11,14 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.util.Preferences.LACE_FILE_FOLDER_SAVE_PATH;
 import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
 
 public class LoadButton extends ImageButton {
 
-  private static App app;
-
-  public static final String LOAD_FILE_DIALOG_TITLE   = "Load diagram";
+  public static final String LOAD_FILE_DIALOG_TITLE   = "Load";
   public static final String DIAGRAM_FILES            = ".lace files (*.lace)";
   public static final String DIAGRAM_FILE_FILTER      = "*.lace";
 
@@ -26,15 +25,20 @@ public class LoadButton extends ImageButton {
 
   public LoadButton(App app, String buttonLabel) {
     super(buttonLabel);
-    LoadButton.app = app;
-    this.setOnMouseClicked(_ -> onLoadAction());
+    this.setOnMouseClicked(_ -> onLoadAction(app));
     buildButtonImage("load.png");
   }
 
-  public static void onLoadAction() {
-    logger.debug("Load file");
+  public static void onLoadAction(App app) {
+    logger.info("Load file");
 
-    FileChooser load = new FileChooserUtil().getFileChooser(LOAD_FILE_DIALOG_TITLE, SAVED_LACE_FILE, LACE_FILE_FOLDER_SAVE_PATH, DIAGRAM_FILES, DIAGRAM_FILE_FILTER);
+    FileChooser load = new FileChooserUtil().getFileChooser(
+            resourceBundle.getString(LOAD_FILE_DIALOG_TITLE),
+            SAVED_LACE_FILE,
+            LACE_FILE_FOLDER_SAVE_PATH,
+            DIAGRAM_FILES,
+            DIAGRAM_FILE_FILTER
+    );
     File file = load.showOpenDialog(app.getScene().getWindow());
 
     if (file != null) {

@@ -9,8 +9,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.util.ImageUtil;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
@@ -21,8 +21,8 @@ import java.util.List;
 
 import static org.alienlabs.adaloveslace.App.TOOLTIPS_DURATION;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.business.model.Diagram.newStep;
-import static org.alienlabs.adaloveslace.view.window.GeometryWindow.GEOMETRY_BUTTONS_HEIGHT;
+import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
+import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.GEOMETRY_BUTTONS_HEIGHT;
 
 public class CreatePatternButton extends ImageButton {
 
@@ -51,14 +51,15 @@ public class CreatePatternButton extends ImageButton {
     }
 
     public static void onCreatePatternModeAction(App app) {
-        logger.debug("Setting create pattern mode");
+        logger.info("Setting create pattern mode");
 
         app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.CREATE_PATTERN);
 
-        app.getGeometryWindow().getDrawingButton().setSelected(false);
-        app.getGeometryWindow().getSelectionButton().setSelected(false);
-        app.getGeometryWindow().getDeletionButton().setSelected(false);
-        app.getGeometryWindow().getDuplicationButton().setSelected(false);
+        // Les boutons sont maintenant dans ToolboxWindow
+        // app.getGeometryWindow().getDrawingButton().setSelected(false);
+        // app.getGeometryWindow().getSelectionButton().setSelected(false);
+        // app.getGeometryWindow().getDeletionButton().setSelected(false);
+        // app.getGeometryWindow().getDuplicationButton().setSelected(false);
 
         app.getOptionalDotGrid().clearSelections();
         app.getOptionalDotGrid().clearHovered();
@@ -112,10 +113,10 @@ public class CreatePatternButton extends ImageButton {
 
             if (firstClickLocal == null) {
                 firstClickLocal = local;
-                logger.debug("Create Pattern => first click {}", firstClickLocal);
+                logger.info("Create Pattern => first click {}", firstClickLocal);
             } else if (secondClickLocal == null) {
                 secondClickLocal = local;
-                logger.debug("Create Pattern => second click {}", secondClickLocal);
+                logger.info("Create Pattern => second click {}", secondClickLocal);
 
                 double xMin = Math.min(firstClickLocal.getX(), secondClickLocal.getX());
                 double yMin = Math.min(firstClickLocal.getY(), secondClickLocal.getY());

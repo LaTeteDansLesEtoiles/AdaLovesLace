@@ -1,0 +1,30 @@
+{
+  "sonarLint": {
+    "connectedMode": {
+      "servers": []
+    },
+    "rules": {
+      "java:S1192": {
+        "level": "on"
+      },
+      "java:S138": {
+        "level": "on",
+        "parameters": {
+          "max": "50"
+        }
+      },
+      "java:S104": {
+        "level": "on",
+        "parameters": {
+          "max": "500"
+        }
+      },
+      "java:S1118": {
+        "level": "on"
+      },
+      "java:S1186": {
+        "level": "on"
+      }
+    }
+  }
+}

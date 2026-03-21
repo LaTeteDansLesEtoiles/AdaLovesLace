@@ -3,10 +3,12 @@ package org.alienlabs.adaloveslace.unittest.view.component;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.Pattern;
+import javafx.scene.paint.Color;
+import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.Pattern;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.view.component.GridUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -17,6 +19,7 @@ import java.util.Optional;
 import static org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tag("unit")
 class OptionalDotGridTest {
 
   private ImageView imageView;
@@ -25,7 +28,7 @@ class OptionalDotGridTest {
   @CsvSource({"1,0", "1.7,7", "3,20", "1.3,3", "1.0,0", "1.1,1", "0.9,-1", "1.2,2", "0.8,-2", "1.3,3", "0.7,-3"})
   void zoom_knot_factor(String expectedZoomFactor, String settedZoomFactor) {
     // Given
-    Knot knot = new Knot(0d, 0d, buildPattern(), Optional.of(""), imageView);
+    Knot knot = new Knot(0d, 0d, buildPattern(), Optional.of(""), Optional.of(Color.BLACK), imageView);
     knot.setZoomFactor(Integer.parseInt(settedZoomFactor));
 
     // When

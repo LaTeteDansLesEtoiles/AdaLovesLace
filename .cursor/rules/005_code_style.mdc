@@ -1,0 +1,9 @@
+# Code Style Rules
+
+## Rule 1 (v000): Size Limits
+
+- A package must not contain more than **10 classes and/or interfaces**
+- A method must not exceed **50 lines** in length
+- A `.java` file must not exceed **500 lines**
+
+These limits help maintain readable, maintainable, and easy-to-understand code.

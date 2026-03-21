@@ -6,26 +6,33 @@ import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
+import javafx.concurrent.Task;
+import javafx.geometry.Pos;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.business.model.Diagram;
-import org.alienlabs.adaloveslace.business.model.Knot;
-import org.alienlabs.adaloveslace.business.model.Step;
-import org.alienlabs.adaloveslace.view.component.button.geometrywindow.DrawingButton;
-import org.alienlabs.adaloveslace.view.window.event.WindowResizeEvents;
+import org.alienlabs.adaloveslace.domain.Diagram;
+import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -50,6 +57,8 @@ public class FileUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
     private App app;
+    private Diagram diagram;
+    private static volatile File lastLoadedLaceFile;
 
     public FileUtil() {
         // Sometimes you don't need the Application
@@ -59,65 +68,179 @@ public class FileUtil {
         this.app = app;
     }
 
-    public void buildUiFromLaceFile(App app, File file) {
-        Diagram diagram = loadFromLaceFile(app, file);
+    public void buildUiFromLaceFile(final App app, final File file) {
+        lastLoadedLaceFile = file;
+        final Dialog<Diagram> dialog = getDialog(app, LoadingLaceInProgress);
 
-        preparePrimaryStage(app, diagram);
-        prepareGeometryAndToolbox(app, diagram);
-    }
+        Task<Diagram> loadTask = new Task<>() {
+            @Override
+            protected Diagram call() {
+                return loadFromLaceFile(app, file);
+            }
+        };
 
-    private static void prepareGeometryAndToolbox(App app, Diagram diagram) {
-        app.getToolboxStage().close();
-        app.showToolboxWindow(app, app, CLASSPATH_RESOURCES_PATH);
-        diagram.setApp(app);
-        app.getOptionalDotGrid().layoutChildren();
-        DrawingButton.onSetDrawModeAction(app, app.getGeometryWindow());
-    }
+        loadTask.setOnSucceeded(_ -> {
+            Diagram value = loadTask.getValue();
+            dialog.setResult(value);
+            dialog.close();
+            // Show the diagram immediately; normal rendering will draw patterns & texts
+            new FileChooserUtil().restartGui(app, value);
+            // Extract the remaining patterns in the background to keep UI smooth
+            Set<String> needed = getNeededPatternFilenamesInViewport(app, value);
+            copyRemainingPatternsAsync(file, needed);
+        });
+        loadTask.setOnFailed(_ -> {
+            logger.error("Error loading task", loadTask.getException());
+            dialog.close();
+        });
+        loadTask.setOnCancelled(_ -> dialog.close());
 
-    private static void preparePrimaryStage(App app, Diagram diagram) {
-        app.getPrimaryStage().close();
-        app.showMainWindow(
-                app.getResizes().getMainWindowWidth(),
-                app.getResizes().getMainWindowHeight(),
-                app.getResizes().getGridWidth(),
-                app.getResizes().getGridHeight(),
-                app.getPrimaryStage(),
-                diagram
-        );
-        app.getOptionalDotGrid().setDiagram(diagram);
-        new KeyboardUtil().initializeKeyboardShorcuts(app);
-        new WindowResizeEvents(app).onDoMainWindowResize();
+        Thread bg = new Thread(loadTask, "AdaLovesLace-LoaderThread");
+        bg.setDaemon(true);
+        bg.setPriority(Thread.MAX_PRIORITY);
+        bg.start();
+
+        dialog.showAndWait();
     }
 
     public Diagram loadFromLaceFile(App app, File file) {
-        Diagram diagram = null;
-        diagram = buildZip(app, file, diagram);
+        new ImageUtil(app).backupKnots();
+        Diagram emptyTemplate = new Diagram(app);
+        Diagram diagram = org.alienlabs.adaloveslace.persistence.LaceArchiveLoader.load(file, emptyTemplate);
 
+        if (diagram == null) {
+            logger.warn("Diagram is null after loading, creating new one");
+            diagram = new Diagram(app);
+        }
+
+        initializeTypedTextFromLoadedText(diagram);
+        // Extract initial patterns needed for the viewport
+        try (ZipFile zipFile = new ZipFile(file)) {
+            Set<String> needed = getNeededPatternFilenamesInViewport(app, diagram);
+            copyOnlyPatterns(zipFile, needed);
+        } catch (IOException e) {
+            logger.error("Error copying patterns from lace file: {}", file.getAbsolutePath(), e);
+        }
+
+        app.getOptionalDotGrid().setDiagram(diagram);
         return diagram;
     }
 
-    private Diagram buildZip(App app, File file, Diagram diagram) {
-        try (ZipFile zipFile = new ZipFile(file)) {
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-            while(entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-
-                if (XML_FILE_TO_SAVE_IN_LACE_FILE.equals(entry.getName())) {
-                    diagram = buildDiagram(zipFile, entry);
-                    app.getOptionalDotGrid().setDiagram(diagram);
-                } else {
-                    copyPattern(file, zipFile, entry);
+    private Set<String> getNeededPatternFilenames(Diagram diagram) {
+        Set<String> needed = new HashSet<>();
+        if (diagram == null || diagram.getAllSteps() == null) return needed;
+        if (diagram.getCurrentStep() != null) {
+            for (Knot k : diagram.getCurrentStep().getAllVisibleKnots()) {
+                if (k.getPattern().isPresent()) {
+                    needed.add(k.getPattern().get().getFilename());
                 }
             }
-
-            if (null != diagram) {
-                buildKnotsImageViews(app, diagram);
-            }
-        } catch (JAXBException | IOException e) {
-            logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
         }
-        return diagram;
+        return needed;
+    }
+
+    private Set<String> getNeededPatternFilenamesInViewport(App app, Diagram diagram) {
+        Set<String> needed = new HashSet<>();
+        if (diagram == null || diagram.getCurrentStep() == null) return needed;
+        double vw;
+        double vh;
+        if (app.getResizes() != null) {
+            vw = app.getResizes().getGridWidth();
+            vh = app.getResizes().getGridHeight();
+        } else {
+            // Tests and some headless contexts don't initialize WindowResizeEvents.
+            vw = DEFAULT_GRID_WIDTH;
+            vh = DEFAULT_GRID_HEIGHT;
+        }
+        for (Knot k : diagram.getCurrentStep().getAllVisibleKnots()) {
+            if (k.getPattern().isPresent()) {
+                double w = k.getPattern().get().getWidth();
+                double h = k.getPattern().get().getHeight();
+                if (rectsIntersect(0, 0, vw, vh, k.getX(), k.getY(), w, h)) {
+                    needed.add(k.getPattern().get().getFilename());
+                }
+            }
+        }
+        return needed;
+    }
+
+    private boolean rectsIntersect(double x1, double y1, double w1, double h1,
+                                   double x2, double y2, double w2, double h2) {
+        return x1 < x2 + w2 && x2 < x1 + w1 && y1 < y2 + h2 && y2 < y1 + h1;
+    }
+
+    private void copyOnlyPatterns(ZipFile zipFile, Set<String> filenames) throws IOException {
+        for (String name : filenames) {
+            ZipEntry entry = zipFile.getEntry(name);
+            if (entry != null) {
+                try (InputStream in = zipFile.getInputStream(entry)) {
+                    copyTargetFile(entry, in);
+                }
+            }
+        }
+    }
+
+    private void copyRemainingPatternsAsync(File file, Set<String> alreadyCopied) {
+        Thread t = new Thread(() -> {
+            try (ZipFile zip = new ZipFile(file)) {
+                Enumeration<? extends ZipEntry> entries = zip.entries();
+                while (entries.hasMoreElements()) {
+                    ZipEntry entry = entries.nextElement();
+                    if (XML_FILE_TO_SAVE_IN_LACE_FILE.equals(entry.getName())) continue;
+                    String name = entry.getName();
+                    if (alreadyCopied.contains(name)) continue;
+                    try (InputStream in = zip.getInputStream(entry)) {
+                        copyTargetFile(entry, in);
+                    } catch (IOException ioe) {
+                        logger.warn("Background copy failed for {}", name, ioe);
+                    }
+                }
+            } catch (IOException e) {
+                logger.warn("Cannot open lace file for async copy", e);
+            }
+        }, "AdaLovesLace-PatternsCopier");
+        t.setDaemon(true);
+        t.setPriority(Thread.NORM_PRIORITY);
+        t.start();
+    }
+
+    public void copyPatternFromZipAsyncByName(String name) {
+        File file = lastLoadedLaceFile;
+        if (file == null || name == null) return;
+        Thread t = new Thread(() -> {
+            try (ZipFile zip = new ZipFile(file)) {
+                ZipEntry entry = zip.getEntry(name);
+                if (entry != null) {
+                    try (InputStream in = zip.getInputStream(entry)) {
+                        copyTargetFile(entry, in);
+                    }
+                }
+            } catch (IOException e) {
+                logger.warn("Cannot copy on-demand pattern {} from {}", name, file.getAbsolutePath(), e);
+            }
+        }, "AdaLovesLace-Pattern-OnDemand");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /**
+     * After loading the diagram from the .lace file, copy the content of the persisted text field
+     * into the transient typedText for text nodes, to ensure they display.
+     */
+    private void initializeTypedTextFromLoadedText(Diagram diagram) {
+        if (diagram == null || diagram.getAllSteps() == null) {
+            return;
+        }
+        for (Step step : diagram.getAllSteps()) {
+            for (Knot knot : step.getAllVisibleKnots()) {
+                if (knot.getPattern().isEmpty()) {
+                    String loaded = knot.getText().orElse("");
+                    if (!loaded.trim().isEmpty()) {
+                        knot.setTypedText(new StringBuilder(loaded));
+                    }
+                }
+            }
+        }
     }
 
     private void buildKnotsImageViews(App app, Diagram diagram) {
@@ -171,12 +294,18 @@ public class FileUtil {
 
     public void buildKnotImageView(Knot knot, FileInputStream fis) {
         if (knot.getPattern().isPresent()) {
-            loadImageView(knot, fis);
+            loadImageView(knot, fis, knot.getColor());
         }
     }
 
-    private static void loadImageView(Knot knot, FileInputStream fis) {
-        Image image = new Image(fis);
+    private static void loadImageView(Knot knot, FileInputStream fis, Optional<Color> currentColor) {
+        Image image;
+
+        if (currentColor.isPresent()) {
+            image = new NodeUtil().replaceColoredPixels(new Image(fis), currentColor.get());
+        } else {
+            image = new Image(fis);
+        }
         ImageView iv = new ImageView(image);
 
         iv.setLayoutX(knot.getX());
@@ -189,20 +318,16 @@ public class FileUtil {
         knot.setImageView(iv);
     }
 
-    private void deleteXmlFile() throws IOException {
-        File xmlFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
-            XML_FILE_TO_SAVE_IN_LACE_FILE);
-
-        if (xmlFile.exists() && xmlFile.canWrite()) {
-            Files.delete(xmlFile.toPath());
-        }
-    }
-
     private void copyPattern(File file, ZipFile zipFile, ZipEntry entry) {
         try (InputStream initialStream = zipFile.getInputStream(entry)) {
             copyTargetFile(entry, initialStream);
         } catch (IOException e) {
-            logger.error("Error unmarshalling loaded file: " + file.getAbsolutePath(), e);
+            // Specific handling for missing images (like splashscreen.jpg)
+            if (entry.getName().contains("splashscreen") || entry.getName().endsWith(".jpg") || entry.getName().endsWith(".png")) {
+                logger.warn("Image file not found in lace file: {}, skipping...", entry.getName());
+            } else {
+                logger.error("Error copying pattern from loaded file: " + file.getAbsolutePath() + ", entry: " + entry.getName(), e);
+            }
         }
     }
 
@@ -217,110 +342,110 @@ public class FileUtil {
         }
     }
 
-    private Diagram buildDiagram(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
-        Diagram diagram = unmarshallXmlFile(zipFile, entry);
-        buildAbsoluteFilenamesForPatternsAndKnots(diagram);
-        diagram.setCurrentPattern(diagram.getPatterns().stream().findFirst().get());
-        return diagram;
-    }
+    // Legacy JAXB-based `save.xml` handling is isolated in the persistence compatibility loader.
 
-    public Diagram unmarshallXmlFile(ZipFile zipFile, ZipEntry entry) throws JAXBException, IOException {
-        JAXBContext context = JAXBContext.newInstance(Diagram.class);
-        Unmarshaller jaxbUnmarshaller = context.createUnmarshaller();
-        return (Diagram) jaxbUnmarshaller.unmarshal(zipFile.getInputStream(entry));
-    }
-
-    private void buildAbsoluteFilenamesForPatternsAndKnots(Diagram diagram) {
-        for (org.alienlabs.adaloveslace.business.model.Pattern p : diagram.getPatterns()) {
-            p.setAbsoluteFilename(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + p.getFilename());
-        }
-
-        for (Step s : diagram.getAllSteps()) {
-            loadPatterns(s.getDisplayedKnots());
-            loadPatterns(s.getSelectedKnots());
-        }
-    }
-
-    private static void loadPatterns(List<Knot> s) {
-        for (Knot k : s) {
-            if (k.getPattern().isPresent()) {
-                k.getPattern().get().setAbsoluteFilename(
-                        APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
-                                k.getPattern().get().getFilename()
-                );
-            }
-        }
-    }
-
-    public File saveFile(File file, Diagram diagram) {
-        if (this.app != null && app.getMainWindow() != null && this.app.getOptionalDotGrid() != null) {
+    public File saveFile(final File file, Diagram diagram, boolean layoutChildren) {
+        if (this.app != null && app.getMainWindow() != null && this.app.getOptionalDotGrid() != null && layoutChildren) {
             this.app.getOptionalDotGrid().layoutChildren();
         }
 
+        Dialog<Diagram> dialog = null;
         try {
-            diagram.getCurrentStep().clearStepsGreaterThanPresentStepPlusLimit(diagram);
-            diagram.getCurrentStep().getDisplayedKnots().addAll(new ArrayList<>(diagram.getCurrentStep().getSelectedKnots()));
-            diagram.getCurrentStep().getSelectedKnots().clear();
-            marshallLaceFile(
-                    file,
-                    diagram,
-                    diagram.getAllSteps().size()
-            );
-        } catch (JAXBException e) {
-            logger.error("Error marshalling save file: " + file.getAbsolutePath(), e);
-        } catch (CompletionException e) {
-            logger.error("Error uploading file: " + file.getAbsolutePath(), e);
-        } catch (IOException e) {
-            logger.error("Error deleting file to upload", e);
+            dialog = getDialog(app, SavingLaceInProgress);
+        } catch (IllegalStateException | NullPointerException | ExceptionInInitializerError e) {
+            // Headless/unit tests may not initialize the JavaFX toolkit / stage.
+            logger.debug("Skipping save progress dialog (toolkit/stage not initialized).", e);
+        }
+        AtomicReference<File> output = new AtomicReference<>();
+
+        Runnable saveLogic = () -> {
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+            try {
+                diagram.getCurrentStep().getDisplayedKnots().addAll(new ArrayList<>(diagram.getCurrentStep().getSelectedKnots()));
+                diagram.getCurrentStep().getSelectedKnots().clear();
+                diagram.getCurrentStep().clearStepsGreaterThanPresentStepPlusLimit(diagram);
+                saveLaceFileProtobuf(file, diagram, diagram.getAllSteps().size());
+            } catch (CompletionException e) {
+                logger.error("Error uploading file: {}", file.getAbsolutePath(), e);
+            } catch (IOException e) {
+                logger.error("Error deleting file to upload", e);
+            }
+            output.set(file);
+        };
+
+        if (dialog == null) {
+            saveLogic.run();
+            return output.get();
         }
 
+        final Dialog<Diagram> dialogToUse = dialog;
+        Task<File> saveTask = new Task<>() {
+            @Override
+            protected File call() {
+                saveLogic.run();
+                return file;
+            }
+        };
 
-        return file;
+        saveTask.setOnSucceeded(_ -> {
+            output.set(saveTask.getValue());
+            dialogToUse.close();
+        });
+        saveTask.setOnFailed(_ -> {
+            dialogToUse.close();
+            Throwable err = saveTask.getException();
+            logger.error("Error loading diagram!", err);
+        });
+        saveTask.setOnCancelled(_ -> dialogToUse.close());
+
+        Thread saveThread = new Thread(saveTask, "AdaLovesLace-saver-Thread");
+        saveThread.setDaemon(true);
+        saveThread.setPriority(Thread.MAX_PRIORITY);
+        saveThread.start();
+
+        dialog.showAndWait();
+        return output.get();
     }
 
-    private void marshallLaceFile(File file, Diagram diagram, Integer currentStepIndex) throws JAXBException, IOException {
-        JAXBContext context = JAXBContext.newInstance(Diagram.class);
-        Marshaller jaxbMarshaller = context.createMarshaller();
-        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+    public Dialog<Diagram> getDialog(App app, String operationInProgress) {
+        ProgressIndicator pi = new ProgressIndicator();
+        pi.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
 
-        writeLaceFile(file, jaxbMarshaller, diagram, currentStepIndex);
-        deleteXmlFile();
+        Dialog<Diagram> dialog = new Dialog<>();
+        dialog.initOwner(app.getPrimaryStage().getOwner());
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+        VBox content = new VBox(
+                10,
+                new Label(resourceBundle.getString(operationInProgress)),
+                pi
+        );
+        content.setAlignment(Pos.CENTER);
+        dialog.getDialogPane().setContent(content);
+
+        return dialog;
     }
 
-    private void writeLaceFile(File file, Marshaller jaxbMarshaller, Diagram toSave, Integer currentStepIndex) throws JAXBException {
-        try (FileOutputStream fos = new FileOutputStream(file);
-                ZipOutputStream zipOut = new ZipOutputStream(fos)) {
-            writePatternsToLaceFile(toSave, zipOut);
-            writeDiagramToLaceFile(jaxbMarshaller, toSave, zipOut, currentStepIndex);
-            zipOut.closeEntry();
-        } catch (IOException e) {
-            logger.error("Error saving .lace file!", e);
-        }
+    private void saveLaceFileProtobuf(File file, Diagram diagram, Integer currentStepIndex) throws IOException {
+        writeLaceFile(file, diagram, currentStepIndex);
     }
 
-    private void writeDiagramToLaceFile(Marshaller jaxbMarshaller, Diagram toSave, ZipOutputStream zipOut, Integer currentStepIndex) throws JAXBException, IOException {
-        toSave.setCurrentStepIndex(currentStepIndex); // Not -1 because of the empty step at the beginning
-        File xmlFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator +
-                XML_FILE_TO_SAVE_IN_LACE_FILE);
-        removeEmptyTexts(toSave);
-        jaxbMarshaller.marshal(toSave, xmlFile);
-
-        zipOut.putNextEntry(new ZipEntry(XML_FILE_TO_SAVE_IN_LACE_FILE));
-        Files.copy(xmlFile.toPath(), zipOut);
+    private void writeLaceFile(File file, Diagram toSave, Integer currentStepIndex) {
+        // Preserve legacy semantics: callers compute the persisted current step index.
+        toSave.setCurrentStepIndex(currentStepIndex);
+        // Primary persistence: protobuf descriptor stored as `descriptor.pb`.
+        org.alienlabs.adaloveslace.persistence.LaceArchiveSaver.save(
+                file,
+                toSave,
+                org.alienlabs.adaloveslace.persistence.LaceArchiveSaver.SaveOptions.defaultOptions());
     }
 
-    private static void removeEmptyTexts(Diagram toSave) {
-        for (Step s : toSave.getAllSteps()) {
-            s.getDisplayedKnots().removeAll(s.getDisplayedKnots().stream().filter(knot ->
-                    (knot.getText().isPresent()) && (knot.getText().get().isEmpty())).toList());
-
-            s.getSelectedKnots().removeAll(s.getSelectedKnots().stream().filter(knot ->
-                    (knot.getText().isPresent()) && (knot.getText().get().isEmpty())).toList());
-        }
-    }
-
+    /**
+     * For each text node, synchronize the persisted text field with the transient typedText
+     * so the content is correctly saved into the .lace file.
+     */
     private void writePatternsToLaceFile(Diagram toSave, ZipOutputStream zipOut) throws IOException {
-        for (org.alienlabs.adaloveslace.business.model.Pattern pattern : new HashSet<>(toSave.getPatterns())) {
+        for (org.alienlabs.adaloveslace.domain.Pattern pattern : new HashSet<>(toSave.getPatterns())) {
             File fileToZip = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
                 + pattern.getFilename());
             try {
@@ -343,7 +468,7 @@ public class FileUtil {
     public List<String> getResources(Object classpathBase, final Pattern pattern) {
         final List<String> retval = new ArrayList<>();
         final String classPath = JAVA_CLASS_PATH_PROPERTY;
-        logger.debug("classpath: {}", classPath);
+        logger.info("classpath: {}", classPath);
 
         if (classPath != null && !classPath.trim().isEmpty()) {
             processClasspath(pattern, retval, classPath);
@@ -357,7 +482,7 @@ public class FileUtil {
     private void processLocationPath(Object classpathBase, Pattern pattern, List<String> retval) {
         File file = new File(classpathBase.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
         String absolutePath = file.getAbsolutePath();
-        logger.debug("absolute path: {}", absolutePath);
+        logger.info("absolute path: {}", absolutePath);
 
         retval.addAll(getResources(absolutePath, pattern));
     }
@@ -365,7 +490,7 @@ public class FileUtil {
     private void processClasspath(Pattern pattern, List<String> retval, String classPath) {
         final String[] classPathElements = classPath.split(PATH_SEPARATOR);
         for (final String element : classPathElements) {
-            logger.debug("element: {}, pattern: {}", element, pattern);
+            logger.info("element: {}, pattern: {}", element, pattern);
 
             retval.addAll(getResources(element, pattern));
         }
@@ -380,7 +505,7 @@ public class FileUtil {
      */
     public List<String> getDirectoryResources(File directory, final Pattern pattern) {
         String absolutePath = directory.getAbsolutePath();
-        logger.debug("absolute path: {}", absolutePath);
+        logger.info("absolute path: {}", absolutePath);
         return new ArrayList<>(getResources(absolutePath, pattern));
     }
 
@@ -392,7 +517,7 @@ public class FileUtil {
             image.getXObject().getPdfObject().setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
             doc.add(image);
 
-            logger.debug("PDF file generated successfully!");
+            logger.info("PDF file generated successfully!");
         } catch (IOException e){
             logger.error("Error generating PDF document!", e);
         }
@@ -419,7 +544,7 @@ public class FileUtil {
         try {
             zf = new ZipFile(file);
         } catch(final IOException e) {
-            logger.debug("Error reading classpath .jar file!", e);
+            logger.info("Error reading classpath .jar file!", e);
             return retval;
         }
         return getStrings(pattern, zf, retval);
@@ -457,7 +582,7 @@ public class FileUtil {
         final List<String> retval = new ArrayList<>();
         final File[] fileList = directory.listFiles();
 
-        logger.debug("Directory: {}", directory.getAbsolutePath());
+        logger.info("Directory: {}", directory.getAbsolutePath());
 
         if (null != fileList) {
             for (final File file : fileList) {
@@ -470,7 +595,7 @@ public class FileUtil {
 
     private void getResourceFromFileOrDirectory(Pattern pattern, List<String> retval, File file) {
         if (file.isDirectory()) {
-            logger.debug("loading from directory: {}", file.getAbsolutePath());
+            logger.info("loading from directory: {}", file.getAbsolutePath());
             retval.addAll(getResourcesFromDirectory(file, pattern));
         } else {
             getResourceFromFile(pattern, retval, file);
@@ -478,16 +603,16 @@ public class FileUtil {
     }
 
     private void getResourceFromFile(Pattern pattern, List<String> retval, File file) {
-        logger.debug("loading from file: {}", file.getAbsolutePath());
+        logger.info("loading from file: {}", file.getAbsolutePath());
 
         try {
             final String fileName = file.getCanonicalPath();
 
             if (pattern.matcher(fileName).matches()) {
-                logger.debug("matches");
+                logger.info("matches");
                 retval.add(fileName);
             } else {
-                logger.debug("doesn't match");
+                logger.info("doesn't match");
             }
         } catch (final IOException e) {
             throw new IllegalStateException("Error reading file / directory from classpath: " + file, e);
