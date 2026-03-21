@@ -302,7 +302,7 @@
           </execution>
         </executions>
         <configuration>
-          <nvdApiKey>c8bc2887-8060-4ba1-b9ba-175721e6216a</nvdApiKey>
+          <nvdApiKey>PUT_YOUR_KEY_HERE</nvdApiKey>
           <nvdApiDelay>3000</nvdApiDelay>
           <failBuildOnCVSS>7</failBuildOnCVSS>
         </configuration>

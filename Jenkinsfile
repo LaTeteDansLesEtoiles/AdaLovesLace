@@ -57,13 +57,12 @@ node {
           }
         }
 
+        // Do not use step([$class: 'JacocoPublisher', ...]) — it needs the optional "JaCoCo" Jenkins plugin.
+        // Without that plugin you get: UnsupportedOperationException: ... SimpleBuildStep is named JacocoPublisher
         stage('test coverage') {
-            step([$class: 'JacocoPublisher',
-                  execPattern:      'target/**/*.exec',
-                  classPattern:     'target/classes',
-                  sourcePattern:    'src/main/java',
-                  exclusionPattern: 'src/test*'
-            ])
+            sh './mvnw -DskipTests jacoco:report'
+            archiveArtifacts artifacts: 'target/site/jacoco/**/*', fingerprint: true, allowEmptyArchive: true
+            archiveArtifacts artifacts: 'target/coverage-reports/*.exec', fingerprint: true, allowEmptyArchive: true
         }
 
         stage('static code analysis') {
