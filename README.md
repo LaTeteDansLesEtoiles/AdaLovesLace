@@ -59,6 +59,8 @@ Feel free to run the Maven wrapper generation command again if Java version used
 
 --------------------------------------------------------------------------------------------
 
+- **CI pipeline (Jenkins modes, quality layers, local equivalents):** see [src/main/resources/doc/ci-pipeline.md](src/main/resources/doc/ci-pipeline.md) and [src/main/resources/doc/MIGRATION_CI_PIPELINE.md](src/main/resources/doc/MIGRATION_CI_PIPELINE.md).
+
 - Build project with:
 
 

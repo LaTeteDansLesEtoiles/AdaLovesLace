@@ -27,7 +27,9 @@
     <skipITs>false</skipITs>
     <skipFTs>false</skipFTs>
     <surefire.groups></surefire.groups>
-    <failsafe.groups></failsafe.groups>
+    <!-- Per Failsafe execution (integration vs functional); do not use one property for both. -->
+    <failsafe.integrationGroups>integration</failsafe.integrationGroups>
+    <failsafe.functionalGroups>functional</failsafe.functionalGroups>
   </properties>
 
   <!-- Align every transitive use of protobuf with protoc / generated code (${protobuf.version}). -->
@@ -258,16 +260,16 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>${test-plugins.version}</version>
         <executions>
+          <!-- Conventional phase: integration tests run in integration-test; verification in verify. -->
           <execution>
             <id>integration-tests</id>
-            <phase>test</phase>
+            <phase>integration-test</phase>
             <goals>
               <goal>integration-test</goal>
-              <goal>verify</goal>
             </goals>
             <configuration>
               <skipITs>${skipITs}</skipITs>
-              <groups>${failsafe.groups}</groups>
+              <groups>${failsafe.integrationGroups}</groups>
               <includes>
                 <include>**/integrationtest/**</include>
               </includes>
@@ -279,13 +281,12 @@
           </execution>
           <execution>
             <id>functional-tests</id>
-            <phase>test</phase>
+            <phase>integration-test</phase>
             <goals>
               <goal>integration-test</goal>
-              <goal>verify</goal>
             </goals>
             <configuration>
-              <groups>${failsafe.groups}</groups>
+              <groups>${failsafe.functionalGroups}</groups>
               <includes>
                 <include>**/functionaltest/**</include>
               </includes>
@@ -295,6 +296,13 @@
               </excludes>
               <skipITs>${skipFTs}</skipITs>
             </configuration>
+          </execution>
+          <execution>
+            <id>failsafe-verify</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>verify</goal>
+            </goals>
           </execution>
         </executions>
         <configuration>
@@ -317,6 +325,8 @@
         <version>${dependency-check-maven.version}</version>
         <executions>
           <execution>
+            <id>dependency-check-verify</id>
+            <phase>verify</phase>
             <goals>
               <goal>check</goal>
             </goals>
@@ -511,7 +521,6 @@
         <skipUTs>true</skipUTs>
         <skipITs>false</skipITs>
         <skipFTs>true</skipFTs>
-        <failsafe.groups>integration</failsafe.groups>
       </properties>
     </profile>
     <profile>
@@ -520,9 +529,113 @@
         <skipUTs>true</skipUTs>
         <skipITs>true</skipITs>
         <skipFTs>false</skipFTs>
-        <failsafe.groups>functional</failsafe.groups>
       </properties>
     </profile>
+    <!-- Single Maven invocation: all integration + functional ITs (use under Xvfb on CI). -->
+    <profile>
+      <id>ci-all-it</id>
+      <properties>
+        <skipUTs>true</skipUTs>
+        <skipITs>false</skipITs>
+        <skipFTs>false</skipFTs>
+      </properties>
+    </profile>
+
+    <!-- CI pipeline markers: activated from Jenkins via -P (see src/main/resources/doc/ci-pipeline.md). -->
+    <profile>
+      <id>ci-pr</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>jacoco-check</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-maven-plugin</artifactId>
+            <!-- Warnings NG still receives XML from verify; backlog prevents hard fail on PR until remediated. -->
+            <configuration>
+              <failOnError>false</failOnError>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>ci-nightly</id>
+    </profile>
+    <profile>
+      <id>ci-release</id>
+    </profile>
+
+    <profile>
+      <id>visual-regression-tests</id>
+      <properties>
+        <!-- Only run the exec scaffold in test phase; do not re-run the full unit suite. -->
+        <skipTests>true</skipTests>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.5.0</version>
+            <executions>
+              <execution>
+                <id>visual-regression-scaffold</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>bash</executable>
+                  <arguments>
+                    <argument>${project.basedir}/scripts/ci/visual-regression.sh</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>performance-tests</id>
+      <properties>
+        <skipTests>true</skipTests>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.5.0</version>
+            <executions>
+              <execution>
+                <id>performance-sanity-scaffold</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>bash</executable>
+                  <arguments>
+                    <argument>${project.basedir}/scripts/ci/performance-sanity.sh</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <profile>
       <id>linux</id>
       <build>

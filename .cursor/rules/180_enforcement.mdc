@@ -28,7 +28,7 @@ To ensure rules are respected even when starting a new session, the following me
   - Method length limit (50 lines) - Rule 1 (v000)
   - File size limit (500 lines) - Rule 1 (v000)
   - Code quality rules
-- **CI/CD pipeline** (Jenkins): Runs all checks automatically on every commit
+- **CI/CD pipeline** (Jenkins): Declarative pipeline with `PIPELINE_MODE` (`pr` | `nightly` | `release`); see `src/main/resources/doc/ci-pipeline.md`, `src/main/resources/doc/ci-audit-phase1.md`, `src/main/resources/doc/MIGRATION_CI_PIPELINE.md`
 
 ### For Manual Review:
 - Code reviews must verify compliance with all rules
