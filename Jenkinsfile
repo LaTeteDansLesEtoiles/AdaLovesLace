@@ -66,7 +66,7 @@ node {
         }
 
         stage('static code analysis') {
-            sh './mvnw -batch-mode -V -U -e pmd:cpd pmd:pmd spotbugs:spotbugs'
+            sh './mvnw -batch-mode -V -U -e pmd:cpd pmd:check spotbugs:spotbugs'
 
             def cpd_report =        scanForIssues(
                 tool:

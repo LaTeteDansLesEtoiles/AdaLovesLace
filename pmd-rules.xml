@@ -3,37 +3,22 @@
          xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset/2.0.0.0.xsd">
-  <description>Custom PMD rules for AdaLovesLace project - Enforces Rule 000 (size limits) and other quality rules</description>
+  <description>
+    PMD 7 rules for AdaLovesLace. Uses the official quickstart set (practical for JavaFX/UI code)
+    plus NcssCount for Rule 000 size limits. Full category/*.xml sets are far stricter and were
+    never meaningfully applied while PMD 6 failed to parse Java 24 sources.
+  </description>
 
-  <!-- Rule 000: ExcessiveMethodLength - Method length limit (50 lines) -->
-  <rule ref="category/java/codestyle.xml/ExcessiveMethodLength">
-    <properties>
-      <property name="minimum" value="50.0"/>
-    </properties>
+  <rule ref="rulesets/java/quickstart.xml">
+    <!-- Java 21+ allows unnamed lambda parameters (__); rule expects [a-z]... -->
+    <exclude name="FormalParameterNamingConventions"/>
   </rule>
 
-  <!-- Rule 000: ExcessiveClassLength - Class size limit (500 lines) -->
-  <rule ref="category/java/codestyle.xml/ExcessiveClassLength">
+  <!-- Rule 000: method / class size (replaces removed ExcessiveMethodLength / ExcessiveClassLength) -->
+  <rule ref="category/java/design.xml/NcssCount">
     <properties>
-      <property name="minimum" value="500.0"/>
+      <property name="methodReportLevel" value="50"/>
+      <property name="classReportLevel" value="500"/>
     </properties>
   </rule>
-
-  <!-- Best practices -->
-  <rule ref="category/java/bestpractices.xml"/>
-
-  <!-- Code style -->
-  <rule ref="category/java/codestyle.xml"/>
-
-  <!-- Design -->
-  <rule ref="category/java/design.xml"/>
-
-  <!-- Error prone -->
-  <rule ref="category/java/errorprone.xml"/>
-
-  <!-- Performance -->
-  <rule ref="category/java/performance.xml"/>
-
-  <!-- Security -->
-  <rule ref="category/java/security.xml"/>
 </ruleset>

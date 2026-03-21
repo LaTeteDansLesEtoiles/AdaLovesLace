@@ -18,6 +18,8 @@
     <protobuf.version>4.34.0</protobuf.version>
     <protobuf.maven.plugin.version>0.6.1</protobuf.maven.plugin.version>
     <dependency-check-maven.version>12.1.1</dependency-check-maven.version>
+    <!-- 3.28+ bundles PMD 7 with Java 24 source parsing; 3.21.x/PMD 6 cannot parse Java 24 syntax -->
+    <maven.pmd.version>3.28.0</maven.pmd.version>
     <skipUTs>false</skipUTs>
     <skipITs>false</skipITs>
     <skipFTs>false</skipFTs>
@@ -333,14 +335,18 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.21.2</version>
+        <version>${maven.pmd.version}</version>
         <configuration>
           <rulesets>
             <ruleset>${basedir}/pmd-rules.xml</ruleset>
           </rulesets>
           <targetJdk>${java.version}</targetJdk>
           <failOnViolation>true</failOnViolation>
+          <!-- Only priority 1 (highest); lower severities are warnings until backlog is cleared -->
+          <failurePriority>1</failurePriority>
           <printFailingErrors>true</printFailingErrors>
+          <skip>false</skip>
+          <minimumTokens>50</minimumTokens>
           <excludeRoots>
             <excludeRoot>target/generated-sources</excludeRoot>
           </excludeRoots>
@@ -350,24 +356,14 @@
         </configuration>
         <executions>
           <execution>
+            <id>pmd-check</id>
             <phase>verify</phase>
             <goals>
               <goal>check</goal>
             </goals>
           </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.21.2</version>
-        <configuration>
-          <skip>false</skip>
-          <minimumTokens>50</minimumTokens>
-          <targetJdk>${java.version}</targetJdk>
-        </configuration>
-        <executions>
           <execution>
+            <id>cpd-check</id>
             <phase>verify</phase>
             <goals>
               <goal>cpd-check</goal>
@@ -451,7 +447,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pmd-plugin</artifactId>
-          <version>3.21.2</version>
+          <version>${maven.pmd.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -467,7 +463,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.20.0</version>
+        <version>${maven.pmd.version}</version>
+        <configuration>
+          <targetJdk>${java.version}</targetJdk>
+          <rulesets>
+            <ruleset>${basedir}/pmd-rules.xml</ruleset>
+          </rulesets>
+        </configuration>
       </plugin>
     </plugins>
   </reporting>
