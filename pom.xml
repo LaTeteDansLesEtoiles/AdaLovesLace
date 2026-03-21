@@ -15,7 +15,7 @@
     <testfx.version>4.0.18</testfx.version>
     <junit.version>5.10.1</junit.version>
     <logback.version>1.5.32</logback.version>
-    <protobuf.version>4.34.0</protobuf.version>
+    <protobuf.version>4.34.1</protobuf.version>
     <protobuf.maven.plugin.version>0.6.1</protobuf.maven.plugin.version>
     <dependency-check-maven.version>12.1.1</dependency-check-maven.version>
     <!-- 3.28+ bundles PMD 7 with Java 24 source parsing; 3.21.x/PMD 6 cannot parse Java 24 syntax -->
