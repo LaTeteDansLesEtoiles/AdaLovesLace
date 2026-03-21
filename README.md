@@ -99,6 +99,12 @@ or:
 
 from the project root directory
 
+- OWASP Dependency-Check (NVD): request an API key at https://nvd.nist.gov/developers/request-an-api-key then run, for example:
+
+      ./mvnw -Dnvd.api.key=YOUR_KEY dependency-check:check
+
+  Without a key, the build still runs but NVD rate limits are strict. **Do not** put a fake placeholder key in `pom.xml` (it causes NVD client errors). Jenkins: bind the key to env `NVD_API_KEY` (secret text credential).
+
 
 - To know your outdated dependencies:
 

@@ -17,7 +17,9 @@
     <logback.version>1.5.32</logback.version>
     <protobuf.version>4.34.1</protobuf.version>
     <protobuf.maven.plugin.version>0.6.1</protobuf.maven.plugin.version>
-    <dependency-check-maven.version>12.1.1</dependency-check-maven.version>
+    <dependency-check-maven.version>12.1.3</dependency-check-maven.version>
+    <!-- NVD API key: request at https://nvd.nist.gov/developers/request-an-api-key — pass -Dnvd.api.key=... or set env NVD_API_KEY (Jenkins) -->
+    <nvd.api.key></nvd.api.key>
     <!-- 3.28+ bundles PMD 7 with Java 24 source parsing; 3.21.x/PMD 6 cannot parse Java 24 syntax -->
     <maven.pmd.version>3.28.0</maven.pmd.version>
     <spotbugs.maven.plugin.version>4.9.8.2</spotbugs.maven.plugin.version>
@@ -305,8 +307,9 @@
           </execution>
         </executions>
         <configuration>
-          <nvdApiKey>PUT_YOUR_KEY_HERE</nvdApiKey>
-          <nvdApiDelay>3000</nvdApiDelay>
+          <!-- Empty = unauthenticated NVD (stricter rate limits). Invalid/garbage keys cause empty HTTP bodies and NPE in the client. -->
+          <nvdApiKey>${nvd.api.key}</nvdApiKey>
+          <nvdApiDelay>6000</nvdApiDelay>
           <failBuildOnCVSS>7</failBuildOnCVSS>
         </configuration>
       </plugin>

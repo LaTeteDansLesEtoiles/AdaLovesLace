@@ -4,6 +4,7 @@ node {
     environment {
         JAVA_HOME = '/usr/lib/jvm/temurin-24-jdk-amd64'
         PATH = "${JAVA_HOME}/bin:${env.PATH}"
+        NVD_API_KEY = credentials('NVD_API_KEY')   // id from Credentials store, not the API key string
     }
     stage('checkout') {
         checkout scm
@@ -114,19 +115,28 @@ node {
         }
     }
 
+    // OWASP Dependency-Check: use Maven plugin (pom.xml) — no Jenkins "Dependency-Check" plugin required.
+    // Bind a "Secret text" credential to env NVD_API_KEY (e.g. in job config or withCredentials) so the key is masked in logs.
     stage ('OWASP Check') {
+        sh '''
+          set -eu
+          if [ -n "${NVD_API_KEY:-}" ]; then
+            ./mvnw -batch-mode -V -U -e -DskipTests -Dnvd.api.key="$NVD_API_KEY" dependency-check:check
+          else
+            ./mvnw -batch-mode -V -U -e -DskipTests dependency-check:check
+          fi
+        '''
+        archiveArtifacts artifacts: 'target/dependency-check-report.*', fingerprint: true, allowEmptyArchive: true
 
-        dependencyCheck additionalArguments: '''
-            -o "./"
-            -s "./"
-            -f "ALL"
-            --prettyPrint''', odcInstallation: 'OWASP-DC'
-
-        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+        def dc_report = scanForIssues(
+            tool: owaspDependencyCheck(pattern: '**/target/dependency-check-report.xml')
+        )
+        publishIssues(issues: [dc_report])
     }
 
     stage('packaging') {
-        sh "./mvnw install -P linux -DskipUTs=true -DskipITs=true -DskipFTs=true"
+        // OWASP already ran in dedicated stage; skip second run on verify
+        sh "./mvnw install -P linux -DskipUTs=true -DskipITs=true -DskipFTs=true -Ddependency-check.skip=true"
         archiveArtifacts artifacts: '**/target/artifacts/*.deb,**/target/artifacts/*.rpm,**/target/artifacts/*.AppImage', fingerprint: true
     }
 
