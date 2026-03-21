@@ -108,6 +108,11 @@ from the project root directory
 from the project root directory
 
 
+- Fail the build on bugs: 
+
+    use `spotbugs:check`, understanding it will fail when SpotBugs finds issues.
+
+
 - You may use this when generating an executable / installer on Winows: https://github.com/fvarrui/JavaPackager/issues/129
 
 https://wixtoolset.org/

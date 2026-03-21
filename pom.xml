@@ -20,6 +20,7 @@
     <dependency-check-maven.version>12.1.1</dependency-check-maven.version>
     <!-- 3.28+ bundles PMD 7 with Java 24 source parsing; 3.21.x/PMD 6 cannot parse Java 24 syntax -->
     <maven.pmd.version>3.28.0</maven.pmd.version>
+    <spotbugs.maven.plugin.version>4.9.8.2</spotbugs.maven.plugin.version>
     <skipUTs>false</skipUTs>
     <skipITs>false</skipITs>
     <skipFTs>false</skipFTs>
@@ -313,12 +314,11 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.8.1.0</version>
+        <version>${spotbugs.maven.plugin.version}</version>
         <configuration>
           <effort>Max</effort>
           <threshold>Low</threshold>
           <xmlOutput>true</xmlOutput>
-          <spotbugsXmlOutput>true</spotbugsXmlOutput>
           <failOnError>true</failOnError>
           <includeFilterFile>${basedir}/spotbugs-include.xml</includeFilterFile>
           <excludeFilterFile>${basedir}/spotbugs-exclude.xml</excludeFilterFile>
