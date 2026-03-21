@@ -105,6 +105,8 @@ from the project root directory
 
   Without a key, the build still runs but NVD rate limits are strict. **Do not** put a fake placeholder key in `pom.xml` (it causes NVD client errors). Jenkins: bind the key to env `NVD_API_KEY` (secret text credential).
 
+  **Sonatype OSS Index** is disabled in `pom.xml` (Sonatype returns 401 without an account/token). To re-enable, set `<ossindexAnalyzerEnabled>true</ossindexAnalyzerEnabled>` and add credentials per [dependency-check OSS Index](https://dependency-check.github.io/DependencyCheck/analyzers/oss-index-analyzer.html) (`ossIndexServerId` in `settings.xml` or `ossIndexUsername` / `ossIndexPassword`).
+
 
 - To know your outdated dependencies:
 

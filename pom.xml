@@ -311,6 +311,8 @@
           <nvdApiKey>${nvd.api.key}</nvdApiKey>
           <nvdApiDelay>6000</nvdApiDelay>
           <failBuildOnCVSS>7</failBuildOnCVSS>
+          <!-- OSS Index requires Sonatype credentials (401 without them). NVD/CISA/RetireJS etc. still run. -->
+          <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
         </configuration>
       </plugin>
 
