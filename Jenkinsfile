@@ -136,8 +136,9 @@ node {
 
     stage('packaging') {
         // OWASP already ran in dedicated stage; skip second run on verify
-        sh "./mvnw install -P linux -DskipUTs=true -DskipITs=true -DskipFTs=true -Ddependency-check.skip=true"
-        archiveArtifacts artifacts: '**/target/artifacts/*.deb,**/target/artifacts/*.rpm,**/target/artifacts/*.AppImage', fingerprint: true
+        sh "./mvnw package -P linux -DskipUTs=true -DskipITs=true -DskipFTs=true -Ddependency-check.skip=true"
+        // AppImage disabled in pom (JavaPackager’s appimagetool download URL is 404); keep pattern optional for local builds
+        archiveArtifacts artifacts: '**/target/artifacts/*.deb,**/target/artifacts/*.rpm', fingerprint: true, allowEmptyArchive: true
     }
 
 }

@@ -81,6 +81,8 @@ then:
     ./mvnw clean install -P linux         -DskipUTs=true -DskipFTs=true      # generate a package skipping all tests
     ./mvnw clean install -P linux                                            # generate a package launching all tests
 
+  Linux packages: **`.deb`** and **`.rpm`** are produced under `target/artifacts/`. **AppImage** generation is **disabled** in `pom.xml` because JavaPackager 1.7.6 downloads `appimagetool` from a GitHub URL that no longer exists (404). To build an AppImage yourself, install [`appimagetool`](https://github.com/AppImage/appimagetool/releases) and use the `AppDir` layout from `target/artifacts/assets/` after a successful package, or set `<generateAppImage>true</generateAppImage>` once a fixed JavaPackager version exists.
+
       • Unit only:
         • mvn -Punit-tests test
       • Integration only:

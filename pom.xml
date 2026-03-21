@@ -543,6 +543,13 @@
                   </fileAssociations>
                   <additionalResources>
                   </additionalResources>
+                  <!-- AppImage: JavaPackager 1.7.6 downloads appimagetool from a GitHub URL that now 404s
+                       (AppImageKit r13 renamed assets to obsolete-appimagetool-*.AppImage). Re-enable when
+                       the plugin updates, or build AppImage manually with appimagetool from
+                       https://github.com/AppImage/appimagetool/releases -->
+                  <linuxConfig>
+                    <generateAppImage>false</generateAppImage>
+                  </linuxConfig>
                 </configuration>
               </execution>
             </executions>
