@@ -11,7 +11,7 @@
     <java.version>24</java.version>
     <javafx.version>24.0.1</javafx.version>
     <test-plugins.version>3.3.0</test-plugins.version>
-    <itext.version>9.5.0</itext.version>
+    <itext.version>9.6.0</itext.version>
     <testfx.version>4.0.18</testfx.version>
     <junit.version>5.10.1</junit.version>
     <logback.version>1.5.32</logback.version>
