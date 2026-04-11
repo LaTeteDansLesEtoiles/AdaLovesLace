@@ -12,6 +12,7 @@ module org.alienlabs.adaloveslace.test {
   opens org.alienlabs.adaloveslace.unittest.domain;
   opens org.alienlabs.adaloveslace.unittest.util;
   opens org.alienlabs.adaloveslace.unittest.view.component                              to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.unittest.view.window.event                           to org.junit.platform.commons, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.unittest.persistence                                 to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.integrationtest.persistence                          to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
 

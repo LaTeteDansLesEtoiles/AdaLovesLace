@@ -43,6 +43,10 @@ public final class GridEvents {
   private static double handleOffsetX;
   private static double handleOffsetY;
   private static Point2D previousEvent;
+  /** Mouse position in movablePane space at MOUSE_PRESSED on the handle; rigid drag offset is computed from this. */
+  private static Point2D dragAnchorMouseParent;
+  /** Each drag knot's (x, y) in movablePane space when the drag session copies were created (same order as dragKnots). */
+  private static List<Point2D> dragKnotStartParent;
   private static double dragStartX;
   private static double dragStartY;
 
@@ -219,6 +223,8 @@ public final class GridEvents {
     handleOffsetX = event.getSceneX() - handleCenterInScene.getX();
     handleOffsetY = event.getSceneY() - handleCenterInScene.getY();
     previousEvent = null;
+    dragAnchorMouseParent = app.getMovablePane().sceneToLocal(event.getSceneX(), event.getSceneY());
+    dragKnotStartParent = null;
 
     app.getMovablePane().removeEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
     app.getOptionalDotGrid().getDiagram().setOldMode(app.getOptionalDotGrid().getDiagram().getCurrentMode());
@@ -314,24 +320,35 @@ public final class GridEvents {
 
       // Mettre ? jour la liste des n?uds s?lectionn?s
       app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(dragKnots);
+
+      dragKnotStartParent = new ArrayList<>(dragKnots.size());
+      for (Knot copiedKnot : dragKnots) {
+        dragKnotStartParent.add(new Point2D(copiedKnot.getX(), copiedKnot.getY()));
+      }
     }
 
+    Point2D mouseInParent = app.getMovablePane().sceneToLocal(
+            event.getSceneX(),
+            event.getSceneY()
+    );
+    double mouseParentX = mouseInParent.getX();
+    double mouseParentY = mouseInParent.getY();
+
+    if (dragAnchorMouseParent == null) {
+      dragAnchorMouseParent = new Point2D(mouseParentX, mouseParentY);
+    }
+    Point2D displacement = mouseInParent.subtract(dragAnchorMouseParent);
+
+    Point2D newLeaderSnap = app.getGridStrategy().getDrawCoordinates(mouseParentX, mouseParentY);
+
     // Mettre ? jour la position des n?uds
-    for (Knot copiedKnot : dragKnots) {
-      Point2D mouseInParent = app.getMovablePane().sceneToLocal(
-              event.getSceneX(),
-              event.getSceneY()
-      );
-      Double x = mouseInParent.getX();
-      Double y = mouseInParent.getY();
-
-      Point2D coord = app.getGridStrategy().getDrawCoordinates(x, y);
-
+    for (int i = 0; i < dragKnots.size(); i++) {
+      Knot copiedKnot = dragKnots.get(i);
       // Mettre ? jour la poign?e si elle existe
       if (copiedKnot.getHandle() != null) {
         // Mettre ? jour les positions
-        copiedKnot.setX(coord.getX());
-        copiedKnot.setY(coord.getY());
+        copiedKnot.setX(newLeaderSnap.getX());
+        copiedKnot.setY(newLeaderSnap.getY());
         copiedKnot.getImageView().setLayoutX(copiedKnot.getX());
         copiedKnot.getImageView().setLayoutY(copiedKnot.getY());
         copiedKnot.getSelection().setLayoutX(copiedKnot.getX());
@@ -340,9 +357,11 @@ public final class GridEvents {
         copiedKnot.getHandle().setLayoutX(copiedKnot.getHandle().getLayoutX() + currentEvent.getX());
         copiedKnot.getHandle().setLayoutY(copiedKnot.getHandle().getLayoutY() + currentEvent.getY());
       } else {
-        // Mettre ? jour les positions
-        copiedKnot.setX(copiedKnot.getX() + currentEvent.getX());
-        copiedKnot.setY(copiedKnot.getY() + currentEvent.getY());
+        Point2D start = dragKnotStartParent.get(i);
+        Point2D candidate = start.add(displacement);
+        Point2D snapped = app.getGridStrategy().getDrawCoordinates(candidate.getX(), candidate.getY());
+        copiedKnot.setX(snapped.getX());
+        copiedKnot.setY(snapped.getY());
         copiedKnot.getImageView().setLayoutX(copiedKnot.getX());
         copiedKnot.getImageView().setLayoutY(copiedKnot.getY());
         copiedKnot.getSelection().setLayoutX(copiedKnot.getX());
@@ -369,6 +388,8 @@ public final class GridEvents {
     // Nettoyer les variables de drag
     dragKnots = null;
     previousEvent = null;
+    dragAnchorMouseParent = null;
+    dragKnotStartParent = null;
 
     app.getOptionalDotGrid().getDiagram().setCurrentMode(app.getOptionalDotGrid().getDiagram().getOldMode());
     app.getOptionalDotGrid().layoutChildren();
