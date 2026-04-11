@@ -262,13 +262,15 @@ public final class GridEvents {
     }
 
     // Initialiser les listes de n?uds et positions si c'est le premier mouvement
+    Knot eventSourceKnot = new Knot();
+
     if (dragKnots == null) {
       List<Knot> selectedKnots = app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots();
       // V?rifier que le n?ud source est dans la s?lection
-      Knot eventSourceKnot = selectedKnots.stream()
-        .filter(knot -> knot.getHandle() != null && knot.getHandle().equals(sourceHandle))
-        .findFirst()
-        .orElse(null);
+      eventSourceKnot = selectedKnots.stream()
+              .filter(knot -> knot.getHandle() != null && knot.getHandle().equals(sourceHandle))
+              .findFirst()
+              .orElse(null);
       if (null == eventSourceKnot) {
         event.consume();
         return;
@@ -315,21 +317,36 @@ public final class GridEvents {
     }
 
     // Mettre ? jour la position des n?uds
-    for (int i = 0; i < dragKnots.size(); i++) {
-      Knot copiedKnot = dragKnots.get(i);
+    for (Knot copiedKnot : dragKnots) {
+      Point2D mouseInParent = app.getMovablePane().sceneToLocal(
+              event.getSceneX(),
+              event.getSceneY()
+      );
+      Double x = mouseInParent.getX();
+      Double y = mouseInParent.getY();
 
-      // Mettre ? jour les positions
-      copiedKnot.setX(copiedKnot.getX() + currentEvent.getX());
-      copiedKnot.setY(copiedKnot.getY() + currentEvent.getY());
-      copiedKnot.getImageView().setLayoutX(copiedKnot.getX());
-      copiedKnot.getImageView().setLayoutY(copiedKnot.getY());
-      copiedKnot.getSelection().setLayoutX(copiedKnot.getX());
-      copiedKnot.getSelection().setLayoutY(copiedKnot.getY());
+      Point2D coord = app.getGridStrategy().getDrawCoordinates(x, y);
 
       // Mettre ? jour la poign?e si elle existe
       if (copiedKnot.getHandle() != null) {
+        // Mettre ? jour les positions
+        copiedKnot.setX(coord.getX());
+        copiedKnot.setY(coord.getY());
+        copiedKnot.getImageView().setLayoutX(copiedKnot.getX());
+        copiedKnot.getImageView().setLayoutY(copiedKnot.getY());
+        copiedKnot.getSelection().setLayoutX(copiedKnot.getX());
+        copiedKnot.getSelection().setLayoutY(copiedKnot.getY());
+
         copiedKnot.getHandle().setLayoutX(copiedKnot.getHandle().getLayoutX() + currentEvent.getX());
         copiedKnot.getHandle().setLayoutY(copiedKnot.getHandle().getLayoutY() + currentEvent.getY());
+      } else {
+        // Mettre ? jour les positions
+        copiedKnot.setX(copiedKnot.getX() + currentEvent.getX());
+        copiedKnot.setY(copiedKnot.getY() + currentEvent.getY());
+        copiedKnot.getImageView().setLayoutX(copiedKnot.getX());
+        copiedKnot.getImageView().setLayoutY(copiedKnot.getY());
+        copiedKnot.getSelection().setLayoutX(copiedKnot.getX());
+        copiedKnot.getSelection().setLayoutY(copiedKnot.getY());
       }
 
       // Mettre ? jour le survol s'il existe
