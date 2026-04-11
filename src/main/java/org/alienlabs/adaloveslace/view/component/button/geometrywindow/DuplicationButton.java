@@ -27,7 +27,6 @@ public class DuplicationButton extends ToggleButton {
 
   public DuplicationButton(App app, String buttonLabel) {
     super(buttonLabel);
-    this.setOnMouseClicked(event -> onSetDuplicationModeAction(app));
     // Ensure TestFX robot clicks trigger the same behavior.
     this.setOnAction(_ -> onSetDuplicationModeAction(app));
     this.setPrefHeight(GEOMETRY_BUTTONS_HEIGHT);
@@ -49,14 +48,12 @@ public class DuplicationButton extends ToggleButton {
 
     for (Knot knot : selectedKnots) {
       Knot copiedKnot = new NodeUtil().copyKnotCloningImageView(knot);
-      copiedKnot.setX(knot.getX() + (NEW_KNOT_GAP * selectedKnots.size()));
-      copiedKnot.setY(knot.getY() + (NEW_KNOT_GAP * selectedKnots.size()));
-      copiedKnot.getImageView().setLayoutX(knot.getX() + (NEW_KNOT_GAP * selectedKnots.size()));
-      copiedKnot.getImageView().setLayoutY(knot.getY() + (NEW_KNOT_GAP * selectedKnots.size()));
+      copiedKnot.setX(knot.getX() + NEW_KNOT_GAP);
+      copiedKnot.setY(knot.getY() + NEW_KNOT_GAP);
+      copiedKnot.getImageView().setLayoutX(knot.getX() + NEW_KNOT_GAP);
+      copiedKnot.getImageView().setLayoutY(knot.getY() + NEW_KNOT_GAP);
 
       displayedKnots.add(knot);
-      displayedKnots.remove(copiedKnot);
-
       selectedKnotsCopy.add(copiedKnot);
     }
 
