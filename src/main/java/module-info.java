@@ -5,6 +5,7 @@ module org.alienlabs.adaloveslace {
 
   requires com.google.gson;
   requires jakarta.xml.bind;
+  requires java.desktop;
   requires java.net.http;
   requires java.prefs;
   requires transitive javafx.graphics;

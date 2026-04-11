@@ -10,8 +10,10 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.domain.Picture;
 import org.alienlabs.adaloveslace.domain.dto.DiagramDTO;
 import org.alienlabs.adaloveslace.domain.enumeration.GridType;
@@ -163,6 +165,28 @@ public class ImageUtil {
                 )
         );
         return params;
+    }
+
+    /**
+     * Rasterizes the diagram for printing: crops to visible knot bounds (plus padding) so the page is filled
+     * by the drawn area, and keeps {@link Pane#getScaleX()}/{@code scaleY} so window zoom matches print magnification.
+     * Call after {@link #hideTechnicalElementsFromRootGroup(boolean)} when matching the print workflow.
+     */
+    public WritableImage snapshotMovablePaneForPrint() {
+        Pane pane = app.getMovablePane();
+        pane.applyCss();
+        pane.layout();
+        Diagram diagram = null;
+        var mainWindow = app.getMainWindow();
+        if (mainWindow != null && mainWindow.getOptionalDotGrid() != null) {
+            mainWindow.getOptionalDotGrid().layoutChildren();
+            diagram = mainWindow.getOptionalDotGrid().getDiagram();
+        }
+        Rectangle2D viewport = DiagramPrintLayout.viewportForPrint(pane, diagram, DiagramPrintLayout.DEFAULT_CONTENT_PADDING);
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.WHITE);
+        params.setViewport(viewport);
+        return pane.snapshot(params, null);
     }
 
     public void buildImage(double xMin, double yMin, double wLog, double hLog) {
