@@ -19,16 +19,16 @@ import static org.alienlabs.adaloveslace.view.window.event.GridEvents.keyHandler
 public class BackInBlackButton extends ToggleButton {
 
   private static App app;
-  private static final String BACK_TO_BLACK_BUTTON_NAME = "BackToBlack";
+  private static final String BACK_IN_BLACK_BUTTON_NAME = "BackInBlack";
 
   public BackInBlackButton(App app) {
-    super(resourceBundle.getString(BACK_TO_BLACK_BUTTON_NAME));
+    super(resourceBundle.getString(BACK_IN_BLACK_BUTTON_NAME));
 
     BackInBlackButton.app = app;
 
     this.getStyleClass().add(PATTERN_TEXT_AND_COLOR_BUTTON);
     // Synchroniser l'état initial avec la couleur actuelle
-    // Si une couleur est déjà définie, ne pas sélectionner "Back to Black"
+    // Si une couleur est déjà définie, ne pas sélectionner "Back in Black"
     if (app.getOptionalDotGrid().getDiagram().getCurrentColor() == null) {
       this.getStyleClass().add(BUTTON_SELECTED);
       this.setSelected(true);
@@ -51,7 +51,7 @@ public class BackInBlackButton extends ToggleButton {
       app.getOptionalDotGrid().getDiagram().setCurrentColor(null);
       GridEvents.setCurrentImageView(null);
       
-      // Mettre en mode sélection quand on active "Back to Black"
+      // Mettre en mode sélection quand on active "Back in Black"
       app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
       app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
       
