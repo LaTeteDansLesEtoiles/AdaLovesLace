@@ -35,9 +35,7 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 import static org.alienlabs.adaloveslace.App.*;
 
@@ -57,7 +55,6 @@ public class FileUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
     private App app;
-    private Diagram diagram;
     private static volatile File lastLoadedLaceFile;
 
     public FileUtil() {
@@ -124,19 +121,6 @@ public class FileUtil {
 
         app.getOptionalDotGrid().setDiagram(diagram);
         return diagram;
-    }
-
-    private Set<String> getNeededPatternFilenames(Diagram diagram) {
-        Set<String> needed = new HashSet<>();
-        if (diagram == null || diagram.getAllSteps() == null) return needed;
-        if (diagram.getCurrentStep() != null) {
-            for (Knot k : diagram.getCurrentStep().getAllVisibleKnots()) {
-                if (k.getPattern().isPresent()) {
-                    needed.add(k.getPattern().get().getFilename());
-                }
-            }
-        }
-        return needed;
     }
 
     private Set<String> getNeededPatternFilenamesInViewport(App app, Diagram diagram) {
@@ -243,55 +227,6 @@ public class FileUtil {
         }
     }
 
-    private void buildKnotsImageViews(App app, Diagram diagram) {
-        for (Step step : diagram.getAllSteps()) {
-            for (Knot knot : step.getDisplayedKnots()) {
-                prepareImageViews(app, knot);
-            }
-
-            for (Knot knot : step.getSelectedKnots()) {
-                preparePatterns(app, knot);
-            }
-        }
-    }
-
-    private void preparePatterns(App app, Knot knot) {
-        if (knot.getPattern().isPresent()) {
-            loadImageView(knot);
-        } else {
-            knot.setImageView(app.getOptionalDotGrid().drawTextImageView(knot, knot.getX(), knot.getY()));
-        }
-    }
-
-    private void loadImageView(Knot knot) {
-        try (FileInputStream fis = new FileInputStream(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
-                + knot.getPattern().get().getFilename())) {
-            buildKnotImageView(knot, fis);
-        } catch (IOException e) {
-            logger.error("Problem with pattern resource file!", e);
-        }
-    }
-
-    private void prepareImageViews(App app, Knot knot) {
-        if (knot.getPattern().isPresent()) {
-            loadPattern(knot);
-        } else {
-            knot.setImageView(app.getOptionalDotGrid().drawTextImageView(knot, knot.getX(), knot.getY()));
-        }
-    }
-
-    private void loadPattern(Knot knot) {
-        String filename = APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
-                + knot.getPattern().get().getFilename();
-
-        try (FileInputStream fis = new FileInputStream(filename)) {
-            buildKnotImageView(knot, fis);
-            knot.getPattern().get().setAbsoluteFilename(filename);
-        } catch (IOException e) {
-            logger.error("Problem with pattern resource file!", e);
-        }
-    }
-
     public void buildKnotImageView(Knot knot, FileInputStream fis) {
         if (knot.getPattern().isPresent()) {
             loadImageView(knot, fis, knot.getColor());
@@ -318,19 +253,6 @@ public class FileUtil {
         knot.setImageView(iv);
     }
 
-    private void copyPattern(File file, ZipFile zipFile, ZipEntry entry) {
-        try (InputStream initialStream = zipFile.getInputStream(entry)) {
-            copyTargetFile(entry, initialStream);
-        } catch (IOException e) {
-            // Specific handling for missing images (like splashscreen.jpg)
-            if (entry.getName().contains("splashscreen") || entry.getName().endsWith(".jpg") || entry.getName().endsWith(".png")) {
-                logger.warn("Image file not found in lace file: {}, skipping...", entry.getName());
-            } else {
-                logger.error("Error copying pattern from loaded file: " + file.getAbsolutePath() + ", entry: " + entry.getName(), e);
-            }
-        }
-    }
-
     private static void copyTargetFile(ZipEntry entry, InputStream initialStream) throws IOException {
         File targetFile = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator + entry.getName());
 
@@ -350,11 +272,13 @@ public class FileUtil {
         }
 
         Dialog<Diagram> dialog = null;
-        try {
-            dialog = getDialog(app, SavingLaceInProgress);
-        } catch (IllegalStateException | NullPointerException | ExceptionInInitializerError e) {
-            // Headless/unit tests may not initialize the JavaFX toolkit / stage.
-            logger.debug("Skipping save progress dialog (toolkit/stage not initialized).", e);
+        if (this.app != null) {
+            try {
+                dialog = getDialog(app, SavingLaceInProgress);
+            } catch (IllegalStateException | ExceptionInInitializerError e) {
+                // Headless/unit tests may not initialize the JavaFX toolkit / stage.
+                logger.debug("Skipping save progress dialog (toolkit/stage not initialized).", e);
+            }
         }
         AtomicReference<File> output = new AtomicReference<>();
 
@@ -438,23 +362,6 @@ public class FileUtil {
                 file,
                 toSave,
                 org.alienlabs.adaloveslace.persistence.LaceArchiveSaver.SaveOptions.defaultOptions());
-    }
-
-    /**
-     * For each text node, synchronize the persisted text field with the transient typedText
-     * so the content is correctly saved into the .lace file.
-     */
-    private void writePatternsToLaceFile(Diagram toSave, ZipOutputStream zipOut) throws IOException {
-        for (org.alienlabs.adaloveslace.domain.Pattern pattern : new HashSet<>(toSave.getPatterns())) {
-            File fileToZip = new File(APP_FOLDER_IN_USER_HOME + PATTERNS_DIRECTORY_NAME + File.separator
-                + pattern.getFilename());
-            try {
-                zipOut.putNextEntry(new ZipEntry(pattern.getFilename()));
-                Files.copy(fileToZip.toPath(), zipOut);
-            } catch (ZipException e) {
-                logger.error("Error saving pattern of .lace file!", e);
-            }
-        }
     }
 
     /**

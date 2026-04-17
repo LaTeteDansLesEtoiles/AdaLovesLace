@@ -210,7 +210,7 @@ public class ToolboxWindow {
         homeDirectoryResourceFiles = loadPatternsFolderResourcesFiles(HOME_DIRECTORY_RESOURCES_PATH,
                 patternsDirectoryResourcesPath);
 
-        if (homeDirectoryResourceFiles == null || homeDirectoryResourceFiles.isEmpty()) {
+        if (homeDirectoryResourceFiles.isEmpty()) {
             // Nothing to do here
         } else {
             // We don't add duplicated resources to our toolbox buttons (i.e., filename must be different in both
@@ -233,11 +233,10 @@ public class ToolboxWindow {
     private File createPatternDirectory() {
         File patternsDirectoryResourcesPath = new File(System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator + PATTERNS_DIRECTORY_NAME);
         if (!patternsDirectoryResourcesPath.exists() && !patternsDirectoryResourcesPath.mkdir()) {
-            // Nothing to do here
+            logger.warn("Could not create patterns directory: {}", patternsDirectoryResourcesPath.getAbsolutePath());
         }
-
         if (!patternsDirectoryResourcesPath.canWrite()) {
-            // Nothing to do here
+            logger.warn("Patterns directory is not writable: {}", patternsDirectoryResourcesPath.getAbsolutePath());
         }
 
         return patternsDirectoryResourcesPath;
@@ -245,11 +244,10 @@ public class ToolboxWindow {
 
     private void createProjectHomeDirectory(File projectHomeDirectory) {
         if (!projectHomeDirectory.exists() && !projectHomeDirectory.mkdir()) {
-            // Nothing to do here
+            logger.warn("Could not create project home directory: {}", projectHomeDirectory.getAbsolutePath());
         }
-
         if (!projectHomeDirectory.canWrite()) {
-            // Nothing to do here
+            logger.warn("Project home directory is not writable: {}", projectHomeDirectory.getAbsolutePath());
         }
     }
 

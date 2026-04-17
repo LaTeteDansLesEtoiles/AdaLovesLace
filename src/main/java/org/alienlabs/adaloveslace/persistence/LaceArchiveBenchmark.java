@@ -5,6 +5,8 @@ import org.alienlabs.adaloveslace.domain.Diagram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.xml.bind.JAXBException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
@@ -41,7 +43,7 @@ public final class LaceArchiveBenchmark {
                     LegacyXmlCompatibilityLoader.loadDiagram(zipFile, xmlEntry);
                     long t1 = System.nanoTime();
                     logger.info("Legacy XML load time for {}: {} ms", laceFile.getName(), (t1 - t0) / 1_000_000L);
-                } catch (Exception e) {
+                } catch (IOException | JAXBException e) {
                     logger.error("Legacy XML load failed for benchmark", e);
                 }
             }

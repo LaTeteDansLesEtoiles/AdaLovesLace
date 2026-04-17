@@ -126,7 +126,7 @@ public class NodeUtil {
         ImageView iv = null;
 
         File imageFile = resolvePatternImageFile(currentPattern);
-        if (imageFile == null || !imageFile.isFile()) {
+        if (!imageFile.isFile()) {
             logger.error("Pattern image not found for {} (resolved from absolute path or user knots folder)",
                     currentPattern.getFilename());
             return null;
@@ -212,10 +212,11 @@ public class NodeUtil {
     
 
     private boolean isBackgroundColor(Color backgroundColor, Color color) {
-        return color.getRed() == backgroundColor.getRed() &&
-                color.getGreen() == backgroundColor.getGreen() &&
-                color.getBlue() == backgroundColor.getBlue() &&
-                color.getOpacity() == backgroundColor.getOpacity();
+        final double eps = 1e-4;
+        return Math.abs(color.getRed() - backgroundColor.getRed()) < eps
+                && Math.abs(color.getGreen() - backgroundColor.getGreen()) < eps
+                && Math.abs(color.getBlue() - backgroundColor.getBlue()) < eps
+                && Math.abs(color.getOpacity() - backgroundColor.getOpacity()) < eps;
     }
 
     public void colorizeKnot(App app, Knot copiedKnot) {
@@ -259,7 +260,6 @@ public class NodeUtil {
     }
 
     public static void duplicateSelectedKnotsAsNewStep(App app, boolean layoutChildren) {
-        List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
         List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
         List<Knot> copiedKnots = new ArrayList<>();
 
@@ -271,7 +271,6 @@ public class NodeUtil {
                 copiedKnot.setHandle(handle);
                 knot.setHandle(null);
             }
-            displayedKnots.remove(knot);
             copiedKnots.add(copiedKnot);
         }
 

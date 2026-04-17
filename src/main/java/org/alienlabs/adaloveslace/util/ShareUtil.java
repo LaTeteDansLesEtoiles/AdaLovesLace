@@ -54,7 +54,7 @@ public class ShareUtil {
         handleResponse(client, request);
 
         File laceFilePath = new File(APP_FOLDER_IN_USER_HOME + diagramName + LACE_FILE_EXTENSION);
-        File previewFile  = ImageUtil.PATH_NAME;
+        File previewFile  = ImageUtil.getLastExportedImageFile();
 
         Files.delete(laceFilePath.toPath());
         Files.delete(previewFile.toPath());
@@ -69,14 +69,12 @@ public class ShareUtil {
   private void handleResponse(HttpClient client, HttpRequest request) {
     CompletableFuture<HttpResponse<String>> completableFuture =
       client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-    completableFuture
-      .thenApplyAsync(HttpResponse::headers);
     completableFuture.join();
 
     try {
       logger.info("Response status code: {}", completableFuture.get().statusCode());
     } catch (InterruptedException | ExecutionException e) {
-      throw new RuntimeException("Error getting response status code!", e);
+      throw new IllegalStateException("Error getting response status code!", e);
     }
   }
 

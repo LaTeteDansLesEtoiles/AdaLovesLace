@@ -4,4 +4,179 @@
   <Match>
     <Source name="~.*generated.*"/>
   </Match>
+
+  <!-- Protobuf-generated message types: singleton-style builders implement Serializable by design. -->
+  <Match>
+    <Package name="org.alienlabs.adaloveslace.persistence.protobuf"/>
+    <Bug pattern="SING_SINGLETON_IMPLEMENTS_SERIALIZABLE"/>
+  </Match>
+
+  <!-- Legacy wiring: static fields hold the live JavaFX app shell; refactoring is out of scope for SpotBugs hygiene. -->
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.App"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.domain.Diagram"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.util.FileUtil"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.util.ImageUtil"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.FastMoveModeButton"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.ExportImageButton"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.SaveAsButton"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.AddKnotButton"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.BackInBlackButton"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ColorButton"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.RedoKnotButton"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ResetAllButton"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ResetDiagramButton"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ShowHideGridButton"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.TextButton"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoKnotButton"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.window.ToolboxWindow"/>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+  </Match>
+
+  <!-- getResource on non-final UI classes: false positive for this app (no subclassing in production). -->
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.App"/>
+    <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.util.ImageUtil"/>
+    <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.AdaLovesLaceMenuBar"/>
+    <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.ImageButton"/>
+    <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.splash.SplashScreen"/>
+    <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.window.CreatePatternWindow"/>
+    <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.window.ToolboxWindow"/>
+    <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+  </Match>
+
+  <!-- JavaFX: fields are assigned during start()/FXML-style setup, not in the constructor. -->
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.App"/>
+    <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.splash.SplashScreen"/>
+    <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.window.MainWindow"/>
+    <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+  </Match>
+
+  <!-- Upload dialog DTO: fields are consumed by HTTP client / Gson, not always read inside this module. -->
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.window.DiagramShareWithImagesWindow$Result"/>
+    <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+  </Match>
+
+  <!-- Grid dimensions are assigned for future layout tuning; current layout uses stage/pane sizes. -->
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid"/>
+    <Bug pattern="URF_UNREAD_FIELD"/>
+  </Match>
+
+  <!-- FX event handlers: single-threaded lazy init of drag state; synchronized init would deadlock with FX thread. -->
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.window.event.GridEvents"/>
+    <Bug pattern="LI_LAZY_INIT_STATIC"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.window.event.GridEvents"/>
+    <Bug pattern="LI_LAZY_INIT_UPDATE_STATIC"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.CreatePatternButton"/>
+    <Bug pattern="LI_LAZY_INIT_STATIC"/>
+  </Match>
+
+  <!-- Legacy static flags / wide API surface on domain and event hub (many call sites). -->
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.App"/>
+    <Field name="resourceBundle"/>
+    <Bug pattern="PA_PUBLIC_PRIMITIVE_ATTRIBUTE"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.domain.Diagram"/>
+    <Bug pattern="PA_PUBLIC_PRIMITIVE_ATTRIBUTE"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.domain.Knot"/>
+    <Field name="typedText"/>
+    <Bug pattern="PA_PUBLIC_PRIMITIVE_ATTRIBUTE"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.component.GuideLinesUtil"/>
+    <Bug pattern="PA_PUBLIC_PRIMITIVE_ATTRIBUTE"/>
+  </Match>
+  <Match>
+    <Class name="org.alienlabs.adaloveslace.view.window.event.GridEvents"/>
+    <Field name="app"/>
+    <Bug pattern="PA_PUBLIC_PRIMITIVE_ATTRIBUTE"/>
+  </Match>
 </FindBugsFilter>

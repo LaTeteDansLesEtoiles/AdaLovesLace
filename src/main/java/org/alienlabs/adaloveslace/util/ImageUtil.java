@@ -36,6 +36,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.alienlabs.adaloveslace.App.*;
@@ -45,7 +46,11 @@ public class ImageUtil {
 
     public static final String NEW_PATTERN = "pattern";
 
-    public static File PATH_NAME;
+    private static File lastExportedImageFile;
+
+    public static File getLastExportedImageFile() {
+        return lastExportedImageFile;
+    }
 
     private final App app;
 
@@ -145,15 +150,15 @@ public class ImageUtil {
                 (int)app.getMovablePane().getHeight()
         );
         WritableImage snapshot = app.getMovablePane().snapshot(newSnapshotParameters(), wi);
-        PATH_NAME = new File(pathname);
+        lastExportedImageFile = new File(pathname);
 
         try {
-            ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), EXPORT_IMAGE_FILE_FORMAT, PATH_NAME);
+            ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), EXPORT_IMAGE_FILE_FORMAT, lastExportedImageFile);
         } catch (IOException e) {
             logger.error("Problem writing root group image file!", e);
         }
 
-    return PATH_NAME;
+        return lastExportedImageFile;
     }
 
     private SnapshotParameters newSnapshotParameters() {
@@ -381,8 +386,8 @@ public class ImageUtil {
         buttonImageView.setPreserveRatio(true);
         button.setGraphic(buttonImageView);
 
-        if (isSelected) {
-            ((ToggleButton)button).setSelected(true);
+        if (isSelected && button instanceof ToggleButton toggleButton) {
+            toggleButton.setSelected(true);
         }
     }
 
@@ -400,7 +405,11 @@ public class ImageUtil {
                 @Override
                 @NonNull
                 public FileVisitResult visitFile(@NonNull Path file, @NonNull BasicFileAttributes attrs) throws IOException {
-                    String filename = file.getFileName().toString().toLowerCase();
+                    Path leaf = file.getFileName();
+                    if (leaf == null) {
+                        return FileVisitResult.CONTINUE;
+                    }
+                    String filename = leaf.toString().toLowerCase(Locale.ROOT);
                     moveKnot(file, filename, backupDirectory, knotsDirectory);
 
                     return FileVisitResult.CONTINUE;
@@ -414,7 +423,10 @@ public class ImageUtil {
     private void moveKnot(Path file, String filename, Path backupDirectory, Path knotsDirectory) throws IOException {
         if (isCorrectFileType(filename)) {
             Path destination = backupDirectory.resolve(knotsDirectory.relativize(file));
-            Files.createDirectories(destination.getParent());
+            Path parent = destination.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             Files.move(file, destination, StandardCopyOption.REPLACE_EXISTING);
 
             logger.info("Copied: {} -> {}", file, destination);

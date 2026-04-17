@@ -211,8 +211,7 @@ public class App extends Application {
       this.diagram = new Diagram(this);
     }
 
-    var javafxVersion = SystemInfo.javafxVersion();
-    var javaVersion   = SystemInfo.javaVersion();
+    logger.debug("Runtime: JavaFX {} Java {}", SystemInfo.javafxVersion(), SystemInfo.javaVersion());
 
     movablePane               = new Pane();
     movablePane.getStyleClass().add("grid");
