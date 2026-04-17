@@ -11,6 +11,7 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
 
 import static org.alienlabs.adaloveslace.App.MAIN_WINDOW_TITLE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
@@ -174,6 +175,41 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
 
     verifyThat(this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots().isEmpty(),
             org.hamcrest.Matchers.is(true));
+  }
+
+  @Test
+  void testBackInBlackSelectionKeepsOriginalColorWithoutDuplicate(FxRobot robot) {
+    selectAndClickOnSnowflakePatternButton(robot);
+    robot.interact(() -> this.app.getOptionalDotGrid().getDiagram().setCurrentColor(Color.RED));
+    drawASnowflake(robot);
+
+    // Activate "Back in Black" (name kept as-is by product intent), then select mode.
+    clickOnButton(robot, this.toolboxWindow.getBackInBlackButton());
+    clickSelectButton(robot);
+    robot.interact(() -> {
+      var step = this.app.getOptionalDotGrid().getDiagram().getCurrentStep();
+      if (!step.getDisplayedKnots().isEmpty()) {
+        var knot = step.getDisplayedKnots().get(0);
+        var newDisplayed = new java.util.ArrayList<>(step.getDisplayedKnots());
+        newDisplayed.remove(knot);
+        step.setDisplayedKnots(newDisplayed);
+        step.setSelectedKnots(java.util.List.of(knot));
+        this.app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+        this.app.getOptionalDotGrid().layoutChildren();
+      }
+    });
+
+    assertCondition(
+            () -> this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots().size() == 1,
+            "Selection should contain exactly one knot");
+
+    var step = this.app.getOptionalDotGrid().getDiagram().getCurrentStep();
+    assertEquals(1, step.getAllVisibleKnots().size(), "Selecting in back in black must not create a duplicate knot");
+    assertEquals(0, step.getDisplayedKnots().size(), "The selected knot must not remain as an extra displayed copy");
+
+    var selectedColor = step.getSelectedKnots().get(0).getColor();
+    assertTrue(selectedColor.isPresent(), "Selected knot color should be preserved");
+    assertEquals(Color.RED, selectedColor.orElseThrow(), "Selected knot color must remain unchanged in back in black mode");
   }
 
   private String getMainWindowTitle() {

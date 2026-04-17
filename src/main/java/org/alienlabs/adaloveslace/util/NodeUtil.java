@@ -210,22 +210,7 @@ public class NodeUtil {
     }
 
     public void colorizeKnot(App app, Knot copiedKnot) {
-        // Check if the "Back in Black" button is selected
-        if (app.getToolboxWindow().getBackInBlackButton().isSelected()) {
-            // "Back in Black" mode: restore the node to its original color (black)
-            copiedKnot.setColor(Optional.empty());
-            if (copiedKnot.getPattern().isPresent()) {
-                // For patterns, restore the original image from cache
-                PatternImageCache.updateKnotImageView(copiedKnot);
-            } else {
-                // For text, recreate the image in black
-                app.getOptionalDotGrid().drawTextImageView(
-                    copiedKnot,
-                    copiedKnot.getX(),
-                    copiedKnot.getY()
-                );
-            }
-        } else if (app.getOptionalDotGrid().getDiagram().getCurrentColor() != null) {
+        if (app.getOptionalDotGrid().getDiagram().getCurrentColor() != null) {
             // Color mode: apply the chosen color
             Color newColor = app.getOptionalDotGrid().getDiagram().getCurrentColor();
 

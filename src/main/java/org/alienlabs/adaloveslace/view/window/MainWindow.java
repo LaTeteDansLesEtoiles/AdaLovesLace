@@ -151,8 +151,7 @@ public class MainWindow {
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!isControlDown) {
-          Knot copiedKnot = nodeUtil.copyKnot(knot);
-          nodeUtil.colorizeKnot(app, copiedKnot);
+          Knot copiedKnot = knot;
           removeNodeAndDecorationsForNowDisplayedKnots(app, selectedKnots);
 
           displayedKnots.addAll(new ArrayList<>(selectedKnots));
@@ -173,20 +172,13 @@ public class MainWindow {
           // Multi-selection mode: add the knot to the existing selection
           logger.info("Multi-selection: adding knot to selection. Current selectedKnots size: {}", selectedKnots.size());
           
-          // Copy all already selected knots to create a fresh list
-          List<Knot> newSelectedKnots = new ArrayList<>();
+          // Keep current selected knots and add the clicked one (no visual copy in selection mode)
+          List<Knot> newSelectedKnots = new ArrayList<>(selectedKnots);
           for (Knot alreadySelected : selectedKnots) {
-            Knot copiedSelected = nodeUtil.copyKnot(alreadySelected);
-            nodeUtil.colorizeKnot(app, copiedSelected);
-            newSelectedKnots.add(copiedSelected);
-            
-            // Remove already selected knots from displayedKnots if present
             displayedKnots.remove(alreadySelected);
           }
           
-          // Copy and add the new knot to the selection
-          Knot copiedKnot = nodeUtil.copyKnot(knot);
-          nodeUtil.colorizeKnot(app, copiedKnot);
+          Knot copiedKnot = knot;
           
           // Remove the original knot from displayedKnots before adding the copy
           displayedKnots.remove(knot);
@@ -212,8 +204,7 @@ public class MainWindow {
 
         // If the "Control" key is pressed, we are in multi-selection mode
         if (!isControlDown) {
-          Knot copiedKnot = nodeUtil.copyKnot(knot);
-          nodeUtil.colorizeKnot(app, copiedKnot);
+          Knot copiedKnot = knot;
           displayedKnots.addAll(new ArrayList<>(selectedKnots));
           selectedKnots.clear();
           selectedKnots.add(copiedKnot);
@@ -234,23 +225,20 @@ public class MainWindow {
         } else {
           // Multi-selection mode: unselect this knot but keep the others selected
           
-          // Copy all already selected knots to create a fresh list
+          // Keep all selected knots except the clicked one
           List<Knot> newSelectedKnots = new ArrayList<>();
           for (Knot alreadySelected : selectedKnots) {
             // Do not copy the knot we want to unselect
             if (alreadySelected.getImageView() == knot.getImageView()) {
               continue; // Skip this knot; it will be unselected
             }
-            Knot copiedSelected = nodeUtil.copyKnot(alreadySelected);
-            nodeUtil.colorizeKnot(app, copiedSelected);
-            newSelectedKnots.add(copiedSelected);
+            newSelectedKnots.add(alreadySelected);
             
             // Remove selected knots from displayedKnots if present
             displayedKnots.remove(alreadySelected);
           }
           
-          Knot copiedKnot = nodeUtil.copyKnot(knot);
-          nodeUtil.colorizeKnot(app, copiedKnot);
+          Knot copiedKnot = knot;
           copiedKnot.setSelection(null);
           
           displayedKnots.remove(knot);
@@ -272,7 +260,7 @@ public class MainWindow {
 
     // If we have clicked elsewhere, we deselect all knots
     if (!hasClickedOnAGivenKnot) {
-      displayedKnots.addAll(selectedKnots.stream().map(nodeUtil::copyKnot).toList());
+      displayedKnots.addAll(selectedKnots);
       removeNodeAndDecorationsForNowDisplayedKnots(app, displayedKnots);
       selectedKnots.clear();
       GridEvents.setCurrentImageView(null);
