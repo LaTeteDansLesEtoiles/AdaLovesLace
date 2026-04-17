@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.functionaltest.util;
 
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
 import org.alienlabs.adaloveslace.util.DiagramPrintLayout;
@@ -106,7 +107,8 @@ class DiagramPrintSnapshotFunctionalTest extends AppFunctionalTestParent {
   }
 
   /**
-   * Same threshold idea as {@link AppFunctionalTestParent} pixel sampling: ignore paper-white background.
+   * Detects any visible tint that is not paper-white. Uses {@link Color} (non-premultiplied) so light pattern
+   * fills still count after print snapshot upscaling; fully transparent samples are skipped.
    */
   private static boolean hasNonWhiteContent(WritableImage img) {
     if (img == null || img.getWidth() <= 0 || img.getHeight() <= 0) {
@@ -119,13 +121,8 @@ class DiagramPrintSnapshotFunctionalTest extends AppFunctionalTestParent {
     int stepY = Math.max(1, h / 80);
     for (int y = 0; y < h; y += stepY) {
       for (int x = 0; x < w; x += stepX) {
-        int argb = pr.getArgb(x, y);
-        int a = (argb >>> 24) & 0xFF;
-        if (a <= 0) {
-          continue;
-        }
-        double lum = luminance(argb);
-        if (lum < 245d) {
+        Color c = pr.getColor(x, y);
+        if (!isNearPaperWhite(c)) {
           return true;
         }
       }
@@ -133,10 +130,8 @@ class DiagramPrintSnapshotFunctionalTest extends AppFunctionalTestParent {
     return false;
   }
 
-  private static double luminance(int argb) {
-    int r = (argb >>> 16) & 0xFF;
-    int g = (argb >>> 8) & 0xFF;
-    int b = argb & 0xFF;
-    return 0.2126d * r + 0.7152d * g + 0.0722d * b;
+  private static boolean isNearPaperWhite(Color c) {
+    double t = 0.997;
+    return c.getRed() >= t && c.getGreen() >= t && c.getBlue() >= t;
   }
 }

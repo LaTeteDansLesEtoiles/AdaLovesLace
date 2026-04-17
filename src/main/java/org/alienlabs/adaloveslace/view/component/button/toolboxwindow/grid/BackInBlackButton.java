@@ -3,17 +3,13 @@ package org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid;
 import javafx.animation.PauseTransition;
 import javafx.event.EventHandler;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
-import org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 
 import static org.alienlabs.adaloveslace.App.resourceBundle;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.*;
-import static org.alienlabs.adaloveslace.view.window.event.GridEvents.keyHandler;
 
 // 🤘
 public class BackInBlackButton extends ToggleButton {
@@ -50,13 +46,8 @@ public class BackInBlackButton extends ToggleButton {
       app.getToolboxWindow().getColorButton().getStyleClass().remove(BUTTON_SELECTED);
       app.getOptionalDotGrid().getDiagram().setCurrentColor(null);
       GridEvents.setCurrentImageView(null);
-      
-      // Mettre en mode sélection quand on active "Back in Black"
-      app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
-      app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
-      
-      SelectionButton.refreshSelectionHandlers(app);
-      SelectionButton.setSelectionModeButtonState(app);
+      // Keep the current geometry mode (usually drawing): this control only chooses "uncolorized" knots,
+      // it must not switch to selection or grid clicks would stop placing patterns.
     });
 
     pause.playFromStart();

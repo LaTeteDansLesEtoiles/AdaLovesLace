@@ -68,15 +68,21 @@ public class NodeUtil {
     }
 
     public Knot copyKnotCloningImageView(Knot knot) {
+        javafx.scene.image.Image snapshotImage =
+                knot.getImageView() != null ? knot.getImageView().getImage() : null;
         Knot copy = new Knot(
                 knot.getX(),
                 knot.getY(),
                 knot.getPattern(),
                 knot.getText(),
                 knot.getColor(),
-                new ImageView(knot.getImageView().getImage())
+                new ImageView(snapshotImage)
         );
         copy(knot, copy);
+        // Own ImageView per knot; do not share handle/hover/selection JavaFX nodes across clones.
+        copy.setHovered(null);
+        copy.setHandle(null);
+        copy.setSelection(null);
         copy.getImageView().addEventHandler(MouseEvent.MOUSE_MOVED, GridEvents.getGridHoverEventHandler(app));
         copy.getImageView().addEventHandler(MouseEvent.MOUSE_CLICKED, GridEvents.getMouseClickEventHandler(app));
 
@@ -259,7 +265,12 @@ public class NodeUtil {
 
         NodeUtil nodeUtil = new NodeUtil();
         for (Knot knot : selectedKnots) {
-            Knot copiedKnot = nodeUtil.copyKnot(knot);
+            javafx.scene.Node handle = knot.getHandle();
+            Knot copiedKnot = nodeUtil.copyKnotCloningImageView(knot);
+            if (handle != null) {
+                copiedKnot.setHandle(handle);
+                knot.setHandle(null);
+            }
             displayedKnots.remove(knot);
             copiedKnots.add(copiedKnot);
         }

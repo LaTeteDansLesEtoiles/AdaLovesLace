@@ -186,6 +186,34 @@ public class OptionalDotGrid extends Pane {
     root.getChildren().removeAll(nodeListToRemove);
   }
 
+  /**
+   * Keeps only {@link ImageView} rasters that belong to the current step's <strong>displayed</strong> (non-selected) knots,
+   * plus the optional drawing-mode preview from {@link GridEvents#getDrawingPreviewImageView()}.
+   * Removes stale images from an earlier layout pulse and selected-knot rasters at their start positions so during
+   * drag only the knots that follow the pointer (see {@link org.alienlabs.adaloveslace.view.window.event.GridEvents})
+   * are visible on the movable pane until {@link #layoutChildren()} runs on drop.
+   */
+  public void retainOnlyDisplayedKnotRastersOnMovablePane() {
+    if (this.diagram == null || this.diagram.getCurrentStepIndex() <= 0) {
+      return;
+    }
+    Set<ImageView> keep = new HashSet<>();
+    for (Knot k : this.diagram.getCurrentStep().getDisplayedKnots()) {
+      if (k.isVisible() && k.getImageView() != null) {
+        keep.add(k.getImageView());
+      }
+    }
+    ImageView drawingGhost = GridEvents.getDrawingPreviewImageView();
+    if (drawingGhost != null) {
+      keep.add(drawingGhost);
+    }
+    for (Node n : new ArrayList<>(this.root.getChildren())) {
+      if (n instanceof ImageView iv && !keep.contains(iv)) {
+        this.root.getChildren().remove(iv);
+      }
+    }
+  }
+
     public void drawHoveredOverOrSelectedDecorations(List<Knot> knots) {
         for (Knot knot : knots) {
 
@@ -485,20 +513,23 @@ public class OptionalDotGrid extends Pane {
   }
 
   private ImageView renderPatternKnot(Knot knot) {
-    String fname = knot.getPattern().get().getFilename();
-    java.io.File f = new java.io.File(org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME +
+    var pattern = knot.getPattern().get();
+    String fname = pattern.getFilename();
+    java.io.File userCopy = new java.io.File(org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME +
             org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME + java.io.File.separator + fname);
-    if (!f.exists()) {
-      new org.alienlabs.adaloveslace.util.FileUtil().copyPatternFromZipAsyncByName(fname);
-      javafx.animation.PauseTransition pt = new javafx.animation.PauseTransition(javafx.util.Duration.millis(150));
-      pt.setOnFinished(__ -> layoutChildren());
-      pt.play();
-      return null;
+    if (!userCopy.exists()) {
+      java.io.File bundled = new java.io.File(pattern.getAbsoluteFilename());
+      if (!bundled.isFile()) {
+        new org.alienlabs.adaloveslace.util.FileUtil().copyPatternFromZipAsyncByName(fname);
+        javafx.animation.PauseTransition pt = new javafx.animation.PauseTransition(javafx.util.Duration.millis(150));
+        pt.setOnFinished(__ -> layoutChildren());
+        pt.play();
+        return null;
+      }
     }
 
     PatternImageCache.updateKnotImageView(knot);
-    ImageView imageView = knot.getImageView();
-    imageView = this.gridUtil.rotatePatternKnot(knot);
+    ImageView imageView = this.gridUtil.rotatePatternKnot(knot);
     this.gridUtil.zoomAndFlipPatternKnot(knot);
     return imageView;
   }

@@ -38,6 +38,11 @@ public final class GridEvents {
   public static App app;
 
   private static ImageView currentImageView;
+
+  /** Drawing-mode ghost pattern on the movable pane; kept when stripping knot rasters for drag. */
+  public static ImageView getDrawingPreviewImageView() {
+    return currentImageView;
+  }
   private static Pattern currentPattern;
   private static double handleOffsetX;
   private static double handleOffsetY;
@@ -203,6 +208,21 @@ public final class GridEvents {
     }
   };
 
+  /**
+   * After drag copies are built with {@link NodeUtil#copyKnotCloningImageView}, assigns the leader's handle
+   * to the drag copy at the same index so {@code MOUSE_DRAGGED#getSource()} still matches {@code knot.getHandle()}.
+   */
+  public static void reattachDragLeaderHandle(List<Knot> selectedBefore, Knot eventSourceKnot, List<Knot> dragKnots) {
+    if (eventSourceKnot == null || selectedBefore == null || dragKnots == null) {
+      return;
+    }
+    int leaderIdx = selectedBefore.indexOf(eventSourceKnot);
+    if (leaderIdx >= 0 && leaderIdx < dragKnots.size() && eventSourceKnot.getHandle() != null) {
+      dragKnots.get(leaderIdx).setHandle(eventSourceKnot.getHandle());
+      eventSourceKnot.setHandle(null);
+    }
+  }
+
   // @see https://stackoverflow.com/questions/42782074/javafx-moving-objects-within-scrollpane-by-drag-and-drop
   // @see https://stackoverflow.com/questions/40982787/change-cursor-in-javafx-listview-during-drag-and-drop/40984625#40984625
   public static final EventHandler<MouseEvent> dragInitiatedOverOnHandle = event -> {
@@ -230,6 +250,8 @@ public final class GridEvents {
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAG_AND_DROP);
 
     NodeUtil.duplicateSelectedKnotsAsNewStep(app, false);
+    // Drop stale rasters and hide selected knots at their origin: only displayed knots stay until drag moves.
+    app.getOptionalDotGrid().retainOnlyDisplayedKnotRastersOnMovablePane();
     event.consume();
   };
 
@@ -293,18 +315,32 @@ public final class GridEvents {
       // Ne pas ajouter les n?uds originaux ? displayedKnots pour ?viter qu'ils se d?placent
       // Les n?uds originaux restent dans selectedKnots mais ne sont pas visibles
 
-      // Cr?er les copies avec leurs nouveaux rectangles de s?lection
+      // Remove previous selection image views so cloned views are the only raster (avoids ghost duplicates).
       for (Knot knot : selectedKnots) {
-        // Copier le n?ud avec sa position actuelle
-        Knot copiedKnot = new NodeUtil().copyKnot(knot);
+        ImageView iv = knot.getImageView();
+        if (iv != null) {
+          app.getMovablePane().getChildren().remove(iv);
+        }
+      }
+
+      // Clone ImageViews so each dragged knot has its own node to move under the cursor.
+      for (Knot knot : selectedKnots) {
+        Knot copiedKnot = new NodeUtil().copyKnotCloningImageView(knot);
         dragKnots.add(copiedKnot);
 
-        // Cr?er un nouveau rectangle de s?lection pour la copie
+        ImageView iv = copiedKnot.getImageView();
+        if (iv != null && !app.getMovablePane().getChildren().contains(iv)) {
+          iv.setLayoutX(copiedKnot.getX());
+          iv.setLayoutY(copiedKnot.getY());
+          app.getMovablePane().getChildren().add(iv);
+        }
+
         Rectangle rec = new GridUtil(app.getMovablePane()).newRectangle(copiedKnot, Color.BLUE);
         copiedKnot.setSelection(rec);
         app.getMovablePane().getChildren().add(rec);
       }
 
+      reattachDragLeaderHandle(selectedKnots, eventSourceKnot, dragKnots);
 
       // Mettre ? jour la liste des n?uds s?lectionn?s
       app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(dragKnots);
@@ -372,6 +408,10 @@ public final class GridEvents {
     event.consume();
   };
 
+  /**
+   * Ends drag: does not create a new {@link org.alienlabs.adaloveslace.domain.Diagram#newStep} — the duplicate from
+   * press already recorded one undo step; this only reapplies layout so final snapped positions match the model.
+   */
   public static final EventHandler<MouseEvent> dragDroppedHandleWithSelectionMode = event -> {
     // Nettoyer les variables de drag
     dragKnots = null;

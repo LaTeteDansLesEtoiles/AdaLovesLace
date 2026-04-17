@@ -9,6 +9,8 @@ import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -169,24 +171,106 @@ public class ImageUtil {
 
     /**
      * Rasterizes the diagram for printing: crops to visible knot bounds (plus padding) so the page is filled
-     * by the drawn area, and keeps {@link Pane#getScaleX()}/{@code scaleY} so window zoom matches print magnification.
+     * by the drawn area, and matches {@link Pane#getScaleX()}/{@code scaleY} as print magnification.
+     * <p>
+     * The pane is snapshotted at scale {@code 1} using a full-pane raster and an explicit pixel crop so
+     * relayout + zoom combinations stay deterministic; the result is nearest-neighbour upscaled by the saved
+     * zoom factors (viewport-only snapshots at pane zoom can miss diagram pixels on some platforms).
      * Call after {@link #hideTechnicalElementsFromRootGroup(boolean)} when matching the print workflow.
      */
     public WritableImage snapshotMovablePaneForPrint() {
         Pane pane = app.getMovablePane();
-        pane.applyCss();
-        pane.layout();
-        Diagram diagram = null;
-        var mainWindow = app.getMainWindow();
-        if (mainWindow != null && mainWindow.getOptionalDotGrid() != null) {
-            mainWindow.getOptionalDotGrid().layoutChildren();
-            diagram = mainWindow.getOptionalDotGrid().getDiagram();
+        double savedScaleX = pane.getScaleX();
+        double savedScaleY = pane.getScaleY();
+        double zoomX = savedScaleX == 0d ? 1d : Math.abs(savedScaleX);
+        double zoomY = savedScaleY == 0d ? 1d : Math.abs(savedScaleY);
+
+        try {
+            pane.setScaleX(1d);
+            pane.setScaleY(1d);
+            pane.applyCss();
+            pane.layout();
+            Diagram diagram = null;
+            var mainWindow = app.getMainWindow();
+            if (mainWindow != null && mainWindow.getOptionalDotGrid() != null) {
+                mainWindow.getOptionalDotGrid().layoutChildren();
+                diagram = mainWindow.getOptionalDotGrid().getDiagram();
+            }
+            Rectangle2D viewport = DiagramPrintLayout.viewportForPrint(pane, diagram, DiagramPrintLayout.DEFAULT_CONTENT_PADDING);
+            SnapshotParameters params = new SnapshotParameters();
+            params.setFill(Color.WHITE);
+            WritableImage fullPane = pane.snapshot(params, null);
+            WritableImage logicalCrop = cropPrintSnapshotToViewport(fullPane, pane, viewport);
+            if (zoomX == 1d && zoomY == 1d) {
+                return logicalCrop;
+            }
+            return upscalePrintSnapshotNearest(logicalCrop, zoomX, zoomY);
+        } finally {
+            pane.setScaleX(savedScaleX);
+            pane.setScaleY(savedScaleY);
         }
-        Rectangle2D viewport = DiagramPrintLayout.viewportForPrint(pane, diagram, DiagramPrintLayout.DEFAULT_CONTENT_PADDING);
-        SnapshotParameters params = new SnapshotParameters();
-        params.setFill(Color.WHITE);
-        params.setViewport(viewport);
-        return pane.snapshot(params, null);
+    }
+
+    /**
+     * Maps a layout-space print viewport onto pixel coordinates of a full-pane snapshot and copies that region.
+     */
+    private static WritableImage cropPrintSnapshotToViewport(WritableImage full, Pane pane, Rectangle2D viewport) {
+        PixelReader reader = full.getPixelReader();
+        if (reader == null) {
+            return full;
+        }
+        double paneW = DiagramPrintLayout.effectivePaneWidth(pane);
+        double paneH = DiagramPrintLayout.effectivePaneHeight(pane);
+        if (paneW <= 0 || paneH <= 0) {
+            return full;
+        }
+        double mapX = full.getWidth() / paneW;
+        double mapY = full.getHeight() / paneH;
+        int fw = (int) full.getWidth();
+        int fh = (int) full.getHeight();
+        int x0 = (int) Math.floor(viewport.getMinX() * mapX);
+        int y0 = (int) Math.floor(viewport.getMinY() * mapY);
+        int cw = (int) Math.ceil(viewport.getWidth() * mapX);
+        int ch = (int) Math.ceil(viewport.getHeight() * mapY);
+        x0 = Math.max(0, Math.min(x0, Math.max(0, fw - 1)));
+        y0 = Math.max(0, Math.min(y0, Math.max(0, fh - 1)));
+        cw = Math.max(1, Math.min(cw, fw - x0));
+        ch = Math.max(1, Math.min(ch, fh - y0));
+        WritableImage out = new WritableImage(cw, ch);
+        PixelWriter writer = out.getPixelWriter();
+        for (int y = 0; y < ch; y++) {
+            for (int x = 0; x < cw; x++) {
+                writer.setColor(x, y, reader.getColor(x0 + x, y0 + y));
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Nearest-neighbour upscale in JavaFX pixel space (avoids Swing conversion quirks on some GTK runs).
+     */
+    private static WritableImage upscalePrintSnapshotNearest(WritableImage src, double zoomX, double zoomY) {
+        PixelReader reader = src.getPixelReader();
+        if (reader == null) {
+            return src;
+        }
+        int sw = (int) src.getWidth();
+        int sh = (int) src.getHeight();
+        if (sw <= 0 || sh <= 0) {
+            return src;
+        }
+        int outW = (int) Math.ceil(sw * zoomX);
+        int outH = (int) Math.ceil(sh * zoomY);
+        WritableImage out = new WritableImage(outW, outH);
+        PixelWriter writer = out.getPixelWriter();
+        for (int y = 0; y < outH; y++) {
+            int sy = Math.min(sh - 1, (int) Math.floor(y / zoomY));
+            for (int x = 0; x < outW; x++) {
+                int sx = Math.min(sw - 1, (int) Math.floor(x / zoomX));
+                writer.setColor(x, y, reader.getColor(sx, sy));
+            }
+        }
+        return out;
     }
 
     public void buildImage(double xMin, double yMin, double wLog, double hLog) {
