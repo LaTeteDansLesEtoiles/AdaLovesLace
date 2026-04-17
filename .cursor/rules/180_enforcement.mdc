@@ -1,3 +1,8 @@
+---
+globs: "**/*.java"
+alwaysApply: true
+---
+
 # Rules Enforcement Rules
 
 ## Rule 20 (v180): Rules Enforcement and Compliance

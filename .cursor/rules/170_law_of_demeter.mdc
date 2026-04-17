@@ -1,3 +1,8 @@
+---
+globs: "**/*.java"
+alwaysApply: true
+---
+
 # Law of Demeter — Strict Enforcement Rule
 
 ## Purpose

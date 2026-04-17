@@ -1,3 +1,8 @@
+---
+globs: "**/*.java"
+alwaysApply: true
+---
+
 # Code Style Rules
 
 ## Rule 1 (v000): Size Limits

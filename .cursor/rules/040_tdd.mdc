@@ -1,3 +1,8 @@
+---
+globs: "**/*.java"
+alwaysApply: true
+---
+
 # Test-Driven Development Rules
 
 ## Rule 5 (v040): Test-Driven Development with Comprehensive Test Coverage

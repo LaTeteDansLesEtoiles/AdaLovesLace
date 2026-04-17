@@ -1,3 +1,8 @@
+---
+globs: "**/*.java"
+alwaysApply: true
+---
+
 # Rules Organization Rules
 
 ## Rule 3 (v020): Rules Files Organization
