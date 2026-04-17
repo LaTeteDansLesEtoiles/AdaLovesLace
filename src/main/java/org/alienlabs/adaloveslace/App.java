@@ -373,6 +373,13 @@ public class App extends Application {
     return this.toolboxStage;
   }
 
+  /**
+   * For tests: attach a toolbox {@link Stage} without building the full toolbox UI (e.g. for resize listener wiring).
+   */
+  public void setToolboxStageForTests(Stage toolboxStage) {
+    this.toolboxStage = toolboxStage;
+  }
+
   public ToolboxWindow getToolboxWindow() {
     return toolboxWindow;
   }
@@ -413,6 +420,13 @@ public class App extends Application {
 
   public Scene getScene() {
     return scene;
+  }
+
+  /**
+   * For tests: set the primary {@link Scene} used by grid gesture handlers that read scene dimensions.
+   */
+  public void setSceneForTests(Scene scene) {
+    this.scene = scene;
   }
 
   public Stage getPrimaryStage() {

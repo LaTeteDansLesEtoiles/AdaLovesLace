@@ -13,8 +13,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.testfx.util.WaitForAsyncUtils;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -80,6 +78,5 @@ class GridEventsRemoveEventsFromGridIntegrationTest {
       assertNull(app.getMovablePane().getOnMouseMoved());
       assertNull(app.getMovablePane().getOnMouseClicked());
     });
-    WaitForAsyncUtils.waitForFxEvents();
   }
 }

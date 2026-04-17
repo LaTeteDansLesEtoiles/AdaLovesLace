@@ -35,6 +35,9 @@ import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+
 import static javafx.animation.Animation.INDEFINITE;
 import static org.alienlabs.adaloveslace.App.ASSETS_DIRECTORY;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
@@ -43,7 +46,21 @@ import static org.alienlabs.adaloveslace.App.resourceBundle;
      * JavaFX splash screen without FXML
      */
 public class SplashScreen {
-    
+
+    /**
+     * Test hook: supply startup phases (e.g. {@link SplashStartupTasks#forTesting}) so splash work does not touch the real user home.
+     * Production default is {@code new SplashStartupTasks(anchor)}.
+     */
+    private static final AtomicReference<Function<Class<?>, SplashStartupTasks>> splashPhasesFactory =
+            new AtomicReference<>(SplashStartupTasks::new);
+
+    /**
+     * Overrides how {@link SplashStartupTasks} is created for {@link #runStartupWork()}. Pass {@code null} to reset to production.
+     */
+    public static void setSplashPhasesFactoryForTests(Function<Class<?>, SplashStartupTasks> factory) {
+        splashPhasesFactory.set(factory != null ? factory : SplashStartupTasks::new);
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(SplashScreen.class);
     
     private Stage splashStage;
@@ -366,7 +383,7 @@ public class SplashScreen {
         Task<Void> loadingTask = new Task<>() {
             @Override
             protected Void call() throws Exception {
-                var tasks = new SplashStartupTasks(mainApp.getClass());
+                var tasks = splashPhasesFactory.get().apply(mainApp.getClass());
                 var phases = tasks.phases();
                 int n = phases.size();
                 for (int i = 0; i < n; i++) {
