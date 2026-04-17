@@ -247,6 +247,8 @@
         <configuration>
           <skipTests>${skipUTs}</skipTests>
           <groups>${surefire.groups}</groups>
+          <!-- Merge JaCoCo agent with other JVM flags (same @{argLine} pattern as Failsafe). -->
+          <argLine>@{argLine}</argLine>
           <includes>
             <include>**/unittest/**</include>
           </includes>
@@ -407,6 +409,8 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.14</version>
         <configuration>
+          <!-- Append across JVMs so separate mvn invocations (unit test, then IT/FT) accumulate in CI. -->
+          <append>true</append>
           <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
           <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
           <rules>

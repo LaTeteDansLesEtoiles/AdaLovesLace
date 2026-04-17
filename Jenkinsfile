@@ -132,7 +132,9 @@ pipeline {
             }
             post {
                 always {
-                    sh './mvnw -batch-mode -q -DskipTests jacoco:report || true'
+                    // HTML/XML from the same accumulated .exec that jacoco:check used during verify (nightly/release).
+                    // Includes unit + integration + functional coverage: Failsafe uses @{argLine} with JaCoCo.
+                    sh './mvnw -batch-mode -q jacoco:report || true'
                     archiveArtifacts allowEmptyArchive: true, artifacts: 'target/site/jacoco/**/*', fingerprint: true
                     archiveArtifacts allowEmptyArchive: true, artifacts: 'target/coverage-reports/*.exec', fingerprint: true
                 }

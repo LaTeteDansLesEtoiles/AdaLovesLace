@@ -62,8 +62,10 @@ Local examples:
 
 ## Coverage
 
-- JaCoCo agent is attached for test runs; **check** enforces 60% line coverage per package and class on runs that execute the `jacoco-check` execution (typically full `verify`).
-- PR mode may skip the JaCoCo **check** execution while still producing **reports** so coverage is visible without blocking merges on incomplete partial runs (explicit trade-off; see migration note).
+- JaCoCo instruments **unit tests (Surefire)** and **integration + functional tests (Failsafe)** via `@{argLine}` on both plugins. Functional / TestFX runs are included: they execute application and domain code like any other test JVM.
+- The agent uses `append=true` so separate Maven invocations in Jenkins (`test`, then `integration-test -P ci-all-it`) merge into `target/coverage-reports/jacoco-unit.exec`.
+- **Quality gate (`verify`)**: `jacoco:check` runs in that lifecycle on nightly/release (not under `ci-pr`). Jenkins **`post { always { ... } }`** on that stage runs `jacoco:report` and archives `target/site/jacoco/` plus the `.exec`, aligned with the same build that enforced thresholds. PR builds still get a report from the accumulated exec (check disabled via `ci-pr`).
+- **check** enforces 60% line coverage per package and class when the `jacoco-check` execution is active (full `verify` without `ci-pr`). Profile `ci-pr` disables that check so merges are not blocked on the partial test pyramid while the report remains visible.
 
 ## OWASP dependency-check
 
