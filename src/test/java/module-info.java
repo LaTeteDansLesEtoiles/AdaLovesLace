@@ -12,6 +12,7 @@ module org.alienlabs.adaloveslace.test {
   opens org.alienlabs.adaloveslace.functionaltest.view.component.spinner                to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.component                        to org.junit.platform.commons, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.window                           to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.functionaltest.view.window.event                     to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.unittest                                    to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.unittest.domain;
   opens org.alienlabs.adaloveslace.unittest.util;
@@ -29,6 +30,7 @@ module org.alienlabs.adaloveslace.test {
   opens org.alienlabs.adaloveslace.integrationtest.view.component.button.statewindow        to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.integrationtest.view.component.button.toolboxwindow     to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.integrationtest.view.component.button.toolboxwindow.grid to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.integrationtest.view.window.event                  to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
 
   requires java.desktop;
   requires javafx.controls;
