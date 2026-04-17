@@ -5,6 +5,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import org.alienlabs.adaloveslace.domain.Knot;
+import org.alienlabs.adaloveslace.domain.Pattern;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,14 +24,14 @@ class GridEventsReattachDragLeaderHandleTest {
   void reattachDragLeaderHandle_movesHandleOntoDragCopyAtSameIndex() {
     WritableImage img = new WritableImage(2, 2);
     Circle handle = new Circle(2, Color.BLUE);
-    Knot leader = new Knot(1, 2, Optional.empty(), Optional.of("a"), Optional.of(Color.RED), new ImageView(img));
+    Knot leader = new Knot(1, 2, Optional.<Pattern>empty(), Optional.of("a"), Optional.of(Color.RED), new ImageView(img));
     leader.setHandle(handle);
-    Knot follower = new Knot(10, 20, Optional.empty(), Optional.of("b"), Optional.of(Color.BLUE), new ImageView(img));
+    Knot follower = new Knot(10, 20, Optional.<Pattern>empty(), Optional.of("b"), Optional.of(Color.BLUE), new ImageView(img));
 
     List<Knot> selectedBefore = List.of(leader, follower);
     List<Knot> dragCopies = new ArrayList<>();
-    dragCopies.add(new Knot(1, 2, Optional.empty(), Optional.of("a"), Optional.of(Color.RED), new ImageView(img)));
-    dragCopies.add(new Knot(10, 20, Optional.empty(), Optional.of("b"), Optional.of(Color.BLUE), new ImageView(img)));
+    dragCopies.add(new Knot(1, 2, Optional.<Pattern>empty(), Optional.of("a"), Optional.of(Color.RED), new ImageView(img)));
+    dragCopies.add(new Knot(10, 20, Optional.<Pattern>empty(), Optional.of("b"), Optional.of(Color.BLUE), new ImageView(img)));
 
     GridEvents.reattachDragLeaderHandle(selectedBefore, leader, dragCopies);
 
