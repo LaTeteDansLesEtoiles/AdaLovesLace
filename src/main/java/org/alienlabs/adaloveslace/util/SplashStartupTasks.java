@@ -98,13 +98,13 @@ public final class SplashStartupTasks {
   }
 
   public record SplashPhase(String messageKey, PhaseWork work) {
-    public void run() throws Exception {
+    public void run() throws IOException, BackingStoreException {
       work.run();
     }
   }
 
   @FunctionalInterface
   public interface PhaseWork {
-    void run() throws Exception;
+    void run() throws IOException, BackingStoreException;
   }
 }

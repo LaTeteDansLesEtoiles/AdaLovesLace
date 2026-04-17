@@ -14,18 +14,17 @@ public class FastMoveModeButton extends ToggleButton {
   public static final double FAST_MODE_SPEED            = 5d;
   public static final double SLOW_MODE_SPEED            = 1d;
 
-  private static SimpleBooleanProperty isFastMode;
   private static final boolean DEFAULT_FAST_MODE        = false;
+
+  private static final SimpleBooleanProperty isFastMode = new SimpleBooleanProperty(DEFAULT_FAST_MODE);
 
   private static FastMoveModeButton instance;
 
   private static final Logger logger                    = LoggerFactory.getLogger(FastMoveModeButton.class);
 
   public FastMoveModeButton() {
-    if (FastMoveModeButton.isFastMode == null) {
-      FastMoveModeButton.isFastMode = new SimpleBooleanProperty(DEFAULT_FAST_MODE);
-    }
     FastMoveModeButton.instance = this;
+    this.setSelected(isFastMode.get());
     this.setOnMouseClicked(event -> onSwitchFastModeAction());
 
     final Tooltip tooltip = new Tooltip();
@@ -35,9 +34,6 @@ public class FastMoveModeButton extends ToggleButton {
   }
 
   public static void onSwitchFastModeAction() {
-    if (isFastMode == null) {
-      isFastMode = new SimpleBooleanProperty(DEFAULT_FAST_MODE);
-    }
     isFastMode.set(!isFastMode.get());
     if (instance != null) {
       instance.setSelected(isFastMode.get());
@@ -46,9 +42,6 @@ public class FastMoveModeButton extends ToggleButton {
   }
 
   public static double getMoveSpeed() {
-    if (isFastMode == null) {
-      return SLOW_MODE_SPEED;
-    }
     return isFastMode.get() ? FAST_MODE_SPEED : SLOW_MODE_SPEED;
   }
 
@@ -57,7 +50,7 @@ public class FastMoveModeButton extends ToggleButton {
    * Intended for tests; production does not call this.
    */
   public static void resetStateForTests() {
-    isFastMode = null;
+    isFastMode.set(DEFAULT_FAST_MODE);
     instance = null;
   }
 
