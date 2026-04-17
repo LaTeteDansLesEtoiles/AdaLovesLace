@@ -30,6 +30,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.util.SplashStartupTasks;
 import org.alienlabs.adaloveslace.util.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,8 +72,7 @@ public class SplashScreen {
             // Start animations
             startAnimations();
             
-            // Simulate application loading
-            simulateLoading();
+            runStartupWork();
             
         } catch (Exception e) {
             logger.error("Error creating splash screen", e);
@@ -362,33 +362,31 @@ public class SplashScreen {
         dotsTimeline.play();
     }
     
-    private void simulateLoading() {
+    private void runStartupWork() {
         Task<Void> loadingTask = new Task<>() {
             @Override
             protected Void call() throws Exception {
-                String[] loadingSteps = {
-                    "Initialisation...",
-                    "Chargement des ressources...",
-                    "Configuration de l'interface...",
-                    "Préparation des outils...",
-                    "Finalisation..."
-                };
-                
-                for (int i = 0; i < loadingSteps.length; i++) {
-                    int finalI = i;
-                    Platform.runLater(() -> {
-                        statusLabel.setText(loadingSteps[finalI]);
-                    });
-                    
-                    // Update the progress bar
-                    double progress = (i + 1) / (double) loadingSteps.length;
+                var tasks = new SplashStartupTasks(mainApp.getClass());
+                var phases = tasks.phases();
+                int n = phases.size();
+                for (int i = 0; i < n; i++) {
+                    SplashStartupTasks.SplashPhase phase = phases.get(i);
+                    int stepIndex = i;
+                    String message = resolvePhaseMessage(phase.messageKey());
+                    Platform.runLater(() -> statusLabel.setText(message));
+                    phase.run();
+                    double progress = (stepIndex + 1) / (double) n;
                     Platform.runLater(() -> progressBar.setProgress(progress));
-                    
-                    // Wait a bit
-                    Thread.sleep(800);
                 }
-                
                 return null;
+            }
+
+            private String resolvePhaseMessage(String key) {
+                try {
+                    return resourceBundle.getString(key);
+                } catch (Exception e) {
+                    return key;
+                }
             }
             
             @Override
