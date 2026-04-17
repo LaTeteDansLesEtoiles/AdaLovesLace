@@ -5,6 +5,7 @@ import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.Preferences;
+import org.alienlabs.adaloveslace.util.ToolboxFilePaths;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.alienlabs.adaloveslace.view.window.FileAlreadyExistsWindow;
 import org.slf4j.Logger;
@@ -51,7 +52,7 @@ public class SaveAsButton extends ImageButton {
       return false;
     }
 
-    file = ensureLaceExtension(file);
+    file = ToolboxFilePaths.ensureFileEndsWithExtension(file, LACE_FILE_EXTENSION);
     FileAlreadyExistsWindow alert = file.exists() ? new FileAlreadyExistsWindow(file) : null;
     preferences.setPathWithFileValue(file.getParentFile(), LACE_FILE_FOLDER_SAVE_PATH);
     if (alert != null && alert.isCancelled()) {
@@ -64,13 +65,6 @@ public class SaveAsButton extends ImageButton {
       Platform.exit();
     }
     return true;
-  }
-
-  private static File ensureLaceExtension(File file) {
-    if (file.getName().endsWith(LACE_FILE_EXTENSION)) {
-      return file;
-    }
-    return new File(file.getAbsolutePath() + LACE_FILE_EXTENSION);
   }
 
   private static void setInitialDirectory(Preferences preferences, FileChooser saveAs) {

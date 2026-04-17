@@ -5,6 +5,7 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.FileChooserUtil;
 import org.alienlabs.adaloveslace.util.FileUtil;
 import org.alienlabs.adaloveslace.util.ImageUtil;
+import org.alienlabs.adaloveslace.util.ToolboxFilePaths;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +42,7 @@ public class ExportPdfButton extends ImageButton {
     File file = export.showSaveDialog(app.getScene().getWindow());
 
     if (file != null) {
-      String pdfFilename = file.getAbsolutePath().endsWith(EXPORT_PDF_FILE_TYPE) ?
-        file.getAbsolutePath() :
-        file.getAbsolutePath() + EXPORT_PDF_FILE_TYPE;
+      String pdfFilename = ToolboxFilePaths.ensurePathEndsWithSuffix(file.getAbsolutePath(), EXPORT_PDF_FILE_TYPE);
 
       String imageFilename = System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator + OUTPUT_TEMPORARY_IMAGE;
 

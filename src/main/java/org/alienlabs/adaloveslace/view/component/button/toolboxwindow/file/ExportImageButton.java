@@ -4,6 +4,7 @@ import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.FileChooserUtil;
 import org.alienlabs.adaloveslace.util.ImageUtil;
+import org.alienlabs.adaloveslace.util.ToolboxFilePaths;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +42,7 @@ public class ExportImageButton extends ImageButton {
 
         if (file != null) {
             new ImageUtil(app).buildFileImageWithoutTechnicalElements(
-                file.getAbsolutePath().endsWith(EXPORT_IMAGE_FILE_TYPE) ?
-                    file.getAbsolutePath() :
-                    file.getAbsolutePath() + EXPORT_IMAGE_FILE_TYPE
+                ToolboxFilePaths.ensurePathEndsWithSuffix(file.getAbsolutePath(), EXPORT_IMAGE_FILE_TYPE)
             );
         }
     }
