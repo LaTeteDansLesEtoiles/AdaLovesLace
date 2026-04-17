@@ -13,7 +13,7 @@ module org.alienlabs.adaloveslace {
   requires javafx.swing;
   requires org.slf4j;
   requires static com.github.spotbugs.annotations;
-  requires static javafx.controls;
+  requires javafx.controls;
   requires static layout;
   requires com.google.protobuf;
   requires com.google.protobuf.util;

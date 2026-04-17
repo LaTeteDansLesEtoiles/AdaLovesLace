@@ -8,8 +8,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>24</java.version>
-    <javafx.version>24.0.1</javafx.version>
+    <java.version>25</java.version>
+    <javafx.version>25.0.2</javafx.version>
     <test-plugins.version>3.3.0</test-plugins.version>
     <itext.version>9.6.0</itext.version>
     <testfx.version>4.0.18</testfx.version>
@@ -193,8 +193,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.15.0</version>
         <configuration>
-          <source>24</source>
-          <target>24</target>
+          <source>25</source>
+          <target>25</target>
         </configuration>
       </plugin>
 
