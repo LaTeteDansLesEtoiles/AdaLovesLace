@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 import static org.alienlabs.adaloveslace.App.CANVAS_TEXT_FONT_SIZE;
-import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
 import static org.alienlabs.adaloveslace.domain.Knot.NEW_TEXT;
 
 /**
@@ -107,18 +106,7 @@ public class OptionalDotGrid extends Pane {
     });
 
     moveKnotPause.setOnFinished(__ -> {
-      List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-      List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-      List<Knot> copiedKnots = new ArrayList<>();
-
-      for (Knot knot : selectedKnots) {
-        Knot copiedKnot = new NodeUtil().copyKnot(knot);
-
-        displayedKnots.remove(knot);
-        copiedKnots.add(copiedKnot);
-      }
-
-      newStep(displayedKnots, copiedKnots, true);
+      NodeUtil.duplicateSelectedKnotsAsNewStep(app, true);
       app.getOptionalDotGrid().getDiagram().setCurrentMode(app.getOptionalDotGrid().getDiagram().getOldMode());
     });
   }
@@ -406,23 +394,10 @@ public class OptionalDotGrid extends Pane {
       imageView = rotateTextKnot(knot);
       this.gridUtil.zoomTextKnot(knot);
     } else if (knot.getPattern().isPresent()) {
-      // Load on the fly if the pattern file is not yet extracted
-      String fname = knot.getPattern().get().getFilename();
-      java.io.File f = new java.io.File(org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME +
-              org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME + java.io.File.separator + fname);
-      if (!f.exists()) {
-        new org.alienlabs.adaloveslace.util.FileUtil().copyPatternFromZipAsyncByName(fname);
-        // Reschedule a render shortly
-        javafx.animation.PauseTransition pt = new javafx.animation.PauseTransition(javafx.util.Duration.millis(150));
-        pt.setOnFinished(__ -> layoutChildren());
-        pt.play();
-        return; // wait for the next render
+      imageView = renderPatternKnot(knot);
+      if (imageView == null) {
+        return;
       }
-      PatternImageCache.updateKnotImageView(knot);
-      imageView = knot.getImageView();
-        
-      imageView = this.gridUtil.rotatePatternKnot(knot);
-      this.gridUtil.zoomAndFlipPatternKnot(knot);
     }
 
     if (null != imageView) {
@@ -491,21 +466,10 @@ public class OptionalDotGrid extends Pane {
 
       drawGuideLines(step, knot);
     } else if (knot.getPattern().isPresent()) {
-      String fname = knot.getPattern().get().getFilename();
-      java.io.File f = new java.io.File(org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME +
-              org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME + java.io.File.separator + fname);
-      if (!f.exists()) {
-        new org.alienlabs.adaloveslace.util.FileUtil().copyPatternFromZipAsyncByName(fname);
-        javafx.animation.PauseTransition pt = new javafx.animation.PauseTransition(javafx.util.Duration.millis(150));
-        pt.setOnFinished(__ -> layoutChildren());
-        pt.play();
+      imageView = renderPatternKnot(knot);
+      if (imageView == null) {
         return;
       }
-      PatternImageCache.updateKnotImageView(knot);
-      imageView = knot.getImageView();
-        
-      imageView = this.gridUtil.rotatePatternKnot(knot);
-      this.gridUtil.zoomAndFlipPatternKnot(knot);
 
       imageView.setLayoutX(x);
       imageView.setLayoutY(y);
@@ -518,6 +482,25 @@ public class OptionalDotGrid extends Pane {
                     knot.getPattern().get().getFilename() :
                     knot.getText().toString(),
             x, y);
+  }
+
+  private ImageView renderPatternKnot(Knot knot) {
+    String fname = knot.getPattern().get().getFilename();
+    java.io.File f = new java.io.File(org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME +
+            org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME + java.io.File.separator + fname);
+    if (!f.exists()) {
+      new org.alienlabs.adaloveslace.util.FileUtil().copyPatternFromZipAsyncByName(fname);
+      javafx.animation.PauseTransition pt = new javafx.animation.PauseTransition(javafx.util.Duration.millis(150));
+      pt.setOnFinished(__ -> layoutChildren());
+      pt.play();
+      return null;
+    }
+
+    PatternImageCache.updateKnotImageView(knot);
+    ImageView imageView = knot.getImageView();
+    imageView = this.gridUtil.rotatePatternKnot(knot);
+    this.gridUtil.zoomAndFlipPatternKnot(knot);
+    return imageView;
   }
 
   // Rotate Text knot with an angle in degrees

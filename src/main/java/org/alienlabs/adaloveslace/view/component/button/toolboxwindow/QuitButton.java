@@ -4,27 +4,17 @@ import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.stage.FileChooser;
 import org.alienlabs.adaloveslace.App;
-import org.alienlabs.adaloveslace.util.FileUtil;
-import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.view.component.button.ImageButton;
-import org.alienlabs.adaloveslace.view.window.FileAlreadyExistsWindow;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.SaveAsButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.Optional;
 
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 import static javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE;
 import static org.alienlabs.adaloveslace.App.*;
-import static org.alienlabs.adaloveslace.util.Preferences.LACE_FILE_FOLDER_SAVE_PATH;
-import static org.alienlabs.adaloveslace.util.Preferences.SAVED_LACE_FILE;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.SaveAsButton.DIAGRAM_FILES;
-import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.file.SaveAsButton.DIAGRAM_FILE_FILTER;
-import static org.alienlabs.adaloveslace.view.window.MainWindow.SAVE_FILE_AS;
-
 public class QuitButton extends ImageButton {
 
   private static final String QUIT_WINDOW_TITLE         = "QuitWindowTitle";
@@ -74,63 +64,7 @@ public class QuitButton extends ImageButton {
 
   private void saveAndQuit(App app) {
     logger.info("Saving diagram & exiting app");
-
-    FileChooser saveAs = new FileChooser();
-    saveAs.setTitle(resourceBundle.getString(SAVE_FILE_AS));
-
-    Preferences preferences = new Preferences();
-    File laceFilePath = preferences.getPathWithFileValue(LACE_FILE_FOLDER_SAVE_PATH);
-
-    setInitialDirectory(laceFilePath, saveAs, preferences);
-
-    FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(DIAGRAM_FILES, DIAGRAM_FILE_FILTER);
-    saveAs.getExtensionFilters().add(filter);
-
-    File file = saveAs.showSaveDialog(app.getScene().getWindow());
-    treatFile(app, file, preferences);
-  }
-
-  private void treatFile(App app, File file, Preferences preferences) {
-    if (file != null) {
-      logger.info("Saving file as");
-
-      if (!file.getName().endsWith(LACE_FILE_EXTENSION)) {
-        file = new File(file.getAbsolutePath() + LACE_FILE_EXTENSION);
-      }
-
-      FileAlreadyExistsWindow alert = null;
-
-      if (file.exists()) {
-        alert = new FileAlreadyExistsWindow(file);
-      }
-
-      preferences.setPathWithFileValue(file.getParentFile(), LACE_FILE_FOLDER_SAVE_PATH);
-      saveAndQuit(app, alert, preferences, file);
-    }
-  }
-
-  private void saveAndQuit(App app, FileAlreadyExistsWindow alert, Preferences preferences, File file) {
-    if (null == alert || !alert.isCancelled()) {
-      preferences.setPathWithFileValue(file, SAVED_LACE_FILE);
-
-      new FileUtil(app).saveFile(
-              file,
-              app.getOptionalDotGrid().getDiagram(),
-              true
-      );
-
-      Platform.exit();
-    }
-  }
-
-  private void setInitialDirectory(File laceFilePath, FileChooser saveAs, Preferences preferences) {
-    if (laceFilePath == null || !laceFilePath.exists() || !laceFilePath.isDirectory() || !laceFilePath.canWrite()) {
-      File userHome = new File(System.getProperty(USER_HOME));
-      saveAs.setInitialDirectory(userHome);
-      preferences.setPathWithFileValue(userHome, LACE_FILE_FOLDER_SAVE_PATH);
-    } else {
-      saveAs.setInitialDirectory(laceFilePath);
-    }
+    SaveAsButton.saveAsDiagram(app, true);
   }
 
 }

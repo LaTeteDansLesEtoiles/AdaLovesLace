@@ -32,31 +32,20 @@ public class WindowRepositionEvents {
     }
 
     public void onDoMainWindowReposition() {
-        onDoChangeX(this.app.getPrimaryStage().xProperty(), MAIN_WINDOW_X, "Main window sceneX: {}");
-        onDoChangeY(this.app.getPrimaryStage().yProperty(), MAIN_WINDOW_Y, "Main window sceneY: {}");
+        onDoChange(this.app.getPrimaryStage().xProperty(), MAIN_WINDOW_X, "Main window sceneX: {}");
+        onDoChange(this.app.getPrimaryStage().yProperty(), MAIN_WINDOW_Y, "Main window sceneY: {}");
     }
 
     public void onDoToolboxWindowReposition() {
-        onDoChangeX(this.app.getToolboxStage().xProperty(), TOOLBOX_WINDOW_X, "Toolbox window sceneX: {}");
-        onDoChangeY(this.app.getToolboxStage().yProperty(), TOOLBOX_WINDOW_Y, "Toolbox window sceneY: {}");
+        onDoChange(this.app.getToolboxStage().xProperty(), TOOLBOX_WINDOW_X, "Toolbox window sceneX: {}");
+        onDoChange(this.app.getToolboxStage().yProperty(), TOOLBOX_WINDOW_Y, "Toolbox window sceneY: {}");
     }
 
 
-    private void onDoChangeX(ReadOnlyDoubleProperty stage, String preferenceName, String s) {
+    private void onDoChange(ReadOnlyDoubleProperty stage, String preferenceName, String message) {
         stage.addListener((obs, oldVal, newVal) ->
                 {
-                    logger.debug(s, newVal);
-
-                    Preferences prefs = new Preferences();
-                    prefs.setStringValue(preferenceName, String.valueOf((double) newVal));
-                }
-        );
-    }
-
-    private void onDoChangeY(ReadOnlyDoubleProperty stage, String preferenceName, String s) {
-        stage.addListener((obs, oldVal, newVal) ->
-                {
-                    logger.debug(s, newVal);
+                    logger.debug(message, newVal);
 
                     Preferences prefs = new Preferences();
                     prefs.setStringValue(preferenceName, String.valueOf((double) newVal));
@@ -65,39 +54,28 @@ public class WindowRepositionEvents {
     }
 
     public double getMainWindowX() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowRepositionEvents.MAIN_WINDOW_X).isEmpty()) {
-            return DEFAULT_MAIN_WINDOW_X;
-        }
-
-        return Double.parseDouble(prefs.getStringValue(WindowRepositionEvents.MAIN_WINDOW_X));
+        return readWindowPreference(WindowRepositionEvents.MAIN_WINDOW_X, DEFAULT_MAIN_WINDOW_X, 0d);
     }
 
     public double getMainWindowY() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowRepositionEvents.MAIN_WINDOW_Y).isEmpty()) {
-            return DEFAULT_MAIN_WINDOW_Y;
-        }
-
-        return Double.parseDouble(prefs.getStringValue(WindowRepositionEvents.MAIN_WINDOW_Y)) - 16d;
+        return readWindowPreference(WindowRepositionEvents.MAIN_WINDOW_Y, DEFAULT_MAIN_WINDOW_Y, -16d);
     }
 
     public double getToolboxWindowX() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowRepositionEvents.TOOLBOX_WINDOW_X).isEmpty()) {
-            return DEFAULT_TOOLBOX_WINDOW_X;
-        }
-
-        return Double.parseDouble(prefs.getStringValue(WindowRepositionEvents.TOOLBOX_WINDOW_X));
+        return readWindowPreference(WindowRepositionEvents.TOOLBOX_WINDOW_X, DEFAULT_TOOLBOX_WINDOW_X, 0d);
     }
 
     public double getToolboxWindowY() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowRepositionEvents.TOOLBOX_WINDOW_Y).isEmpty()) {
-            return DEFAULT_TOOLBOX_WINDOW_Y;
-        }
+        return readWindowPreference(WindowRepositionEvents.TOOLBOX_WINDOW_Y, DEFAULT_TOOLBOX_WINDOW_Y, -16d);
+    }
 
-        return Double.parseDouble(prefs.getStringValue(WindowRepositionEvents.TOOLBOX_WINDOW_Y)) - 16d;
+    private double readWindowPreference(String preferenceName, double defaultValue, double offset) {
+        Preferences prefs = new Preferences();
+        String value = prefs.getStringValue(preferenceName);
+        if (value.isEmpty()) {
+            return defaultValue;
+        }
+        return Double.parseDouble(value) + offset;
     }
 
 }

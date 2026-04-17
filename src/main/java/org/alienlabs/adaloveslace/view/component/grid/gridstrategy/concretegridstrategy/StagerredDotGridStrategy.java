@@ -2,34 +2,18 @@ package org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegrid
 
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Ellipse;
-import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.IDotGridStrategy;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 
 import static org.alienlabs.adaloveslace.App.GRID_DOTS_RADIUS;
 import static org.alienlabs.adaloveslace.domain.Diagram.*;
 
-public class StagerredDotGridStrategy implements IDotGridStrategy {
-
-    private double width;
-    private double height;
-    private double translateX;
-    private double translateY;
+public class StagerredDotGridStrategy extends AbstractDotGridStrategy {
 
     /**
      * This shall only be called by the ParentGridStrategy.
      */
     public StagerredDotGridStrategy() {
         // This shall only be called by the ParentGridStrategy.
-    }
-
-    /**
-     * This shall only be called by the ParentGridStrategy.
-     */
-    public void setViewPort(double width, double height, double translateX, double translateY) {
-        this.width = width;
-        this.height = height;
-        this.translateX = translateX;
-        this.translateY = translateY;
     }
 
     @Override
@@ -47,7 +31,7 @@ public class StagerredDotGridStrategy implements IDotGridStrategy {
             }
 
         }
-        ParentGridStrategy.gridPane.getChildren().addAll(ParentGridStrategy.grid);
+        finalizeGridPane();
     }
 
     @Override

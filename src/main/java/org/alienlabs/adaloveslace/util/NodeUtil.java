@@ -21,10 +21,13 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.alienlabs.adaloveslace.App.CANVAS_TEXT_FONT_SIZE;
 import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
+import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
 import static org.alienlabs.adaloveslace.domain.Diagram.isNewText;
 import static org.alienlabs.adaloveslace.domain.Knot.NEW_TEXT;
 import static org.alienlabs.adaloveslace.util.FileUtil.APP_FOLDER_IN_USER_HOME;
@@ -247,6 +250,30 @@ public class NodeUtil {
         app.getOptionalDotGrid().clearHovered();
         app.getOptionalDotGrid().clearHandles();
         app.getOptionalDotGrid().layoutChildren();
+    }
+
+    public static void duplicateSelectedKnotsAsNewStep(App app, boolean layoutChildren) {
+        List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+        List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+        List<Knot> copiedKnots = new ArrayList<>();
+
+        NodeUtil nodeUtil = new NodeUtil();
+        for (Knot knot : selectedKnots) {
+            Knot copiedKnot = nodeUtil.copyKnot(knot);
+            displayedKnots.remove(knot);
+            copiedKnots.add(copiedKnot);
+        }
+
+        duplicateSelectedKnotsAsNewStep(app, copiedKnots, layoutChildren);
+    }
+
+    public static void duplicateSelectedKnotsAsNewStep(App app, List<Knot> copiedKnots, boolean layoutChildren) {
+        List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
+        List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
+        for (Knot knot : selectedKnots) {
+            displayedKnots.remove(knot);
+        }
+        newStep(displayedKnots, copiedKnots, layoutChildren);
     }
 
 

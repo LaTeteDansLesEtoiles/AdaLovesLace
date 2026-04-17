@@ -46,8 +46,8 @@ public class WindowResizeEvents {
     }
 
     public void onDoToolboxWindowResize() {
-        onDoChangeWidth(this.app.getToolboxStage().widthProperty(), TOOLBOX_WINDOW_WIDTH, "Toolbox window width: {}");
-        onDoChangeHeight(this.app.getToolboxStage().heightProperty(), TOOLBOX_WINDOW_HEIGHT, "Toolbox window height: {}");
+        onDoChange(this.app.getToolboxStage().widthProperty(), TOOLBOX_WINDOW_WIDTH, "Toolbox window width: {}");
+        onDoChange(this.app.getToolboxStage().heightProperty(), TOOLBOX_WINDOW_HEIGHT, "Toolbox window height: {}");
     }
 
 
@@ -79,21 +79,10 @@ public class WindowResizeEvents {
         );
     }
 
-    private void onDoChangeWidth(ReadOnlyDoubleProperty stage, String preferenceName, String s) {
+    private void onDoChange(ReadOnlyDoubleProperty stage, String preferenceName, String message) {
         stage.addListener((obs, oldVal, newVal) ->
                 {
-                    logger.debug(s, newVal);
-
-                    Preferences prefs = new Preferences();
-                    prefs.setStringValue(preferenceName, String.valueOf((double) newVal));
-                }
-        );
-    }
-
-    private void onDoChangeHeight(ReadOnlyDoubleProperty stage, String preferenceName, String s) {
-        stage.addListener((obs, oldVal, newVal) ->
-                {
-                    logger.debug(s, newVal);
+                    logger.debug(message, newVal);
 
                     Preferences prefs = new Preferences();
                     prefs.setStringValue(preferenceName, String.valueOf((double) newVal));
@@ -109,57 +98,36 @@ public class WindowResizeEvents {
     }
 
     public double getMainWindowWidth() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowResizeEvents.MAIN_WINDOW_WIDTH).isEmpty()) {
-            return DEFAULT_MAIN_WINDOW_WIDTH;
-        }
-
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.MAIN_WINDOW_WIDTH));
+        return readWindowPreference(WindowResizeEvents.MAIN_WINDOW_WIDTH, DEFAULT_MAIN_WINDOW_WIDTH, 0d);
     }
 
     public double getMainWindowHeight() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowResizeEvents.MAIN_WINDOW_HEIGHT).isEmpty()) {
-            return DEFAULT_MAIN_WINDOW_HEIGHT;
-        }
-
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.MAIN_WINDOW_HEIGHT)) - 32d;
+        return readWindowPreference(WindowResizeEvents.MAIN_WINDOW_HEIGHT, DEFAULT_MAIN_WINDOW_HEIGHT, -32d);
     }
 
     public double getGridWidth() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowResizeEvents.GRID_WIDTH).isEmpty()) {
-            return DEFAULT_GRID_WIDTH;
-        }
-
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.GRID_WIDTH));
+        return readWindowPreference(WindowResizeEvents.GRID_WIDTH, DEFAULT_GRID_WIDTH, 0d);
     }
 
     public double getGridHeight() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowResizeEvents.GRID_HEIGHT).isEmpty()) {
-            return DEFAULT_GRID_HEIGHT;
-        }
-
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.GRID_HEIGHT)) - 32d;
+        return readWindowPreference(WindowResizeEvents.GRID_HEIGHT, DEFAULT_GRID_HEIGHT, -32d);
     }
 
     public double getToolboxWindowWidth() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowResizeEvents.TOOLBOX_WINDOW_WIDTH).isEmpty()) {
-            return DEFAULT_TOOLBOX_WINDOW_WIDTH;
-        }
-
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.TOOLBOX_WINDOW_WIDTH));
+        return readWindowPreference(WindowResizeEvents.TOOLBOX_WINDOW_WIDTH, DEFAULT_TOOLBOX_WINDOW_WIDTH, 0d);
     }
 
     public double getToolboxWindowHeight() {
-        Preferences prefs = new Preferences();
-        if (prefs.getStringValue(WindowResizeEvents.TOOLBOX_WINDOW_HEIGHT).isEmpty()) {
-            return 0d;
-        }
+        return readWindowPreference(WindowResizeEvents.TOOLBOX_WINDOW_HEIGHT, 0d, -32d);
+    }
 
-        return Double.parseDouble(prefs.getStringValue(WindowResizeEvents.TOOLBOX_WINDOW_HEIGHT)) - 32d;
+    private double readWindowPreference(String preferenceName, double defaultValue, double offset) {
+        Preferences prefs = new Preferences();
+        String value = prefs.getStringValue(preferenceName);
+        if (value.isEmpty()) {
+            return defaultValue;
+        }
+        return Double.parseDouble(value) + offset;
     }
 
 }

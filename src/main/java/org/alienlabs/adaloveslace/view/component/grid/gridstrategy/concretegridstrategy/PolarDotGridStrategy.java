@@ -3,34 +3,18 @@ package org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegrid
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.IDotGridStrategy;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 
-public class PolarDotGridStrategy implements IDotGridStrategy {
+public class PolarDotGridStrategy extends AbstractDotGridStrategy {
 
     private static final double RADIUS_STEP     = 25d;
     private static final double ANGLE_STEP_DEG  = 15d;
-
-    private double width;
-    private double height;
-    private double translateX;
-    private double translateY;
 
     /**
      * This shall only be called by the ParentGridStrategy.
      */
     public PolarDotGridStrategy() {
         // This shall only be called by the ParentGridStrategy.
-    }
-
-    /**
-     * This shall only be called by the ParentGridStrategy.
-     */
-    public void setViewPort(double width, double height, double translateX, double translateY) {
-        this.width = width;
-        this.height = height;
-        this.translateX = translateX;
-        this.translateY = translateY;
     }
 
     @Override
@@ -69,10 +53,7 @@ public class PolarDotGridStrategy implements IDotGridStrategy {
             ParentGridStrategy.grid.add(l);
         }
 
-        ParentGridStrategy.gridPane.getChildren().addAll(ParentGridStrategy.grid);
-        ParentGridStrategy.gridPane.toBack();
-        ParentGridStrategy.gridPane.getStyleClass().add("grid");
-        ParentGridStrategy.gridPane.setBackground(null);
+        finalizeGridPane();
     }
 
     @Override

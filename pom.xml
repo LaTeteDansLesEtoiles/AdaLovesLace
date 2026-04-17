@@ -377,7 +377,7 @@
           <failurePriority>1</failurePriority>
           <printFailingErrors>true</printFailingErrors>
           <skip>false</skip>
-          <minimumTokens>50</minimumTokens>
+          <minimumTokens>90</minimumTokens>
           <excludeRoots>
             <excludeRoot>target/generated-sources</excludeRoot>
           </excludeRoots>

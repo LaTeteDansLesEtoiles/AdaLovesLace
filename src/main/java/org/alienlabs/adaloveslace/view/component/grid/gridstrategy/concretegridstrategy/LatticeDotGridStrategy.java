@@ -3,37 +3,21 @@ package org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegrid
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
-import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.IDotGridStrategy;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class LatticeDotGridStrategy implements IDotGridStrategy {
+public class LatticeDotGridStrategy extends AbstractDotGridStrategy {
 
     private static final double SPACING_FOR_LATTICE = 25;
-
-    private double width;
-    private double height;
-    private double translateX;
-    private double translateY;
 
     /**
      * This shall only be called by the ParentGridStrategy.
      */
     public LatticeDotGridStrategy() {
         // This shall only be called by the ParentGridStrategy.
-    }
-
-    /**
-     * This shall only be called by the ParentGridStrategy.
-     */
-    public void setViewPort(double width, double height, double translateX, double translateY) {
-        this.width = width;
-        this.height = height;
-        this.translateX = translateX;
-        this.translateY = translateY;
     }
 
     @Override
@@ -63,10 +47,7 @@ public class LatticeDotGridStrategy implements IDotGridStrategy {
         addAngled(ParentGridStrategy.grid, dw, dh, a, translateX, translateY, n1, d1);
         addAngled(ParentGridStrategy.grid, dw, dh, a, translateX, translateY, n2, d2);
 
-        ParentGridStrategy.gridPane.getChildren().addAll(ParentGridStrategy.grid);
-        ParentGridStrategy.gridPane.toBack();
-        ParentGridStrategy.gridPane.getStyleClass().add("grid");
-        ParentGridStrategy.gridPane.setBackground(null);
+        finalizeGridPane();
     }
 
     private void addAngled(

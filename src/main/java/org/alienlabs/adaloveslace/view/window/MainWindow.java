@@ -157,15 +157,7 @@ public class MainWindow {
           displayedKnots.addAll(new ArrayList<>(selectedKnots));
           displayedKnots.remove(knot);
           selectedKnots.clear();
-          selectedKnots.add(copiedKnot);
-
-          List<Knot> selectedKnotsOfStep = new ArrayList<>();
-          selectedKnotsOfStep.add(copiedKnot);
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
-          app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
-          if (!NEW_TEXT.toString().contentEquals(copiedKnot.getText().get())) {
-            copiedKnot.setTypedText(new StringBuilder(copiedKnot.getText().get()));
-          }
+          configureSingleSelectedKnot(app, selectedKnots, copiedKnot);
 
           newStep(displayedKnots, selectedKnots, true);
         } else {
@@ -206,17 +198,8 @@ public class MainWindow {
         if (!isControlDown) {
           Knot copiedKnot = knot;
           displayedKnots.addAll(new ArrayList<>(selectedKnots));
-          selectedKnots.clear();
-          selectedKnots.add(copiedKnot);
           displayedKnots.remove(knot);
-
-          List<Knot> selectedKnotsOfStep = new ArrayList<>();
-          selectedKnotsOfStep.add(copiedKnot);
-          app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
-          app.getOptionalDotGrid().getDiagram().setCurrentKnot(copiedKnot);
-          if (!NEW_TEXT.toString().contentEquals(copiedKnot.getText().get())) {
-            copiedKnot.setTypedText(new StringBuilder(copiedKnot.getText().get()));
-          }
+          configureSingleSelectedKnot(app, selectedKnots, copiedKnot);
 
           hideHandlesForNotSelectedKnots(app, displayedKnots);
           newStep(displayedKnots, selectedKnots, true);
@@ -279,6 +262,19 @@ public class MainWindow {
       k.setHandle(null);
       app.getMovablePane().getChildren().remove(k.getImageView());
     });
+  }
+
+  private static void configureSingleSelectedKnot(App app, List<Knot> selectedKnots, Knot knot) {
+    selectedKnots.clear();
+    selectedKnots.add(knot);
+
+    List<Knot> selectedKnotsOfStep = new ArrayList<>();
+    selectedKnotsOfStep.add(knot);
+    app.getOptionalDotGrid().getDiagram().getCurrentStep().setSelectedKnots(selectedKnotsOfStep);
+    app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
+    if (!NEW_TEXT.toString().contentEquals(knot.getText().get())) {
+      knot.setTypedText(new StringBuilder(knot.getText().get()));
+    }
   }
 
   private void hideHandlesForNotSelectedKnots(App app, List<Knot> displayedKnots) {

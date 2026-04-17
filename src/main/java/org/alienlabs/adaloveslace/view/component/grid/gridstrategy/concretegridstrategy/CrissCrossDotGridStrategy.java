@@ -2,17 +2,11 @@ package org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegrid
 
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Line;
-import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.IDotGridStrategy;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 
 import static org.alienlabs.adaloveslace.domain.Diagram.*;
 
-public class CrissCrossDotGridStrategy implements IDotGridStrategy {
-
-    private double width;
-    private double height;
-    private double translateX;
-    private double translateY;
+public class CrissCrossDotGridStrategy extends AbstractDotGridStrategy {
     private final double offsetX;
 
     /**
@@ -21,16 +15,6 @@ public class CrissCrossDotGridStrategy implements IDotGridStrategy {
     public CrissCrossDotGridStrategy() {
         // This shall only be called by the ParentGridStrategy.
         this.offsetX = SPACING_X_FOR_CRISS_CROSS;
-    }
-
-    /**
-     * This shall only be called by the ParentGridStrategy.
-     */
-    public void setViewPort(double width, double height, double translateX, double translateY) {
-        this.width = width;
-        this.height = height;
-        this.translateX = translateX;
-        this.translateY = translateY;
     }
 
     @Override
@@ -55,10 +39,7 @@ public class CrissCrossDotGridStrategy implements IDotGridStrategy {
             }
         }
 
-        ParentGridStrategy.gridPane.getChildren().addAll(ParentGridStrategy.grid);
-        ParentGridStrategy.gridPane.toBack();
-        ParentGridStrategy.gridPane.getStyleClass().add("grid");
-        ParentGridStrategy.gridPane.setBackground(null);
+        finalizeGridPane();
     }
 
     @Override

@@ -41,16 +41,22 @@ public class SelectionButton extends ToggleButton {
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
     app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
 
+    refreshSelectionHandlers(app);
+    setSelectionModeButtonState(app);
+  }
+
+  public static void refreshSelectionHandlers(App app) {
     for (Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
       putAllEventsOnKnot(app, knot);
     }
-
     GridEvents.removeEventsFromGrid(app);
+  }
 
-    app.getToolboxWindow().getDrawingButton()     .setSelected(false);
-    app.getToolboxWindow().getSelectionButton()   .setSelected(true);
-    app.getToolboxWindow().getDeletionButton()    .setSelected(false);
-    app.getToolboxWindow().getDuplicationButton() .setSelected(false);
+  public static void setSelectionModeButtonState(App app) {
+    app.getToolboxWindow().getDrawingButton().setSelected(false);
+    app.getToolboxWindow().getSelectionButton().setSelected(true);
+    app.getToolboxWindow().getDeletionButton().setSelected(false);
+    app.getToolboxWindow().getDuplicationButton().setSelected(false);
   }
 
   public static void putAllEventsOnKnot(App app, Knot knot) {

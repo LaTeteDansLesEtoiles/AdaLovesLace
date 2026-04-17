@@ -8,10 +8,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton;
 import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 
 import static org.alienlabs.adaloveslace.App.resourceBundle;
-import static org.alienlabs.adaloveslace.view.component.button.geometrywindow.SelectionButton.putAllEventsOnKnot;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.*;
 import static org.alienlabs.adaloveslace.view.window.event.GridEvents.keyHandler;
 
@@ -55,16 +55,8 @@ public class BackInBlackButton extends ToggleButton {
       app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.SELECTION);
       app.getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
       
-      for (org.alienlabs.adaloveslace.domain.Knot knot : app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots()) {
-        putAllEventsOnKnot(app, knot);
-      }
-      
-      GridEvents.removeEventsFromGrid(app);
-      
-      app.getToolboxWindow().getDrawingButton()     .setSelected(false);
-      app.getToolboxWindow().getSelectionButton()   .setSelected(true);
-      app.getToolboxWindow().getDeletionButton()    .setSelected(false);
-      app.getToolboxWindow().getDuplicationButton() .setSelected(false);
+      SelectionButton.refreshSelectionHandlers(app);
+      SelectionButton.setSelectionModeButtonState(app);
     });
 
     pause.playFromStart();

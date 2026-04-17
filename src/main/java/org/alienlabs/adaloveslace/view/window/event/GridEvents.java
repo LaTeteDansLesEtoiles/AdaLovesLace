@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.alienlabs.adaloveslace.domain.Diagram.isNewText;
-import static org.alienlabs.adaloveslace.domain.Diagram.newStep;
 import static org.alienlabs.adaloveslace.domain.Knot.NEW_TEXT;
 import static org.alienlabs.adaloveslace.view.window.MainWindow.MOUSE_CLICKED;
 
@@ -230,18 +229,7 @@ public final class GridEvents {
     app.getOptionalDotGrid().getDiagram().setOldMode(app.getOptionalDotGrid().getDiagram().getCurrentMode());
     app.getOptionalDotGrid().getDiagram().setCurrentMode(MouseMode.DRAG_AND_DROP);
 
-    List<Knot> displayedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getDisplayedKnots());
-    List<Knot> selectedKnots = new ArrayList<>(app.getOptionalDotGrid().getDiagram().getCurrentStep().getSelectedKnots());
-    List<Knot> copiedKnots = new ArrayList<>();
-
-    for (Knot knot : selectedKnots) {
-      Knot copiedKnot = new NodeUtil().copyKnot(knot);
-
-      displayedKnots.remove(knot);
-      copiedKnots.add(copiedKnot);
-    }
-
-    newStep(displayedKnots, copiedKnots, false);
+    NodeUtil.duplicateSelectedKnotsAsNewStep(app, false);
     event.consume();
   };
 
