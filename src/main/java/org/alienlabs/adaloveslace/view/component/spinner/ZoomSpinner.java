@@ -20,6 +20,18 @@ public class ZoomSpinner {
     internalUpdateInProgress = false;
   }
 
+  private static void beginInternalUpdate() {
+    internalUpdateInProgress = true;
+  }
+
+  private static void endInternalUpdate() {
+    internalUpdateInProgress = false;
+  }
+
+  private static boolean isInternalUpdate() {
+    return internalUpdateInProgress;
+  }
+
   public void buildZoomSpinner(App app, Spinner<Integer> spinner,
                                SpinnerValueFactory<Integer> spinnerToReflect1,
                                SpinnerValueFactory<Integer> spinnerToReflect2) {
@@ -29,9 +41,9 @@ public class ZoomSpinner {
             spinnerToReflect1,
             spinnerToReflect2,
             resourceBundle.getString("ZOOM_SPINNER_BUTTON_TOOLTIP"),
-            () -> internalUpdateInProgress = true,
-            () -> internalUpdateInProgress = false,
-            () -> internalUpdateInProgress,
+            ZoomSpinner::beginInternalUpdate,
+            ZoomSpinner::endInternalUpdate,
+            ZoomSpinner::isInternalUpdate,
             Knot::setZoomFactor
     );
   }

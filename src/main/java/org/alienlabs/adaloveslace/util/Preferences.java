@@ -13,10 +13,6 @@ public class Preferences {
   /** What is File path of the saved .lace file? */
   public static final String SAVED_LACE_FILE = "SAVED_LACE_FILE";
 
-  public Preferences() {
-    // Nothing special to do here as it is just a utility class
-  }
-
   public File getPathWithFileValue(String path) {
     java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userNodeForPackage(App.class);
     String filePath = prefs.get(path, null);

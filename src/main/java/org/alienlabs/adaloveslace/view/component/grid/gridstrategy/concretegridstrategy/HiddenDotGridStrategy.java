@@ -9,13 +9,7 @@ public class HiddenDotGridStrategy implements IDotGridStrategy {
     /**
      * This shall only be called by the ParentGridStrategy.
      */
-    public HiddenDotGridStrategy() {
-        // This shall only be called by the ParentGridStrategy.
-    }
-
-    /**
-     * This shall only be called by the ParentGridStrategy.
-     */
+    @Override
     public void setViewPort(double width, double height, double translateX, double translateY) {
         // Nothing to do here
     }

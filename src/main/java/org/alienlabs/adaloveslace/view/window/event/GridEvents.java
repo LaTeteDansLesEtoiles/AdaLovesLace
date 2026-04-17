@@ -151,7 +151,7 @@ public final class GridEvents {
             app.getOptionalDotGrid().getDiagram().getCurrentStepIndex(),
             app.getOptionalDotGrid().getDiagram().getCurrentMode());
 
-    if (eType.equals(MOUSE_CLICKED) && event.getButton() == MouseButton.PRIMARY) {
+    if (MOUSE_CLICKED.equals(eType) && event.getButton() == MouseButton.PRIMARY) {
       Point2D mouseInParent = app.getMovablePane().sceneToLocal(event.getSceneX(), event.getSceneY());
       Double x = mouseInParent.getX();
       Double y = mouseInParent.getY();

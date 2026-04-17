@@ -210,9 +210,7 @@ public class ToolboxWindow {
         homeDirectoryResourceFiles = loadPatternsFolderResourcesFiles(HOME_DIRECTORY_RESOURCES_PATH,
                 patternsDirectoryResourcesPath);
 
-        if (homeDirectoryResourceFiles.isEmpty()) {
-            // Nothing to do here
-        } else {
+        if (!homeDirectoryResourceFiles.isEmpty()) {
             // We don't add duplicated resources to our toolbox buttons (i.e., filename must be different in both
             // classpathResourceFiles & homeDirectoryResourceFiles
             this.classpathResourceFiles.addAll(

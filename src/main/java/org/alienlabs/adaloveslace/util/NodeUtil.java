@@ -40,10 +40,6 @@ public class NodeUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(NodeUtil.class);
 
-    public NodeUtil() {
-        // Nothing to do here, that's just to avoid an all-static class
-    }
-
     public boolean isMouseOverKnot(Knot knot) {
         return (knot.getImageView().isHover())
                 || ((knot.getHovered() != null) && (knot.getHovered().isHover()))

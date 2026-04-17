@@ -9,13 +9,6 @@ import static org.alienlabs.adaloveslace.domain.Diagram.*;
 
 public class StagerredDotGridStrategy extends AbstractDotGridStrategy {
 
-    /**
-     * This shall only be called by the ParentGridStrategy.
-     */
-    public StagerredDotGridStrategy() {
-        // This shall only be called by the ParentGridStrategy.
-    }
-
     @Override
     public void drawGrid() {
         ParentGridStrategy.hideGrid();

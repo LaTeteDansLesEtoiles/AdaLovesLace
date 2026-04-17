@@ -10,12 +10,13 @@ import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.concretegrids
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class ParentGridStrategy {
 
     public static Pane gridPane;
     public static List<Shape> grid = new ArrayList<>();
-    private final EnumMap<GridType, IDotGridStrategy> childStrategies = new EnumMap<>(GridType.class);
+    private final Map<GridType, IDotGridStrategy> childStrategies = new EnumMap<>(GridType.class);
     public static App app;
     private static boolean gridHasBeenDrawn = false;
 

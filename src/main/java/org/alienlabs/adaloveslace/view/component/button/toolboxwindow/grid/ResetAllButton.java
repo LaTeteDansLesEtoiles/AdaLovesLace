@@ -8,9 +8,6 @@ import javafx.scene.input.MouseEvent;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.util.FileChooserUtil;
 import org.alienlabs.adaloveslace.util.ImageUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Optional;
 
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
@@ -28,8 +25,6 @@ public class ResetAllButton extends ToggleButton {
   private static final String RESET_ALL_CONTENT_TEXT        = "ResetAllContentText";
   private static final String RESET_ALL_BUTTON_TEXT         = "ResetAllButtonText";
   private static final String CANCEL_RESET_ALL_BUTTON_TEXT  = "CancelResetAll";
-
-  private static final Logger logger                        = LoggerFactory.getLogger(ResetAllButton.class);
 
   public ResetAllButton(App app) {
     super(resourceBundle.getString(RESET_ALL_BUTTON_NAME));

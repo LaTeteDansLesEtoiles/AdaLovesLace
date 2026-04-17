@@ -13,13 +13,6 @@ public class LatticeDotGridStrategy extends AbstractDotGridStrategy {
 
     private static final double SPACING_FOR_LATTICE = 25;
 
-    /**
-     * This shall only be called by the ParentGridStrategy.
-     */
-    public LatticeDotGridStrategy() {
-        // This shall only be called by the ParentGridStrategy.
-    }
-
     @Override
     public void drawGrid() {
         ParentGridStrategy.hideGrid();

@@ -16,7 +16,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public class PatternImageCache {
+public final class PatternImageCache {
+
+    private PatternImageCache() {
+    }
+
     private static final Map<PatternColorKey, ImageView> cache = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(PatternImageCache.class);
     

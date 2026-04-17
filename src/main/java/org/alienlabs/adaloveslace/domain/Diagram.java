@@ -526,9 +526,8 @@ public class Diagram {
             // R?utiliser le rectangle sauvegard? du step vide si disponible
             Node selection = currentKnot.getSelection();
             GridUtil gridUtil = new GridUtil(app.getMovablePane());
-            if (savedSelection != null && savedSelection instanceof Rectangle) {
+            if (savedSelection instanceof Rectangle savedRect) {
                 // R?utiliser le rectangle du step vide et le mettre ? jour avec la bonne taille
-                Rectangle savedRect = (Rectangle) savedSelection;
                 currentKnot.setSelection(savedRect);
                 selection = savedRect;
                 // Mettre ? jour la taille et la position du rectangle avec les nouvelles valeurs du texte
@@ -558,14 +557,14 @@ public class Diagram {
                 }
             }
             
-            if (selection != null && selection instanceof Rectangle) {
+            if (selection instanceof Rectangle rectangleSelection) {
                 Circle handle = null;
-                if (savedHandle != null && savedHandle instanceof Circle) {
+                if (savedHandle instanceof Circle savedCircle) {
                     // R?utiliser le handle du step vide et le mettre ? jour avec la bonne position
-                    handle = (Circle) savedHandle;
+                    handle = savedCircle;
                     currentKnot.setHandle(handle);
                     // Mettre ? jour la position du handle
-                    Circle newHandle = gridUtil.newHandleForText(currentKnot, (Rectangle) selection);
+                    Circle newHandle = gridUtil.newHandleForText(currentKnot, rectangleSelection);
                     if (newHandle != null) {
                         handle.setLayoutX(newHandle.getLayoutX());
                         handle.setLayoutY(newHandle.getLayoutY());
@@ -573,7 +572,7 @@ public class Diagram {
                     }
                     logger.info("Reusing saved handle from empty text step and updating position");
                 } else {
-                    handle = gridUtil.newHandleForText(currentKnot, (Rectangle) selection);
+                    handle = gridUtil.newHandleForText(currentKnot, rectangleSelection);
                     if (handle != null) {
                         currentKnot.setHandle(handle);
                     }
@@ -633,13 +632,13 @@ public class Diagram {
                     knot.getPattern().isPresent() ? knot.getPattern().get().getFilename() : "none",
                     knot.getText().orElse("empty"),
                     knot.getTypedText() != null ? knot.getTypedText().toString() : "null",
-                    existingKnot != null && knot.equals(existingKnot));
+                    existingKnot != null && existingKnot.equals(knot));
             // Garder les n?uds de texte (sans pattern) dans selectedKnots
             // SAUF si c'est le n?ud existant qui sera remplac? par currentKnot
             if (knot.getPattern().isEmpty()) {
                 // Ne pas ajouter si c'est le n?ud existant qui sera remplac?
                 // Utiliser la comparaison de r?f?rence ou equals pour ?tre s?r
-                if (existingKnot == null || (knot != existingKnot && !knot.equals(existingKnot))) {
+                if (existingKnot == null || !Objects.equals(knot, existingKnot)) {
                     selectedKnots.add(knot);
                     logger.info("    Added previous knot to selectedKnots");
                 } else {

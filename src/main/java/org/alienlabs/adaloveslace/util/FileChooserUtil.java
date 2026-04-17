@@ -12,10 +12,6 @@ import static org.alienlabs.adaloveslace.view.component.button.toolboxwindow.gri
 
 public class FileChooserUtil {
 
-  public FileChooserUtil() {
-    // Nothing to do here, that's just to avoid an all-static class
-  }
-
   public FileChooser getFileChooser(String dialogTitle, String file, String folderSavePath,
                                             String filteredFiles, String fileFilter) {
     FileChooser export = new FileChooser();

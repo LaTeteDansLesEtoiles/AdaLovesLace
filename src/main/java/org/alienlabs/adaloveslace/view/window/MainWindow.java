@@ -34,8 +34,6 @@ public class MainWindow {
 
   private OptionalDotGrid optionalDotGrid;
 
-  private TilePane footer;
-
   public static final String SAVE_FILE      = "Save";
 
   public static final String SAVE_FILE_AS   = "SaveAs";
@@ -66,12 +64,8 @@ public class MainWindow {
 
   private static final Logger logger        = LoggerFactory.getLogger(MainWindow.class);
 
-  public MainWindow() {
-    // Just to be able to unit test code using the UI without effectively instantiating the UI
-  }
-
   public TilePane createFooter(String javafxVersion, String javaVersion) {
-    footer = new TilePane(Orientation.VERTICAL);
+    TilePane footer = new TilePane(Orientation.VERTICAL);
     footer.setPrefHeight(100);
     footer.setPrefWidth(Double.MAX_VALUE);
     footer.getStyleClass().add("footer");

@@ -256,9 +256,7 @@ public class Knot implements Comparable<Knot> {
 
   @Override
   public final boolean equals(Object o) {
-    if (!(o instanceof Knot knot)) return false;
-
-    return uuid.equals(knot.uuid);
+    return o instanceof Knot knot && uuid.equals(knot.uuid);
   }
 
   @Override

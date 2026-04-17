@@ -10,13 +10,6 @@ public class PolarDotGridStrategy extends AbstractDotGridStrategy {
     private static final double RADIUS_STEP     = 25d;
     private static final double ANGLE_STEP_DEG  = 15d;
 
-    /**
-     * This shall only be called by the ParentGridStrategy.
-     */
-    public PolarDotGridStrategy() {
-        // This shall only be called by the ParentGridStrategy.
-    }
-
     @Override
     public void drawGrid() {
         ParentGridStrategy.hideGrid();

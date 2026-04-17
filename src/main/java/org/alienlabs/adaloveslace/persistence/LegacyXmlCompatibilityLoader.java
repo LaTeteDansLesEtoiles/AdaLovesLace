@@ -7,9 +7,6 @@ import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.domain.Step;
 import org.alienlabs.adaloveslace.util.FileUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -22,8 +19,6 @@ import static org.alienlabs.adaloveslace.App.PATTERNS_DIRECTORY_NAME;
  * Isolated compatibility loader for legacy JAXB/XML-based save.xml descriptors.
  */
 public final class LegacyXmlCompatibilityLoader {
-
-    private static final Logger logger = LoggerFactory.getLogger(LegacyXmlCompatibilityLoader.class);
 
     private LegacyXmlCompatibilityLoader() {
         // Utility

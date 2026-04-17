@@ -20,6 +20,18 @@ public class RotationSpinner {
     internalUpdateInProgress = false;
   }
 
+  private static void beginInternalUpdate() {
+    internalUpdateInProgress = true;
+  }
+
+  private static void endInternalUpdate() {
+    internalUpdateInProgress = false;
+  }
+
+  private static boolean isInternalUpdate() {
+    return internalUpdateInProgress;
+  }
+
   public void buildRotationSpinner(App app, Spinner<Integer> spinner,
                                    SpinnerValueFactory<Integer> spinnerToReflect1,
                                    SpinnerValueFactory<Integer> spinnerToReflect2) {
@@ -29,9 +41,9 @@ public class RotationSpinner {
             spinnerToReflect1,
             spinnerToReflect2,
             resourceBundle.getString("ROTATION_SPINNER_BUTTON_TOOLTIP"),
-            () -> internalUpdateInProgress = true,
-            () -> internalUpdateInProgress = false,
-            () -> internalUpdateInProgress,
+            RotationSpinner::beginInternalUpdate,
+            RotationSpinner::endInternalUpdate,
+            RotationSpinner::isInternalUpdate,
             Knot::setRotationAngle
     );
   }

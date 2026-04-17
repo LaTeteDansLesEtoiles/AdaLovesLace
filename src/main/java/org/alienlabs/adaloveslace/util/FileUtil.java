@@ -55,7 +55,7 @@ public class FileUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
     private App app;
-    private static volatile File lastLoadedLaceFile;
+    private static final AtomicReference<File> lastLoadedLaceFile = new AtomicReference<>();
 
     public FileUtil() {
         // Sometimes you don't need the Application
@@ -66,7 +66,7 @@ public class FileUtil {
     }
 
     public void buildUiFromLaceFile(final App app, final File file) {
-        lastLoadedLaceFile = file;
+        lastLoadedLaceFile.set(file);
         final Dialog<Diagram> dialog = getDialog(app, LoadingLaceInProgress);
 
         Task<Diagram> loadTask = new Task<>() {
@@ -189,7 +189,7 @@ public class FileUtil {
     }
 
     public void copyPatternFromZipAsyncByName(String name) {
-        File file = lastLoadedLaceFile;
+        File file = lastLoadedLaceFile.get();
         if (file == null || name == null) return;
         Thread t = new Thread(() -> {
             try (ZipFile zip = new ZipFile(file)) {

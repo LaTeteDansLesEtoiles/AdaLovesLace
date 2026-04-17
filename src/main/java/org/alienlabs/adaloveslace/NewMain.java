@@ -1,6 +1,9 @@
 package org.alienlabs.adaloveslace;
 
-public class NewMain {
+public final class NewMain {
+
+    private NewMain() {
+    }
 
     public static void main(String[] args) {
         App.main(args);

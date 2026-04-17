@@ -3,15 +3,10 @@ package org.alienlabs.adaloveslace.view.component.button;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static org.alienlabs.adaloveslace.App.ASSETS_DIRECTORY;
 import static org.alienlabs.adaloveslace.App.SMALL_ICON_SIZE;
 
 public class ImageButton extends Button {
-
-  private static final Logger logger = LoggerFactory.getLogger(ImageButton.class);
 
   public ImageButton(String buttonLabel) {
     super(buttonLabel);

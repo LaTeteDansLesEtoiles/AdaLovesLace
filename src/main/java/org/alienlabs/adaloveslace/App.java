@@ -143,10 +143,10 @@ public class App extends Application {
     }
 
     // Afficher le splash screen d'abord
-    showSplashScreen(primaryStage, filePath);
+    showSplashScreen(filePath);
   }
 
-  private void showSplashScreen(Stage primaryStage, String filePath) {
+  private void showSplashScreen(String filePath) {
     // Stocker le filePath pour plus tard
     this.filePath = filePath;
     
