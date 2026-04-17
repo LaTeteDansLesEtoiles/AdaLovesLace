@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import static org.alienlabs.adaloveslace.App.EXPORT_IMAGE_FILE_TYPE;
 import static org.alienlabs.adaloveslace.App.EXPORT_PDF_FILE_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("unit")
@@ -45,5 +46,10 @@ class FileToolboxButtonsTest {
     assertEquals("Load", LoadButton.LOAD_FILE_DIALOG_TITLE);
     assertEquals("Export a diagram image", ExportImageButton.EXPORT_IMAGE_DIALOG_TITLE);
     assertEquals("Export a diagram as PDF", ExportPdfButton.EXPORT_PDF_DIALOG_TITLE);
+  }
+
+  @Test
+  void export_pdf_button_name_key_is_stable() {
+    assertFalse(ExportPdfButton.EXPORT_PDF_BUTTON_NAME.isBlank());
   }
 }

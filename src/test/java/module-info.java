@@ -13,10 +13,12 @@ module org.alienlabs.adaloveslace.test {
   opens org.alienlabs.adaloveslace.functionaltest.view.component.button.toolboxwindow.grid to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.component.spinner                to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.component                        to org.junit.platform.commons, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.functionaltest.view.splash                           to org.junit.platform.commons, org.testfx.junit5, javafx.graphics;
   opens org.alienlabs.adaloveslace.functionaltest.view.window                           to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.window.event                     to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.unittest                                    to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.unittest.domain;
+  opens org.alienlabs.adaloveslace.unittest.domain.dto                                 to org.junit.platform.commons, org.junit.jupiter.api, org.junit.jupiter.params;
   opens org.alienlabs.adaloveslace.unittest.domain.enumeration                         to org.junit.platform.commons, org.junit.jupiter.params;
   opens org.alienlabs.adaloveslace.unittest.domain.xmladapter                           to org.junit.platform.commons, org.junit.jupiter.params;
   opens org.alienlabs.adaloveslace.unittest.util;
@@ -25,6 +27,9 @@ module org.alienlabs.adaloveslace.test {
   opens org.alienlabs.adaloveslace.unittest.view.component.button.statewindow           to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.unittest.view.component.button.toolboxwindow         to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.unittest.view.component.button.toolboxwindow.grid    to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.unittest.view.component.grid.gridstrategy.concretegridstrategy to org.junit.platform.commons, org.junit.jupiter.api, org.junit.jupiter.params;
+  opens org.alienlabs.adaloveslace.unittest.view.component.spinner                      to org.junit.platform.commons, org.junit.jupiter.api, org.junit.jupiter.params;
+  opens org.alienlabs.adaloveslace.unittest.view.window                                 to org.junit.platform.commons, org.junit.jupiter.api, org.junit.jupiter.params;
   opens org.alienlabs.adaloveslace.unittest.view.window.event                           to org.junit.platform.commons, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.unittest.persistence                                 to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.integrationtest.app                               to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
@@ -34,6 +39,7 @@ module org.alienlabs.adaloveslace.test {
   opens org.alienlabs.adaloveslace.integrationtest.view.component.button.statewindow        to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.integrationtest.view.component.button.toolboxwindow     to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.integrationtest.view.component.button.toolboxwindow.grid to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.integrationtest.view.window                        to org.junit.platform.commons, org.junit.jupiter.api, org.junit.jupiter.params;
   opens org.alienlabs.adaloveslace.integrationtest.view.window.event                  to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.integrationtest.domain.enumeration                  to org.junit.platform.commons, org.junit.jupiter.params, jakarta.xml.bind, com.google.gson;
   opens org.alienlabs.adaloveslace.integrationtest.domain.xmladapter                    to org.junit.platform.commons, org.junit.jupiter.params, jakarta.xml.bind;
