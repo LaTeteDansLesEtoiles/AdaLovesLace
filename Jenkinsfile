@@ -1,4 +1,11 @@
 // AdaLovesLace — product-oriented CI (see src/main/resources/doc/ci-pipeline.md, src/main/resources/doc/MIGRATION_CI_PIPELINE.md)
+//
+// CI mode policy:
+// - auto (default):
+//   - nightly timer trigger -> nightly (full tests + OWASP + scaffolds)
+//   - push on develop/main -> release (nightly gates + packaging + smoke/checksums)
+//   - any other push -> pr (fast feedback gates)
+// - pr/nightly/release can still be selected manually as an explicit override.
 pipeline {
     agent any
 
@@ -6,16 +13,21 @@ pipeline {
         timestamps()
     }
 
+    triggers {
+        // Nightly full validation.
+        cron('H 2 * * *')
+    }
+
     parameters {
         choice(
             name: 'PIPELINE_MODE',
-            choices: ['pr', 'nightly', 'release'],
-            description: 'pr: fast gates; nightly: full tests + OWASP + scaffolds; release: nightly + Linux packages + checksums + smoke'
+            choices: ['auto', 'pr', 'nightly', 'release'],
+            description: 'Default auto mode: push -> pr, nightly timer -> nightly, push on develop/main -> release. Use pr/nightly/release only for manual override.'
         )
     }
 
     environment {
-        JAVA_HOME = '/usr/lib/jvm/temurin-24-jdk-amd64'
+        JAVA_HOME = '/usr/lib/jvm/java-25-openjdk-amd64/'
         PATH = "${JAVA_HOME}/bin:${env.PATH}"
     }
 
@@ -26,11 +38,39 @@ pipeline {
             }
         }
 
+        stage('Select pipeline mode') {
+            steps {
+                script {
+                    // Sandbox-safe trigger detection (no getRawBuild/script approval required).
+                    // BUILD_CAUSE_TIMERTRIGGER is exported on cron-triggered builds; keep a fallback
+                    // for installations that only expose BUILD_CAUSE.
+                    def isNightlyTrigger =
+                        (env.BUILD_CAUSE_TIMERTRIGGER ?: 'false').toBoolean() ||
+                        ((env.BUILD_CAUSE ?: '').contains('TIMERTRIGGER'))
+                    def branch = env.BRANCH_NAME ?: ''
+                    def isReleaseBranchPush = !isNightlyTrigger && (branch == 'develop' || branch == 'main')
+
+                    // Keep backward compatibility: explicit parameter wins.
+                    if (params.PIPELINE_MODE in ['pr', 'nightly', 'release']) {
+                        env.CI_MODE = params.PIPELINE_MODE
+                    } else if (isNightlyTrigger) {
+                        env.CI_MODE = 'nightly'
+                    } else if (isReleaseBranchPush) {
+                        env.CI_MODE = 'release'
+                    } else {
+                        env.CI_MODE = 'pr'
+                    }
+
+                    echo "Resolved CI mode: ${env.CI_MODE} (branch=${branch}, nightlyTrigger=${isNightlyTrigger})"
+                }
+            }
+        }
+
         stage('Toolchain') {
             steps {
                 sh """
                     set -eux
-                    echo "PIPELINE_MODE=${params.PIPELINE_MODE}"
+                    echo "PIPELINE_MODE=${env.CI_MODE}"
                     echo "JAVA_HOME=\${JAVA_HOME}"
                     command -v java
                     command -v javac
@@ -61,8 +101,8 @@ pipeline {
         stage('Integration and functional tests') {
             when {
                 anyOf {
-                    expression { params.PIPELINE_MODE == 'nightly' }
-                    expression { params.PIPELINE_MODE == 'release' }
+                    expression { env.CI_MODE == 'nightly' }
+                    expression { env.CI_MODE == 'release' }
                 }
             }
             steps {
@@ -83,7 +123,7 @@ pipeline {
         stage('Quality gate (verify)') {
             steps {
                 script {
-                    if (params.PIPELINE_MODE == 'pr') {
+                    if (env.CI_MODE == 'pr') {
                         sh './mvnw -batch-mode -e verify -P ci-pr -DskipTests=true -DskipITs=true -DskipFTs=true -Ddependency-check.skip=true'
                     } else {
                         sh './mvnw -batch-mode -e verify -DskipTests=true -DskipITs=true -DskipFTs=true -Ddependency-check.skip=true'
@@ -113,8 +153,8 @@ pipeline {
         stage('OWASP dependency-check') {
             when {
                 anyOf {
-                    expression { params.PIPELINE_MODE == 'nightly' }
-                    expression { params.PIPELINE_MODE == 'release' }
+                    expression { env.CI_MODE == 'nightly' }
+                    expression { env.CI_MODE == 'release' }
                 }
             }
             steps {
@@ -144,7 +184,7 @@ pipeline {
 
         stage('Dependency and plugin freshness (informational)') {
             when {
-                expression { params.PIPELINE_MODE == 'nightly' }
+                expression { env.CI_MODE == 'nightly' }
             }
             steps {
                 sh '''
@@ -162,7 +202,7 @@ pipeline {
 
         stage('Visual regression scaffold') {
             when {
-                expression { params.PIPELINE_MODE == 'nightly' }
+                expression { env.CI_MODE == 'nightly' }
             }
             steps {
                 sh 'bash scripts/ci/visual-regression.sh'
@@ -176,7 +216,7 @@ pipeline {
 
         stage('Performance sanity scaffold') {
             when {
-                expression { params.PIPELINE_MODE == 'nightly' }
+                expression { env.CI_MODE == 'nightly' }
             }
             steps {
                 sh 'bash scripts/ci/performance-sanity.sh'
@@ -190,7 +230,7 @@ pipeline {
 
         stage('Linux packaging') {
             when {
-                expression { params.PIPELINE_MODE == 'release' }
+                expression { env.CI_MODE == 'release' }
             }
             steps {
                 sh './mvnw -batch-mode package -P linux -P ci-release -DskipTests=true -DskipITs=true -DskipFTs=true -Ddependency-check.skip=true'
@@ -199,7 +239,7 @@ pipeline {
 
         stage('Packaged artifact smoke') {
             when {
-                expression { params.PIPELINE_MODE == 'release' }
+                expression { env.CI_MODE == 'release' }
             }
             steps {
                 sh 'bash scripts/ci/verify-packaged-artifacts.sh'
