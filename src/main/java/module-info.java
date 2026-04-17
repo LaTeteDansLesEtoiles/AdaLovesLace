@@ -28,6 +28,7 @@ module org.alienlabs.adaloveslace {
   exports org.alienlabs.adaloveslace.view.window;
   exports org.alienlabs.adaloveslace.view.component;
   exports org.alienlabs.adaloveslace.view.component.button.geometrywindow;
+  exports org.alienlabs.adaloveslace.view.component.button.geometrywindow.move;
   exports org.alienlabs.adaloveslace.view.component.button.toolboxwindow;
   exports org.alienlabs.adaloveslace.view.component.spinner;
   exports org.alienlabs.adaloveslace.domain.enumeration;

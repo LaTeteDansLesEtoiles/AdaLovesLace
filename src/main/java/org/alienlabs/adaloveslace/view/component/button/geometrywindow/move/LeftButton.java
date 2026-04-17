@@ -2,6 +2,7 @@ package org.alienlabs.adaloveslace.view.component.button.geometrywindow.move;
 
 import javafx.scene.control.Button;
 import org.alienlabs.adaloveslace.App;
+import org.alienlabs.adaloveslace.util.MoveKnotVectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.alienlabs.adaloveslace.view.window.ToolboxWindow.GEOMETRY_BUTTONS_HEIGHT;
@@ -16,7 +17,13 @@ public class LeftButton extends Button {
   }
 
   public static void onMoveKnotLeftAction(App app) {
-    MoveKnotActionUtil.moveSelectedKnots(app, -FastMoveModeButton.getMoveSpeed(), 0d, "left", logger);
+    double speed = FastMoveModeButton.getMoveSpeed();
+    MoveKnotActionUtil.moveSelectedKnots(
+        app,
+        MoveKnotVectors.Direction.LEFT.deltaX(speed),
+        MoveKnotVectors.Direction.LEFT.deltaY(speed),
+        "left",
+        logger);
   }
 
 }

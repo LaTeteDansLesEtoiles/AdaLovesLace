@@ -449,40 +449,49 @@ public class ToolboxWindow {
         // Add arrows to the separate GridPane (3x3 square)
         // Top row: UpLeft, Up, UpRight
         UpLeftButton upLeftButton = new UpLeftButton(app);
+        upLeftButton.setId(MoveToolboxNodeIds.UP_LEFT);
         util.getImageView("up_left.png", upLeftButton, false);
         arrowsGrid.add(upLeftButton, 0, 0);
 
         UpButton upButton = new UpButton(app);
+        upButton.setId(MoveToolboxNodeIds.UP);
         util.getImageView("up.png", upButton, false);
         arrowsGrid.add(upButton, 1, 0);
 
         UpRightButton upRightButton = new UpRightButton(app);
+        upRightButton.setId(MoveToolboxNodeIds.UP_RIGHT);
         util.getImageView("up_right.png", upRightButton, false);
         arrowsGrid.add(upRightButton, 2, 0);
 
         // Middle row: Left, Fast, Right
         LeftButton leftButton = new LeftButton(app);
+        leftButton.setId(MoveToolboxNodeIds.LEFT);
         util.getImageView("left.png", leftButton, false);
         arrowsGrid.add(leftButton, 0, 1);
 
         FastMoveModeButton fastMoveModeButton = new FastMoveModeButton();
+        fastMoveModeButton.setId(MoveToolboxNodeIds.FAST_MODE);
         util.getImageView("fast.png", fastMoveModeButton, false);
         arrowsGrid.add(fastMoveModeButton, 1, 1);
 
         RightButton rightButton = new RightButton(app);
+        rightButton.setId(MoveToolboxNodeIds.RIGHT);
         util.getImageView("right.png", rightButton, false);
         arrowsGrid.add(rightButton, 2, 1);
 
         // Bottom row: DownLeft, Down, DownRight
         DownLeftButton downLeftButton = new DownLeftButton(app);
+        downLeftButton.setId(MoveToolboxNodeIds.DOWN_LEFT);
         util.getImageView("down_left.png", downLeftButton, false);
         arrowsGrid.add(downLeftButton, 0, 2);
 
         DownButton downButton = new DownButton(app);
+        downButton.setId(MoveToolboxNodeIds.DOWN);
         util.getImageView("down.png", downButton, false);
         arrowsGrid.add(downButton, 1, 2);
 
         DownRightButton downRightButton = new DownRightButton(app);
+        downRightButton.setId(MoveToolboxNodeIds.DOWN_RIGHT);
         util.getImageView("down_right.png", downRightButton, false);
         arrowsGrid.add(downRightButton, 2, 2);
         
