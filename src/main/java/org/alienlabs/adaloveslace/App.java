@@ -124,6 +124,8 @@ public class App extends Application {
   private WindowRepositionEvents windowRepositionEvents;
   private String filePath = "";
 
+  private FileChooserDialogGateway fileChooserDialogGateway = FileChooserDialogGateway.javaFxDefault();
+
   @Override
   public void start(Stage primaryStage) {
     Application.Parameters params = getParameters();
@@ -468,6 +470,18 @@ public class App extends Application {
 
   public void setWindowRepositionEvents(WindowRepositionEvents windowRepositionEvents) {
     this.windowRepositionEvents = windowRepositionEvents;
+  }
+
+  public FileChooserDialogGateway getFileChooserDialogGateway() {
+    return fileChooserDialogGateway;
+  }
+
+  /**
+   * Replace file chooser modality (e.g. TestFX with a stub). Passing {@code null} restores the default JavaFX gateway.
+   */
+  public void setFileChooserDialogGateway(FileChooserDialogGateway fileChooserDialogGateway) {
+    this.fileChooserDialogGateway =
+        fileChooserDialogGateway == null ? FileChooserDialogGateway.javaFxDefault() : fileChooserDialogGateway;
   }
 
 }

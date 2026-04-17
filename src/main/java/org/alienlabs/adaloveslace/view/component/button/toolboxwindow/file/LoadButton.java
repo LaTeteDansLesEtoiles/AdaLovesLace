@@ -39,7 +39,7 @@ public class LoadButton extends ImageButton {
             DIAGRAM_FILES,
             DIAGRAM_FILE_FILTER
     );
-    File file = load.showOpenDialog(app.getScene().getWindow());
+    File file = app.getFileChooserDialogGateway().showOpenDialog(app.getScene().getWindow(), load);
 
     if (file != null) {
       new FileUtil().buildUiFromLaceFile(app, file);

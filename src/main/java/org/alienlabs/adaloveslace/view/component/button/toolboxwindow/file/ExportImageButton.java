@@ -38,7 +38,7 @@ public class ExportImageButton extends ImageButton {
         logger.info("Exporting image file");
 
         FileChooser export = new FileChooserUtil().getFileChooser(EXPORT_IMAGE_DIALOG_TITLE, SAVED_LACE_FILE, LACE_FILE_FOLDER_SAVE_PATH, EXPORTED_FILES, EXPORT_FILE_FILTER);
-        File file = export.showSaveDialog(app.getScene().getWindow());
+        File file = app.getFileChooserDialogGateway().showSaveDialog(app.getScene().getWindow(), export);
 
         if (file != null) {
             new ImageUtil(app).buildFileImageWithoutTechnicalElements(

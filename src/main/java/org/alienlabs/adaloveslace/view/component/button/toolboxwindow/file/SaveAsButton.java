@@ -47,7 +47,7 @@ public class SaveAsButton extends ImageButton {
     setInitialDirectory(preferences, saveAs);
     saveAs.getExtensionFilters().add(new FileChooser.ExtensionFilter(DIAGRAM_FILES, DIAGRAM_FILE_FILTER));
 
-    File file = saveAs.showSaveDialog(app.getScene().getWindow());
+    File file = app.getFileChooserDialogGateway().showSaveDialog(app.getScene().getWindow(), saveAs);
     if (file == null) {
       return false;
     }
