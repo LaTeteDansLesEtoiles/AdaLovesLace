@@ -6,6 +6,7 @@ module org.alienlabs.adaloveslace.test {
   opens org.alienlabs.adaloveslace.functionaltest.util                                  to org.junit.platform.commons, org.junit.jupiter.params;
   opens org.alienlabs.adaloveslace.functionaltest.view.component.button.geometrywindow     to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.component.button.geometrywindow.move to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.functionaltest.view.component.button.statewindow         to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.component.button.toolboxwindow   to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.component.spinner                to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.functionaltest.view.component                        to org.junit.platform.commons, org.testfx.junit5;
@@ -15,11 +16,13 @@ module org.alienlabs.adaloveslace.test {
   opens org.alienlabs.adaloveslace.unittest.util;
   opens org.alienlabs.adaloveslace.unittest.view.component                              to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.unittest.view.component.button.geometrywindow.move   to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.unittest.view.component.button.statewindow           to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.unittest.view.window.event                           to org.junit.platform.commons, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.unittest.persistence                                 to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.integrationtest.app                               to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.integrationtest.persistence                          to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
   opens org.alienlabs.adaloveslace.integrationtest.view.component.button.geometrywindow.move to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
+  opens org.alienlabs.adaloveslace.integrationtest.view.component.button.statewindow        to org.junit.platform.commons, org.junit.jupiter.params, org.testfx.junit5;
 
   requires java.desktop;
   requires javafx.controls;
