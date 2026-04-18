@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
@@ -135,17 +136,28 @@ public class AppFunctionalTestParent {
     this.app.setOptionalDotGrid(this.app.getMainWindow().getOptionalDotGrid());
 
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
-    // Preferences can persist huge coordinates from dev machines; Xvfb is often ~1280×768.
+    // Preferences may have persisted off-screen coordinates from dev machines. Pin both stages to the top-left
+    // of the primary screen and size them generously enough to keep all toolbox buttons visible
+    // (FIRST_SNOWFLAKE_PIXEL_Y = 450 must fit inside the main stage's grid area).
+    final javafx.geometry.Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
     final double safeMainX = 20d;
     final double safeMainY = 20d;
+    final double mainWidth = Math.min(App.DEFAULT_MAIN_WINDOW_WIDTH, screenBounds.getWidth() - 2 * safeMainX);
+    final double mainHeight = Math.min(App.DEFAULT_MAIN_WINDOW_HEIGHT, screenBounds.getHeight() - 2 * safeMainY);
     this.primaryStage.setX(safeMainX);
     this.primaryStage.setY(safeMainY);
-    this.primaryStage.setWidth(580d);
-    this.primaryStage.setHeight(480d);
-    this.app.getToolboxStage().setWidth(600d);
-    this.app.getToolboxStage().setX(safeMainX + 580d + 15d);
+    this.primaryStage.setWidth(mainWidth);
+    this.primaryStage.setHeight(mainHeight);
+    // Default toolbox width is ~1100; shrink only if the screen cannot fit both stages side by side.
+    final double toolboxX = safeMainX + mainWidth + 10d;
+    final double toolboxDesiredWidth = 1100d;
+    final double toolboxWidth = Math.max(480d,
+        Math.min(toolboxDesiredWidth, screenBounds.getWidth() - toolboxX - safeMainX));
+    final double toolboxHeight = Math.min(900d, screenBounds.getHeight() - 2 * safeMainY);
+    this.app.getToolboxStage().setX(toolboxX);
     this.app.getToolboxStage().setY(safeMainY);
-    this.app.getToolboxStage().setHeight(560d);
+    this.app.getToolboxStage().setWidth(toolboxWidth);
+    this.app.getToolboxStage().setHeight(toolboxHeight);
 
     // GeometryWindow et StateWindow sont maintenant intégrées dans ToolboxWindow
     // this.geometryWindow = this.app.showGeometryWindow(this.app);
@@ -323,6 +335,7 @@ public class AppFunctionalTestParent {
   protected void enterDrawingMode(FxRobot robot) {
     robot.interact(() -> DrawingButton.onSetDrawModeAction(app));
   }
+
 
 
   /**
