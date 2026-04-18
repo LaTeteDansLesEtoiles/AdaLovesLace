@@ -58,7 +58,7 @@ pipeline {
                     } else if (isReleaseBranchPush) {
                         env.CI_MODE = 'release'
                     } else {
-                        env.CI_MODE = 'pr'
+                        env.CI_MODE = 'nightly'
                     }
 
                     echo "Resolved CI mode: ${env.CI_MODE} (branch=${branch}, nightlyTrigger=${isNightlyTrigger})"
