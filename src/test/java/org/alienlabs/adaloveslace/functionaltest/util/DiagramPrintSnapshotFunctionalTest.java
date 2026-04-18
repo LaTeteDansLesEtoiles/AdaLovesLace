@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
-import org.testfx.util.WaitForAsyncUtils;
+import org.alienlabs.adaloveslace.testutil.FxAwait;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,9 +30,9 @@ class DiagramPrintSnapshotFunctionalTest extends AppFunctionalTestParent {
   }
 
   @Test
-  void printViewport_excludesMostEmptyCanvas_whenSingleKnotDrawn(FxRobot robot) {
+  void printViewport_excludesMostEmptyCanvas_whenSingleKnotDrawn(FxRobot robot) throws Exception {
     drawASnowflake(robot);
-    WaitForAsyncUtils.waitForFxEvents();
+    FxAwait.syncFx();
     robot.interact(() -> {
       app.getMovablePane().applyCss();
       app.getMovablePane().layout();
@@ -49,9 +49,9 @@ class DiagramPrintSnapshotFunctionalTest extends AppFunctionalTestParent {
   }
 
   @Test
-  void snapshotForPrint_pixelWidthScalesWithMainWindowZoom(FxRobot robot) {
+  void snapshotForPrint_pixelWidthScalesWithMainWindowZoom(FxRobot robot) throws Exception {
     drawASnowflake(robot);
-    WaitForAsyncUtils.waitForFxEvents();
+    FxAwait.syncFx();
 
     double[] w1 = new double[1];
     robot.interact(() -> {
@@ -81,15 +81,15 @@ class DiagramPrintSnapshotFunctionalTest extends AppFunctionalTestParent {
   }
 
   @Test
-  void snapshotForPrint_containsDiagramPixels_afterZoom(FxRobot robot) {
+  void snapshotForPrint_containsDiagramPixels_afterZoom(FxRobot robot) throws Exception {
     drawASnowflake(robot);
-    WaitForAsyncUtils.waitForFxEvents();
+    FxAwait.syncFx();
 
     robot.interact(() -> {
       app.getMovablePane().setScaleX(2.0);
       app.getMovablePane().setScaleY(2.0);
     });
-    WaitForAsyncUtils.waitForFxEvents();
+    FxAwait.syncFx();
 
     robot.interact(() -> {
       ImageUtil iu = new ImageUtil(app);

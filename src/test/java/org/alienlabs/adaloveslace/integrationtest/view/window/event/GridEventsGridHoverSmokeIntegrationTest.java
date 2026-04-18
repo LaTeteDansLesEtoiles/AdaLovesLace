@@ -11,6 +11,7 @@ import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.domain.enumeration.GridType;
 import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.domain.enumeration.PatternOrTextMode;
+import org.alienlabs.adaloveslace.testutil.FxAwait;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
@@ -18,12 +19,6 @@ import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("integration")
 class GridEventsGridHoverSmokeIntegrationTest {
@@ -51,10 +46,7 @@ class GridEventsGridHoverSmokeIntegrationTest {
 
   @Test
   void grid_hover_covers_selection_and_drawing_text_paths_on_one_fx_pulse() throws Exception {
-    CountDownLatch done = new CountDownLatch(1);
-    AtomicReference<Throwable> err = new AtomicReference<>();
-
-    Platform.runLater(() -> {
+    FxAwait.runAndWait(() -> {
       Stage primary = null;
       try {
         App app = new App();
@@ -75,6 +67,7 @@ class GridEventsGridHoverSmokeIntegrationTest {
         primary.setScene(scene);
         app.setSceneForTests(scene);
         app.setPrimaryStage(primary);
+        primary.show();
 
         double screenX = 900 + 55;
         double screenY = 700 + 60;
@@ -87,19 +80,12 @@ class GridEventsGridHoverSmokeIntegrationTest {
         GridEvents.getGridHoverEventHandler(app).handle(mouseMoved(40, 50, screenX - 10, screenY - 5));
         GridEvents.getGridHoverEventHandler(app).handle(mouseMoved(90, 70, screenX + 20, screenY + 10));
         GridEvents.getGridHoverExitEventHandler(app).handle(mouseMoved(0, 0, screenX, screenY));
-      } catch (Throwable t) {
-        err.set(t);
       } finally {
         if (primary != null) {
           primary.close();
         }
-        done.countDown();
       }
     });
-
-    assertTrue(done.await(30, TimeUnit.SECONDS));
-    if (err.get() != null) {
-      throw new RuntimeException(err.get());
-    }
+    FxAwait.syncFx();
   }
 }

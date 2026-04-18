@@ -6,6 +6,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
+import org.alienlabs.adaloveslace.testutil.FxAwait;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
@@ -18,9 +19,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -65,10 +63,7 @@ class WindowRepositionEventsListenersIntegrationTest {
     remember(WindowRepositionEvents.TOOLBOX_WINDOW_X, p);
     remember(WindowRepositionEvents.TOOLBOX_WINDOW_Y, p);
 
-    CountDownLatch done = new CountDownLatch(1);
-    AtomicReference<Throwable> err = new AtomicReference<>();
-
-    Platform.runLater(() -> {
+    FxAwait.runAndWait(() -> {
       Stage primary = null;
       Stage toolbox = null;
       try {
@@ -96,6 +91,9 @@ class WindowRepositionEventsListenersIntegrationTest {
         toolbox.setY(120);
         app.setToolboxStageForTests(toolbox);
 
+        primary.show();
+        toolbox.show();
+
         WindowRepositionEvents repos = new WindowRepositionEvents(app);
         repos.onWindowsReposition();
 
@@ -108,8 +106,6 @@ class WindowRepositionEventsListenersIntegrationTest {
         assertTrue(p.getStringValue(WindowRepositionEvents.MAIN_WINDOW_Y).startsWith("88"));
         assertTrue(p.getStringValue(WindowRepositionEvents.TOOLBOX_WINDOW_X).startsWith("1205"));
         assertTrue(p.getStringValue(WindowRepositionEvents.TOOLBOX_WINDOW_Y).startsWith("44"));
-      } catch (Throwable t) {
-        err.set(t);
       } finally {
         if (toolbox != null) {
           toolbox.close();
@@ -117,13 +113,7 @@ class WindowRepositionEventsListenersIntegrationTest {
         if (primary != null) {
           primary.close();
         }
-        done.countDown();
       }
     });
-
-    assertTrue(done.await(30, TimeUnit.SECONDS));
-    if (err.get() != null) {
-      throw new RuntimeException(err.get());
-    }
   }
 }

@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
-import org.testfx.util.WaitForAsyncUtils;
+import org.alienlabs.adaloveslace.testutil.FxAwait;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -79,7 +79,7 @@ class FileToolboxFileDialogsFunctionalTest extends AppFunctionalTestParent {
     });
 
     robot.clickOn(resourceBundle.getString(LOAD_FILE));
-    WaitForAsyncUtils.waitForFxEvents();
+    FxAwait.flushFx(4);
 
     assertCondition(
         () -> app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots().size() >= 1,
@@ -96,13 +96,13 @@ class FileToolboxFileDialogsFunctionalTest extends AppFunctionalTestParent {
       app.setFileChooserDialogGateway(stubGateway);
     });
 
-    robot.clickOn("#drawingButton");
-    robot.clickOn(toolboxWindow.getSnowflakeButton());
+    enterDrawingMode(robot);
+    selectAndClickOnSnowflakePatternButton(robot);
     drawASnowflake(robot);
-    WaitForAsyncUtils.waitForFxEvents();
+    FxAwait.flushFx(4);
 
     robot.clickOn(resourceBundle.getString(SAVE_FILE));
-    WaitForAsyncUtils.waitForFxEvents();
+    FxAwait.flushFx(4);
 
     assertCondition(
         () -> target.isFile() && target.length() > 50L,
@@ -123,13 +123,13 @@ class FileToolboxFileDialogsFunctionalTest extends AppFunctionalTestParent {
       app.setFileChooserDialogGateway(stubGateway);
     });
 
-    robot.clickOn("#drawingButton");
-    robot.clickOn(toolboxWindow.getSnowflakeButton());
+    enterDrawingMode(robot);
+    selectAndClickOnSnowflakePatternButton(robot);
     drawASnowflake(robot);
-    WaitForAsyncUtils.waitForFxEvents();
+    FxAwait.flushFx(4);
 
     robot.clickOn(resourceBundle.getString(SAVE_FILE_AS));
-    WaitForAsyncUtils.waitForFxEvents();
+    FxAwait.flushFx(4);
 
     assertCondition(
         () -> target.isFile() && target.length() > 50L,
@@ -141,7 +141,7 @@ class FileToolboxFileDialogsFunctionalTest extends AppFunctionalTestParent {
   }
 
   @Test
-  void shouldWritePngWhenExportImageChoosesFile(FxRobot robot) {
+  void shouldWritePngWhenExportImageChoosesFile(FxRobot robot) throws Exception {
     File png = tempDir.resolve("export-ui.png").toFile();
 
     robot.interact(() -> {
@@ -151,7 +151,7 @@ class FileToolboxFileDialogsFunctionalTest extends AppFunctionalTestParent {
     });
 
     robot.clickOn(resourceBundle.getString(EXPORT_IMAGE));
-    WaitForAsyncUtils.waitForFxEvents();
+    FxAwait.flushFx(4);
 
     assertCondition(
         () -> png.isFile() && png.length() > 200L,
@@ -169,7 +169,7 @@ class FileToolboxFileDialogsFunctionalTest extends AppFunctionalTestParent {
     });
 
     robot.clickOn(resourceBundle.getString(EXPORT_PDF_BUTTON_NAME));
-    WaitForAsyncUtils.waitForFxEvents();
+    FxAwait.flushFx(4);
 
     assertCondition(
         () -> pdf.isFile() && pdf.length() > 500L,

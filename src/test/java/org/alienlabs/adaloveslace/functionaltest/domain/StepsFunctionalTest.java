@@ -28,8 +28,8 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
 
     @Test
     void should_create_history_when_drawing_steps(FxRobot robot) {
-        robot.clickOn("#drawingButton");
-        robot.clickOn(toolboxWindow.getSnowflakeButton());
+        enterDrawingMode(robot);
+        selectAndClickOnSnowflakePatternButton(robot);
         int initialSteps = app.getOptionalDotGrid().getDiagram().getAllSteps().size();
 
         // Use the same grid-relative coordinates as the stable snowflake helpers (small Y values hit window chrome).
@@ -48,8 +48,8 @@ class StepsFunctionalTest extends AppFunctionalTestParent {
 
     @Test
     void should_undo_and_redo_last_step(FxRobot robot) {
-        robot.clickOn("#drawingButton");
-        robot.clickOn(toolboxWindow.getSnowflakeButton());
+        enterDrawingMode(robot);
+        selectAndClickOnSnowflakePatternButton(robot);
         drawSnowFlake(robot, FIRST_SNOWFLAKE_PIXEL_X, FIRST_SNOWFLAKE_PIXEL_Y);
         WaitForAsyncUtils.waitForFxEvents();
         drawSnowFlake(robot, SECOND_SNOWFLAKE_PIXEL_X, SECOND_SNOWFLAKE_PIXEL_Y);

@@ -10,6 +10,7 @@ import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.domain.enumeration.GridType;
 import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
+import org.alienlabs.adaloveslace.testutil.FxAwait;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
@@ -17,12 +18,6 @@ import org.alienlabs.adaloveslace.view.window.event.GridEvents;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("integration")
 class GridEventsMouseClickPassiveModesIntegrationTest {
@@ -38,10 +33,7 @@ class GridEventsMouseClickPassiveModesIntegrationTest {
 
   @Test
   void primary_click_runs_for_duplication_create_pattern_mirror_and_move_modes() throws Exception {
-    CountDownLatch done = new CountDownLatch(1);
-    AtomicReference<Throwable> err = new AtomicReference<>();
-
-    Platform.runLater(() -> {
+    FxAwait.runAndWait(() -> {
       Stage primary = null;
       try {
         App app = new App();
@@ -62,6 +54,7 @@ class GridEventsMouseClickPassiveModesIntegrationTest {
         primary.setScene(scene);
         app.setSceneForTests(scene);
         app.setPrimaryStage(primary);
+        primary.show();
 
         double sx = 120;
         double sy = 140;
@@ -81,19 +74,11 @@ class GridEventsMouseClickPassiveModesIntegrationTest {
               null
           ));
         }
-      } catch (Throwable t) {
-        err.set(t);
       } finally {
         if (primary != null) {
           primary.close();
         }
-        done.countDown();
       }
     });
-
-    assertTrue(done.await(30, TimeUnit.SECONDS));
-    if (err.get() != null) {
-      throw new RuntimeException(err.get());
-    }
   }
 }

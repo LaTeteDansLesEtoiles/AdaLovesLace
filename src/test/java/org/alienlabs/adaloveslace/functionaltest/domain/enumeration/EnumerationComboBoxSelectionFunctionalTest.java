@@ -7,12 +7,15 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.domain.enumeration.GridType;
 import org.alienlabs.adaloveslace.domain.enumeration.Technique;
+import org.alienlabs.adaloveslace.testutil.FxAwait;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -40,16 +43,22 @@ class EnumerationComboBoxSelectionFunctionalTest {
   }
 
   @Test
-  void grid_type_combo_box_selects_enum_constant(FxRobot robot) {
+  void grid_type_combo_box_selects_enum_constant(FxRobot robot) throws Exception {
     robot.clickOn("#grid-type-combo");
+    FxAwait.syncFx();
+    robot.sleep(Long.getLong("SLEEP_TIME", 500L), TimeUnit.MILLISECONDS);
     robot.clickOn(GridType.HIDDEN.name());
+    FxAwait.syncFx();
     robot.interact(() -> assertEquals(GridType.HIDDEN, gridTypeCombo.getValue()));
   }
 
   @Test
-  void technique_combo_box_selects_enum_constant(FxRobot robot) {
+  void technique_combo_box_selects_enum_constant(FxRobot robot) throws Exception {
     robot.clickOn("#technique-combo");
+    FxAwait.syncFx();
+    robot.sleep(Long.getLong("SLEEP_TIME", 500L), TimeUnit.MILLISECONDS);
     robot.clickOn(Technique.EMBROIDERY.name());
+    FxAwait.syncFx();
     robot.interact(() -> assertEquals(Technique.EMBROIDERY, techniqueCombo.getValue()));
   }
 }

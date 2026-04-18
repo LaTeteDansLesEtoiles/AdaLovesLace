@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.RedoKnotButton;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
@@ -114,7 +115,7 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     drawASnowflake(robot);
 
     // When: issue an "Undo knot" command
-    robot.clickOn("#undoButton");
+    clickOnButton(robot, app.getToolboxWindow().getUndoKnotButton());
     assertCondition(
             () -> this.app.getOptionalDotGrid().getDiagram().getCurrentStep().getAllVisibleKnots().isEmpty(),
             "Undo should remove the only drawn knot"
@@ -139,13 +140,13 @@ class MainWindowFunctionalTest extends AppFunctionalTestParent {
     assertTrue(stepAfterDraw >= 2, "Drawing a knot should advance the step index");
 
     // Issue an "Undo knot" command
-    robot.clickOn("#undoButton");
+    clickOnButton(robot, app.getToolboxWindow().getUndoKnotButton());
     assertCondition(
             () -> this.app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() == stepAfterDraw - 1,
             "Undo should step back");
 
     // When: Issue a "Redo knot" command
-    robot.clickOn("#redoButton");
+    robot.interact(RedoKnotButton::redoKnot);
     assertCondition(
             () -> this.app.getOptionalDotGrid().getDiagram().getCurrentStepIndex() == stepAfterDraw,
             "Redo should restore the stepped-forward state"

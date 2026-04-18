@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.util.ImageUtil;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.DrawingButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoKnotButton;
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.alienlabs.adaloveslace.view.window.event.WindowRepositionEvents;
@@ -134,9 +135,17 @@ public class AppFunctionalTestParent {
     this.app.setOptionalDotGrid(this.app.getMainWindow().getOptionalDotGrid());
 
     this.toolboxWindow = this.app.showToolboxWindow(this.app, this, CLASSPATH_RESOURCES_PATH_JPG);
-    this.app.getToolboxStage().setX(1500d);
-    this.app.getToolboxStage().setY(50d);
-    this.app.getToolboxStage().setHeight(900d);
+    // Preferences can persist huge coordinates from dev machines; Xvfb is often ~1280×768.
+    final double safeMainX = 20d;
+    final double safeMainY = 20d;
+    this.primaryStage.setX(safeMainX);
+    this.primaryStage.setY(safeMainY);
+    this.primaryStage.setWidth(580d);
+    this.primaryStage.setHeight(480d);
+    this.app.getToolboxStage().setWidth(600d);
+    this.app.getToolboxStage().setX(safeMainX + 580d + 15d);
+    this.app.getToolboxStage().setY(safeMainY);
+    this.app.getToolboxStage().setHeight(560d);
 
     // GeometryWindow et StateWindow sont maintenant intégrées dans ToolboxWindow
     // this.geometryWindow = this.app.showGeometryWindow(this.app);
@@ -297,7 +306,8 @@ public class AppFunctionalTestParent {
 
   // Click on the snowflake in the toolbox to select its pattern
   protected void selectAndClickOnSnowflakePatternButton(FxRobot robot) {
-    clickOnButton(robot, toolboxWindow.getSnowflakeButton());
+    // Avoid TestFX visibility checks: the snowflake lives in a tall toolbox that is often clipped in Xvfb.
+    robot.interact(() -> toolboxWindow.getSnowflakeButton().fire());
   }
 
   protected void clickOnButton(FxRobot robot, ToggleButton button) {
@@ -306,7 +316,12 @@ public class AppFunctionalTestParent {
   }
 
   protected void clickOnButton(FxRobot robot, UndoKnotButton button) {
-    robot.clickOn("#" + button.getId());
+    robot.interact(UndoKnotButton::undoKnot);
+  }
+
+  /** Prefer this over {@code robot.clickOn("#drawingButton")} when the toolbox is clipped in Xvfb. */
+  protected void enterDrawingMode(FxRobot robot) {
+    robot.interact(() -> DrawingButton.onSetDrawModeAction(app));
   }
 
 

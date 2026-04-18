@@ -6,6 +6,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
+import org.alienlabs.adaloveslace.testutil.FxAwait;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
@@ -15,11 +16,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -65,10 +64,7 @@ class WindowResizeEventsListenersIntegrationTest {
     remember(WindowResizeEvents.GRID_WIDTH, p);
     remember(WindowResizeEvents.TOOLBOX_WINDOW_WIDTH, p);
 
-    CountDownLatch done = new CountDownLatch(1);
-    AtomicReference<Throwable> err = new AtomicReference<>();
-
-    Platform.runLater(() -> {
+    FxAwait.runAndWait(() -> {
       Stage primary = null;
       Stage toolbox = null;
       try {
@@ -92,6 +88,9 @@ class WindowResizeEventsListenersIntegrationTest {
         toolbox.setScene(new Scene(new Pane(), 300, 200));
         app.setToolboxStageForTests(toolbox);
 
+        primary.show();
+        toolbox.show();
+
         WindowResizeEvents resize = new WindowResizeEvents(app);
         resize.onWindowsResize();
 
@@ -101,8 +100,6 @@ class WindowResizeEventsListenersIntegrationTest {
         assertEquals(641d, app.getGridWidth(), 1e-6);
         assertTrue(p.getStringValue(WindowResizeEvents.MAIN_WINDOW_WIDTH).startsWith("641"));
         assertTrue(p.getStringValue(WindowResizeEvents.TOOLBOX_WINDOW_WIDTH).startsWith("901"));
-      } catch (Throwable t) {
-        err.set(t);
       } finally {
         if (toolbox != null) {
           toolbox.close();
@@ -110,13 +107,7 @@ class WindowResizeEventsListenersIntegrationTest {
         if (primary != null) {
           primary.close();
         }
-        done.countDown();
       }
     });
-
-    assertTrue(done.await(30, TimeUnit.SECONDS));
-    if (err.get() != null) {
-      throw new RuntimeException(err.get());
-    }
   }
 }

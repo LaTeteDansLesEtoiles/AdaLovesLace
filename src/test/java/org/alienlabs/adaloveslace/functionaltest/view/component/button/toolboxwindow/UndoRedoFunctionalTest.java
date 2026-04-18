@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
+import org.alienlabs.adaloveslace.testutil.FxAwait;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.RedoKnotButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoKnotButton;
 import org.junit.jupiter.api.Disabled;
@@ -79,7 +80,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
      *
      */
     @Test
-    void should_undo_last_drawn_knot(final FxRobot robot) {
+    void should_undo_last_drawn_knot(final FxRobot robot) throws Exception {
         // Given
         selectAndClickOnSnowflakePatternButton(robot);
         drawASnowflake(robot);
@@ -89,7 +90,8 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         org.junit.jupiter.api.Assertions.assertTrue(stepIndexBefore >= 2, "Expected at least two draw steps for undo test");
 
         // When
-        robot.clickOn("#undoButton");
+        clickOnButton(robot, app.getToolboxWindow().getUndoKnotButton());
+        FxAwait.flushFx(4);
 
         // Then
         assertCondition(
@@ -99,34 +101,35 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     }
 
     @Test
-    void test_add_a_knot_then_undo_step_then_redo_step(final FxRobot robot) {
+    void test_add_a_knot_then_undo_step_then_redo_step(final FxRobot robot) throws Exception {
         // Given
         selectAndClickOnSnowflakePatternButton(robot);
         drawASnowflake(robot);
+        robot.interact(() -> app.getOptionalDotGrid().layoutChildren());
+
         Point2D pointToCheck = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 25d, FIRST_SNOWFLAKE_PIXEL_Y + 25d);
         robot.moveTo(pointToCheck);
 
         Color foundColorOnGridBeforeUndo = getColor(pointToCheck);
 
         // When
-        robot.clickOn("#undoButton");
+        clickOnButton(robot, app.getToolboxWindow().getUndoKnotButton());
+        FxAwait.flushFx(4);
 
-        // Then
-        Point2D snowflakeOnTheGrid = newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d);
-        robot.moveTo(snowflakeOnTheGrid);
-        foundColorOnGrid = getColor(snowflakeOnTheGrid);
-        assertNotEquals(foundColorOnGridBeforeUndo, foundColorOnGrid, "Both colors should not be the same!");
+        // Then — layout + pixel sampling can lag behind the model on slow CI; poll like other functional tests.
+        assertCondition(
+            () -> !ColorMatchers.isColor(foundColorOnGridBeforeUndo).matches(getColor(pointToCheck)),
+            Long.getLong("GRID_PIXEL_ASSERT_WAIT_MS", 30_000L),
+            "Undo should change pixels at the knot location");
 
         // When
         robot.interact(RedoKnotButton::redoKnot);
 
         // Then
-        robot.moveTo(newPointOnGrid(FIRST_SNOWFLAKE_PIXEL_X + 20d, FIRST_SNOWFLAKE_PIXEL_Y + 20d));
-
-        Color foundColorOnGridAfterRedo = getColor(pointToCheck);
-        // If we choose a point in the snowflake it must be of the right color
-        assertTrue(ColorMatchers.isColor(foundColorOnGridBeforeUndo).matches(foundColorOnGridAfterRedo),
-                "Before undo color: " + foundColorOnGridBeforeUndo + ", after redo color: " + foundColorOnGridAfterRedo);
+        assertCondition(
+            () -> ColorMatchers.isColor(foundColorOnGridBeforeUndo).matches(getColor(pointToCheck)),
+            Long.getLong("GRID_PIXEL_ASSERT_WAIT_MS", 30_000L),
+            "Redo should restore pixels at the knot location");
     }
 
     @Test
@@ -162,7 +165,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     }
 
     @Test
-    void test_add_a_knot_then_turn_it_then_undo(final FxRobot robot) {
+    void test_add_a_knot_then_turn_it_then_undo(final FxRobot robot) throws Exception {
         // Given
         selectAndClickOnSnowflakePatternButton(robot);
         drawASnowflake(robot);
@@ -178,7 +181,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
                 app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
             }
         });
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
+        FxAwait.flushFx(4);
 
         final int[] rotationBeforeSpinner = new int[] {0};
         robot.interact(() -> rotationBeforeSpinner[0] = getSelectedOrFirstKnot().getRotationAngle());
@@ -186,7 +189,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         // When
         final int rotationSpinnerValueBefore = this.toolboxWindow.getRotationSpinner3().getValue();
         setSpinnerValue(robot, this.toolboxWindow.getRotationSpinner3(), rotationSpinnerValueBefore + 30);
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
+        FxAwait.flushFx(4);
 
         final int[] rotationAfterSpinner = new int[] {0};
         robot.interact(() -> rotationAfterSpinner[0] = getSelectedOrFirstKnot().getRotationAngle());
@@ -211,7 +214,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
     }
 
     @Test
-    void test_add_a_knot_then_zoom_it_then_undo(final FxRobot robot) {
+    void test_add_a_knot_then_zoom_it_then_undo(final FxRobot robot) throws Exception {
         // Given
         selectAndClickOnSnowflakePatternButton(robot);
         drawASnowflake(robot);
@@ -227,7 +230,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
                 app.getOptionalDotGrid().getDiagram().setCurrentKnot(knot);
             }
         });
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
+        FxAwait.flushFx(4);
 
         final int[] zoomBeforeSpinner = new int[] {0};
         robot.interact(() -> zoomBeforeSpinner[0] = getSelectedOrFirstKnot().getZoomFactor());
@@ -235,7 +238,7 @@ class UndoRedoFunctionalTest extends AppFunctionalTestParent {
         // When
         final int zoomSpinnerValueBefore = this.toolboxWindow.getZoomSpinner3().getValue();
         setSpinnerValue(robot, this.toolboxWindow.getZoomSpinner3(), zoomSpinnerValueBefore + 3);
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
+        FxAwait.flushFx(4);
 
         final int[] zoomAfterSpinner = new int[] {0};
         robot.interact(() -> zoomAfterSpinner[0] = getSelectedOrFirstKnot().getZoomFactor());
