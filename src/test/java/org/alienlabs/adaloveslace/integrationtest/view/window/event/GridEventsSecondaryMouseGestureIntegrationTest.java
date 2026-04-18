@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.domain.enumeration.GridType;
+import org.alienlabs.adaloveslace.testutil.FxRuntime;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
 import org.alienlabs.adaloveslace.view.window.MainWindow;
@@ -28,11 +29,7 @@ class GridEventsSecondaryMouseGestureIntegrationTest {
 
   @BeforeAll
   static void startJavaFx() {
-    try {
-      Platform.startup(() -> {
-      });
-    } catch (IllegalStateException ignored) {
-    }
+    FxRuntime.ensureStarted();
   }
 
   @Test

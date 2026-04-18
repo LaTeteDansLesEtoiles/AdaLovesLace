@@ -1,6 +1,5 @@
 package org.alienlabs.adaloveslace.integrationtest.view.component.button.geometrywindow.move;
 
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -12,6 +11,7 @@ import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.testutil.FxAwait;
+import org.alienlabs.adaloveslace.testutil.FxRuntime;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.FastMoveModeButton;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.LeftButton;
 import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.RightButton;
@@ -35,12 +35,7 @@ class MoveKnotActionsIntegrationTest {
 
   @BeforeAll
   static void startJavaFx() {
-    try {
-      Platform.startup(() -> {
-      });
-    } catch (IllegalStateException alreadyStarted) {
-      // JavaFX toolkit already initialized in this JVM
-    }
+    FxRuntime.ensureStarted();
   }
 
   private App app;

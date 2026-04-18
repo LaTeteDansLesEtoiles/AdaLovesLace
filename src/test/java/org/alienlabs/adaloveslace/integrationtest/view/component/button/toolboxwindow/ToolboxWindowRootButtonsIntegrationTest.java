@@ -1,12 +1,12 @@
 package org.alienlabs.adaloveslace.integrationtest.view.component.button.toolboxwindow;
 
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.testutil.FxAwait;
+import org.alienlabs.adaloveslace.testutil.FxRuntime;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShareButton;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
@@ -27,12 +27,7 @@ class ToolboxWindowRootButtonsIntegrationTest {
 
   @BeforeAll
   static void startJavaFx() {
-    try {
-      Platform.startup(() -> {
-      });
-    } catch (IllegalStateException alreadyStarted) {
-      // JavaFX toolkit already initialized in this JVM
-    }
+    FxRuntime.ensureStarted();
   }
 
   private App app;

@@ -1,12 +1,12 @@
 package org.alienlabs.adaloveslace.integrationtest.view.window.event;
 
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.domain.Diagram;
 import org.alienlabs.adaloveslace.testutil.FxAwait;
+import org.alienlabs.adaloveslace.testutil.FxRuntime;
 import org.alienlabs.adaloveslace.util.Preferences;
 import org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid;
 import org.alienlabs.adaloveslace.view.component.grid.gridstrategy.ParentGridStrategy;
@@ -30,12 +30,7 @@ class WindowResizeEventsListenersIntegrationTest {
 
   @BeforeAll
   static void startJavaFx() {
-    try {
-      Platform.startup(() -> {
-      });
-    } catch (IllegalStateException ignored) {
-      // toolkit already started
-    }
+    FxRuntime.ensureStarted();
   }
 
   @AfterEach

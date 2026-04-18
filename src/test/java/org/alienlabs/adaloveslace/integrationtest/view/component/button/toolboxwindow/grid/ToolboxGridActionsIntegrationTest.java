@@ -1,6 +1,5 @@
 package org.alienlabs.adaloveslace.integrationtest.view.component.button.toolboxwindow.grid;
 
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -14,6 +13,7 @@ import org.alienlabs.adaloveslace.domain.Knot;
 import org.alienlabs.adaloveslace.domain.enumeration.GridType;
 import org.alienlabs.adaloveslace.domain.enumeration.MouseMode;
 import org.alienlabs.adaloveslace.testutil.FxAwait;
+import org.alienlabs.adaloveslace.testutil.FxRuntime;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.CreatePatternButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.RedoKnotButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.ShowHideGridButton;
@@ -45,12 +45,7 @@ class ToolboxGridActionsIntegrationTest {
 
   @BeforeAll
   static void startJavaFx() {
-    try {
-      Platform.startup(() -> {
-      });
-    } catch (IllegalStateException alreadyStarted) {
-      // JavaFX toolkit already initialized in this JVM
-    }
+    FxRuntime.ensureStarted();
   }
 
   private App app;
