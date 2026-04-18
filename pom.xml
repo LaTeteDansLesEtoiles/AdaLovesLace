@@ -297,8 +297,10 @@
                 <exclude>**/integrationtest/**</exclude>
               </excludes>
               <skipITs>${skipFTs}</skipITs>
-              <!-- One JVM per TestFX class: avoids stale stages/windows from full App tests breaking lightweight UI tests. -->
-              <reuseForks>false</reuseForks>
+              <!-- Reuse the forked JVM across TestFX classes: JavaFX/Xvfb startup is ~5s and dominates wall time when
+                   not reused. AppFunctionalTestParent's @AfterEach closes toolbox/state/geometry stages and resets
+                   static UI state (spinners, FastMoveModeButton, App.toolboxWindow/mainWindow) between tests. -->
+              <reuseForks>true</reuseForks>
             </configuration>
           </execution>
           <execution>
@@ -311,8 +313,8 @@
         </executions>
         <configuration>
           <forkCount>1</forkCount>
-          <!-- TestFX/JavaFX: one Application.launch per forked JVM (functional execution sets reuseForks=false per class).
-               Some CI environments enable JUnit parallelism; disable it explicitly for functional tests. -->
+          <!-- TestFX/JavaFX: Application.launch can only be called once per JVM. Forks are reused across classes
+               (see functional-tests execution); disable JUnit parallelism so TestFX tests don't race for the robot. -->
           <systemPropertyVariables>
             <junit.jupiter.execution.parallel.enabled>false</junit.jupiter.execution.parallel.enabled>
             <junit.jupiter.execution.parallel.mode.default>same_thread</junit.jupiter.execution.parallel.mode.default>

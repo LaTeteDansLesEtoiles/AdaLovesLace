@@ -22,6 +22,11 @@ import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.grid.UndoK
 import org.alienlabs.adaloveslace.view.window.ToolboxWindow;
 import org.alienlabs.adaloveslace.view.window.event.WindowRepositionEvents;
 import org.alienlabs.adaloveslace.view.window.event.WindowResizeEvents;
+import org.alienlabs.adaloveslace.testutil.FxAwait;
+import org.alienlabs.adaloveslace.view.component.button.geometrywindow.move.FastMoveModeButton;
+import org.alienlabs.adaloveslace.view.component.spinner.RotationSpinner;
+import org.alienlabs.adaloveslace.view.component.spinner.ZoomSpinner;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -101,6 +106,50 @@ public class AppFunctionalTestParent {
     FxToolkit.toolkitContext().setSetupTimeoutInMillis(setupMs);
     FxToolkit.toolkitContext().setLaunchTimeoutInMillis(launchMs);
     logger.info("TestFX timeouts: setup={}ms launch={}ms", setupMs, launchMs);
+  }
+
+  /**
+   * Close secondary windows (toolbox/state/geometry/dialogs) and reset static UI state between tests so the forked
+   * JVM can be reused across test classes ({@code reuseForks=true}) without leaking stages or singletons.
+   * TestFX's {@code ApplicationExtension} only tears down the injected primary stage.
+   *
+   * <p>Note: {@code App.mainWindow}/{@code App.toolboxWindow} are NOT nulled out. A deferred animation
+   * callback (e.g. {@code OptionalDotGrid.moveKnotPause}) may still fire between teardown and the next
+   * {@code @Start}; the next start will overwrite those statics with fresh instances anyway.</p>
+   */
+  @AfterEach
+  void tearDownFunctionalTestState() {
+    // Stop any running JavaFX timers/animations that could fire after teardown and NPE on stale state.
+    try {
+      FxAwait.runAndWait(() -> {
+        try {
+          org.alienlabs.adaloveslace.view.component.grid.OptionalDotGrid.moveKnotPause.stop();
+        } catch (RuntimeException ignored) {
+          // Best-effort.
+        }
+        try {
+          if (this.app != null && this.app.getToolboxStage() != null) {
+            this.app.getToolboxStage().close();
+          }
+        } catch (RuntimeException ignored) {
+          // Stages may already be closed.
+        }
+        for (javafx.stage.Window window : new java.util.ArrayList<>(javafx.stage.Window.getWindows())) {
+          if (window instanceof Stage stage && stage != this.primaryStage) {
+            try {
+              stage.close();
+            } catch (RuntimeException ignored) {
+              // ignore
+            }
+          }
+        }
+      });
+    } catch (Exception ignored) {
+      // Teardown is best-effort: don't fail the test because cleanup hiccupped.
+    }
+    FastMoveModeButton.resetStateForTests();
+    RotationSpinner.resetNumberOfUpdates();
+    ZoomSpinner.resetNumberOfUpdates();
   }
 
   /**
