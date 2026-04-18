@@ -4,7 +4,7 @@
 // - auto (default):
 //   - nightly timer trigger -> nightly (full tests + OWASP + scaffolds)
 //   - push on develop/main -> release (nightly gates + packaging + smoke/checksums)
-//   - any other push -> pr (fast feedback gates)
+//   - any other branch push -> pr (unit tests + verify; no integration/functional)
 // - pr/nightly/release can still be selected manually as an explicit override.
 pipeline {
     agent any
@@ -41,12 +41,34 @@ pipeline {
         stage('Select pipeline mode') {
             steps {
                 script {
-                    // Sandbox-safe trigger detection (no getRawBuild/script approval required).
-                    // BUILD_CAUSE_TIMERTRIGGER is exported on cron-triggered builds; keep a fallback
-                    // for installations that only expose BUILD_CAUSE.
-                    def isNightlyTrigger =
-                        (env.BUILD_CAUSE_TIMERTRIGGER ?: 'false').toBoolean() ||
-                        ((env.BUILD_CAUSE ?: '').contains('TIMERTRIGGER'))
+                    // Nightly = cron/timer. Prefer currentBuild.getBuildCauses() (Pipeline Supporting APIs
+                    // plugin): many controllers never set BUILD_CAUSE_* / BUILD_CAUSE_TIMERTRIGGER for timer runs.
+                    def isNightlyTrigger = false
+                    if ((env.BUILD_CAUSE_TIMERTRIGGER ?: 'false').toBoolean() ||
+                            ((env.BUILD_CAUSE ?: '').contains('TIMERTRIGGER'))) {
+                        isNightlyTrigger = true
+                    }
+                    if (!isNightlyTrigger) {
+                        try {
+                            def timerOnly = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')
+                            isNightlyTrigger = (timerOnly != null && !timerOnly.isEmpty())
+                        } catch (Throwable ignored) {
+                            // Older core / API: fall through to generic cause scan.
+                        }
+                    }
+                    if (!isNightlyTrigger) {
+                        try {
+                            def allCauses = currentBuild.getBuildCauses()
+                            isNightlyTrigger = (allCauses != null && allCauses.any { c ->
+                                def cls = (c instanceof Map) ? (c['_class'] ?: '') : ''
+                                def sd = (c instanceof Map) ? (c['shortDescription'] ?: '') : ''
+                                cls.toString().contains('TimerTrigger') ||
+                                    sd.toString().toLowerCase().contains('timer')
+                            })
+                        } catch (Throwable ignored) {
+                            isNightlyTrigger = false
+                        }
+                    }
                     def branch = env.BRANCH_NAME ?: ''
                     def isReleaseBranchPush = !isNightlyTrigger && (branch == 'develop' || branch == 'main')
 
@@ -58,7 +80,8 @@ pipeline {
                     } else if (isReleaseBranchPush) {
                         env.CI_MODE = 'release'
                     } else {
-                        env.CI_MODE = 'nightly'
+                        // Feature branches / PR multibranch: fast feedback only (not timer -> not nightly).
+                        env.CI_MODE = 'pr'
                     }
 
                     echo "Resolved CI mode: ${env.CI_MODE} (branch=${branch}, nightlyTrigger=${isNightlyTrigger})"
