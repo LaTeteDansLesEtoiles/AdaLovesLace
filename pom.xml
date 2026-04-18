@@ -417,6 +417,29 @@
           <append>true</append>
           <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
           <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+          <!--
+            Exclude auto-generated protobuf message classes. They live in src/main/java after protoc generation
+            and contain thousands of lines of library-driven builder/parser code that is not ours to own and whose
+            coverage is orthogonal to the quality of the adaloveslace code under test. Keeping them in the counter
+            is also how the persistence.protobuf package fell to ~0.42: nothing realistic exercises every branch of
+            a generated Builder. Excluding them here applies both to the coverage report and to the jacoco:check
+            thresholds below, without masking any hand-written persistence code (LaceArchiveLoader/Saver/etc. live
+            in the org.alienlabs.adaloveslace.persistence package, not persistence.protobuf).
+          -->
+          <excludes>
+            <exclude>org/alienlabs/adaloveslace/persistence/protobuf/**</exclude>
+            <!--
+              NewMain is a two-line entrypoint that delegates to App.main, which blocks inside
+              Application.launch for the life of the JVM. There is no deterministic way to execute its
+              body from a surefire/failsafe fork without either forking another JVM per test or leaving
+              a daemon thread parked inside the JavaFX event loop past JaCoCo's shutdown flush. The
+              functional-test suite already starts the real application via TestFX, so the runtime path
+              is thoroughly exercised; JaCoCo's coverage counter for this single delegation line is not
+              a meaningful quality signal and is excluded to avoid blocking the per-class threshold on a
+              race-prone test mechanism.
+            -->
+            <exclude>org/alienlabs/adaloveslace/NewMain.class</exclude>
+          </excludes>
           <rules>
             <rule>
               <element>PACKAGE</element>
@@ -424,7 +447,7 @@
                 <limit>
                   <counter>LINE</counter>
                   <value>COVEREDRATIO</value>
-                  <minimum>0.40</minimum>
+                  <minimum>0.60</minimum>
                 </limit>
               </limits>
             </rule>
@@ -434,7 +457,7 @@
                 <limit>
                   <counter>LINE</counter>
                   <value>COVEREDRATIO</value>
-                  <minimum>0.0</minimum>
+                  <minimum>0.15</minimum>
                 </limit>
               </limits>
             </rule>

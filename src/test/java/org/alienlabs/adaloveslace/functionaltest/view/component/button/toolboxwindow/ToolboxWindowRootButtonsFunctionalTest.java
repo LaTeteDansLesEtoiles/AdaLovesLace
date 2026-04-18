@@ -8,6 +8,7 @@ import javafx.stage.Window;
 import java.util.function.Predicate;
 import org.alienlabs.adaloveslace.App;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
+import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.QuitButton;
 import org.alienlabs.adaloveslace.view.component.button.toolboxwindow.ShareButton;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,40 @@ class ToolboxWindowRootButtonsFunctionalTest extends AppFunctionalTestParent {
     assertNotNull(dialogWindow, "Share dialog window should open");
     robot.targetWindow(dialogWindow);
     // Under GTK/Xvfb the CANCEL button label is not always the literal "Cancel" for TestFX text lookup.
+    robot.press(KeyCode.ESCAPE).release(KeyCode.ESCAPE);
+    FxAwait.syncFx();
+  }
+
+  /**
+   * Clicks the Quit button and verifies the confirmation Alert is opened, then cancels it with ESCAPE so the
+   * application keeps running for the next test (the alternative Quit path would call {@code Platform.exit()}
+   * and kill the shared TestFX JVM). This exercises {@link QuitButton#onQuitAction(javafx.event.Event)} all the
+   * way through {@link javafx.scene.control.Alert#showAndWait()} and the {@code Cancel} branch, which is what
+   * drops {@link org.alienlabs.adaloveslace.view.component.button.toolboxwindow} below the package coverage
+   * minimum when nothing dismisses the alert at runtime.
+   */
+  @Test
+  void quit_toolbox_click_opens_alert_then_escape_cancels(FxRobot robot) throws Exception {
+    Predicate<Node> isQuit = n -> n instanceof QuitButton;
+    QuitButton quit = robot.from(app.getToolboxStage().getScene().getRoot())
+        .lookup(isQuit)
+        .queryAs(QuitButton.class);
+    robot.clickOn(quit);
+    FxAwait.syncFx();
+
+    Window alertWindow = null;
+    for (Window w : robot.listWindows()) {
+      if (w.isShowing() && w != app.getPrimaryStage() && w != app.getToolboxStage()) {
+        alertWindow = w;
+        break;
+      }
+    }
+    assertNotNull(alertWindow, "Quit confirmation alert should open on toolbox quit click");
+
+    robot.targetWindow(alertWindow);
+    // ESCAPE maps to the CANCEL_CLOSE button ("CancelQuitButton"); this keeps the FX runtime alive, which is
+    // critical because subsequent tests (and other test classes reusing the fork) would otherwise hit a dead
+    // toolkit after a successful quit.
     robot.press(KeyCode.ESCAPE).release(KeyCode.ESCAPE);
     FxAwait.syncFx();
   }

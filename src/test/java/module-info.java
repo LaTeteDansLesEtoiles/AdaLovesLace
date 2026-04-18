@@ -46,6 +46,7 @@ module org.alienlabs.adaloveslace.test {
   opens org.alienlabs.adaloveslace.integrationtest.domain.xmladapter                    to org.junit.platform.commons, org.junit.jupiter.params, jakarta.xml.bind;
 
   requires java.desktop;
+  requires java.net.http;
   requires javafx.controls;
   requires javafx.graphics;
   requires javafx.swing;
