@@ -80,11 +80,7 @@ public class FileUtil {
             Diagram value = loadTask.getValue();
             dialog.setResult(value);
             dialog.close();
-            // Show the diagram immediately; normal rendering will draw patterns & texts
             new FileChooserUtil().restartGui(app, value);
-            // Extract the remaining patterns in the background to keep UI smooth
-            Set<String> needed = getNeededPatternFilenamesInViewport(app, value);
-            copyRemainingPatternsAsync(file, needed);
         });
         loadTask.setOnFailed(_ -> {
             logger.error("Error loading task", loadTask.getException());
@@ -111,10 +107,8 @@ public class FileUtil {
         }
 
         initializeTypedTextFromLoadedText(diagram);
-        // Extract initial patterns needed for the viewport
         try (ZipFile zipFile = new ZipFile(file)) {
-            Set<String> needed = getNeededPatternFilenamesInViewport(app, diagram);
-            copyOnlyPatterns(zipFile, needed);
+            copyAllDiagramPatterns(zipFile, diagram);
         } catch (IOException e) {
             logger.error("Error copying patterns from lace file: {}", file.getAbsolutePath(), e);
         }
@@ -153,8 +147,9 @@ public class FileUtil {
         return x1 < x2 + w2 && x2 < x1 + w1 && y1 < y2 + h2 && y2 < y1 + h1;
     }
 
-    private void copyOnlyPatterns(ZipFile zipFile, Set<String> filenames) throws IOException {
-        for (String name : filenames) {
+    private void copyAllDiagramPatterns(ZipFile zipFile, Diagram diagram) throws IOException {
+        for (org.alienlabs.adaloveslace.domain.Pattern pattern : diagram.getPatterns()) {
+            String name = pattern.getFilename();
             ZipEntry entry = zipFile.getEntry(name);
             if (entry != null) {
                 try (InputStream in = zipFile.getInputStream(entry)) {
@@ -162,30 +157,6 @@ public class FileUtil {
                 }
             }
         }
-    }
-
-    private void copyRemainingPatternsAsync(File file, Set<String> alreadyCopied) {
-        Thread t = new Thread(() -> {
-            try (ZipFile zip = new ZipFile(file)) {
-                Enumeration<? extends ZipEntry> entries = zip.entries();
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
-                    if (XML_FILE_TO_SAVE_IN_LACE_FILE.equals(entry.getName())) continue;
-                    String name = entry.getName();
-                    if (alreadyCopied.contains(name)) continue;
-                    try (InputStream in = zip.getInputStream(entry)) {
-                        copyTargetFile(entry, in);
-                    } catch (IOException ioe) {
-                        logger.warn("Background copy failed for {}", name, ioe);
-                    }
-                }
-            } catch (IOException e) {
-                logger.warn("Cannot open lace file for async copy", e);
-            }
-        }, "AdaLovesLace-PatternsCopier");
-        t.setDaemon(true);
-        t.setPriority(Thread.NORM_PRIORITY);
-        t.start();
     }
 
     public void copyPatternFromZipAsyncByName(String name) {

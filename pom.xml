@@ -9,13 +9,13 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>25</java.version>
-    <javafx.version>25.0.2</javafx.version>
+    <javafx.version>25.0.3</javafx.version>
     <test-plugins.version>3.3.0</test-plugins.version>
     <itext.version>9.6.0</itext.version>
     <testfx.version>4.0.18</testfx.version>
-    <junit.version>5.10.1</junit.version>
+    <junit.version>6.1.0</junit.version>
     <logback.version>1.5.32</logback.version>
-    <protobuf.version>4.34.1</protobuf.version>
+    <protobuf.version>4.35.0</protobuf.version>
     <protobuf.maven.plugin.version>0.6.1</protobuf.maven.plugin.version>
     <dependency-check-maven.version>12.1.3</dependency-check-maven.version>
     <!-- NVD API key: request at https://nvd.nist.gov/developers/request-an-api-key — pass -Dnvd.api.key=... or set env NVD_API_KEY (Jenkins) -->
@@ -102,13 +102,13 @@
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
-      <version>4.0.7</version>
+      <version>4.0.8</version>
     </dependency>
 
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.13.2</version>
+      <version>2.14.0</version>
     </dependency>
 
     <dependency>
@@ -124,7 +124,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>2.0.17</version>
+      <version>2.0.18</version>
     </dependency>
 
     <dependency>
@@ -237,6 +237,30 @@
             </manifest>
           </archive>
         </configuration>
+      </plugin>
+
+      <!-- Call Conveyor -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.6.3</version>
+        <executions>
+          <execution>
+            <id>conveyor-package</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>conveyor</executable>
+              <arguments>
+                <argument>make</argument>
+                <argument>--output-dir=target/artifacts</argument>
+              </arguments>
+              <workingDirectory>${project.basedir}</workingDirectory>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>

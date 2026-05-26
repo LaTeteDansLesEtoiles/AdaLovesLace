@@ -34,6 +34,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -170,6 +171,23 @@ public class ToolboxWindow {
         return null;
     }
 
+    private ToggleButton buildPatternButton(App app, Diagram diagram, int buttonIndex,
+                                            org.alienlabs.adaloveslace.domain.Pattern pattern) {
+        File file = resolveToolboxPatternFile(pattern);
+
+        if (file.isFile()) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                return buildPatternButton(app, diagram, buttonIndex, pattern, fis);
+            } catch (IOException e) {
+                logger.error("Exception reading toolbox file!", e);
+            }
+        } else {
+            logger.warn("Pattern image not found for toolbox button: {}", pattern.getFilename());
+        }
+
+        return null;
+    }
+
     // The Pattern button itself
     private ToggleButton buildPatternButton(App app, Diagram diagram, int i, String filename, String label, FileInputStream fis) {
         org.alienlabs.adaloveslace.domain.Pattern pattern = new org.alienlabs.adaloveslace.domain.Pattern(filename);
@@ -203,6 +221,70 @@ public class ToolboxWindow {
 
         diagram.addPattern(pattern);
         return button;
+    }
+
+    private ToggleButton buildPatternButton(App app, Diagram diagram, int buttonIndex,
+                                            org.alienlabs.adaloveslace.domain.Pattern pattern,
+                                            FileInputStream fis) {
+        Image img = new Image(fis);
+
+        if (diagram.getCurrentPattern() == null) {
+            diagram.setCurrentPattern(pattern);
+        }
+
+        if (pattern.getCenterX() == 0d) {
+            pattern.setCenterX(img.getWidth() / 2);
+        }
+        if (pattern.getCenterY() == 0d) {
+            pattern.setCenterY(img.getHeight() / 2);
+        }
+        if (pattern.getWidth() == 0d) {
+            pattern.setWidth(img.getWidth());
+        }
+        if (pattern.getHeight() == 0d) {
+            pattern.setHeight(img.getHeight());
+        }
+
+        ToggleButton button = new PatternButton(app, pattern.getFilename(), img, pattern);
+        button.setId(TOOLBOX_BUTTON + (buttonIndex + 1));
+        this.allPatterns.add(button);
+
+        if (buttonIndex == 0) {
+            this.colorWheelButton = button;
+        }
+
+        if ("snowflake_small.jpg".equals(pattern.getFilename())) {
+            this.snowflakeButton = button;
+            this.snowflakeButton.setId("snowflakeButton");
+        }
+
+        if (pattern.equals(diagram.getCurrentPattern())) {
+            button.setSelected(true);
+            if (!button.getStyleClass().contains(BUTTON_SELECTED)) {
+                button.getStyleClass().add(BUTTON_SELECTED);
+            }
+            app.getOptionalDotGrid().getCurrentPatternProperty().set(pattern);
+        }
+
+        return button;
+    }
+
+    private File resolveToolboxPatternFile(org.alienlabs.adaloveslace.domain.Pattern pattern) {
+        if (pattern.getAbsoluteFilename() != null) {
+            File fromPattern = new File(pattern.getAbsoluteFilename());
+            if (fromPattern.isFile()) {
+                return fromPattern;
+            }
+        }
+
+        return new File(System.getProperty(USER_HOME) + File.separator + PROJECT_NAME + File.separator
+                + PATTERNS_DIRECTORY_NAME + File.separator + pattern.getFilename());
+    }
+
+    private void resetPatternButtonsState() {
+        this.allPatterns.clear();
+        this.snowflakeButton = null;
+        this.colorWheelButton = null;
     }
 
     private void managePatternResourceFiles(File patternsDirectoryResourcesPath) {
@@ -286,20 +368,41 @@ public class ToolboxWindow {
     ) {
         this.toolboxStage = toolboxStage;
         this.menuBar = menuBar;
+        resetPatternButtonsState();
 
         // Create a separate GridPane for patterns with scrolling
         GridPane patternsPane = new GridPane();
         patternsPane.setVgap(5);
         patternsPane.setHgap(5);
         patternsPane.setPadding(new Insets(5));
-        
-        // Add patterns to the patterns GridPane
-        for (int i = 0; i < this.classpathResourceFiles.size(); i++) {
-            patternsPane.add(buildPatternButton(app, diagram, i), i % 2, i / 2);
+
+        List<org.alienlabs.adaloveslace.domain.Pattern> diagramPatterns = diagram.getPatterns().stream()
+                .sorted(Comparator.comparing(org.alienlabs.adaloveslace.domain.Pattern::getFilename))
+                .toList();
+
+        if (diagram.getCurrentPattern() == null && !diagramPatterns.isEmpty()) {
+            diagram.setCurrentPattern(diagramPatterns.getFirst());
+        }
+
+        if (!diagramPatterns.isEmpty()) {
+            for (int i = 0; i < diagramPatterns.size(); i++) {
+                ToggleButton button = buildPatternButton(app, diagram, i, diagramPatterns.get(i));
+                if (button != null) {
+                    patternsPane.add(button, i % 2, i / 2);
+                }
+            }
+        } else {
+            for (int i = 0; i < this.classpathResourceFiles.size(); i++) {
+                ToggleButton button = buildPatternButton(app, diagram, i);
+                if (button != null) {
+                    patternsPane.add(button, i % 2, i / 2);
+                }
+            }
         }
         
         // Create a ScrollPane specifically for patterns
         ScrollPane patternsScrollPane = new ScrollPane();
+        patternsScrollPane.setId("toolboxPatternsScrollPane");
         patternsScrollPane.setContent(patternsPane);
         patternsScrollPane.setFitToWidth(true);
         patternsScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -307,19 +410,19 @@ public class ToolboxWindow {
         patternsScrollPane.setPrefWidth(450);
         
         // Enable vertical scrollbar if more than 14 patterns
-        if (this.classpathResourceFiles.size() > MAX_PATTERNS_WITHOUT_SCROLL) {
+        if (this.allPatterns.size() > MAX_PATTERNS_WITHOUT_SCROLL) {
             patternsScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         } else {
             patternsScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         }
         
         // Limit the ScrollPane height so it takes only the needed space
-        if (this.classpathResourceFiles.size() > MAX_PATTERNS_WITHOUT_SCROLL) {
+        if (this.allPatterns.size() > MAX_PATTERNS_WITHOUT_SCROLL) {
             patternsScrollPane.setMaxHeight(400); // Height for 7 rows of patterns
             patternsScrollPane.setMinHeight(400); // Minimum height to ensure visibility
         } else {
             // If fewer than 14 patterns, compute the exact required height
-            int patternsRows = (int) Math.ceil((double) this.classpathResourceFiles.size() / 2);
+            int patternsRows = (int) Math.ceil((double) this.allPatterns.size() / 2);
             double exactHeight = patternsRows * 60d + 20d; // 60px per row + padding
             patternsScrollPane.setMaxHeight(exactHeight);
             patternsScrollPane.setMinHeight(exactHeight);
@@ -420,6 +523,7 @@ public class ToolboxWindow {
         
         // Create a separate GridPane for first-column buttons with margin
         GridPane buttonsGrid = new GridPane();
+        buttonsGrid.setId("toolboxButtonsGrid");
         buttonsGrid.setPadding(new Insets(20, 0, 10, 10)); // Reduced right padding to shift the 2nd sub-column
         buttonsGrid.setVgap(10); // Larger vertical spacing
         buttonsGrid.setHgap(10); // Larger horizontal spacing
