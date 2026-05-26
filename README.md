@@ -244,3 +244,5 @@ I tested out with GitHub Pages and it works flawlessly.
     Go to the Video page on YouTube and click on the Share Button
     Choose Embed
     Copy and Paste the HTML snippet in your markdown
+
+[![Packaged with Conveyor](https://conveyor.hydraulic.dev/badge.svg)](https://conveyor.hydraulic.dev)

@@ -1,16 +1,32 @@
 package org.alienlabs.adaloveslace.functionaltest.view.window;
 
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.alienlabs.adaloveslace.domain.enumeration.GridType;
 import org.alienlabs.adaloveslace.functionaltest.AppFunctionalTestParent;
+import org.alienlabs.adaloveslace.util.FileUtil;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import org.testfx.matcher.base.ColorMatchers;
 import org.testfx.util.WaitForAsyncUtils;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.alienlabs.adaloveslace.App.TOOLBOX_TITLE;
 import static org.alienlabs.adaloveslace.App.resourceBundle;
@@ -87,6 +103,68 @@ class ToolboxWindowFunctionalTest extends AppFunctionalTestParent {
     robot.clickOn(resourceBundle.getString(SHOW_HIDE_GRID_BUTTON_NAME));
     assertCondition(() -> !gridLabel.getText().equals(afterFirstToggle), "Grid label should change on second grid switch");
     assertNotEquals(initial, afterFirstToggle, "Grid name should reflect a different visible grid mode");
+  }
+
+  @Test
+  void testQuickstartLoad_rebuilds_pattern_list_from_diagram(FxRobot robot) throws Exception {
+    File quickstart = quickstartDiagramFile("Crochet.lace");
+    int expectedPatternCount = 19;
+
+    robot.interact(() -> new FileUtil().buildUiFromLaceFile(this.app, quickstart));
+    WaitForAsyncUtils.waitForFxEvents();
+
+    assertCondition(
+            () -> this.app.getToolboxWindow().getAllPatterns().size() == this.app.getOptionalDotGrid().getDiagram().getPatterns().size(),
+            "Toolbox pattern list should match the loaded diagram pattern set");
+    assertEquals(expectedPatternCount, this.app.getToolboxWindow().getAllPatterns().size());
+
+    Set<String> expectedPatternNames = this.app.getOptionalDotGrid().getDiagram().getPatterns().stream()
+            .map(org.alienlabs.adaloveslace.domain.Pattern::getFilename)
+            .map(ToolboxWindowFunctionalTest::stripImageExtension)
+            .collect(Collectors.toSet());
+    Set<String> actualPatternNames = this.app.getToolboxWindow().getAllPatterns().stream()
+            .map(ButtonBase::getText)
+            .collect(Collectors.toSet());
+    assertEquals(expectedPatternNames, actualPatternNames);
+
+    VBox toolboxRoot = (VBox) ((ScrollPane) this.app.getToolboxStage().getScene().getRoot()).getContent();
+    HBox mainContainer = (HBox) toolboxRoot.getChildren().get(1);
+    VBox leftColumn = (VBox) mainContainer.getChildren().get(0);
+    GridPane toolboxGrid = (GridPane) leftColumn.getChildren().get(0);
+
+    ScrollPane patternScrollPane = (ScrollPane) toolboxGrid.lookup("#toolboxPatternsScrollPane");
+    GridPane buttonsGrid = (GridPane) toolboxGrid.lookup("#toolboxButtonsGrid");
+
+    assertNotNull(patternScrollPane, "Pattern list scroll pane should be present in toolbox");
+    assertNotNull(buttonsGrid, "Toolbox buttons grid should be present");
+    assertTrue(buttonsGrid.getChildren().contains(this.app.getToolboxWindow().getTextButton()));
+    assertEquals(0, gridRow(patternScrollPane), "Pattern list should stay directly under the menu bar");
+    assertEquals(1, gridRow(buttonsGrid), "Pattern list should stay above the text button row");
+
+    List<String> sortedButtonNames = this.app.getToolboxWindow().getAllPatterns().stream()
+            .map(ButtonBase::getText)
+            .toList();
+    List<String> sortedDiagramNames = this.app.getOptionalDotGrid().getDiagram().getPatterns().stream()
+            .map(org.alienlabs.adaloveslace.domain.Pattern::getFilename)
+            .sorted(Comparator.naturalOrder())
+            .map(ToolboxWindowFunctionalTest::stripImageExtension)
+            .toList();
+    assertEquals(sortedDiagramNames, sortedButtonNames);
+  }
+
+  private static int gridRow(Node node) {
+    Integer row = GridPane.getRowIndex(node);
+    return row == null ? 0 : row;
+  }
+
+  private File quickstartDiagramFile(String filename) throws URISyntaxException {
+    URL url = getClass().getResource("/diagrams/" + filename);
+    assertNotNull(url, "Quickstart diagram resource should exist");
+    return Paths.get(url.toURI()).toFile();
+  }
+
+  private static String stripImageExtension(String filename) {
+    return filename.replaceFirst("(?i)\\.(png|jpg|gif|bmp|jpeg)$", "");
   }
 
 }
